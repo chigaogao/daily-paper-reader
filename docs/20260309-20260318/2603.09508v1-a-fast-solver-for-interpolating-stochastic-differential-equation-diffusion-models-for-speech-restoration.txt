@@ -1,0 +1,871 @@
+Title: A Fast Solver for Interpolating Stochastic Differential Equation Diffusion Models for Speech Restoration
+
+URL Source: https://arxiv.org/pdf/2603.09508v1
+
+Published Time: Wed, 11 Mar 2026 00:57:00 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# A Fast Solver for Interpolating Stochastic Differential Equation Diffusion Models for Speech Restoration 
+
+# Bunlong Lay ID 1,2, Timo Gerkmann ID 11 University Hamburg, Signal Processing, Bundestr. 56a, Hamburg, Germany  
+
+> 2
+
+# HITeC-Hamburg, Bundestr. 56a, Hamburg, Germany 
+
+bunlong.lay@uni-hamburg.de, timo.gerkmann@uni-hamburg.de 
+
+# Abstract 
+
+Diffusion Probabilistic Models (DPMs) are a well-established class of diffusion models for unconditional image genera-tion, while SGMSE+ is a well-established conditional diffusion model for speech enhancement. One of the downsides of dif-fusion models is that solving the reverse process requires many evaluations of a large Neural Network. Although advanced fast sampling solvers have been developed for DPMs, they are not directly applicable to models such as SGMSE+ due to differ-ences in their diffusion processes. Specifically, DPMs trans-form between the data distribution and a standard Gaussian distribution, whereas SGMSE+ interpolates between the target distribution and a noisy observation. This work first develops a formalism of interpolating Stochastic Differential Equations (iSDEs) that includes SGMSE+, and second proposes a solver for iSDEs. The proposed solver enables fast sampling with as few as 10 Neural Network evaluations across multiple speech restoration tasks. 
+
+Index Terms : speech restoration, diffusion model, fast sampler 
+
+# 1. Introduction 
+
+The goal of Speech Restoration (SR) is to retrieve the clean speech signal from a degraded signal that has been affected by some corruption. Traditional methods attempt to leverage the statistical relationships between the clean speech signal and the degraded signal. Various machine learning techniques have been suggested, treating SR as a predictive learning task [1, 2]. Diverging from predictive approaches, which establish a direct mapping from degraded to clean speech, generative ap-proaches focus on learning a prior distribution over clean speech data. Recently, a category of generative models known as dif-fusion models (or score-based generative models ) has been in-troduced to the realm of SR [3, 4, 5, 6]. In [3, 4], the concept involves gradually adding Gaussian noise to the data through a discrete and fixed Markov chain, referred to as the forward process , thereby transforming the data into a tractable distribu-tion like a Gaussian distribution. Subsequently, a Neural Net-work (NN) is trained to reverse this diffusion process in a so-called reverse process [7]. As the step size between two discrete Markov chain states approaches zero, the discrete Markov chain transforms into a continuous-time stochastic differential equa-tion (SDE) under mild constraints. The use of SDEs provides greater flexibility and opportunities compared to methods based on discrete Markov chains [8]. For SR, a SDE has been origi-nally proposed in [5, 6]. Notably, SDEs enable the application of general-purpose SDE solvers for numerically integrating the reverse process, thereby influencing performance and the num-ber of iteration steps. An SDE can be viewed as resulting in a transformation between two specified distributions, with one designated as the initial distribution and the other as the ter-minating distribution of the SDE. In the context of SGMSE+ [6], recently different SDEs [6, 9] have been introduced, with the initial distribution being the clean speech data and the ter-minating distribution being centered around the noisy mixture. Hence, these SDEs result in a stochastic interpolation between the clean speech signal and the noisy mixture. Within mild con-straints, it is possible to identify a reverse ordinary differential equation (ODE), known as the probability flow ordinary differ-ential equation (PF-ODE) [10], and different reverse SDEs [11] for each forward SDE that effectively reverses the forward pro-cess. This reverse ODE/SDE starts from the degraded signal plus some Gaussian noise and ends at an estimate of the clean speech. The key difference between a reverse SDE and a re-verse ODE is that the reverse SDE adds Gaussian noise during the reverse process, which enables the sampler to explore differ-ent regions of the model’s learned distribution, rather than col-lapsing to one deterministic trajectory. As this process assumes that the degraded signal is available, this formulation of the dif-fusion models is known as conditional generation, opposed to unconditional generation, where the terminating distribution is an uninformed standard Gaussian and thus independent of the degraded signal. Solving the reverse PF-ODE generates a con-ditional estimate of the clean speech signal. Since the success of the SGMSE+’s [5, 6] conditional dif-fusion process formulation [4], many other interpolation SDEs (iSDEs) [9, 12, 13, 14, 15, 16] have been applied for score-based SR. Even some Schrödinger Bridges [17, 18, 19] can be formulated as an iSDEs. However, no general mathematical for-mulation has been developed to unify these iSDEs. In this work, we develop a formalism for arbitrary interpolating SDEs from which all iSDEs can be derived. Under this formalism, the un-conditional generation task becomes a special case, where the mean interpolates towards 0, instead of towards a degraded sig-nal as proposed in SGMSE+. For unconditional diffusion pro-cesses, many fast sampling methods [20, 21, 22, 11] have been developed, where [20] is one of the first prominent fast solvers, known as the DPM-Solver or DPM-pS . All fast sampling meth-ods achieved better quality with fewer number of function eval-uations (NFEs), where NFEs denotes the number of times a NN is called when solving the reverse process. However, these fast solvers can not be directly applied to iSDEs, as the solvers were only derived for the unconditional diffusion process. Hence, in this work, we develop a novel solver, based on DPM-Solver, for the conditional diffusion process formulated by iSDEs. The for-mulation of iSDEs in combination with the novel solver paves the road for future work to develop other DPM-Solver variants [21, 22] for conditional diffusion. The DPM-Solver [20] is a fast ODE solver that has demonstrated its superiority over other solvers, such as Euler-
+
+> arXiv:2603.09508v1 [eess.AS] 10 Mar 2026
+
+Maruyama (EuM) or "classical RK45" [23]. An essential idea of the DPM-Solver is to adopt the so-called exponential Runge-Kutta (expRK), a well-known family of ODE solvers, to the PF-ODE. Different from classical Runge-Kutta (RK) methods, the expRK method allows to exactly integrate the linear part of the solution, instead of only approximating it. As a result, the DPM-Solver achieves better quality with fewer reverse steps for unconditional diffusion. Inspired by [20], in this work, based on the expRK solvers, we derive a novel solver for conditional dif-fusion tasks such as SGMSE+. To this end, we develop a fast ODE sampler for solving the PF-ODE for a wide class of iSDEs and provide an analysis of this fast sampler against different samplers from the literature on various audio tasks. We exper-iment on SR tasks such as Noise reduction, bandwidth exten-sion (BWE), Declipping, MP3 decoding, and Dereverberation. We show that the proposed solver requires only 10 NFEs for restoring the clean speech target, achieving similar performance as the higher-order adaptive RK45 solver, which has more than 40 NFEs. 
+
+# 2. Diffusion Models 
+
+2.1. Stochastic Differential Equations 
+
+Let s be clean speech and y be a degraded version of s. Fol-lowing the approach in [6, 9], we model the forward process of the score-based generative model with an SDE defined on 
+
+0 ≤ t < T max :
+
+dxt = ft(xt, y )
+
+| {z }
+
+> A(t)xt+a(t)
+
+dt + g(t)d w, (1) where A(t), a (t) are continuous functions in t. Since the drift coefficient ft and diffusion coefficient g have only linear depen-dency on xt, we call such an SDE a linear SDE. Furthermore, 
+
+w is the standard Wiener process [24], xt is the current pro-cess state with initial condition x0 = s, and t is a continuous diffusion time-step variable that describes the progress of the process that ends in the last diffusion time-step Tmax . The term 
+
+ft(xt, y )d t can be integrated by Lebesgue integration [25], and 
+
+g(t)d w follows Itô integration [24]. In the considered SDEs, the diffusion coefficient g regulates the amount of Gaussian noise that is added to the process, and the drift coefficient f
+
+affects the mean and standard deviation of xt. With this model, the process state xt follows a Gaussian distribution [26, Ch. 5], called the perturbation kernel :
+
+p0t(xt|x0, y ) = N  xt; μt(x0, y ), σ 2 
+
+> t
+
+I . (2) We call μt(x0, y ) the mean-evolution and σt2 the variance-evolution as they describe how the mean and variance of the process state xt evolve over the diffusion time t. If we can find closed-form solutions for the mean and variance evolution, then (2) allows us to efficiently compute the process state xt for each 
+
+t by calculating 
+
+xt = μt(x0, y ) + σtz, (3) with z ∼ N (0 , 1) .
+
+2.2. Interpolating SDEs: Unifying Conditional Diffusion 
+
+In this work, we are interested in iSDEs. These are SDEs, whose mean-evolution interpolates between the degraded ob-servation and the clean speech: 
+
+μt(x0, y ) = (1 − k(t)) x0 + k(t)y (4) 
+
+= x0 + k(t)( y − x0) (5) with 0 ≤ k(t) ≤ 1 being a monotonically increasing continu-ous interpolation function, and k(0) = 0 and lim t→Tmax k(t) = 1. Eq. (5) shows that gradually the difference y − x0 is added to the clean speech signal x0. This difference has different meanings for different audio tasks. For example, in Speech En-hancement/Noise reduction, the difference y − x corresponds to environmental noise that has to be removed. This means that for Noise reduction, μt is a noisy mixture depending on the corrupted signal y, but with a higher signal-to-noise ra-tio (SNR). For BWE, the difference y − x corresponds to the high-frequency content that has to be restored. As a novelty, we provide a unified formulation of several existing iSDEs from popular approaches such as in [9, 12, 13, 14, 15, 16, 17]. We show in Appendix (Section 7.1) that all iSDEs must have the following drift coefficient: 
+
+ft(xt, y ) = γ(t)( y − xt) (6) with R t 
+
+> 0
+
+γ(s)ds → ∞ for t → Tmax , and γ(t) ≥ 0. We call γ(t)
+
+the stiffness function of the iSDE. The converse is also true and can be computed from [24, (6.10)], meaning if (6) is the drift coefficient, then the resulting mean-evolution is interpolating between x0 and y.Moreover, we can even connect the interpolation function 
+
+k(t) to the stiffness factor γ(t). We have that the stiffness pa-rameter γ(t) and the interpolation function k(t) are connected via the following equations: 
+
+γ(t) = k′(t)1 − k(t) , (7) where k′(t) denotes the derivative. Equivalently to (7), we can write 
+
+k(t) = 1 − e− R t 
+
+> 0γ(s)ds
+
+. (8) In the following, we provide a recipe for how to find drift and diffusion coefficients of a linear SDE, given an interpolating mean with interpolation function k(t) and given the standard deviation σt. Given an interpolating mean, we can already find the drift coefficient from (7). If the diffusion coefficient g(t) is given, then in the case of linear SDEs, the variance var t = σt2
+
+can be computed from [24, Eq. (6.11)]: 
+
+var t = e−2 R t 
+
+> 0γ(s)d s
+
+Z t
+
+> 0
+
+e2 R u 
+
+> 0γ(s)d s
+
+g(u)2du. (9) Conversely, if one wants to design an interpolating SDE process with a desired variance, we can solve (9) for g(t) to obtain: 
+
+g2(t) = d(var t · e2 R t 
+
+> 0γ(s)d s
+
+)dt e−2 R t 
+
+> 0γ(s)d s
+
+. (10) Therefore, for a given process defined by its mean and variance evolution, we find a linear SDE (1) with the desired mean and variance by computing the drift coefficient from (7) and the dif-fusion coefficient from (9). In Table 1, we provide a list of popular iSDEs for SR tasks, defined by their diffusion and drift coefficients. The resulting closed-form solution of the mean and variance-evolution are in-dicated by the interpolation function and the standard deviation. It is interesting to see that if Tmax < ∞, the drift coefficient be-comes numerically unstable, as it can be seen for BBED and Table 1: Summary of existing iSDEs for audio tasks. The SDE is defined by (1) , where only γ(t) is needed to define the diffusion coefficient ft(xt, y ) (see (6) ). The distribution of xt is given by its mean and variance-evolution μt, σ t, where the interpolation function 
+
+k(t) determines the mean-evolution μt (see (4) ). c, r > 0, σ min , σ max , γ 0 > 0 are parameters of the diffusion and drift coefficient. 
+
+Name Tmax T γ(t) g(t) k(t) σt
+
+fOUVE ∞ 1 γ0 σmin ( σmax  
+
+> σmin
+
+)tq
+
+2 ln( σmax  
+
+> σmin
+
+) + 2 γ0 1 − e−γ0t σmin ( σmax  
+
+> σmin
+
+)t
+
+OUVE [5, 6] ∞ 1 γ0 σmin ( σmax  
+
+> σmin
+
+)tq
+
+2 ln( σmax  
+
+> σmin
+
+) 1 − e−γ0t
+
+q
+
+[( σmax  
+
+> σmin
+
+)2t − e−2γ0t]KK = σmin 
+
+q ln( σmax /σ min )(γ0+ln( σmax /σ min )) 
+
+BBED [9] 1 0.999 11−t cr t t analytically not solvable Optimal Transport [16] 1 0.999 11−t σmax 
+
+q 2t 
+
+> 1−t
+
+t σmax · t
+
+Brownian Bridge [13, 14] 1 0.999 11−t 1 t t(1 − t)
+
+OT. In fact, this is a general implication of iSDEs which can be explained as follows. From (8), we must have that k(t) approaches 1 for t →
+
+Tmax . Hence, R t 
+
+> 0
+
+γ(s)ds approaches ∞. This implies that γ(t)
+
+diverges as t → Tmax , which leads to numerical instability near the terminal time. We can evade the numerical instability for 
+
+γ(Tmax ), if we construct an SDE when the last diffusion time-step is unbounded, i.e. Tmax = ∞. Such an SDE is given by the Ornstein-Uhlenbeck Variance Exploding (OUVE) SDE in Table 1. One design issue of the OUVE is that the introduced parameters σmax , σ min do not follow what their name suggests. That is, σmax (or σmin ) is not the maximal σt (or minimal σt). To fix this issue, we construct fixed Ornstein-Uhlenbeck Vari-ance Exploding (fOUVE) SDE. To this end, we set the drift coefficient as for OUVE, but the desired standard deviation is 
+
+σmin ( σmax  
+
+> σmin
+
+)t. The corresponding diffusion coefficient can be computed from (10) and its result provided in Table 1. For fOUVE we have now that the maximal σt is indeed given by 
+
+σmax , likewise σmin is min t σt. Therefore, fOUVE matches the intuitive meaning of σmin , σ max , and facilitates a grid-search of 
+
+σmax , σ min as discussed in Section 4.4. Next, we want to derive a fast sampler for the class of intro-duced iSDEs. To this end, we introduce the reverse process and the corresponding PF-ODE and reverse SDE in the next section. In addition, in Section 3, we explain fast solvers from the liter-ature and how to apply them to the proposed class of iSDEs in Section 3.2. 
+
+2.3. Reverse Process 
+
+Under mild constraints [27, 11], a (forward) SDE can be re-versed in time. This means there exists a reverse SDE starting in t = Tmax , and ending in t = 0 , that has the same marginals as its forward SDE [8]. In fact, for 0 ≤ κ ≤ 1, there even exists a family of reverse SDEs [11]: 
+
+dxt =
+
+
+
+ft(xt, y ) − 1 + κ2
+
+2 g(t)2∇xt log pt(xt|y)
+
+
+
+dt (11) 
+
++ κg (t)d ¯ w , 
+
+where d ¯ w is a Wiener process going backwards in time. For 
+
+κ = 1 , we obtain the reverse SDE by Anderson [27], and for 
+
+κ = 0 , we obtain the so-called PF-ODE. To solve this reverse SDE, we must set a finite T ≲ Tmax .This is because, in the case of finite Tmax , the drift coefficient 
+
+f (xt, y ) becomes numerically unstable, if t → Tmax as dis-cussed in Section 2.2. Obviously, in the case Tmax = ∞, we must also set a finite T < T max . We start sampling from an initial xT = μT (x0, y ) + σTmax z, since μT (x0, y ) depends on 
+
+x0 which is unknown during inference, we simply approximate 
+
+μT (x0, y ) ≈ y assuming that T is sufficiently close to Tmax .The score ∇Xt log pt(Xt|Y ) is unknown during inference, and is typically approximated by a NN. Directly estimating the score yields the so-called denoising score matching (DSM) loss. That is, given xt = μt(x0, y ) + σtz, with z ∼ N (0 , 1) , the NN 
+
+sθ approximates the score ∇xt log pt(xt|y) = − ϵσt :
+
+LDSM = Et, (x0,y ),ϵ,x t|(x0,y )
+
+
+
+∥sθ (xt, y, t ) + ϵσt
+
+∥22
+
+
+
+. (12) Another option is to directly estimate ϵ with a NN ρθ which yields the ϵ loss: 
+
+Lϵ = Et, (x0,y ),ϵ,x t|(x0,y )
+
+∥ρθ (xt, y, t ) − ϵ∥22
+
+ . (13) With a trained ρθ , we can approximate the score as 
+
+∇Xt log pt(Xt|Y ) = − ϵσt ≈ − ρθ (xt,y,t ) 
+
+> σt
+
+. In the following, to simplify notation, we use ˆsθ (xt, y, t ) ≈ ∇ xt log pt(xt|y) to comprise both sθ and − ρθ (xt,y,t ) 
+
+> σt
+
+.
+
+# 3. Runge-Kutta ODE Solvers 
+
+In this section, we particularly address ODE solvers as they are well-established in literature [23]. Therefore, we set κ = 0 in (11). Equipped with a trained NN estimating the score, we fix a reverse diffusion-time schedule: T = tN > · · · > t 1 > t 0 =0. Then, starting with xT , for each diffusion time-step from ti
+
+to ti−1, we aim to solve the integral: 
+
+xti−1 = xti +
+
+Z ti
+
+> ti−1
+
+ft(xt, y ) − 12 g(t)2 ˆsθ (xt, y, t )d t (14) A widely used method is the RK method. For RK, the in-tegral (14) is solved by evaluating the integrand at p ∈ N
+
+specific intermediate points, yielding local truncation error of 
+
+O(( ti−ti−1)p+1 ). For instance, the Midpoint method evaluates the integral at each time-step ( ti to ti−1) at ti and additionally at the midpoint ti+ti−1 
+
+> 2
+
+. Therefore, this method has 2 evalua-tions of the integrand per time-step. The Midpoint method is an RK2 method and has a cubic local truncation error. Instead of directly evaluating the integral at intermediate points, we can integrate the linear term ft(xt, y ) out of the in-tegral to obtain 
+
+L(xti , t i, t i−1) := xti +
+
+Z ti−1
+
+> ti
+
+ft(xt, y )d t (15) 
+
+= Ψ( ti−1, t i)xti + (1 − Ψ( ti−1, t i)) y, 
+
+(16) where for s > t ,
+
+Ψ( s, t ) = e− R ts γ(τ )d τ = 1 − k(t)1 − k(s) (17) is the so-called fundamental solution of the homogeneous equation. As the linear term is exponentially weighted by 
+
+e− R ts γ(τ )d τ , we refer to this solver as expRK. We define the integral over the second term containing ˆsθ in (14) as the non-linear part. The non-linear part can be rewritten as 
+
+N (ti, t i−1) = 
+
+Z ti
+
+> ti−1
+
+Ψ( t, t i) 12 g2(t)ˆ sθ (xt, y, t )d t. (18) In summary, we can write the solution 
+
+xti−1 = L(xti , t i, t i−1) + N (ti, t i−1), (19) which separates the solution into a linear and a non-linear part. Now, since the linear part L(xti ) is exactly integrated on (15), it is left to integrate only the non-linear part. The DPM-Solver [20], abbreviated DPM-pS, is a solver that follows the scheme of separating the linear from the non-linear term, and has been proposed for unconditional diffusion models (meaning y = 0 )and has local truncation error of order p. Briefly explained, DPM-pS proposes two ideas for how to integrate the non-linear part: 1) Taylor expand ˆsθ , and pull it out of the integral, and 2) simplify the integral of the remaining non-linear part with a substitution rule, which we will explain in more detail in the following. 
+
+3.1. Existing Fast DPM-Solver 
+
+In this section, we explain the fast ODE sampler, called DPM-pS [20], which is based on (19) with y = 0 , and can therefore be understood as a direct application of expRK [28]. The linear term can be computed as 
+
+L(xti ) = 1 − k(ti−1)1 − k(ti) xti . (20) Computing the non-linear part is more problematic than com-puting the linear part, as we need to integrate over the NN. For DPM-pS, the ϵ-loss is employed, together with the change-of-variables λt = log( 1−k(t) 
+
+> σt
+
+) the non-linear part from (18) be-comes 
+
+N (ti, t i−1) = (1 − k(λti−1 )) 
+
+Z λti−1
+
+> λti
+
+e−λρθ (xλ, λ ) (21) To avoid integration of the NN, the (p − 1) -th degree Taylor power series is employed as: 
+
+ρθ (xλ, λ ) ≈
+
+> p−1
+
+X
+
+> n=0
+
+(λ − λti )n
+
+n! ρ(n) 
+
+> θ
+
+(xλti , λ ti ), (22) where ρ(n) 
+
+> θ
+
+refers to the n-th total derivative of the model ρθ (·).Replacing the NN in the integral of the non-linear part with the Taylor power series yields: 
+
+Np(xti , t i, t i−1) :=(1 − k(λti−1 )) · Rp(xti , t i, t i−1) (23) 
+
+Rp(xti , t i, t i−1) := 
+
+> p−1
+
+X
+
+> n=0
+
+ρ(n) 
+
+> θ
+
+(xλti , λ ti )wn(λti , λ ti−1 ),
+
+(24) with Np(xλti , λ ti , λ ti−1 ) = N (λti , λ ti−1 )+ O(( ti −ti−1)p).In addition, the weights w(λti , λ ti−1 ) are given by 
+
+wn(λti , λ ti−1 ) = 
+
+Z λti−1
+
+> λti
+
+e−λ (λ − λti−1 )n
+
+n! dλ. (25) A key observation of [20] is that the change-of-variable trick introduced by λt eliminates direct dependencies on the diffu-sion and drift coefficients, as these coefficients do not directly appear anymore in the integral form in (25). Consequently, the integral in (25) can be solved in closed form. Therefore, solv-ing (23) only boils down to computing the n-th total derivative 
+
+ρ(n) 
+
+> θ
+
+(xλti , λ ti ) for which the authors of [20] refer to literature [29, 30]. The whole (truncated) form can be written as 
+
+xti−1 ≈ L(xti , t i, t i−1) + Np(xti , t i, t i−1). (26) 
+
+3.2. Proposed Fast ISDE-Solver 
+
+As a contribution, we derive a fast solver similar to DPM-pS for the proposed wide class of iSDEs (with some examples in Table 1). This novel solver solves (11) with κ ∈ [0 , 1] . There are two important distinctions to make. First, the drift coeffi-cient depends on the noisy observation y̸ = 0 . Second, often the DSM loss is employed [9, 6] instead of the ϵ loss for SR tasks. Since the drift coefficient depends on y, the linear term is now of the form: 
+
+L(xti , t i, t i−1) = 1 − k(ti−1)1 − k(ti) xti
+
++
+
+
+
+1 − 1 − k(ti−1)1 − k(ti)
+
+
+
+y. (27) Compared to (20), we see that this linear term also includes a term depending on y. For the non-linear part and in con-trast to DPM-pS, the change-of-variables λt = log 
+
+ 1−k(t)
+
+> σt
+
+
+
+does not eliminate the dependence on σt when the score is di-rectly approximated using ∇Xt log pt(Xt|Y ) ≈ sθ opposed to 
+
+∇Xt log pt(Xt|Y ) ≈ − ρθ 
+
+> σt
+
+. However, following the idea of using a Taylor power series, we can pull the NN out of the inte-gral: 
+
+N κp (xti , t i, t i−1) :=(1 − k(ti−1)) · Rκp (xti , t i, t i−1) (28) 
+
+Rκp (xti , t i, t i−1) :=(1 + κ2)
+
+> p−1
+
+X
+
+> n=0
+
+s(n) 
+
+> θ
+
+(xti , y, t i)wn(ti, t i−1).
+
+(29) As before, this truncated non-linear form approximates the true non-linear part as N κp (xti , t i, t i−1) = N (ti, t i−1) + O(( ti −
+
+ti−1)p). However, the weights differ now from (25): 
+
+wn(ti, t i−1) = 
+
+Z ti−1
+
+> ti
+
+g(τ )2
+
+2(1 − k(τ )) (τ − ti)n
+
+n! dτ. (30) While for DPM-pS, wn is solved in closed form for any choice of diffusion and drift coefficient, for the proposed solver, this is not generally possible. This is because the integrand includes the standard deviation σt, which depends on the diffusion and drift coefficients. In those cases, one can make use of numeri-cal integral solvers [31] whose computational expenses are very small compared to computing the n-th total derivatives of the NN s(n) 
+
+> θ
+
+. However, for certain choices of the drift and diffu-sion coefficients, wn can be solved analytically. In fact, in Ap-pendix 7.2, we derived closed-form solutions for fOUVE and OUVE. Unlike DPM-pS, we allow κ > 0. Therefore, the solu-tion xti−1 after taking one step from ti to ti−1 can be written as 
+
+xti−1 ≈ L(xti , t i, t i−1) + N κp (xti , t i, t i−1) + κI (ti, t i−1)z, 
+
+(31) where zI (ti, t i−1) is the exactly integrated Itô-integral inject-ing random Gaussian noise z ∼ N (0 , 1) . The computations of this Itô-integral for fOUVE can be found in the Appendix 7.3. We call the resulting solver iSDE-pS-κ, where, as be-fore, p refers here to the truncation error, and κ regulates how much Gaussian noise is injected at each time-step. For κ = 0 ,this solver solves the PF-ODE and follows as the DPM-pS the expRK formulation in (19). For κ > 0, this solver solves a reverse SDE. In Algorithm 1, we show such a solver for p = 2 . In line 4 of Algorithm 1, the solution at the midpoint si is computed with p = 1 which requires the evaluation of sθ (xti , y, t i) in 
+
+N 01 (xti , y, t i). Another score-model evaluation is due to line 5, as we compute sθ (xsi , y, s i). Both score-model evaluations are then reused in line 6 for computing N2(xti , y, t i). Therefore, the NFE is 2N , as we have N time-steps, and 2 NFE per time-step. In the last line, we add Gaussian noise z ∼ N (0 , 1) to the process if κ > 0.
+
+Algorithm 1 iSDE-2S-κ
+
+Require: xT , time-steps T = tN > . . . t 1 = 0 , score model 
+
+sθ 
+
+> 1:
+
+xti ← xT 
+
+> 2:
+
+for i = N, . . . , 0 do  
+
+> 3:
+
+si ← ti+ti−1 
+
+> 2
+> 4:
+
+xsi ← L(xti , t i, s i) + N 01 (xti , t i, s i) 
+
+> 5:
+
+˜sθ (1) ← sθ (xti ,y,t i)−sθ (xsi ,y,s i)2( ti−ti−1) ▷ Approx. s(1)  
+
+> θ
+> 6:
+
+xti−1 ← L(xti , t i, t i−1) + N κ 
+
+> 2
+
+(xti , t i, t i−1) 
+
+> 7:
+
+xti−1 ← xti−1 + κI (ti, t i−1)z ▷ z ∼ N (0 , 1)  
+
+> 8:
+
+end for 
+
+# 4. Experimental Setup 
+
+4.1. Data representation 
+
+Each audio input, sampled at 16 kHz, is converted to a complex-valued short-time Fourier transform (STFT) representation. As in [32], we use a window size of nfft = 510 samples ( ≈ 32 ms ), a hop length of nhop = 256 samples ( 16 ms ), and a periodic Hann window. The input for training is cropped to K = 128 
+
+time frames randomly, resulting in approximately 1 second of data. A magnitude compression is used to compensate for the typically heavy-tailed distribution of STFT speech magni-tudes [33]. Each complex coefficient v of the STFT representa-tion is transformed as β|v|αei∠(v). Depending on the task, we use different α, β which are reported in Section 4.4. 
+
+4.2. Data set and audio tasks 
+
+SR is the task of retrieving the clean speech signal from a de-graded signal. Although the diffusion process is formulated in the STFT domain, we define the following corruption opera-tions in this section in the time-domain. To this end, we denote with stime , y time time-domain signals of the clean speech signal and corrupted signal. In general, we can write 
+
+ytime = u(stime ), (32) where u(·) is the corruption operator. The precise definition of u depends on which corruption type or audio task is consid-ered. In this work, we investigate the following audio tasks: Noise reduction, Dereverberation, Declipping, MP3 decoding, and BWE which we describe next. 
+
+4.2.1. Noise reduction 
+
+In Noise reduction, the corruption operator adds environmental noise to the clean speech signal. We train, validate, and test on the publicly available dataset EARS-WHAM-v2 1 with clean files from the EARS dataset [34] and environmental noise files from the WHAM dataset [35]. The dataset, originally recorded at 48 kHz, was downsampled for this work to 16 kHz. This dataset has 54 hours for training, 1.1 hours of validation, and 3.5 hours for testing. 
+
+4.2.2. Bandwidth Extension 
+
+For BWE we use the same split and clean files at 16 kHz from EARS-WHAM-v2 where the corrupted files are obtained by downsampling to sampling frequencies of 8 kHz and 4 kHz, leading to a frequency cutoff at 4 kHz and 2 kHz, respectively. This yields, as before, 54 hours for training, 1.1 hours of vali-dation, and 3.5 hours of testing. 
+
+4.2.3. Dereverberation 
+
+We investigate speech dereverberation using the EARS-Reverb-v2 dataset [34]. The signal corruption model is ytime = stime ∗
+
+h, where ∗ indicates time-domain convolution and h is a sam-pled room impulse response (RIR). 
+
+4.2.4. MP3 Decoding 
+
+We investigate the restoration of speech signals degraded by lossy MP3 compression. The corruption operator u(·) de-grades the clean speech signal into the MP3 format and sub-sequently introduces quantization artifacts, band-limitation and other artifacts. We artificially degrade the clean utterances from the EARS-WHAM-v2 dataset using the audiomenta-tions library in Python with a uniformly random bitrate of 
+
+{16 , 24 , 32 , 40 , 48 , 56 , 64 } kbp/s. The dataset splits remain identical to the previous tasks, yielding 54 hours for training, 1.1 hours for validation, and 3.5 hours for testing at 16 kHz. 
+
+4.2.5. Declipping 
+
+The corruption operator u(·) applies hard clipping to the clean waveform as 
+
+ytime [n] = 
+
+(
+
+stime [n], if − ξ < s time [n] < ξ ξ · sign (stime [n]) , otherwise (33) 
+
+> 1https://github.com/sp-uhh/ears_benchmark
+
+where y[n] is the n-th sample of ytime . In addition, ξ is the clipping threshold. The threshold and clean files are cho-sen as follows. As before, we use the same split and clean files from EARS-WHAM-v2. We multiply the peak normal-ized clean speech file by a uniformly random number g ∈
+
+[0 .3, 1.0] . The threshold is then uniformly randomly selected 
+
+ξ ∈ [0 .05 g, 0.3g]. With these parameters, 0.11 percent of the samples are clipped. 
+
+4.3. Metrics 
+
+To evaluate the performance of the proposed method, we use standard metrics, which we will describe in detail below. 
+
+PESQ: The Perceptual Evaluation of Speech Quality (PESQ) is used for objective speech quality testing and is standardized in ITU-T P.862 [36]. The PESQ score takes values between 1 (poor) and 4.5 (excellent). We use the wideband PESQ version. 
+
+DistillMOS: DistillMOS [37] is a Mean Opinion Score (MOS) prediction method, built by distilling a wav2vec2.0-based speech quality assessment (SQA) model into a more efficient model. Higher values indicate better quality. 
+
+SI-SDR: Scale-Invariant-Signal-to-Distortion Ratio (SI-SDR) is a standard evaluation metric for single-channel speech en-hancement and speech separation [38], which is measured in dB, therefore higher values are better. 
+
+LSD: The log spectral distance (LSD) metric is like the SI-SDR, a sample-based metric. In contrast to SI-SDR this metric is a distance metric, this means we have that lower values cor-respond to a better performance. 
+
+FADTK: Fréchet-Audio-Distance metric [39] measures the similarities of distribution of clean speech to the distribution of restored files. Lower values indicate that the distribution of restored files is closer to the distribution of the clean speech signals. 
+
+4.4. Training and Parameter of ISDE 
+
+We train fOUVE on the different tasks. For each task, we first select the parameter α, β of the magnitude compression. Then, we select the parameters of fOUVE σmax , σ min , γ 0 re-port the numbers below. To find an initial σmax and β, we fol-low [40]. We first fix a α = 0 .5. Then we select β as fol-lows. We ensure that 99.7 percent of the imaginary and real parts of the clean data s remain within [−1, 1] . Denote with 
+
+sm, y m the magnitude compressed STFTs of clean and noisy, respectively. We then select an initial σmax , called σmax ,0, by computing the RMSE between sm and ym, and take the q-th quantile ( q = 0 .997) of all RMSEs of all data points from the data sets. We set σmin = 0 .001 and γ0 = 2 . Based on these initial choices of parameters, we further grid-search on 
+
+{σmax ,0, 2σmax ,0, 3σmax ,0} for an optimal maximum σt for each task. With this scheme, we find for Noise reduction, we have 
+
+β = 0 .26 , and σmax ,0 = 0 .10 . For BWE, we have β = 0 .23 ,and σmax ,0 = 0 .07 . For Dereverberation, we have β = 0 .23 ,and σmax ,0 = 0 .12 . For MP3 decoding, we have β = 0 .24 ,and σmax ,0 = 0 .05 . For Declipping, we have β = 0 .1, and 
+
+σmax ,0 = 0 .08 .From the three trained models (with three different σmax ), we select only one model for testing. To select a model for testing for each task, we select 10 pairs of clean and degraded signals from the validation set during each training run. These 10 files are then enhanced by solving the reverse SDE in (11) with κ = 1 with EuM with M = 60 steps. Based on these enhanced files from the validation set, we selected the best run in terms of SI-SDR for testing. We use the 2D-UNet NCSN++ as a backbone trained on the 
+
+LDSM loss as it was done in [6, 9] and optimized with ADAM [41] with a batch-size of 16 . To avoid numerical inaccuracy of the LDSM loss around 0, we uniformly sample the diffusion time-step t ∈ [δ, T ] with δ = 10 −2 and T = 1 for fOUVE as indicated in Table 1. 
+
+4.5. Methods 
+
+We compare against different ODE and SDE solvers. To this end, we fixed reverse time-steps T = tM > · · · > t 2 = δ > t1 = 0 .
+
+iSDE-2S-κ: We employ the proposed sampler from Algo-rithm 1. This sampler has 2 NFEs per time-step, resulting in 
+
+2M NFEs. 
+
+Euler-Maruyama: A widely used first-order SDE solver. Of-ten this solver solves (11) with κ = 1 [6, 9]. We denote this solver by EuM. This solver has M NFE. 
+
+PC-Sampler: As for EuM, this scheme solves (11) with κ = 1 
+
+as it has been done in [6]. For a time-step from ti to ti−1 the Predictor-Corrector (PC) scheme [10] predicts xti−1 by EuM, and additionally one correction step by annealed Langevin Dy-namics resulting in 2M NFEs. In [6] it has been found that it is beneficial to employ one corrector step with a corrector stepsize of 0.5.
+
+RK2 (midpoint): We also employ the Midpoint method, which is a RK2 method. This method also has 2M NFEs and is very comparable to the proposed solver iSDE-2S-κ as both solvers are second-order, when κ = 0 .
+
+adaptive RK45: We also employ the "classic RK45" method which is a RK4 method. We abbreviate this method with adap-tive RK45. An adaptive method does not employ a fixed time-step schedule, instead, the sampler automatically adapts the number of steps of a time-step schedule to obtain a new time-step schedule with more steps. Then the sampler compares the two different time-step schedules and their difference. If the difference does not decrease below a certain threshold (given by parameters rtol = 10 −5, a tol = 10 −5), then the sampler will stop the comparisons of different schedulers. Adaptive methods aim to take the least number of steps while being numerically optimal. 
+
+# 5. Results 
+
+In Section 5.1, we discuss the results of the proposed iSDE-2S-
+
+κ solver with κ = 0 , for which we simply write iSDE-2S for brevity. In Section 5.2 we see the effect of varying κ.
+
+5.1. iSDE-2S vs other solvers 
+
+For a fair comparison of the solvers, we ensure that the solvers use the same NFEs from which we set the number of equally spaced time-steps M .In Figure 1, we report the results of the proposed iSDE-2S solver compared against other solvers as described in Sec-tion 4.5 on several audio tasks described in Section 4.2. We observe that iSDE-2S outperforms all other solvers at NFE=10 for Declipping, Dereverberation, and Noise reduction. If the NFE is larger than 10, then the other solvers may reach the same performance as the proposed iSDE-2S. For instance, for Dereverberation, the solvers EuM, RK2 (midpoint), and PC re-quire 40 NFE to achieve virtually the same performance as the proposed iSDE-2S solver with only 10 NFE in DistillMOS and SI-SDR. Moreover, in PESQ remains a relatively large gap of at least 0.08 between the proposed solver and EuM, RK2 (mid-1.0                          
+
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> Declipping
+> PESQ
+> 2
+> 3
+> 4
+> Distill MOS
+> 30
+> 20
+> 10
+> 0
+> 10
+> SI-SDR
+> 20
+> 40
+> 60
+> 80
+> LSD
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> FADTK
+> 1.2
+> 1.4
+> 1.6
+> Dereverberation
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 60
+> 50
+> 40
+> 30
+> 20
+> 10
+> 20
+> 30
+> 40
+> 0.5
+> 1.0
+> 1.5
+> 1.2
+> 1.4
+> 1.6
+> Speech Enhancement
+> 2
+> 3
+> 30
+> 20
+> 10
+> 0
+> 10
+> 20
+> 40
+> 60
+> 80
+> 0.5
+> 1.0
+> 1.5
+> 1
+> 2
+> 3
+> MP3 decoding
+> 2
+> 3
+> 4
+> 0
+> 10
+> 20
+> 20
+> 40
+> 0.5
+> 1.0
+> 410 20 30 40
+> NFE
+> 1
+> 2
+> 3
+> BWE
+> 410 20 30 40
+> NFE
+> 2
+> 3
+> 4
+> 410 20 30 40
+> NFE
+> 20
+> 0
+> 410 20 30 40
+> NFE
+> 20
+> 40
+> 60
+> 80
+> 410 20 30 40
+> NFE
+> 0.5
+> 1.0
+> 1.5
+> iSDE-2S (ours) EuM RK2 (midpoint) PC adaptive RK45 degraded signal
+
+Figure 1: Results on the different tasks with different samplers. For all tasks, adaptive RK45 uses more than 40 NFEs. Audio examples can be found in the supplementary materials. 
+
+point), and PC. In addition, adaptive RK45 even uses 91 NFEs for Dereverberation. This demonstrates that the proposed iSDE-2S restores the clean speech signal among different audio tasks, much faster than usual solvers, with better metrics. There are two exceptions in which the proposed iSDE-2S does not outperform the RK2 (midpoint) method with fewer NFEs. First, on BWE, the Midpoint method performs on par with the proposed iSDE-2S solver for all metrics and NFEs. Notably, there is a difference in PESQ at NFE = 10. How-ever, it should be mentioned that PESQ does not reflect well if a low-pass filtered signal has been correctly bandwidth-extended [42]. Secondly, for MP3 corruption, we also observe that the RK2 (midpoint) method is on par with the proposed iSDE-2S except for NFEs = 4, where Midpoint outperforms the proposed iSDE-2S in terms of metrics. The reason why Midpoint with 4 NFEs has better metrics is that it removes almost all Gaus-sian noise. However, we report that no MP3 decompression is performed 2. In all other tasks and for all other solvers with 4 NFE s, we observe that performance is poor as too much resid-ual Gaussian noise is left over. The similar performance of RK2 (midpoint) and iSDE-2S can be explained by the fact that both are second-order solvers for the PF-ODE. The key difference 
+
+> 2
+
+Audio examples are provided in the supplementary materials 
+
+is that iSDE-2S integrates the linear term exactly, whereas RK2 approximates it. We believe that both solvers have similar per-formance if the linear term that has been exactly integrated for iSDE-2S is much less important than the non-linear term. This seems to be the case for fOUVE on BWE and MP3 decoding. As a higher-order solver generally gives a much more ac-curate solution than a lower-order solver, we have that adaptive RK45 is the strongest solver, as this is a fourth-order solver, and the competing solvers are at most second-order. In addition, this solver has more than 40 NFEs in all tasks. More precisely, the averaged NFEs over the test sets for adaptive RK45 is 66, 91, 44, 48, and 75 for Declipping, Dereverberation, Noise reduc-tion, MP3 decoding, and BWE, respectively. For all tasks, we see that the maximal performance of the other solvers becomes on par with that of adaptive RK45. However, as discussed be-fore, with the proposed iSDE-2S, this happens with already 10 NFEs, whereas other solvers may require 40 NFEs. 
+
+5.2. Effect of κ for iSDE-2s-κ
+
+In Table 2, we observe the effect of varying κ for Noise re-duction with 10 NFEs on fOUVE. More precisely, we use the proposed solver iSDE-2S-κ, which solves the reverse SDE (11) with the given κ > 0. We can see that increasing κ from 0 to κ PESQ DistillMOS FADTK 
+
+0 1.55 ± 0.45 3.61 ± 0.87 0.34 0.05 1.58 ± 0.47 3.61 ± 0.88 0.33 
+
+0.1 1.67 ± 0.51 3.63 ± 0.84 0.33 
+
+0.125 1.73 ± 0.55 3.49 ± 0.77 0.41 0.15 1.50 ± 0.37 3.00 ± 0.54 0.64 
+
+Table 2: Performance of iSDE-2S-κ with different κ on Noise reduction with 10 NFEs. 
+
+0.1 benefits the metrics, whereas in PESQ we observe a differ-ence of over 0.1 between using κ = 0 , and κ = 0 .1, 0.125 .A larger κ > 0.125 results in a restored file, where too much Gaussian noise is left. We report that more diffusion time-steps 
+
+M (or equivalently more NFEs) are required to remove the in-jected Gaussian noise when κ is too large. In summary, after the score-model has been trained, κ can be varied to empiri-cally tune the performance of the proposed solver iSDE-2S-κ
+
+without additional training. 
+
+# 6. Conclusion 
+
+In this work, we unified the mathematical formulation of pop-ular choices of SDEs for audio tasks. We focused on linear SDEs where the mean-evolution is a linear interpolation be-tween the clean speech and a degraded version of it. Based on these interpolating SDEs, we developed a fast solver, called iSDE-2S-κ, that solves the probability flow ODE when κ = 0 ,and solves reverse SDEs for κ > 0. This work has been in-spired by DPM-Solver [20], where the underlying SDE for-mulation can be understood as a special case for which the degraded signal is 0, or differently said, DPM-Solver solves for the unconditional probability flow ODE, and the proposed iSDE-2S-κ solves a conditional process. We demonstrated the superiority of the proposed solver against other solvers such as Euler-Maruyama, Predictor-Corrector scheme, RK2 (midpoint) and adaptive RK45. We experimented on Speech Restoration tasks: Declipping, Dereverberation, Noise reduction, MP3 de-coding and BWE. For MP3 decoding and BWE, we find that the proposed solver is on par with RK2 (midpoint), and outper-forms Euler-Maruyama and Predictor-Corrector. For Declip-ping, Dereverberation, and Noise reduction, the proposed solver is much faster, requiring only 10 NFEs to achieve the same performance as the adaptive RK45 solver that uses much more than 40 NFEs. At the same time, Euler-Maruyama, Predictor-Corrector, and even RK2 (midpoint) require up to 40 NFEs to achieve the performance of adaptive RK45, demonstrating the effectiveness of the proposed solver. 
+
+# 7. Appendix 
+
+7.1. Proof (6) and (7) We assume that a linear iSDE is given with an interpolation function k(t). We want to show that (6) and (7) hold. Every linear SDE follows the dynamics [24, (6.12)]: 
+
+μ′ 
+
+> t
+
+= A(t)μt + a(t), (34) where μ′ 
+
+> t
+
+is the derivative w.r.t to t of the mean-evolution. In-serting the definition of iSDEs from (5) yields: 
+
+−k(t)x0 + k(t)y = A(t)x0 + (1 − k(t))( y − x0) + a(t) (35) Now, collecting terms with x0 on the right-hand side of the equation and comparing them to −k(t)x0 on the left-hand side yields: 
+
+A(t) = −k′(t)1 − k(t) (36) Likewise, a comparison of the remaining terms of the right-hand side to k(t)y from the left-hand side yields: 
+
+a(t) = k′(t)1 − k(t) y. (37) Since ft(xt, y ) = A(t)xt + a(t), we can write 
+
+ft(xt, y ) = k′(t)1 − k(t) (y − xt). (38) and from which we conclude that γ(t) = k′(t)1−k(t) . We therefore have proven that an iSDE has a drift term of the form (6) and the stiffness function is given by (7). 
+
+7.2. Computing ωn for fOUVE and OUVE 
+
+In this section, we report the weights ωn from (30) for the fOUVE and OUVE SDE from (1). For fOUVE and OUVE, we obtain that (30) can be written as 
+
+ωn(ti, t i−1) = L
+
+Z ti−1
+
+> ti
+
+eζτ (τ − ti)n
+
+n! dτ (39) with k = σmin  
+
+> σmax
+
+and ζ = γ0 + 2 log( k). The constant 
+
+L = σmin 2(log( k) + γ0)(1 + κ2) for fOUVE and L =
+
+σmin 2 log( k)(1 + κ2) for OUVE. We can integrate this by parts to obtain 
+
+ωn(ti, t i−1) = L eζτ (τ − ti)n+1 
+
+(n + 1)! 
+
+> ti−1
+> ti
+
++ 1
+
+ζ ωn−1(ti, t i−1)
+
+!
+
+.
+
+(40) Solving this recursive formulation yields: 
+
+ωn(ti, t i−1) = L(eζt i − eζt i−1 )+ L
+
+> n
+
+X
+
+> i=1
+
+(−1) n+i+1 
+
+ζn−i+1 
+
+ eζt i−1 (ti−1 − ti)i
+
+i!
+
+
+
+.
+
+(41) 
+
+7.3. Computing I(ti, t i−1) for fOUVE 
+
+Let z ∼ N (0 , 1) , then the Itô-integral can be generally written as a Lebesgue integral as follows: 
+
+I(ti, t i−1) = 
+
+sZ ti
+
+> ti−1
+
+(Φ( ti, t i−1)g(τ )) 2dτ (42) 
+
+= (1 − k(ti−1)) 
+
+sZ ti
+
+> ti−1
+
+ g(τ )1 − k(τ )
+
+2
+
+dτ , (43) Inserting g(t), k (t) for fOUVE from Table 1, we obtain 
+
+I(ti, t i−1) = (1 − k(ti−1))( eζt i − eζt i−1 )σmin 2, (44) where ζ = 2 ln( σmin  
+
+> σmax
+
+) + 2 γ0.
+
+# 8. Acknowledgements 
+
+Funded by the Deutsche Forschungsgemeinschaft (DFG, Ger-man Research Foundation) 498394658; by the Federal Ministry for Economic Affairs and Climate Action (Bundesministerium fÃ¼r Wirtschaft und Klimaschutz), Zentrales Innovationspro-gramm Mittelstand (ZIM), Germany, within the project FKZ KK5528802VW4; and by the German Federal Ministry of Re-search, Technology and Space (BMFTR) under grant agreement No. 01IS24072A (COMFORT). The authors gratefully acknowledge the scientific support and HPC resources provided by the Erlangen National High Performance Computing Center (NHR@FAU) of the Friedrich-Alexander-UniversitÃ¤t Erlangen-NÃ¼rnberg (FAU) under the NHR projects f101ac. NHR funding is provided by federal and Bavarian state authorities. NHR@FAU hardware is par-tially funded by the German Research Foundation (DFG) âC“ 440719683. 
+
+# 9. Generative AI Use Disclosure 
+
+Generative AI tools were used solely for language editing and polishing of the manuscript. These tools assisted in improv-ing grammar, clarity, and readability. They were not used to generate scientific content, derive results, conduct experiments, or formulate the core contributions of this work. All authors take full responsibility for the content of this paper and have reviewed and approved the final manuscript. 
+
+# 10. References 
+
+[1] D. Wang and J. Chen, “Supervised speech separation based on deep learning: An overview,” IEEE Trans. on Audio, Speech, and Language Proc. (TASLP) , vol. 26, no. 10, pp. 1702–1726, 2018. [2] Y. Luo and N. Mesgarani, “Conv-TasNet: Surpassing ideal time–frequency magnitude masking for speech separation,” IEEE Trans. on Audio, Speech, and Language Proc. (TASLP) , vol. 27, no. 8, pp. 1256–1266, 2019. [3] Y.-J. Lu, Y. Tsao, and S. Watanabe, “A study on speech enhance-ment based on diffusion probabilistic model,” IEEE Asia-Pacific Signal and Inf. Proc. Assoc. Annual Summit and Conf. (APSIPA ASC) , pp. 659–666, 2021. [4] Y.-J. Lu, Z.-Q. Wang, S. Watanabe, A. Richard, C. Yu, and Y. Tsao, “Conditional diffusion probabilistic model for speech enhancement,” IEEE Int. Conf. on Acoustics, Speech and Signal Proc. (ICASSP) , pp. 7402–7406, 2022. [5] S. Welker, J. Richter, and T. Gerkmann, “Speech enhancement with score-based generative models in the complex STFT do-main,” ISCA Interspeech , pp. 2928–2932, 2022. [6] J. Richter, S. Welker, J.-M. Lemercier, B. Lay, and T. Gerkmann, “Speech enhancement and dereverberation with diffusion-based generative models,” IEEE Trans. on Audio, Speech, and Language Proc. (TASLP) , 2023. [7] J. Ho, A. Jain, and P. Abbeel, “Denoising diffusion probabilis-tic models,” Advances in Neural Inf. Proc. Systems (NeurIPS) ,vol. 33, pp. 6840–6851, 2020. [8] Y. Song, J. Sohl-Dickstein, D. P. Kingma, A. Kumar, S. Ermon, and B. Poole, “Score-based generative modeling through stochas-tic differential equations,” Int. Conf. on Learning Representations (ICLR) , 2021. [9] B. Lay, S. Welker, J. Richter, and T. Gerkmann, “Reducing the prior mismatch of stochastic differential equations for diffusion-based speech enhancement,” ISCA Interspeech , 2023. [10] Y. Song and S. Ermon, “Generative modeling by estimating gra-dients of the data distribution,” Advances in Neural Inf. Proc. Sys-tems (NeurIPS) , vol. 32, 2019. [11] Q. Zhang and Y. Chen, “Fast sampling of diffusion models with exponential integrator,” Int. Conf. on Learning Representations (ICLR) , 2022. [12] Z. Guo, J. Du, C.-H. Lee, Y. Gao, and W. Zhang, “Variance-preserving-based interpolation diffusion models for speech en-hancement,” ISCA Interspeech , 2023. [13] T. Trachu, C. Piansaddhayanon, and E. Chuangsuwanich, “Thun-der : Unified Regression-Diffusion Speech Enhancement with a Single Reverse Step using Brownian Bridge,” ISCA Interspeech ,2024. [14] Z. Qiu, M. Fu, F. Sun, G. Altenbek, and H. Huang, “Se-bridge: Speech enhancement with consistent brownian bridge,” arXiv preprint , 2023. [15] Y. Jun, B. J. Woo, M. Jeong, and N. S. Kim, “SNR-aligned con-sistent diffusion for adaptive speech enhancement,” ISCA Inter-speech , 2025. [16] S. Lee, S. Cheong, S. Han, and J. W. Shin, “Flowse: Flow matching-based speech enhancement,” pp. 1–5, 2025. [17] A. Juki´ c, R. Korostik, J. Balam, and B. Ginsburg, “Schrödinger bridge for generative speech enhancement,” ISCA Interspeech ,2024. [18] S. Han, S. Lee, J. Lee, and K. Lee, “Few-step adversarial schrödinger bridge for generative speech enhancement,” ISCA In-terspeech , 2025. [19] J. Richter, D. de Oliveira, and T. Gerkmann, “Investigating train-ing objectives for generative speech enhancement,” IEEE Int. Conf. on Acoustics, Speech and Signal Proc. (ICASSP) , 2025. [20] Q. Zhang and Y. Chen, “DPM-Solver: A Fast ODE Solver for Diffusion Probabilistic Model Sampling in Around 10 Steps,” Ad-vances in Neural Inf. Proc. Systems (NeurIPS) , 2022. [21] C. Lu, Y. Zhou, F. Bao, J. Chen, C. Li, and J. Zhu, “DPM-Solver++: Fast Solver for Guided Sampling of Diffusion Prob-abilistic Models,” vol. 22, 2022, pp. 730 – 751. [22] K. Zheng, C. Lu, J. Chen, and J. Zhu, “DPM-solver-v3: Im-proved diffusion ODE solver with empirical model statistics,” in 
+
+Advances in Neural Inf. Proc. Systems (NeurIPS) , 2023. [23] J. C. Butcher, Numerical methods for ordinary differential equa-tions . John Wiley & Sons, 2016. [24] I. Karatzas and S. E. Shreve, Brownian Motion and Stochastic Calculus , 2nd ed. Springer, 1996. [25] W. Rudin, Real and Complex Analysis , 3rd ed. McGraw-Hill, Inc., 1987. [26] S. Särkkä and A. Solin, Applied Stochastic Differential Equations .Cambridge University Press, 2019. [27] B. D. Anderson, “Reverse-time diffusion equation models,” 
+
+Stochastic Processes and their Applications , vol. 12, no. 3, pp. 313–326, 1982. [28] C.-H. Lai, Y. Song, D. Kim, Y. Mitsufuji, and S. Ermon, “The principles of diffusion models,” arXiv preprint , 2025. [29] M. Hochbruck and A. Ostermann, “Explicit exponential runge-kutta methods for semilinear parabolic problems,” SIAM Journal on Numerical Analysis , vol. 43, no. 3, pp. 1069–19 090, 2005. [30] V. T. Luan, “Efficient exponential Runge-Kutta methods of high order: Construction and implementation,” BIT Numerical Mathe-matics , vol. 61, no. 2, pp. 535–560, 2021. [31] R. Piessens, E. de Doncker-Kapenga, C. W. Überhuber, and D. Kahaner, QUADPACK: A subroutine package for automatic integration . Springer-Verlag, 1983. [32] B. Lay, R. Makarov, and T. Gerkmann, “Diffusion buffer: Online diffusion-based speech enhancement with sub-second latency,” 
+
+ISCA Interspeech , 2025. [33] T. Gerkmann and R. Martin, “Empirical distributions of DFT-domain speech coefficients based on estimated speech variances,” 
+
+Int. Workshop on Acoustic Echo and Noise Control , 2010. [34] J. Richter, Y.-C. Wu, S. Krenn, S. Welker, B. Lay, S. Watan-abe, A. Richard, and T. Gerkmann, “EARS: An anechoic fullband speech dataset benchmarked for speech enhancement and derever-beration,” ISCA Interspeech , 2024. [35] G. Wichern, J. Antognini, M. Flynn, L. Zhu, E. McQuinn, D. Crow, E. Manilow, and J. Le Roux, “Wham!: Extending speech separation to noisy environments,” ISCA Interspeech , 07 2019. [36] A. Rix, J. Beerends, M. Hollier, and A. Hekstra, “Perceptual eval-uation of speech quality (PESQ) - a new method for speech qual-ity assessment of telephone networks and codecs,” IEEE Int. Conf. on Acoustics, Speech and Signal Proc. (ICASSP) , vol. 2, pp. 749– 752, 2001. [37] B. Stahl and H. Gamper, “Distillation and pruning for scalable self-supervised representation-based speech quality assessment,” 
+
+IEEE Int. Conf. on Acoustics, Speech and Signal Proc. (ICASSP) ,2025. [38] J. Le Roux, S. Wisdom, H. Erdogan, and J. R. Hershey, “SDR– half-baked or well done?” IEEE Int. Conf. on Acoustics, Speech and Signal Proc. (ICASSP) , pp. 626–630, 2019. [39] K. Kilgour, M. Zuluaga, D. Roblek, and M. Sharifi, “Fréchet au-dio distance: A reference-free metric for evaluating music en-hancement algorithms,” ISCA Interspeech , 2019. [40] S. Welker, M. Le, R. T. Q. Chen, W.-N. Hsu, T. Gerkmann, A. Richard, and Y.-C. Wu, “FlowDec: A flow-based full-band general audio codec with high perceptual quality,” in Int. Conf. on Learning Representations (ICLR) , 2025. [41] D. P. Kingma and J. Ba, “Adam: A method for stochastic opti-mization,” Int. Conf. on Learning Representations (ICLR) , 2015. [42] J. Abel, M. Kaniewska, C. Guillaumé, W. Tirry, and T. Fin-gscheidt, “An instrumental quality measure for artificially bandwidth-extended speech signals,” IEEE Trans. on Audio, Speech, and Language Proc. (TASLP) , pp. 1–1, 12 2016.

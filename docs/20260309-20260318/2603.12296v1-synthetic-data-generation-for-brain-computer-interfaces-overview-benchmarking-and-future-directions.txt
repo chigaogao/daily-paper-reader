@@ -1,0 +1,1387 @@
+Title: Synthetic Data Generation for Brain-Computer Interfaces: Overview, Benchmarking, and Future Directions
+
+URL Source: https://arxiv.org/pdf/2603.12296v1
+
+Published Time: Mon, 16 Mar 2026 00:06:18 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+> IEEE TRANSACTIONS ON ... 1
+
+# Synthetic Data Generation for Brain-Computer Interfaces: Overview, Benchmarking, and Future Directions 
+
+Ziwei Wang, Zhentao He, Xingyi He, Hongbin Wang, Tianwang Jia, Jingwei Luo, Siyang Li, Xiaoqing Chen, and Dongrui Wu ∗, Fellow, IEEE 
+
+Abstract —Deep learning has achieved transformative perfor-mance across diverse domains, largely driven by the large-scale, high-quality training data. In contrast, the development of brain–computer interfaces (BCIs) is fundamentally constrained by the limited, heterogeneous, and privacy-sensitive neural recordings. Generating synthetic yet physiologically plausible brain signals has therefore emerged as a compelling way to mitigate data scarcity and enhance model capacity. This survey provides a comprehensive review of brain signal generation for BCIs, covering methodological taxonomies, benchmark experi-ments, evaluation metrics, and key applications. We systemati-cally categorize existing generative algorithms into four types: knowledge-based, feature-based, model-based, and translation-based approaches. Furthermore, we benchmark existing brain signal generation approaches across four representative BCI paradigms to provide an objective performance comparison. Finally, we discuss the potentials and challenges of current generation approaches and prospect future research on accurate, data-efficient, and privacy-aware BCI systems. The benchmark codebase is publicized at https://github.com/wzwvv/DG4BCI. 
+
+Index Terms —Brain-computer interface, electroencephalogra-phy, data generation, data augmentation 
+
+I. I NTRODUCTION 
+
+# BRAIN–computer interface (BCI) serves as a direct com-munication pathway between a user’s brain and an ex-ternal device, enabling mapping, assisting, augmenting, and potentially restoring human cognitive and/or sensorymotor functions [1]. Despite rapid progress, real-world BCI systems still suffer from the limited data availability, strong individual variability, and non-stationarity of brain signals. The reliability of decoding models is closely tied to the quantity and quality of the available brain data. Recent success of deep learning underscores the importance of large, high-quality training data. For example, Google’s trillion-word corpus has significantly boosted performance in language models [2]. However, acquiring sufficient brain signals presents challenges, illustrated in Fig. 1.  
+
+> •
+
+High signal acquisition costs . For example, devices for brain signal collection, especially intracranial brain sig-nals, are expensive. 
+
+This research was supported by the National Natural Science Foundation of China (625B2077 and 62525305), and Open Fund of Intelligent Control Laboratory (2024-ZKSYS-KF02-04). The authors are with Hubei Key Laboratory of Brain-inspired Intelligent Systems, School of Artificial Intelligence and Automation, Huazhong Univer-sity of Science and Technology, Wuhan 430074, China. X. Chen and D. Wu are also with Zhongguancun Academy, Beijing 100094, China. *Corresponding Author: Dongrui Wu (drwu09@gmail.com).  
+
+> •
+
+Difficulty in long-term collection . Only a limited amount of data can be acquired in each session, due to the un-comfortable acquisition devices in long-term collection.  
+
+> •
+
+Low signal quality . Raw brain signals are often non-stationary and prone to noise and disturbances. Artifacts such as electrooculographic signals from eye movements [3], [4], electromyographic activity from facial muscles, cardiac artifacts, baseline drift, and electromagnetic in-terference frequently contaminate the signals [5], [6]. These factors degrade signal quality and may impair downstream decoding. In addition, obtaining precise la-bels is challenging, as it is difficult to ensure subjects consistently perform the intended tasks.  
+
+> •
+
+Significant signal heterogeneity . Unlike image or text data, brain signals vary significantly across subjects, datasets, and devices, limiting model generalization.  
+
+> •
+
+Privacy concerns . Legal and regulations may restrict the sharing of sensitive brain data, as transferring brain data across institutions can risk exposing private information. 
+
+> )/'( "0
+> !! .2 3
+
+!"#$$#%& '#$$#%& !"##"$% 
+
+'()*+,--+ 
+
+!& ' ./012345 
+
+()*+ .678$25 
+
+9:9;9+ 
+
+,,-./ 
+
+.;;< 
+
+.0$1"$% 
+
+)2 ./012345 
+
+3(2 .678$25 
+
+)( ./012345 
+
+43( .678$25 =6/$4 ;$234"%?25 *&@6$#? ./012345 :"4#A6345 
+
+> !"#" %&'#(&)*#&+,
+> A#B"
+
+)"%55B./01234 )"%55B.255#%& )"%55B<2@#32 
+
+> 738 %&'(&F&3"(- 5&FF+,+(3+ 7;8 64# 5"-" G0")&-H 7"8 %:")) 5"-" %&I+
+
+Fig. 1. Data scarcity issue in BCIs, owing to the small data size, low signal quality, and/or significant differences across sessions, subjects, and devices.  
+
+> arXiv:2603.12296v1 [cs.LG] 11 Mar 2026 IEEE TRANSACTIONS ON ... 2
+
+The above limitations hinder the construction of robust and generalized decoding models for BCIs [7]. The scarcity and heterogeneity of brain data, together with privacy barriers, motivate the development of brain signal generation techniques capable of synthesizing informative and diverse samples to support learning under limited supervision. Based on the electrode placement, brain signals can be categorized into non-invasive, partially invasive, and invasive ones. Non-invasive brain signals are considered the safest, without any surgical procedures. Partially invasive brain sig-nals involve the implantation of electrodes beneath the scalp, without penetrating the brain tissue. Invasive BCIs require surgical implantation of electrodes into the brain, offering the highest resolution and precision for neural signal record-ing. Each acquisition modality exhibits distinct spatial and temporal characteristics, as summarized in Table I. Among them, electroencephalography (EEG) remains the most widely adopted owing to its safety, affordability, and portability. Magnetoencephalography (MEG) and functional near-infrared spectroscopy (fNIRS) complement EEGs with enhanced spa-tial or hemodynamic information, while electrocorticography (ECoG) and stereoelectroencephalography (SEEG) provide higher fidelity but at a high surgical cost.  
+
+> •
+
+EEG is one of the most widely used non-invasive tech-niques due to its cost-effectiveness and ease of appli-cation. It captures the brain’s electrical activity through scalp electrodes.  
+
+> •
+
+MEG measures neuromagnetic activity with millisecond temporal precision and moderate spatial resolution. It en-ables non-invasive mapping of cortical dynamics critical for studying real-time neural computation and oscillatory processes.  
+
+> •
+
+fNIRS measures blood oxygenation changes via near-infrared light and offers moderate spatial and temporal resolution. It is portable and less susceptible to electro-magnetic interference, making it suitable for both clinical and field-based research settings.  
+
+> •
+
+ECoG is collected from electrodes placed on the exposed surface of the brain, providing high spatial resolution and direct access to cortical areas. It offers better signal quality than EEG, but carries some risks of surgical intervention.  
+
+> •
+
+SEEG is collected from electrodes implanted through small burr holes into deep brain regions, primarily of-fering detailed monitoring of neural activity in patients with brain diseases.                                        
+
+> TABLE I CHARACTERISTICS OF BRAIN SIGNALS IN BCI S.
+> Electrode Signal Temporal Spatial Cost Universality Setup Placement Type Resolution Resolution Duration
+> Non-invasive
+> EEG High Low Cheap High Quick
+> fNIRS Moderate Moderate Moderate Moderate Quick
+> MEG High Moderate Expensive Low Moderate
+> Partially ECoG High High Expensive Low Short-term Invasive implant
+> Invasive SEEG High High Expensive Low Short-term
+
+This survey provides a comprehensive review of brain signal generation for BCIs, covering methodological taxonomies, evaluation metrics, benchmark experiments, and key applica-tions. Benckmark comparison of existing brain signal genera-tion algorithms is performed on four representative paradigms: motor imagery (MI), an active BCI modality relevant to neu-rorehabilitation; epileptic seizure detection (ESD), a medical-grade application involving spontaneous pathological signals; steady-state visually evoked potentials (SSVEP), a frequency-coded visual stimulation paradigm characterized by highly periodic neural responses that enable robust target identifica-tion; and audio attention detection (AAD), a selective-listening paradigm that decodes users’ auditory attention. The remainder of this paper is organized as follows: Sec-tion II reviews data generation algorithms in BCIs. Section III benchmarks existing brain signal generation algorithms. Sec-tion IV summarizes evaluation metrics of the generated data. Section V presents the representative applications. Section VI summarizes the insights of existing work and presents some possible future directions. Section VII draws conclusions. II. S YNTHETIC DATA GENERATION FOR BCI S
+
+The data generation driven machine learning pipeline for BCIs is depicted in Fig. 2, where the generation algorithms can be categorized into four types: knowledge-based, feature-based, model-based, and translation-based approaches. Details of the four types are further illustrated in Fig. 3. 
+
+A. Knowledge-Based Generation 
+
+Knowledge-based brain signal generation leverages estab-lished neurophysiological priors, such as event-related desyn-chronization and synchronization patterns in MI and rhythmic spike-wave discharges in epilepsy, to guide the generation of synthetic data. The priors can be incorporated into gen-erative frameworks through rule-driven signal synthesis or probabilistic modeling with physiological constraints. This strategy preserves the biological plausibility of the generated signals and improves their diversity, which helps bridge the gap between purely data-driven synthesis and interpretable neuroscience. Knowledge-based generation uses prior exper-tise and previously discovered patterns in temporal, spatial, and/or spectral domains to generate brain signals. Rommel 
+
+et al. [8] categorized EEG data augmentation techniques into three types: time, frequency, and spatial domain approaches. Since certain time-frequency decomposition techniques simul-taneously capture temporal and spectral characteristics of brain signals, we expand this taxonomy by introducing an additional category, namely time-frequency domain approaches [9]:  
+
+> •
+
+Time domain approaches, which directly manipulate the temporal characteristics of brain signals. For example, Wang et al. [10] introduced Gaussian white noise to the original signals, Mohsenvand et al. [11] randomly masked portions of EEG segments, and Zhang et al. [12] applied minor scaling and voltage inversion.  
+
+> •
+
+Frequency domain approaches, which first transform brain signals into the frequency domain, perform augmen-tation, and then convert them back to the time domain. IEEE TRANSACTIONS ON ... 3
+
+## !
+
+! " !    
+
+> !"#$ %&'(") *+(+,"-+. %&'(") /+"-0,+ 12-,"3-4, 5+34.+, *+(+,"-+.$%&'(") 6"-+(- /+"-0,+ *+(+,"-+. /+"-0,+ 1(34.+,
+> 7"8
+> *+(+,"-+.$ 9:"'+
+> 7;8 738 7.8
+> !!" #!" $!!"
+> <0)-&=>?"((+)$@,"&($%&'(")A
+
+! 
+
+> B+0,") B+-#4,C
+> @,"&($%&'(")$ D,+E,43+AA&('
+> $%&'()%*+&,-./0&0 1&0(,2*+%3/4&.-$$1!5 #6 788%39&:% ;<6 $=%%3>*+%3/4&.-
+> !"#$%&'$(%#)& *+%+"#,$-%
+> >4(-,4))+,
+> /+"-0,+ 1('&(++,&('
+> >)"AA&F&3"-&4(G !+',+AA&4(
+
+"#$#% &'(')#$*+(% ,+)%-./0 
+
+## "!
+
+#$
+
+Fig. 2. Data generation driven machine learning pipeline for BCIs, which includes brain signal acquisition, data preprocessing, data generation, feature engineering, and classification/regression. The latter two components can be unified into a single end-to-end neural network. Data generation approaches are categorized into four types: (a) knowledge-based generation, (b) feature-based generation, (c) model-based generation, and (d) translation-based generation.   
+
+> !"#$%&'(&)*+,&'-.&"&/+01#" 2&+03/&)*+,&'-.&"&/+01#" 4#'&%)*+,&'-.&"&/+01#" 5/+",%+01#")*+,&'-.&"&/+01#"
+> !"#$%& '&"()*+,* -&.*,/$.%"&
+
+! " !
+
+> 0*$.1/*2 34./$5."/
+
+! 
+
+> 3&5"+*/ !*5"+*/
+> )*+,"-&".
+
+!!
+
+!"
+
+> 7$( 8%,&$) -#$,*
+
+! "!
+
+! "!
+
+!
+
+$#!
+
+> 7$( 8%,&$) 9*&*/$.*+ 8%,&$) 9*&*/$.*+ 8%,&$) 7$( 8%,&$) 7$( 8%,&$) :$.*&. 0*$.1/* :$.*&. 0*$.1/* 9*&*/$.*+ 0*$.1/* :$.*&. 0*$.1/*
+
+Fig. 3. Four types of data generation approaches for brain signals. 
+
+For example, Zhang et al. [12] performed frequency shifting, Schwabedal et al. [13] replaced the Fourier phases of EEG trials with random numbers, and Zhao 
+
+et al. [14] used the discrete cosine transform (DCT) to sample and recombine frequency bands.  
+
+> •
+
+Spatial domain approaches, which exploit the spatial structure of multi-channel brain signals. For example, Wang et al. [15] swapped symmetric hemisphere channels and their labels for left/right hand MI, Krell et al. [16] applied random interpolation to rotated channels, and Pei 
+
+et al. [17] recombined hemispheric channels.  
+
+> •
+
+Time-frequency domain approaches, which employ time-frequency decomposition techniques for data generation. For example, Wang et al. [9] generated brain signals with the discrete wavelet transform (DWT) and Hilbert-Huang transform (HHT). Both typically involve three steps: time-frequency decomposition, sub-signal reassem-bly, and temporal reconstruction. This direction remains underexplored and offers significant potential for future research. Knowledge-based generation approaches are summarized in Table II, and their temporal visualizations are shown in Fig. 4. 
+
+N     
+
+   
+
+     
+
+    
+
+ 
+
+  
+
+Fig. 4. Visualizations of brain signals before (blue lines) and after (red lines) eleven knowledge-based generation approaches, using 1-channel as an example. 
+
+B. Feature-Based Generation 
+
+Feature-based generation approaches focus on generating synthetic features rather than raw signals. This strategy helps improve model generalization by enriching the feature space, playing a crucial role in enhancing the diversity of features. The widely adopted techniques are the synthetic minority over-sampling technique (SMOTE) [18] and its variants [19], which generate synthetic features by interpolating between IEEE TRANSACTIONS ON ... 4                             
+
+> TABLE II FOUR TYPES OF KNOWLEDGE -BASED GENERATION APPROACHES .
+> Type Approach Description Parameter
+> Time domain
+> Noise [10] Adding uniform noise to an EEG trial in the time domain Cnoise : the noise injection rate
+> Mask [11] Masking a portion of EEG trials randomly Cmask : the masking rate
+> Scale [12] Scaling the voltage of EEG trials with a minor coefficient Cscale : the scaling rate
+> Flip [12] Performing voltage inversion /
+> Frequency domain
+> FShift [12] Shifting the frequency of EEG trials Cf shif t : the frequency scaling rate
+> FSurr [13] Replacing the Fourier phases of trials with random numbers Cp: applying probability; Cm: noise magnitude
+> FComb [14] Applying discrete cosine transform and recombining bands Ccomb : the number of combining bands
+> Spatial domain CR [15] Swapping symmetric left and right hemisphere channels /
+> HS [16] Recombining left and right channels from the same category /
+> Time-Frequency domain DWTaug [9] Decomposing trials by DWT and reassembling coefficients Clevel : the number of decomposition level
+> HHTaug [9] Empirical mode decomposition and sub-signal reassembling /
+
+existing minority-class samples. Feature-based generation ap-proaches are particularly beneficial for seizure detection or anxiety state classification, where imbalanced datasets often degrade model performance. Borderline SMOTE and adaptive synthetic have been further explored for generating EEG features in mental stress detection [19], ensuring that newly generated samples lie closer to the decision boundary, thereby improving classifier robustness. Additionally, Mixup [20] extends the idea of SMOTE by applying linear interpolations to both features and labels, helping improve model generalization across varying condi-tions. Freer et al. [21] leveraged empirical mode decompo-sition to separate EEG signals into intrinsic modes for data generation. Manifold-based feature generation exploits the intrinsic geometric structure of the feature space by mapping features onto lower-dimensional manifolds and synthesizing new samples through distribution-aware sampling. Manifold Mixup [22] enhances neural network training by performing linear interpolations within hidden representations, generating high-confidence synthetic features. 
+
+C. Model-Based Generation 
+
+Model-based generation is more flexible, commonly relying on probabilistic generative models to generate synthetic brain signals, based on the idea that the underlying distribution of brain signals can be modeled and sampled from sophisticated deep learning models. The key advantage of model-based generation lies in its ability to model high-dimensional, nonlinear data distributions, such as those inherent in brain signals. These models go beyond basic data augmentation techniques by providing a deeper understanding of the signal’s probabilistic structure. There are mainly four categories of approaches, including generative adversarial networks (GANs) [23], variational au-toencoders (VAEs) [24], autoregressive models (AMs) [25], and denoising diffusion probabilistic models (DDPMs) [26], as illustrated in Fig. 5. A comparison between existing model-based EEG generation studies is provided in Table III, includ-ing the model type, synthetic signal type, applied paradigm, dataset, implementation, and their gains. 
+
+1) Generative Adversarial Networks: Introduced in [78], GANs have gained significant traction in the field of data   
+
+> !"#$%"&"'()*%
+> !"#$ % #& '()
+
+! +,',%()*%   
+
+> *"+&
+> -'$*.,%
+> ,!"+-#&
+
+! !,$*.,%    
+
+> .""#-+&
+> !"//0#"*'
+> ,"# #-# #$% &
+
+! !,'*"#"'1    
+
+> .""# #$% -# #&
+> 2%,."$)"*'34*.,5
+> ."# #-# %$ # &$ / $ # #$% &
+> !"#"$%&'(")*+("$,%$'%- ."&/0$1 2!*.3 4%$'%&'0#%-)*5&0"#60+"$ 24*73 *5&0$"8$",,'(")90+"- 2*93 :"#0','#8):';;5,'0#)<$0=%='-',&'6)90+"- 2::<93
+
+## !
+
+"
+
+#"
+
+#"
+
+#"
+
+#"!
+
+#"
+
+"
+
+!! !"
+
+" 
+
+> #!#"
+> !"#$%#&
+
+! !      
+
+> '()(#*(
+> ###$%# #$
+> $%# &&# &%# '
+> ('%# &%# &# &'
+> +%#,%-,".%/ /"$(# 0"1.&
+> Fig. 5. Model-based generation approaches for brain signals, including GANS, VAEs, AMs, and DDPMs.
+
+generation due to their ability to produce high-fidelity samples, frequently used in areas like image generation [79], audio synthesis [80], time series augmentation [81], and have been taken into consideration for EEG generation. They have proven effective in generating high-fidelity samples under proper training. However, their training process usually meets mode collapse and can be computationally expensive. Fahimi et al. [82] highlighted the effectiveness of GANs in EEG data generation, claiming that the generated EEG signals by GANs resemble the temporal, spectral, and spatial characteristics of real EEG [28]. Wen et al. [27] proposed cc-LSTM-GAN to augment the monkey’s spike data. EEG-GAN [38] utilized GAN with a convolutional generator to synthesize EEG data, allowing the generation of raw EEG signals from random noise for MI classification. Cheng et al. [40] proposed SleepEGAN to generate minority category EEG samples for IEEE TRANSACTIONS ON ... 5
+
+TABLE III COMPARISON OF EXISTING STUDIES ON BRAIN SIGNAL GENERATIVE MODELS , INCLUDING GAN S, VAE S, ARM S, AND DDPM S.
+
+Model Type Approach Signal Type Paradigm Dataset Setup Improvement 
+
+GAN 
+
+cc-LSTM-GAN [27] Spike Motor execution Two Monkeys Conditional 16% accuracy 
+
+DCGAN [28] EEG and ECG Motor execution Fourteen humans Conditional 7.32% accuracy 
+
+GDAL [29] EEG MI III-3a, III-4a, and IV-2a Unconditional 2% accuracy 
+
+SSVEP-GAN [30] EEG SSVEP 32 humans Conditional 96s time-saving 
+
+TOED-GAN [31] EEG SSVEP Dial Conditional 18.47% accuracy 
+
+WGAN [32] EEG SSVEP NAO Unconditional 3% accuracy 
+
+Ma and Ruotsalo [33] EEG Visual perception CelebA Conditional 6.6% accuracy 
+
+Lee et al. [34] EEG Speech imagery Lee et al. [35] Unconditional /
+
+NeuroTalk [36] EEG Speech imagery Lee et al. [35] Unconditional reduced 0.6 RMSE 
+
+CS-GAN [37] EEG MI IV-2a Unconditional 15.85% accuracy 
+
+EEG-GAN [38] EEG MI Private dataset [38] Unconditional 0.08 inception score 
+
+Palazzo et al. [39] EEG Image generation Private dataset [39] Conditional 40.5% accuracy 
+
+cWGAN [7] EEG Emotion recognition SEED, DEAP Conditional 4.9% accuracy 
+
+sWGAN [7] EEG Emotion recognition SEED, DEAP Conditional 7.4% accuracy 
+
+SleepEGAN [40] EEG Sleep stage classification Sleep-EDF, SHHS Unconditional 7.4% accuracy 
+
+SynSigGAN [41] EEG Seizure prediction Siena Scalp Unconditional /
+
+SynSigGAN [41] ECG Arrhythmia detection MIT-BIH Unconditional /
+
+SynSigGAN [41] EMG Sleep stage classification Sleep-EDF Unconditional /
+
+SynSigGAN [41] PPG Respiratory rate estimation BIDMC Unconditional /
+
+WGAN-GP [42] EEG Mental state classification MUSE Unconditional 6.45% accuracy 
+
+WGAN-GP [42] ECG Abnormality detection Kaggle Unconditional 1.40% accuracy 
+
+BWGAN-GP [43] EEG RSVP Private dataset [44] Conditional 3.70% accuracy 
+
+Kavasidis et al. [45] EEG Image generation Private dataset Unconditional /
+
+CESP [46] EEG Seizure prediction CHB-MIT Unconditional 4% sensitivity 
+
+VAE 
+
+cVAE [7] EEG Emotion recognition SEED, DEAP Conditional 3.1% accuracy 
+
+sVAE [7] EEG Emotion recognition SEED, DEAP Conditional 3.2% accuracy 
+
+DEVAE-GAN [47] EEG Emotion recognition SEED Conditional 5% accuracy 
+
+EEG2Vec [48] EEG Emotion recognition SEED Conditional 3% accuracy 
+
+CR-VAE [49] ECoG Seizure detection Kramer et al. [50] Conditional reduced 0.014 RMSE 
+
+VAEEG [51] EEG Seizure detection TUSZ Conditional 1.4% accuracy 
+
+VAEEG [51] EEG Sleep stage classification NCH Conditional 1.3% accuracy 
+
+Kavasidis et al. [45] EEG Image generation Private dataset [45] Unconditional /
+
+CVAE [52] EEG MI OpenNeuro Conditional 1.05% accuracy 
+
+VAE [53] iEEG Seizure detection Kaggle, TUH, CHB-MIT Unconditional 12% accuracy 
+
+ARM 
+
+Neuro-GPT [54] EEG MI TUH Unconditional 9.3% accuracy 
+
+Bird et al. [55] EEG Mental state classification Private dataset [44] Conditional 0.88% accuracy 
+
+Bird et al. [55] EMG Gesture recognition Private dataset [56] Conditional 0.3% accuracy 
+
+Niu et al. [57] EEG Seizure prediction MIT Conditional 1.9% accuracy 
+
+MEG-GPT [58] MEG Cognitive BCI Cam-CAN Unconditional 8% accuracy 
+
+MEG-GPT [58] MEG Visual perception Wakeman-Henson Unconditional 5% accuracy 
+
+ChannelGPT2 [59] MEG Visual perception Cichy et al. [60] Conditional 3.3 % accuracy 
+
+Thought2Text [61] EEG, Text Text generation CVPR2017 Conditional 18.2 BLEU-1 
+
+GET [62] EEG MI IV-2b Unconditional /
+
+Endemann [63] iEEG Seizure detection private dataset [63] Unconditional /
+
+DDPM 
+
+Zhong et al. [64] EEG MI 64 humans Unconditional 3.17% accuracy 
+
+DDIM [65] EEG MI, SSVEP IV-2a, VEPESS Unconditional 10.25% accuracy 
+
+CDASC-MI [66] EEG MI IV-2a, IV-2b Unconditional 6% accuracy 
+
+Dere et al. [67] EEG, EMG MI OpenBCI Conditional 3.41% precision 
+
+Kim et al. [68] EEG Speech imagery Lee et al. [35] Conditional 15.3% accuracy 
+
+Diff-E [69] EEG Speech imagery Lee et al. [35] Conditional 14.4% accuracy 
+
+DiffEEG [70] EEG Seizure prediction CHB-MIT Conditional 8.6% AUC 
+
+AE-KL [71] EEG Sleep stage classification SleepEDFx Unconditional reduced 11.62 FID 
+
+AE-KL [71] EEG Sleep stage classification SHHS Unconditional reduced 0.77 FID 
+
+EEG-DIF [72] EEG Seizure prediction Physionet Unconditional 8% accuracy 
+
+Klein et al. [73] EEG P300 OpenBMI Conditional /
+
+Liu et al. [74] EEG Driving behavior classification Private dataset Conditional 7.11% 
+
+Chetkin et al. [75] EEG MI IV-2a Unconditional /
+
+ControlNet [76] EEG, Audio Audio generation NMED-T Conditional reduced 0.23 MSE 
+
+Dreamdiffusion [77] EEG, image Image generation ImageNet-EEG Unconditional 7.3% IEEE TRANSACTIONS ON ... 6
+
+sleep stage classification. Hazra and Byun [41] introduced SynSigGAN to generate four types of synthetic biomedical signals, including EEG signals for epileptic seizure classifica-tion. Arjovsky et al. [83] proposed Wasserstein GAN (WGAN) to overcome model collapse. Gulrajani et al. [84] added the gradient penalty to WGAN (WGAN-GP) that could maintain more stable training. Palazzo et al. [39] applied WGAN con-ditioned on EEG features for cross-modal image generation, using EEG as an auxiliary input. This approach allows the synthesis of images corresponding to specific brain states or stimuli, expanding the possibilities for visual decoding. Luo et al. [7] introduced two types of GANs, including conditional WGAN and selective WGAN, to augment EEG differential entropy features for emotion recognition. Venugopal and Faria [42] validated the effectiveness of WGAN-GP in EEG and ECG generation for mental state classification. Xu et al. [43] further verified that WGAN-GP could generate a balanced EEG dataset with improved performance for the rapid serial visual presentation classification task. GANs consist of two modules: a generator G to generate synthetic data and a discriminator D to evaluate the authen-ticity of the generated data against real data. G and D are trained in an adversarial setting, allowing generator G to gradually improve its ability to generate realistic data that can no longer be distinguished by the discriminator D. These opposing networks are simultaneously trained to maximize 
+
+log (D(x, ˆx)) and minimize log (1 − D(G(z))) , which can be formulated as a minimax problem: 
+
+min  
+
+> G
+
+max  
+
+> D
+
+V (G, D ) = Ex∼px [log( D(x, ˆx))] + Ez∼pz [log(1 − D(G(z)))] ,
+
+(1) where E is the expectation operator, ˆx the generated sample, 
+
+D(x, ˆx) the probability of ˆx belonging to the real x, z arandom noise input, and ˆx = G(z). The cross-entropy loss is commonly used as the optimization objective function for the generator and discriminator, respectively formulated as: 
+
+LG = − log D(G(z)) , (2) and 
+
+LD = − log D(x, ˆx) − log (1 − D(G(z))) . (3) 
+
+2) Variational Autoencoders: VAEs have also been applied to the generation of brain signals. Bethge et al. [48] intro-duced a conditional VAE that learns generative-discriminative representations from affective EEG data, enabling emotion-related signal generation. This framework can learn generative-discriminative representations from EEG signals and generate synthetic EEG signals that resemble real EEG data inputs, par-ticularly for reconstructing low-frequency signal components. Li et al. [49] developed a causal recurrent VAE to construct a Granger causal graph from EEG signals, illustrating the ability of VAEs to not only generate brain signals but also capture complex data dependencies. This capability is crucial for understanding the causal relationships across brain regions. Besides directly generating the raw signals, some works explored generating features in the latent space. Luo et al. 
+
+[7] introduced two types of VAEs, conditional VAE and selective VAE, to augment EEG differential entropy features for emotion recognition. Tian et al. [47] also proposed a dual encoder VAE-GAN incorporating spatiotemporal features to augment differential entropy features for emotion recognition. VAEs are latent variable generative models consisting of an encoder and a decoder. The encoder qθ (z|x) of VAE learns a lower-dimensional representation z of the raw trial x, known as the latent space, with variational parameters θ. The decoder 
+
+pφ(x|z) outputs the probability distribution of the raw trial based on the latent representation z, with its parameters φ.Deep latent variable models aim to maximize the probability of the raw trial x by 
+
+p(x) = 
+
+∫
+
+p(x|z)p(z)dx. (4) However, the marginal probability of data under the model is typically intractable due to this integral not having an analytic solution or efficient estimator. In practice, p(x|z) is nearly zero for most z and contributes almost nothing to estimate p(x).To overcome this, VAEs try to sample z by approximating the posterior pφ(z|x) with qθ (z|x). pφ(x) can be defined as: 
+
+log pφ(x)=Eqθ (z|x)
+
+[log pφ(x)] = Eqθ (z|x)
+
+log 
+
+[
+
+pφ(x, z )
+
+pφ(z|x)
+
+]
+
+=Eqθ (z|x)
+
+[
+
+log 
+
+[ pφ(x, z )
+
+qθ (z|x)
+
+]]
+
++ Eqθ (z|x)
+
+log 
+
+[
+
+qθ (z|x)
+
+pφ(z|x)
+
+] ,
+
+(5) where the first term is the evidence lower bound (ELBO), and the second term is Kullback-Leibler (KL) divergence 
+
+DKL 
+
+(qθ (z|x)‖pφ(z|x)) used to measure the discrepancy between two distributions. Thus, it can be rewritten as 
+
+log pφ(x) = ELBO + DKL 
+
+(qθ (z|x)‖pφ(z|x)) , (6) where the KL divergence is non-negative according to Jensen’s inequality. VAEs are well-suited for probabilistic modeling and gener-ating smooth, continuous latent spaces. Their ability to model complex data distributions makes them ideal for generating brain signals conditioned on specific neural activities, such as emotion or cognitive tasks. Although VAEs can offer valuable insights into latent representations, they may struggle with generating highly detailed samples compared to GANs, especially when it comes to capturing fine-grained temporal or spatial features in brain signals. 
+
+3) Autoregressive Models: AMs, such as generative pre-trained transformers (GPT) that are decoder-only transformers, are designed to generate data sequentially. AMs handle long-range dependencies within brain signals, facilitating more accurate signal generation. Cui et al. [54] introduced a model comprising an EEG encoder and a GPT pre-trained on a large-scale dataset to reconstruct masked EEG trials, enabling realistic EEG generation by decoding temporal dependencies of EEG signals. Bird et al. [55] employed multiple GPT-2 IEEE TRANSACTIONS ON ... 7
+
+models to generate synthetic EEG signals, enhancing classifi-cation performance for unseen subjects. Similarly, Niu et al. 
+
+[57] used GPT to generate synthetic EEG signals for epileptic seizure prediction, aiding the early detection of abnormal brain activity. In AMs, the model generates each trial conditioning on all previous ones: 
+
+p(x) = 
+
+> T
+
+∏
+
+> t=1
+
+p (xi | x1, x 2, . . . , x t−1; θ) , (7) where p(xt|x1, x 2, ..., x t−1; θ) is the probability of the current trial xt conditioned on all preceding trials, θ the model parameters, and T the total number of trials. The training objective of AMs is to minimize the negative log-likelihood loss: 
+
+LAM = −
+
+> T
+
+∑
+
+> t=1
+
+log p (xt | x1, x 2, . . . , x t−1; θ) . (8) AMs excel in capturing long-term temporal dependencies, making them suited for understanding the sequential patterns in brain signals. However, AMs can be computationally inten-sive and often require large-scale training datasets to perform optimally. 
+
+4) Denoising Diffusion Probabilistic Models: DDPMs have emerged as a potential tool for identifying nuanced patterns within complex, high-dimensional EEG signals. Tosato et al. 
+
+[85] applied DDPMs to generate synthetic EEG data in both time and frequency domains, independent of channel count. This ability to handle EEG data across different domains enhances the flexibility and robustness of DDPMs for real-world BCIs. Further, DDPMs have been employed for cross-modal generation, where EEG signals are used to reconstruct high-quality images [86]. Kim et al. [68] utilized DDPMs in conjunction with the conditional autoencoder to analyze speech-related EEG signals. DDPMs generate synthetic data by progressively denoising random noise in a sequence of steps, conditioning each step on previous iterations [26]. In DDPM, a sequence of noise coefficients β1, β 2, ..., β T for Markov transition kernels is cho-sen, following patterns of constant, linear, or cosine schedules to generate high-quality samples. Following [26], the forward diffusion steps are defined as: 
+
+Ft (xt−1, β t) = q (xt | xt−1
+
+) = N
+
+(
+
+xt; √1 − βtxt−1, β tI
+
+)
+
+,
+
+(9) where Ft is the forward transition kernels at time t. With the composition of forward transition kernels form x0 to xT ,the diffusion process adds Gaussian noises to brain signals by Markov kernel q(xt|xt−1):
+
+F
+
+(
+
+x0, {βi}Ti=1 
+
+)
+
+= q (x1: T | x0
+
+) =
+
+> T
+
+∏
+
+> t=1
+
+q (xt | xt−1
+
+) . (10) The reverse denoising step, with learnable Gaussian kernels optimized by φ, is formulated as: 
+
+Rt
+
+(xt, Σφ
+
+) = pφ
+
+(xt−1 | xt
+
+)
+
+= N (xt−1; μφ (xt, t ) , Σφ (xt, t )) , (11) where Rt is the reverse transition kernels at time t, μφ and 
+
+Σφ are learnable mean and variance of the reverse Gaussian kernel, and pφ the reverse step distribution. Reverse steps from 
+
+xT to x0 is 
+
+R (xT , Σφ
+
+) = pφ (x0: T ) = p (xT )
+
+> T
+
+∏
+
+> t=1
+
+pφ
+
+(xt−1 | xt
+
+) . (12) DDPMs also require significant computational resources and have not yet been as widely adopted as GANs or VAEs for generating brain signals. 
+
+D. Translation-Based Generation 
+
+Translation-based generation involves synthesizing data by integrating information from additional modalities, typically through cross-modal generative models. In BCIs, this strategy is crucial for bridging diverse data types, such as brain signals [87], text [88], speech [89], images [90], and other sensor data. Generative models serve as the foundation for translation-based generation, learning the distributions across modalities. Typical approaches can be divided into the joint and con-ditional latent space generative models. Both leverage latent spaces for cross-modal data generation, but they differ in how to construct and utilize the latent space, as shown in Fig. 6. 
+
+1) Joint Latent Space Generation: Joint latent space gen-eration aims to map multiple modalities into a shared latent space, where data from each modality are encoded into a unified lower-dimensional representation. The shared latent space captures the relationships and dependencies between modalities. For example, in the brain-to-image paradigm, sep-arate encoders EθB and EθI project brain signals and images into a common space z with reduced dimensionality such that 
+
+EθB (xB ), E θI (xI ) ∈ Rd, where xB and xI are the brain signal and image pair inputs. The training process typically involves a Gaussian distribution for regularization: 
+
+Ljoint 
+
+(
+
+(xB , x I ); EθB ; DφB ; EθI ; DφI
+
+)
+
+=
+
+EqθB (z|xB )
+
+[
+
+log pφB (xB |z)
+
+]
+
++ EqθI (z|xI )
+
+[
+
+log pφI (xI |z)
+
+]
+
+− DKL 
+
+(
+
+qθB (z|xB )‖p(z)
+
+)
+
+− DKL 
+
+(
+
+qθI (z|xI )‖p(z)
+
+)
+
+, (13) where q(z|x) is encoders’ approximate posterior distributions, 
+
+p(x|z) decoders’ prior likelihood distributions, p(z) the prior distribution over the latent space assumed to be a standard Gaussian distribution, and DKL (q‖p) the KL divergence that regularizes the latent distribution. 
+
+2) Conditional Latent Space Generation: In contrast, con-ditional latent space generation focuses on generating the tar-get modality based on a given input modality, without mapping both modalities into a shared latent space. This approach is useful when the target modality depends on specific conditions or context from the source modality. For example, an encoder 
+
+EθB maps a brain signal input to a latent space z, and the IEEE TRANSACTIONS ON ... 8
+
+> !"#$% &$'%#( )*+,-*" ./#'* 0%+,-*"
+> 1#$"*-.%234
+> ./#'* )*+,-*" !"#$% &$'%#( 0%+,-*"
+> )$54"$634$,% 7*'3(#"$8#4$,% 9#4*%4 &2#+*
+> ./#'* )*+,-*"
+> 1#$"*-: .%234
+> !"#$% &$'%#( 0%+,-*" )$54"$634$,% 7*'3(#"$8#4$,% 9#4*%4 &2#+*
+
+# !!! ""!
+
+# !!" """
+
+> &$/$(#"$4;:<#=$/$8#4$,% 1#$"*->34234
+
+# !!!!! """
+
+!"#$%&'(%)$%&*+(,)&-)$).(%#"$ /"$0#%#"$(1&'(%)$%&*+(,)&-)$).(%#"$  
+
+> Fig. 6. Two types of translation-based generation for brain signals, taking two modalities of image and brain signal as an example.
+
+image decoder DφI reconstructs the corresponding image. The training process is formulated as: 
+
+Lconditional 
+
+(
+
+(xB , x I ); EθB , D φI
+
+)
+
+=EqθB (z|xA)
+
+[
+
+log pφI (xI |z)
+
+]
+
+− DKL 
+
+(
+
+qθB (z|xB )‖p(z)
+
+)
+
+.
+
+(14) Conditional models have shown significant promise in appli-cations such as EEG signal reconstruction, brain-to-text gen-eration, and multimodal image generation [90]. For instance, brain signals can be conditioned on a specific task to generate corresponding visual representations in brain-to-image tasks. In EEG signal reconstruction, a model conditioned on aspecific cognitive state could generate synthetic EEG signals that closely match the brain’s activity. In multimodal image generation, brain signals condition the model to generate images corresponding to specific mental images or visual stimuli. Du et al. [87] proposed a brain-to-image translation framework that decodes features of brain data to reconstruct the perceived image. Despite promising developments in cross-modal genera-tion, several challenges remain. Training generative models with multiple modalities requires high-quality, well-aligned datasets, which are often hard to obtain, especially for brain signals. Additionally, models must address modal inconsis-tencies. In conclusion, translation-based generative models bridge brain signals with other modalities, facilitating effective multimodal interaction. However, achieving high-quality and contextually accurate cross-modal generation remains a key challenge. 
+
+E. Comparison of Generation Approaches 
+
+To summarize, Table IV presents a comparison of the four brain signal generation approaches, providing an overview of their strengths, limitations, and key challenges. III. B ENCHMARK EXPERIMENTS 
+
+This section details the datasets, experiments, and analyses. We benchmarked and fairly evaluated the popular brain signal generation approaches on four mainstream BCI paradigms across 11 public datasets. Code for all compared approaches is available on GitHub 1, serving as a benchmark codebase for brain signal generation. 
+
+A. Dataset 
+
+We conducted experiments on four BCI decoding tasks: MI, SSVEP, ESD, and AAD. Characteristics of 11 publicly available datasets are summarized in Table V. 
+
+1) MI Datasets: We adopted four publicly available MI datasets from the MOABB benchmark [91] and BCI compe-titions.  
+
+> •
+
+IV-2a [92]: Includes EEG recordings from nine partici-pants performing left/right hand MI tasks. Signals were collected using 22 channels at a sampling rate of 250 Hz. Only the first recording session was considered in our experiments.  
+
+> •
+
+Zhou2016 [93]: Contains MI trials from four subjects performing left/right hand imagery, recorded with 14 EEG channels at 250 Hz. Experiments were conducted using only the first session.  
+
+> •
+
+Blankertz2007 [94]: Derived from BCI Competition IV Dataset 1, comprising EEG recordings from seven sub-jects collected with 59 channels at 250 Hz. Two subjects performed left hand/right foot MI, while the remaining participants carried out left/right hand imagery tasks.  
+
+> •
+
+BNCI2014002 [95]: Contains EEG trials from 14 sub-jects, each completing eight runs of right hand and foot MI. Signals were recorded using 15 channels at 512 Hz. The first five training runs were used.  
+
+> •
+
+BNCI2015001 [96]: Contains EEG trials from 12 sub-jects, each completing two sessions of right hand and foot MI. Signals were recorded using 13 channels at 512 Hz. The first session was used. For the IV-2a, Zhou2016, BNCI2014002, and BNCI2015001 datasets, the standard preprocessing pipeline provided by MOABB was applied, including notch filtering                                                                                                                   
+
+> 1https://github.com/wzwvv/DG4BCI IEEE TRANSACTIONS ON ... 9
+> TABLE IV COMPARISON OF FOUR TYPES OF SYNTHETIC DATA GENERATION APPROACHES IN BCI S.
+> Type Strength Limitation Key Challenge
+> Knowledge-Based Generation Uses domain-specific knowledge Limited flexibility Incorporates more brain signal features
+> High interpretability Struggles with nonlinear data Ensures diversity of generated signals
+> Feature-Based Generation Generates diverse samples Lack of direct signal fidelity Maintains feature integrity
+> Useful for imbalanced data Overfits to the minority Enhances model robustness
+> Model-Based Generation Handles high-dimensional data Computationally expensive Manages model complexity
+> Flexible and adaptable Prone to mode collapse Efficient training
+> Translation-Based Generation Enables multimodal integration Complex to train and deploy Ensures accurate cross-modal alignment
+> Integrates more information Hard to align modalities Maintains cross-modal consistency
+> TABLE V SUMMARY OF THE FIVE MI DATASETS ,TWO SEIZURE DATASETS ,TWO SSVEP DATASETS ,AND TWO AAD DATASETS .
+> Paradigm Dataset Number of Number of Sampling Trial Length Number of Task Types
+> Subjects EEG Channels Rate (Hz) (seconds) Trials
+> MI
+> BNCI2014001 922 250 41,296 left/right hand
+> Zhou2016 414 250 5409 left/right hand
+> Blankertz2007 759 250 31,400 left/right hand or left hand/right foot
+> BNCI2014002 14 15 512 51,400 right hand/both feet
+> BNCI2015001 12 13 512 52,400 right hand/both feet
+> ESD CHSZ 27 19 500 or 1,000 421,237 normal/seizure
+> NICU 39 19 256 452,534 normal/seizure
+> SSVEP Nakanishi2015 10 8256 11,800 12 different stimuli
+> Benchmark 35 9250 18,400 40 different stimuli
+> AAD KUL 16 64 8,192 22,872 left/right attention track
+> DTU 18 64 512 22,940 left/right attention track
+
+and band-pass filtering. For the Blankertz2007 dataset, EEG signals were first band-pass filtered within 8-30 Hz. Trials in the interval of [0.5, 3.5] s after cue onset were extracted and downsampled to 250 Hz. Euclidean alignment (EA) [97], an effective unsupervised EEG alignment method was applied. In the cross-subject setting, the EA reference matrix of the target subject was updated online as new test trials became available, as in [98]. 
+
+2) SSVEP Datasets: Two publicly collected SSVEP datasets are evaluated.  
+
+> •
+
+Nakanishi2015 [99]: Comprises EEG recordings from 10 subjects under a 12-target frequency-coded visual stim-ulation paradigm, with stimulation frequencies ranging from 9.25 Hz to 14.75 Hz at 0.5 Hz intervals. EEG signals were acquired from eight occipital electrodes using a BioSemi ActiveTwo system. Each subject completed 15 blocks of trials, with a 4-second trial length. The data were originally sampled at 2048 Hz and downsampled to 256 Hz for analysis. Nine posterior electrodes (Pz, PO3, PO5, PO4, PO6, POz, O1, Oz, and O2) were selected following [100].  
+
+> •
+
+Benchmark [101]: Consists of 64-channel EEG record-ings from 35 healthy subjects. The experiment employed a cue-guided virtual keyboard with 40 visual targets en-coded using a joint frequency–phase modulation scheme. Stimulation frequencies ranged from 8.0 Hz to 15.8 Hz with a 0.2 Hz step and a fixed phase difference of 
+
+0.5π. Each subject completed six blocks of trials, with a 5-second trial length. EEG signals were recorded at 1000 Hz using a SynAmps2 system and subsequently downsampled to 250 Hz. 
+
+3) ESD Datasets: Two clinical seizure detection datasets are evaluated. EEG signals in both datasets were recorded with 19 unipolar electrodes placed according to the international 10–20 system, and 18 bipolar channels were derived from them. Each bipolar channel was preprocessed using a 50 Hz notch filter and a 0.5-50 Hz band-pass filter, after which the continuous signals were segmented into 4-second trials.  
+
+> •
+
+CHSZ [102]: Comprises EEG recordings from 27 pe-diatric patients (aged 3 months to 10 years), acquired using 19 unipolar channels at sampling rates of 500 or 1000 Hz. All seizure events were annotated by certified neurologists, with precise labeling of seizure onset and offset.  
+
+> •
+
+NICU [103]: A large-scale neonatal EEG corpus collected in the neonatal intensive care unit of Helsinki University Hospital. EEG signals were recorded at 256 Hz using the same electrode configuration as CHSZ. Annotations were provided independently by three clinical experts with a temporal resolution of 1s. For our experiments, we adopt a consensus subset consisting of 39 neonates with confirmed seizure activity. 
+
+4) AAD Datasets: We further evaluate on two widely used public AAD datasets, namely the KUL and DTU datasets. Both datasets record EEG responses elicited in multi-speaker listening scenarios, where subjects are required to selectively attend to one target speaker. IEEE TRANSACTIONS ON ... 10  
+
+> •
+
+KUL [104]: Consists of 64-channel EEG recordings from 16 normal-hearing participants, acquired at a sampling rate of 8192 Hz. During the collection, subjects listened to mixtures of two concurrent speech streams and were instructed to attend to one of them. Two spatial pre-sentation conditions were included, a dichotic condition with one speaker per ear and a spatialized condition using head-related transfer functions to simulate sound sources located at ±90 ◦. Each participant completed eight trials, each lasting approximately six minutes. The EEG trials were further high-pass filtered at 0.5 Hz and downsampled to 128 Hz.  
+
+> •
+
+DTU [105]: 64-channel EEG data were collected from 18 normal-hearing subjects at a sampling rate of 512 Hz. The experimental paradigm similarly involved selective attention to one of two simultaneous speakers presented at ±60 ◦ relative to the listener. Speech stimuli were drawn from Danish audiobooks narrated by both male and female speakers and delivered through ER-2 earphones at 60 dB. Each subject participated in 60 trials with a 50-second trial length. For KUL, EEG trials were high-pass filtered at 0.5 Hz and downsampled to 128 Hz. Artifacts were removed using the MWF filtering method [106]. For DTU, The signals were high-pass filtered at 0.1 Hz, notch filtered at 50 Hz, and then downsampled to 64 Hz. For both datasets, signals were segmented into 2-second trials. 
+
+B. Generation Algorithms 
+
+We benchmarked 8 representative knowledge-based EEG data generation approaches introduced in Table II, including Flip, Noise, Scale, Fshift, FSurr, FComb, HS, CR, and DW-Taug. Besides, 9 EEG generation models are benchmarked:  
+
+> •
+
+Vanilla CNN: The generator comprises a shallow CNN architecture coupled with its inverse counterpart for EEG synthesis, and is trained with a combination of classifi-cation and ℓ1 losses.  
+
+> •
+
+Vanilla CNN-Trans.: Building upon the vanilla CNN baseline, the generator integrates CNN blocks with a Transformer encoder [107].  
+
+> •
+
+Vanilla CNN-LSTM: Extending the vanilla CNN ar-chitecture, the generator incorporates an LSTM layer alongside CNN modules, as in [31].  
+
+> •
+
+GAN-based CNN: In this adversarial variant, the back-bone includes a discriminator and is optimized using a classification loss, an ℓ1 loss, and the standard GAN discriminative loss [78].  
+
+> •
+
+GAN-based CNN-Trans.: The generator combines CNN blocks with a Transformer encoder [107], and is trained with classification, ℓ1, and discriminative losses [78].  
+
+> •
+
+GAN-based CNN-LSTM: The generator merges CNN modules with an LSTM layer [31], optimized via classi-fication, ℓ1, and adversarial losses [78].  
+
+> •
+
+VAE-based CNN: In addition to the classification and 
+
+ℓ1 losses, a latent alignment loss between the latent representations of real and generated data is introduced to guide training, following [52].  
+
+> •
+
+VAE-based CNN-Trans.: The generator integrates CNN blocks with a Transformer encoder [107] and is optimized using classification, ℓ1, and latent alignment losses [52].  
+
+> •
+
+VAE-based CNN-LSTM: The generator combines CNN blocks with an LSTM layer [31], trained with classifica-tion, ℓ1, and latent alignment losses [52]. 
+
+C. Decoding Algorithms 
+
+Different types of EEG decoding algorithms, including traditional machine learning approaches and deep neural net-works, were benchmarked in the experiments:  
+
+> •
+
+EEGNet [108] is a compact CNN tailored for EEG classification. It includes two key convolutional blocks: a temporal convolution for capturing frequency-specific features, followed by a depthwise spatial convolution. A separable convolution and subsequent pointwise convolu-tion are designed to enhance spatio-temporal representa-tions.  
+
+> •
+
+SCNN [109] is a shallow CNN inspired by the filter bank common spatial pattern, utilizing temporal and spatial convolutions in two stages to efficiently extract discriminative EEG features.  
+
+> •
+
+DCNN [109] is a deeper version of SCNN with larger parameters, consisting of four convolutional blocks with max pooling layers.  
+
+> •
+
+IFNet [110] extends the spectral-spatial approach by decomposing EEG into multiple frequency bands (e.g., 4-16 Hz, 16-40 Hz). For each band, it applies 1D spatial and temporal convolutions, followed by feature concatenation and a fully connected layer for classification.  
+
+> •
+
+EEGWaveNet [111] introduces a multi-scale temporal CNN framework that employs channel-wise depthwise filters to learn representations at multiple temporal reso-lutions from each EEG channel independently.  
+
+> •
+
+Filter bank canonical correlation analysis (FBCCA) [112] is a widely used SSVEP decoding approach that extends standard canonical correlation analysis [113] by incor-porating a filter bank. For both datasets, a filter bank composed of 3 sub-bands was used.  
+
+> •
+
+CCNN [100] is designed with convolutional layers for spatial and spectral feature extraction, followed by fully connected layers for classification. By explicitly modeling both magnitude and phase information, CCNN provides an effective baseline for SSVEP recognition.  
+
+> •
+
+SSVEPNet [114] combines one-dimensional CNN layers with an LSTM module for SSVEP detection. CNN layers extract local temporal features, and the LSTM layer captures long-range temporal dependencies.  
+
+> •
+
+DARNet [115] is a dual attention refinement network for the AAD task, consisting of the spatiotemporal construc-tion module, dual attention refinement module, feature fusion, and classifier module.  
+
+> •
+
+DBPNet [116] a dual-branch parallel network with temporal-frequency fusion for AAD, which consists of the temporal attentive branch and the frequency residual branch. IEEE TRANSACTIONS ON ... 11  
+
+> •
+
+DBConformer [107] is a dual-branch convolutional Transformer model for EEG decoding, comprising a temporal branch T-Conformer and a spatial branch S-Conformer to simultaneously learn the temporal dynam-ics and spatial patterns of EEG data. 
+
+D. Evaluation Settings 1) Evaluation Scenarios: To evaluate the performance of generation approaches under different scenarios, we conducted experiments under the within-subject and cross-subject set-tings, as in [107], [117]. The cross-subject scenario evaluates the generalization performance of each approach, while the within-subject scenario mimics real-time deployment. Specif-ically, the MI and ESD experiments were conducted under a cross-subject setting, where EEG trials from a single subject were held out as the test set and trials from all remaining subjects were combined for training. SSVEP and AAD experi-ments were under the within-subject setting. A 5-fold or 6-fold cross-validation was performed on SSVEP, with the dataset divided chronologically into 5 or 6 equal parts, each with balanced classes. For the Nakanishi2015 dataset, one fold was used for training and four for testing in each iteration when applying knowledge-based generation approaches. In contrast, four folds were used for training and one for testing when applying the model-based generation, as generative models require more training data. For the Benchmark dataset, five folds were used for training and one fold for testing, since the trial number per class is 6. For AAD, trials from each subject were split according to recording time. The first 90% of trials were used for training, and the remaining 10% for testing. 
+
+2) Evaluation Metrics: Accuracy was used to evaluate the performance on MI, SSVEP, and AAD paradigms. To evaluate the classification performance on class-imbalanced seizure datasets, the balanced classification accuracy (BCA), defined as the average of recall obtained on each class, was calculated in the ESD paradigm. 
+
+E. Implementation Details 1) Training Settings: For all paradigms, experiments were repeated five times with a seed list [1, 2, 3, 4, 5], and the average results were reported. For MI classification, models were trained for 100 epochs using the Adam optimizer with learning rate 1×10 −3. Batch sizes were set to 32 for baselines and 64 for data generation approaches. For ESD, the training epoch 100, learning rate 10 −3, and batch size 256 were used for both datasets and both backbone nets. For SSVEP detection, the batch size was set to 36, the training epoch was 300, and the learning rate was 10 −3. Weight decay with a coefficient of 10 −4 was applied to mitigate overfitting. For AAD, batch size 32 , training epoch 200 using early stopping with patience 10, learning rate 5 × 10 −4, and weight decay with a coefficient of 3 × 10 −4 were applied on all backbones. 
+
+2) Generative Models Settings: For model-based genera-tion, the experiments consisted of two stages. The generative models (nine variants in total) were first pretrained using the training data to learn the underlying distribution of brain sig-nals. Then, the generated signals were concatenated with the original training signals to train downstream classifiers, whose performance was evaluated on the held-out test data. Different objective functions were used for optimization. For the vanilla models, an ℓ1 reconstruction loss was used to constrain the generated signals. For GAN-based models, the adversarial loss was introduced, where a discriminator was trained to distin-guish real and generated samples, and a domain classifier was employed. For VAE-based models, the standard variational objective was adopted with the KL divergence constraining the latent distribution to match a standard normal distribution. The trade-off parameter between the ℓ1 loss and alignment loss was 1 for both GAN-based and VAE-based models. 
+
+3) Parameter Settings: The noise rate was set to 2 for Noise, the scaling rate was set to 0.05 for Scale, and the frequency scaling rate was 0.2 for FShift, following [21]. For FSurr, the probability was 1, and the phase noise magnitude was 0.5, following [13]. For DWTaug, the number of decom-position levels was set to 2, as in [9]. Note that Flip, HS, and CR do not require any hyperparameters. 
+
+F. Main Results 1) Results on MI: To evaluate the effectiveness of knowledge-based generation approaches, we compared eight representative strategies under a cross-subject setting on five MI datasets. Specifically, five popular decoding models were used as backbones: the commonly used SCNN, DCNN, EEG-Net, IFNet, and the CNN-Transformer hybrid model DBCon-former, according to [118]. Results are presented in Table VI. Observe that:  
+
+> •
+
+Overall, most generation strategies improved the None baseline, though their effectiveness varied across datasets and backbones. Among them, DWTaug achieved the best average performance for four out of five backbones and yielded the highest overall average accuracy, improving the average accuracy of SCNN from 72.41% to 76.30% and DCNN from 73.54% to 77.21%. This indicates that multi-resolution signal decomposition and recombination in the wavelet domain can effectively enrich discrimina-tive patterns in MI signals.  
+
+> •
+
+Regarding backbone networks, DBConformer consis-tently achieved the highest accuracies across datasets, reaching the best overall average performance (79.50%). Compared with CNN-based models, the Transformer-based architecture better captures long-range temporal dependencies in EEG signals, leading to more robust de-coding performance. The improvements brought by data generation were also more stable on stronger backbones such as IFNet and DBConformer. 
+
+2) Results on ESD: Classification results of two seizure datasets are shown in Table VII. Observe that:  
+
+> •
+
+In contrast to the MI paradigm, not all data generation strategies improved performance for ESD, and several approaches even degraded the baseline results. This sug-gests that seizure patterns are relatively sensitive to signal distortions introduced by naive augmentations such as flipping or heavy perturbations. In particular, HS and Flip often reduced the classification accuracy, indicating IEEE TRANSACTIONS ON ... 12 
+
+TABLE VI AVERAGE CLASSIFICATION ACCURACIES (%) ON FIVE MI DATASETS WITH FIVE DECODING MODELS UNDER THE CROSS -DATASET SETTING . T HE BEST AVERAGE PERFORMANCE OF EACH NETWORK IS MARKED IN BOLD , AND THE SECOND BEST BY AN UNDERLINE .
+
+Backbone Dataset None Flip Noise Scale FShift FSurr HS CR DWTaug 
+
+SCNN 
+
+IV-2a 72.22 ±1.03 75.10 ±0.95 74.44 ±0.74 74.39 ±0.51 74.95 ±0.95 65.92 ±1.24 73.37 ±1.05 74.76 ±1.10 75.56 ±0.93 
+
+Zhou2016 81.97 ±1.63 81.82 ±0.74 82.62 ±1.20 83.67 ±0.91 81.67 ±0.61 63.04 ±1.20 81.57 ±0.58 81.87 ±0.78 84.92 ±1.32 
+
+Blankertz2007 70.04 ±0.79 74.10 ±0.90 73.59 ±0.90 71.96 ±0.87 73.57 ±0.44 61.51 ±0.88 73.38 ±0.63 73.89 ±0.66 74.69 ±1.17 
+
+BNCI2014002 68.13 ±0.74 72.10 ±0.37 72.97 ±0.41 72.36 ±0.74 72.28 ±0.70 66.74 ±1.14 71.72 ±0.67 72.43 ±0.45 72.21 ±1.01 
+
+BNCI2015001 69.71 ±0.67 69.80 ±0.89 69.31 ±1.00 68.98 ±0.82 69.35 ±0.90 68.60 ±0.65 68.32 ±0.96 69.50 ±0.73 74.11 ±0.29 
+
+Average 72.41 74.58 74.59 74.27 74.36 65.16 73.67 74.49 76.30 
+
+DCNN 
+
+IV-2a 73.21 ±1.79 76.13 ±0.87 72.66 ±0.82 76.13 ±1.00 76.42 ±1.24 62.29 ±0.66 50.05 ±1.48 77.80 ±0.45 73.92 ±0.81 
+
+Zhou2016 82.91 ±0.85 84.01 ±1.21 83.27 ±0.44 83.22 ±1.30 83.69 ±1.13 78.76 ±1.73 53.88 ±1.43 84.22 ±1.26 85.55 ±1.10 
+
+Blankertz2007 71.44 ±0.78 71.31 ±0.76 71.06 ±1.32 71.80 ±0.46 70.87 ±0.52 67.39 ±0.76 50.72 ±0.42 72.10 ±1.50 72.32 ±0.62 
+
+BNCI2014002 69.74 ±0.94 74.76 ±0.97 74.74 ±1.12 74.98 ±0.80 75.14 ±0.87 72.23 ±0.46 54.41 ±2.60 74.35 ±1.20 77.54 ±0.75 
+
+BNCI2015001 70.42 ±0.68 73.65 ±0.82 74.20 ±0.41 74.32 ±0.86 74.12 ±0.75 73.86 ±0.62 61.78 ±2.59 73.93 ±0.35 76.71 ±0.45 
+
+Average 73.54 75.97 75.19 76.09 76.05 70.91 54.17 76.48 77.21 
+
+EEGNet 
+
+IV-2a 73.64 ±1.14 73.72 ±1.14 73.98 ±1.06 73.07 ±0.84 73.21 ±0.76 74.38 ±0.89 71.58 ±0.88 75.77 ±1.58 75.35 ±1.39 
+
+Zhou2016 83.22 ±1.73 81.19 ±2.39 84.16 ±0.96 83.99 ±0.83 82.94 ±1.99 83.82 ±1.18 80.18 ±2.52 84.82 ±1.36 85.00 ±1.17 
+
+Blankertz2007 71.17 ±0.87 69.86 ±1.49 71.87 ±0.55 71.70 ±0.73 70.96 ±0.82 69.82 ±0.56 68.31 ±2.68 74.97 ±0.96 72.17 ±1.37 
+
+BNCI2014002 72.86 ±0.38 73.75 ±1.31 72.49 ±0.69 72.59 ±0.68 73.51 ±1.07 72.21 ±0.97 69.99 ±2.37 72.43 ±0.70 74.13 ±0.83 
+
+BNCI2015001 71.89 ±0.70 71.96 ±1.11 72.28 ±1.02 71.73 ±1.30 73.11 ±1.31 73.21 ±1.20 70.91 ±2.17 72.21 ±0.93 76.92 ±0.59 
+
+Average 74.56 74.10 74.96 74.62 74.75 74.69 72.19 76.04 76.71 
+
+IFNet 
+
+IV-2a 74.52 ±0.75 74.81 ±1.02 75.82 ±0.41 75.45 ±0.46 75.47 ±0.63 74.98 ±0.72 73.56 ±1.10 74.29 ±0.59 74.65 ±0.54 
+
+Zhou2016 86.21 ±0.99 85.71 ±0.41 85.66 ±0.57 86.17 ±0.49 85.91 ±0.69 79.46 ±1.33 85.38 ±0.95 86.05 ±0.62 87.03 ±0.46 
+
+Blankertz2007 73.43 ±1.06 76.16 ±0.43 76.16 ±0.37 75.83 ±0.52 76.00 ±0.74 75.09 ±0.86 72.99 ±1.25 79.36 ±1.33 76.26 ±0.92 
+
+BNCI2014002 73.90 ±0.65 75.33 ±1.02 75.93 ±0.69 75.96 ±0.57 75.83 ±1.13 75.14 ±0.71 75.89 ±0.64 71.44 ±0.45 76.00 ±0.79 
+
+BNCI2015001 72.73 ±1.17 72.96 ±0.60 72.43 ±0.85 72.54 ±0.73 73.13 ±0.53 72.30 ±0.43 71.32 ±1.87 70.83 ±0.76 78.16 ±0.52 
+
+Average 76.16 76.99 77.20 77.19 77.27 75.39 75.83 76.39 78.42 
+
+DBConformer 
+
+IV-2a 77.67 ±0.61 76.22 ±1.19 76.54 ±0.82 76.27 ±0.43 76.03 ±1.06 74.52 ±1.48 73.01 ±0.83 76.06 ±0.46 77.29 ±1.35 
+
+Zhou2016 85.37 ±0.94 85.54 ±1.10 85.58 ±0.59 86.53 ±0.73 85.82 ±0.92 81.92 ±1.65 86.07 ±0.75 86.19 ±0.85 86.73 ±0.77 
+
+Blankertz2007 76.33 ±0.71 76.44 ±1.26 76.5 ±1.11 76.09 ±1.01 76.29 ±1.10 77.44 ±1.12 75.73 ±0.85 78.99 ±0.65 76.84 ±0.93 
+
+BNCI2014002 77.17 ±0.78 76.96 ±0.12 77.01 ±0.86 77.90 ±0.82 77.24 ±0.44 77.64 ±0.94 73.04 ±0.96 73.97 ±0.75 78.46 ±0.56 
+
+BNCI2015001 75.90 ±0.90 75.45 ±0.54 76.00 ±0.89 75.45 ±0.30 75.17 ±0.60 73.46 ±1.13 73.38 ±1.07 75.21 ±0.82 78.17 ±0.71 
+
+Average 78.49 78.12 78.33 78.45 78.11 77.00 76.25 78.08 79.50 
+
+TABLE VII AVERAGE CLASSIFICATION BCA S (%) ON TWO SEIZURE DATASETS WITH EEGN ET AND EEGW AVE NET MODELS UNDER THE CROSS -SUBJECT SETTING .THE BEST AVERAGE PERFORMANCE OF EACH NETWORK IS MARKED IN BOLD , AND THE SECOND BEST BY AN UNDERLINE .
+
+Dataset Backbone None Flip Noise Scale FShift HS CR 
+
+CHSZ 
+
+EEGNet 81.92 ±0.76 79.46 ±0.78 80.63 ±0.81 81.74 ±0.31 80.43 ±0.93 80.40 ±1.19 82.77 ±0.40 
+
+EEGWaveNet 78.05 ±0.34 79.03 ±0.70 78.21 ±0.97 79.02 ±0.02 77.65 ±1.31 75.25 ±1.09 79.47 ±0.57 
+
+Average 79.99 79.25 79.42 80.38 79.04 77.83 81.12 
+
+NICU 
+
+EEGNet 61.22 ±0.54 60.43 ±0.24 58.88 ±0.29 58.69 ±0.43 58.79 ±0.51 57.17 ±0.46 62.03 ±0.40 
+
+EEGWaveNet 62.86 ±0.68 61.17 ±0.47 62.88 ±0.50 65.12 ±0.71 63.38 ±0.53 63.39 ±0.23 66.04 ±0.16 
+
+Average 62.04 60.80 60.88 61.91 61.09 60.28 64.04 
+
+that preserving the intrinsic temporal structure of seizure signals is critical for reliable detection. 
+
+• CR consistently achieved the best performance across datasets and backbones, highlighting that leveraging spa-tial symmetry across hemispheres can effectively enrich spatial patterns in ESD. 
+
+3) Results on SSVEP: Classification results of two SSVEP datasets are presented in Table VIII. The traditional FBCCA and three deep models were utilized. Observe that: 
+
+• Overall, DWTaug consistently achieved the best or second-best performance across datasets and backbones, with improvements from 68.58% to 71.76% on Nakan-ishi2015 and from 71.07% to 74.69% on Benchmark. This suggests that enriching discriminative frequency components while preserving the intrinsic periodic struc-ture of SSVEP signals is critical for frequency-based decoding. 
+
+• In contrast, Flip caused a dramatic performance drop across all models. Mathematically, Flip multiplies the EEG signal by −1, which induces a global π phase shift without altering the amplitude spectrum. How-ever, SSVEP decoding fundamentally depends on phase synchronization between EEG responses and stimulus frequencies. The induced phase inversion disrupts this synchronization, thereby severely degrading the perfor-mance. IEEE TRANSACTIONS ON ... 13 
+
+TABLE VIII AVERAGE CLASSIFICATION ACCURACIES (%) ON TWO SSVEP DATASETS WITH FOUR DECODING BACKBONES UNDER THE WITHIN -SUBJECT SETTING .THE BEST AVERAGE PERFORMANCE OF EACH NETWORK IS MARKED IN BOLD , AND THE SECOND BEST BY AN UNDERLINE .
+
+Dataset Backbone None Flip Noise Scale FShift DWTaug 
+
+Nakanishi2015 
+
+FBCCA 68.06 ±0.68 7.90 ±0.57 67.99 ±0.69 68.06 ±0.68 60.68 ±2.21 72.86 ±3.37 
+
+EEGNet 45.69 ±3.71 35.90 ±1.13 49.88 ±2.79 49.14 ±2.82 48.63 ±3.94 51.93 ±2.70 
+
+CCNN 70.54 ±1.74 69.14 ±3.49 70.65 ±3.33 70.81 ±3.41 70.08 ±2.27 71.36 ±3.10 
+
+SSVEPNet 90.03 ±1.20 82.89 ±0.87 90.18 ±1.49 90.22 ±1.39 88.65 ±1.38 90.88 ±1.08 
+
+Average 68.58 ±1.83 48.96 ±1.52 69.68 ±2.08 69.56 ±2.08 67.01 ±2.45 71.76 ±2.56 
+
+Benchmark 
+
+FBCCA 63.08 ±1.06 2.38 ±0.42 62.83 ±1.53 63.08 ±1.06 54.20 ±3.07 71.42 ±0.66 
+
+EEGNet 61.76 ±0.75 30.52 ±1.79 62.14 ±1.14 62.41 ±1.04 56.35 ±1.38 62.17 ±0.63 
+
+CCNN 71.43 ±1.32 70.17 ±1.28 74.26 ±1.67 74.40 ±1.65 75.05 ±1.31 75.70 ±1.72 
+
+SSVEPNet 88.04 ±1.75 83.52 ±1.51 87.22 ±3.58 90.15 ±2.14 85.73 ±2.42 89.48 ±0.79 
+
+Average 71.07 ±1.22 46.65 ±1.25 71.61 ±1.98 72.51 ±1.47 67.83 ±2.05 74.69 ±0.95 
+
+TABLE IX AVERAGE CLASSIFICATION ACCURACIES (%) ON TWO AAD DATASETS WITH IFN ET , DBC ONFORMER , AND DARN ET MODELS UNDER THE WITHIN -SUBJECT SETTING . T HE BEST AVERAGE PERFORMANCE OF EACH NETWORK IS MARKED IN BOLD , AND THE SECOND BEST BY AN UNDERLINE .
+
+Dataset Backbone None Flip Noise Scale FShift FSurr CR DWTaug 
+
+KUL 
+
+IFNet 90.46 ±0.25 84.76 ±2.13 90.73 ±0.36 90.92 ±0.27 92.77 ±0.49 91.43 ±0.30 91.17 ±0.46 91.39 ±0.19 
+
+DBConformer 84.56 ±0.36 84.26 ±1.12 85.20 ±0.66 85.38 ±0.94 88.56 ±0.34 85.05 ±0.36 85.63 ±0.43 86.35 ±0.66 
+
+DARNet 89.60 ±0.72 93.58 ±0.30 89.81 ±0.43 89.85 ±0.30 90.80 ±0.45 89.89 ±0.38 89.67 ±0.59 90.45 ±0.45 
+
+Average 88.21 87.53 88.58 88.72 90.71 88.79 88.82 89.40 
+
+DTU 
+
+IFNet 82.25 ±0.75 76.77 ±0.63 81.98 ±0.54 82.48 ±0.48 83.09 ±0.45 83.32 ±0.39 80.30 ±0.32 82.50 ±0.34 
+
+DBConformer 80.42 ±0.32 79.93 ±0.81 80.74 ±0.68 80.98 ±0.55 80.87 ±0.29 80.98 ±0.20 79.47 ±0.86 81.38 ±0.60 
+
+DARNet 81.35 ±0.47 84.53 ±0.37 81.29 ±0.30 81.08 ±0.32 81.36 ±0.34 81.01 ±0.50 81.29 ±0.39 81.31 ±0.35 
+
+Average 81.34 80.41 81.34 81.51 81.77 81.77 80.35 81.73 
+
+4) Results on AAD: Classification results of two AAD datasets are presented in Table IX. Observe that:  
+
+> •
+
+Frequency domain generation strategies were generally effective for AAD. FShift achieved the best overall av-erage performance on both datasets, and DWTaug the second-best. This suggests that moderate perturbations in the frequency domain can enhance variability in neural tracking patterns, which is critical for AAD.  
+
+> •
+
+Interestingly, Flip combined with DARNet achieved the highest accuracy on both datasets. Since DARNet em-ploys a dual attention refinement mechanism to model spatiotemporal dependencies, polarity inversion does not alter the underlying correlation structure. This suggests that Flip can serve as a semantically invariant trans-formation for attention decoding while improving the robustness of feature learning.  
+
+> •
+
+Most generation strategies exhibited clear backbone de-pendency, producing noticeable gains on some decoders while yielding marginal or even negative effects on oth-ers. This suggests that the effectiveness of data generation is closely related to how different models extract features from brain signals. 
+
+5) Results on Generative Models: To investigate the effec-tiveness of generative models for brain data generation, we evaluated nine models covering three generative paradigms and three generator architectures. Table X reports the average classification accuracies on two SSVEP datasets under the within-subject setting. Observe that:  
+
+> •
+
+Overall, incorporating generative models improved de-coding performance compared with the None baseline. On the Nakanishi2015 dataset, the GAN-based model with a CNN-Transformer generator achieved an average improvement of 1.93% across four base classifiers. The gain became pronounced on the more challenging Bench-mark dataset with 40 targets, where the average accuracy increased by 5.35%.  
+
+> •
+
+We compared three types of generative models: vanilla reconstruction models, GAN-based models, and VAE-based models. Among them, GAN-based generators con-sistently achieved the best performance on both datasets, outperforming the vanilla and VAE variants. This sug-gested that adversarial learning can help the generator better approximate the underlying EEG distribution, lead-ing to more informative synthetic samples. In contrast, VAE-based models provided only marginal improvements over vanilla generators, possibly due to the tendency of variational models to produce over-smoothed signals.  
+
+> •
+
+We further analyzed the influence of generator archi-tectures, including CNN, CNN-Transformer, and CNN-LSTM. In most cases, incorporating temporal modeling modules improved the performance. CNN-Trans. design achieved the best average results in several configurations, suggesting that self-attention mechanisms effectively cap-ture long-range temporal dependencies and highlighting the importance of temporal modeling when designing generative models. IEEE TRANSACTIONS ON ... 14 
+
+TABLE X AVERAGE CLASSIFICATION ACCURACIES (%) ON TWO SSVEP DATASETS WITH FOUR BASE CLASSIFIERS UNDER THE WITHIN -SUBJECT SETTING ,
+
+> COMPARING NINE GENERATIVE MODELS
+
+. T HE BEST AVERAGE PERFORMANCE OF EACH NETWORK IS MARKED IN BOLD , AND THE SECOND BEST BY AN UNDERLINE .
+
+Dataset Backbone None Vanilla GAN VAE 
+
+CNN CNN-Trans. CNN-LSTM CNN CNN-Trans. CNN-LSTM CNN CNN-Trans. CNN-LSTM 
+
+Nakanishi2015 
+
+FBCCA 79.50 ±4.0 79.44 ±4.01 79.50 ±4.2 79.78 ±4.3 86.06 ±4.2 86.33 ±3.0 85.94 ±3.4 79.50 ±4.1 79.61 ±4.2 79.72 ±4.4
+
+EEGNet 90.50 ±3.9 87.56 ±2.4 90.67 ±2.4 88.00 ±2.2 89.22 ±4.0 89.83 ±1.7 90.39 ±2.1 88.17 ±2.9 90.61 ±2.0 89.61 ±1.2
+
+CCNN 91.33 ±2.6 90.00 ±4.5 91.17 ±2.6 89.78 ±2.7 92.50 ±3.4 92.83 ±2.6 92.83 ±2.6 90.00 ±4.5 91.11 ±2.8 89.83 ±2.6
+
+SSVEPNet 97.17 ±0.7 97.33 ±1.3 96.61 ±1.3 96.89 ±0.6 97.06 ±1.4 97.22 ±1.5 97.06 ±1.0 97.22 ±1.4 97.22 ±1.0 97.17 ±1.3
+
+Average 89.63 88.58 89.49 88.61 91.21 91.55 91.56 88.72 89.64 89.08 
+
+Benchmark 
+
+FBCCA 63.08 ±0.9 72.12 ±0.8 72.20 ±0.9 72.08 ±0.9 77.68 ±1.1 78.54 ±1.4 77.96 ±1.0 72.19 ±0.8 72.13 ±0.9 72.08 ±1.0
+
+EEGNet 61.72 ±1.8 63.44 ±0.9 62.90 ±1.8 62.01 ±2.0 66.53 ±1.6 66.79 ±1.1 66.72 ±2.0 63.96 ±0.9 62.63 ±1.8 61.73 ±2.0
+
+CCNN 71.43 ±1.1 68.94 ±0.6 69.27 ±1.4 69.33 ±0.5 74.38 ±1.3 75.15 ±1.4 75.37 ±1.3 68.90 ±0.7 69.27 ±1.4 69.42 ±0.5
+
+SSVEPNet 88.04 ±0.8 85.37 ±0.9 85.53 ±1.5 84.96 ±1.4 84.92 ±1.4 85.20 ±1.1 85.29 ±1.1 84.60 ±0.8 85.30 ±0.9 84.25 ±1.4
+
+Average 71.07 72.47 72.48 72.10 75.88 76.42 76.34 72.41 72.33 71.87 
+
+IV. S YNTHETIC DATA EVALUATION 
+
+The evaluation of generated data is pivotal for data-centric artificial intelligence. A well-defined and scientifically grounded evaluation framework is essential for guiding data generation and utilization [119]. Giuffre et al. [120] examined synthetic data applications in healthcare, highlighting concerns related to bias, quality, and privacy. Yan et al. [121] proposed a systematic framework for evaluating synthetic electronic health records based on utility and privacy metrics. Tpsato 
+
+et al. [85] conducted both qualitative and quantitative assess-ments of synthetic EEG data in comparison to real recordings. Additionally, Long et al. [119] evaluated synthetic data based on fidelity, diversity, and downstream task performance. This section introduces an evaluation framework to assess the synthetic data across six dimensions: reliability, quality, task performance, model performance, multimodal consis-tency, and privacy preservation ability, as shown in Fig. 7. 
+
+A. Data Reliability 
+
+Data reliability assesses whether generated signals faithfully reflect real brain activity in terms of authenticity, consistency, and interpretability. Several aspects are commonly considered:  
+
+> •
+
+Temporal Consistency : Measures such as dynamic time warping, mutual information, and autocorrelation assess whether generated signals preserve temporal structures and repetitive patterns observed in real EEG signals.  
+
+> •
+
+Spectral Consistency : Power spectral density and spectral similarity evaluate whether the generated signals maintain realistic frequency-domain characteristics.  
+
+> •
+
+Spatial Consistency : This examines whether generated data preserve correlations across channels and brain re-gions, reflecting plausible spatial brain activity patterns.  
+
+> •
+
+Feature Consistency : Metrics such as Frechet inception distance (FID) [122], maximum mean discrepancy, cosine similarity, and Jaccard similarity quantify similarity in feature representations between generated and real data.  
+
+> •
+
+Signal Quality : The quality of generated data is critical for ensuring that generated data mirrors real-world sig-nals. A higher signal-to-noise ratio indicates less interfer-ence, leading to more accurate data.  
+
+> •
+
+Physiological Interpretability : It reflects how well the sig-nals align with actual brain activity. This can be assessed by spectral analysis, synchrony analysis, preservation of task-related activity, and consistency between local and global brain activity patterns. 
+
+B. Data Quality 
+
+Selecting high-quality generated data requires evaluating three key aspects: diversity, representativeness, and model certainty:  
+
+> •
+
+Diversity : Measures whether generated samples cover the variability of the data distribution across subjects, cognitive states, and task conditions. Metrics such as the inception score (IS) [123] and entropy-based statistics are commonly used.  
+
+> •
+
+Representativeness : Assesses how well synthetic data re-flect the underlying distribution of real signals, including their temporal, spectral, and spatial characteristics.  
+
+> •
+
+Uncertainty : Reflects the model’s confidence in generated samples. Incorporating uncertainty helps identify reliable and informative samples for training. 
+
+C. Model Performance 
+
+Model evaluation focuses on the ability of generative models to produce useful data while maintaining stable and efficient training.  
+
+> •
+
+Training Stability : Evaluates issues such as instability or mode collapse during training, particularly for adversarial models.  
+
+> •
+
+Training Efficiency : Assesses computational cost and re-source consumption during model training.  
+
+> •
+
+Task Performance : Measures the effectiveness of gener-ated data in downstream BCI tasks using metrics such as accuracy, recall, and F 1 score.  
+
+> •
+
+Generalization Ability : Examines whether models trained with generated data generalize well across sessions or subjects. IEEE TRANSACTIONS ON ... 15 
+
+!"#$%&$'() *+$+ 
+
+,-.&/ 
+
+0+12 
+
+> 03+'#45'#&6$7#&  0&1$
+
+!"#"$%&'(")('(#* !"#"$+,"'(#* 
+
+!""#$%"&'(' !"#!$ %&& 
+
+)$*"+,+-.'('' !" !"#'" 
+
+/*"%00'('' !" !"#'$ 
+
+12'('' (!" (!"#)*#)+ 
+
+> !"#"$%&%"'()*%&%+,-./,0."&
+> !%0%+"$%&%"'()*%&%+,-./,0."&
+> !"#"$%&" !"#"$%&" '"(& '"(&
+> )$*((+,*-%./ )*#(0(&"#12
+> 30&40#+,*-%./ )*#(0(&"#12
+> 1-'(0%+
+
+! 
+
+> 2%0+.3(
+> !"#$%"&" '()(*"&(+$%"&"
+> !""#$%&'(%)*( +$'",-' !""#$%&'(.#&( )/&(+$'",-' +$'",-'(.#&( )/&(!""#$%&' 0/&(+$'",-'( /$(!""#$%&'
+> 5&"6( 7*((
+> 5&"6( 8119$%12
+> ,-./0&"&1-)"2$!(3-0*4(3 5*"1)1)6$51.(
+
+,7/$'8-.+/)9-#1'1$&#(" 
+
+:3';+("):3&1&3;+$'-#)<='/'$" 
+
+> '":6*$%./ )*#(0(&"#12
+
+3*.*$%4*5 
+
+> ;"%&9$"/ )*#(0(&"#12 56"1&$%./ )*#(0(&"#12
+> 56%&0%./ )*#(0(&"#12
+
+/%6 
+
+7
+
+> 7-#$8440*"49
+> <("$/=-"#&0>01%&0*#
+> :16;$8440*"49
+> '%(?/).%((0>01%&0*#
+> !"#$% &'#()*+*,-)*.(% /.'#0 12&%3-"4% 20-""*+*,-)*.(% /.'#0
+
+7
+
+7
+
+> 5#(#$-)#
+
+7
+
+7 
+
+> !"#$% &6 3-"4% 7-8#0
+> 9-:%;*<(-0 5#(#$-)#'%;*<(-0
+
+Fig. 7. Evaluation framework of generated data in BCIs, encompassing data reliability, quality, task performance, model performance, multimodal consistency, and privacy preservation ability. 
+
+D. Multimodal Consistency 
+
+For translation-based generation, consistency across modal-ities is essential.  
+
+> •
+
+Within-Modal Consistency : Evaluates similarity between generated signals and real data within the same modality in conditional latent space generation.  
+
+> •
+
+Cross-Modal Consistency : Measures the alignment be-tween latent representations of generated brain signals and other modalities in joint latent space generation. 
+
+E. Privacy Preservation Ability 
+
+Data privacy is pivotal and directly impacts the safety of healthcare and interactive BCIs. Generated brain signals should protect user privacy while maintaining utility.  
+
+> •
+
+Privacy Identification Protection : Evaluates whether gen-erated data can reveal user identity through privacy recog-nition models [124]. By reducing the effectiveness of pri-vacy recognition models during training, data generation can prevent the leakage of sensitive information.  
+
+> •
+
+Privacy Inference Protection : Assesses the risk of recon-structing sensitive information through inference attacks such as gradient inversion or attribute prediction. V. A PPLICATIONS OF SYNTHETIC DATA IN BCI S
+
+A. Enhancing Large Brain Model Training 
+
+With the rapid development of large language models and vision-language models, large-scale brain models have emerged as a new frontier in BCI research. An increasing number of large-scale brain models have been proposed for universal feature extraction. EEGPT [125] is a pre-trained transformer model with 10 million parameters. LaBraM [126] enables cross-dataset feature extraction with 5.8 million pa-rameters. CBraMod [127] adopts a criss-cross transformer backbone to model spatial and temporal dependencies with 4.1 million parameters. Beyond task-specific decoding paradigms, data generation is expected to play an increasingly important role in training large-scale brain models. These models aim to learn gen-eralizable neural representations from large-scale EEG data across subjects, tasks, and recording conditions [128]. How-ever, unlike text and vision domains with massive curated datasets, publicly available brain signals remain relatively limited, fragmented, and heterogeneous due to high acquisition costs, protocol variability, and privacy constraints [129]. In this context, data generation can expand the training data while preserving task-relevant information. Augmentation strategies based on signal processing and neurophysiological priors can also impose desirable invariances on learned representations. Specifically, brain signal generation can support the entire lifecycle of large-scale brain model development, including both pre-training and downstream fine-tuning:  
+
+> •
+
+Pre-Training : When incorporated into pre-training objec-tives, these transformations can help models disentangle stable neural dynamics from interference factors such as noise, subject variability, and recording artifacts, improv-ing robustness and cross-dataset transferability.  
+
+> •
+
+Fine-Tuning : Synthetic data are particularly beneficial IEEE TRANSACTIONS ON ... 16 
+
+when labeled data are scarce. During the adaptation of large pre-trained models to downstream tasks, additional generated data can compensate for the limited task-specific samples and improve generalization. 
+
+B. Improving Model Generalization Ability 
+
+Homogeneous generalization ensures robust model perfor-mance across variations in data distributions, while heteroge-neous generalization addresses the challenge of adapting to significantly different datasets or tasks, such as those arising from variations in data collection devices. Synthetic data facil-itates both types of generalization by simulating diverse brain states and cognitive tasks, enriching training datasets with improved robustness. Integrating synthetic data enables models to adapt more effectively to both similar and highly diverse environments. Approaches like cross-subject data generation [9] generate brain signals from both source and target subjects, reducing the gap for data generation under distribution shift. 
+
+C. Privacy Preservation 1) Secure Data Sharing: Sharing subjects’ raw brain data across institutions may expose sensitive personal informa-tion. Generated brain signals provide a potential solution by preserving neural activity patterns while masking individual traits. This enables data aggregation from multiple sources to construct larger training sets without revealing private health information or mental states. 
+
+2) Synthetic Data for Federated Learning: Federated learn-ing enables privacy-preserving collaborative training by keep-ing data locally and exchanging only model updates [130]. In general domains, data generation has been widely used to address statistical heterogeneity across clients [131]. Existing studies employ strategies such as lightweight client-side aug-mentation to expand effective sample spaces [132]–[134], or server-side synthetic data to approximate global distributions and stabilize training [135], [136]. However, the integration of data generation and federated learning in BCIs remains largely unexplored. Current work mainly focuses on client-side augmentation to improve cross-subject generalization [137], alleviate class imbalance [138], [139], and enhance robustness through adversarial sample generation [139]. These strategies enable federated training without transferring sensitive data, thereby preserving privacy while improving model performance. 
+
+D. Multimodal Data Generation 1) Cross-Modal Alignment: Cross-modal alignment in-volves mapping data from one modality to another. By gener-ating cross-modal signals, models can integrate information from multiple modalities, offering a more comprehensive understanding of brain activity. 
+
+2) Cross-Modal Translation: In BCIs, EEG-to-text or EEG-to-image translation could significantly improve communica-tion for subjects with disabilities. For example, generating cross-modal data allows models to directly convert brain activity into text, speech, or visual outputs. This enables ap-plications like brain-controlled typing, communication aids for non-verbal subjects, or real-time cognitive state monitoring. VI. D ISCUSSION 
+
+A. Summary of Existing Literature 
+
+Brain signal generation has evolved from simple heuristic to sophisticated deep architectures. The choice of generation strategies involves a trade-off between performance, signal fidelity, and physiological interpretability. While knowledge-based approaches offer good inter-pretability by embedding neurophysiological priors, they often struggle with nonlinear brain data and have limited robustness. In contrast, model-based approaches bypass explicit rule-setting by learning the underlying manifold of brain dynam-ics. Despite the development of generative models, several structural bottlenecks persist. Generative models introduce the black-box dilemma, and the generated data may lack biological plausibility. Besides, the model collapse in GANs and sampling latency in DDPMs are concerns. Feature-based generation remains the most pragmatic choice for addressing the class imbalance prevalent. Nevertheless, our review indicates a growing shift toward raw signal generation. This is driven by the end-to-end deep learning pipelines that preserve temporal, spectral, and spatial characteristics, whereas feature-based approaches, by definition, struggle to achieve this. Translation-based generation frames brain signal generation as a cross-modal alignment task, leveraging the semantic richness of other modalities to regularize the sparse and noisy nature of brain signals. Future work should focus on effective cross-modal alignment and multimodal feature learning. Furthermore, the evaluation metrics for generated brain signals remain fragmented. Standard metrics like IS or FID do not account for the functional relevance of brain signals. We argue that future research must prioritize task-specific fidelity, ensuring that synthetic signals not only look real in the time-frequency domain but also preserve the discriminative neural patterns. 
+
+B. Future Research Direction 1) Foundation Model Construction: Large-scale synthetic datasets can facilitate the training of large-scale brain models. As demand for large-scale EEG datasets grows, synthetic brain signals offer a viable alternative to real ones, particularly in data-constrained settings. Leveraging synthetic brain signals in foundation model pre-training and fine-tuning can substan-tially enhance decoding performance while promoting robust generalization. 
+
+2) Federated BCIs: Synthetic data can enhance federated models by supplementing real data with simulated data, help-ing balance and diversify datasets across institutions [134]. Consequently, developing privacy-aware generation strategies within the federated learning framework represents a promis-ing avenue for future research. 
+
+3) Speech Decoding BCIs: In speech decoding BCIs, achieving satisfactory decoding performance typically requires long-term data collection [140]. To obtain larger training sets under limited recording durations, prior studies have commonly adopted data augmentation strategies grounded in signal processing or neurophysiological priors, including IEEE TRANSACTIONS ON ... 17 
+
+noise addition [141], [142], wavelet transforms [142], sliding window [143], and spatial transformation [144]. In addition, generative models such as variational autoencoders have been explored to learn compressed and noise-resilient representa-tions from speech-related neural signals, enabling the synthesis of samples that closely match the distribution of real speech EEG data [145]. Given the large target vocabulary inherent in speech decoding paradigms and the limited availability of neural data, data synthesis is expected to become an important future research direction for speech decoding BCIs. 
+
+4) Medical Rehabilitation: Rare neurological events, like epileptic seizures or anxiety states, are often under-represented in brain datasets. Synthetic data generation can supplement training sets for these rare events, enabling the detection of anomalies that might be missed due to the limited real data. By generating the rare abnormal event data, models can be better trained to identify and respond to rare occurrences. As gen-erative models are deployed in medical applications, ensuring interpretability and transparency is vital. Future research could focus on explainable machine learning to better understand how generated signals correspond to brain activity, while integrating prior constraints for improved interpretability. 
+
+5) Real-Time BCIs: Real-time BCIs require constant pro-cessing of brain signals to provide immediate feedback or control. Synthetic data is useful in real-time settings, as it allows models to adapt to real-time fluctuations in brain states. By generating synthetic data that mimics the dynamic change in brain states, real-time models can be trained to handle various dynamic environments and improve their responsive-ness and accuracy. However, the latency of generating high-fidelity trials can negate the benefits of data augmentation. Exploring lightweight neural networks and approaches like model pruning could be helpful to address the computational complexity. VII. C ONCLUSION 
+
+This paper presents a comprehensive survey of brain sig-nal generation for BCIs, encompassing methodological tax-onomies, benchmark evaluations, assessment metrics, and key applications. Brain signal generation has emerged as a promis-ing strategy for producing high-quality, high-diversity, and privacy-preserving training data for BCIs. Existing approaches are systematically categorized into four classes: knowledge-based, feature-based, model-based, and translation-based gen-eration. To enable the fair comparison, we conducted bench-mark experiments of representative generation approaches on four BCI paradigms across 11 public datasets. Further, we summarized evaluation principles for generated signals from multiple perspectives, including data reliability, signal quality, distribution consistency, decoding performance, and privacy preservation ability. By alleviating data scarcity, improving model generalization, and supporting the development of large-scale brain models, synthetic brain signals have the potential to advance the design of more accurate, data-efficient, and privacy-aware BCI systems. REFERENCES [1] M. Ienca, P. Haselager, and E. J. Emanuel, “Brain leaks and consumer neurotechnology,” Nature Biotechnology , vol. 36, no. 9, pp. 805–810, 2018. [2] T. Brown, B. Mann, N. Ryder, M. Subbiah, J. D. Kaplan, P. Dhariwal 
+
+et al. , “Language models are few-shot learners,” in Proc. Advances in Neural Information Processing Systems , Vancouver, Canada, Dec. 2020, pp. 1877–1901. [3] G. Wang, C. Teng, K. Li, Z. Zhang, and X. Yan, “The removal of EOG artifacts from EEG signals using independent component analysis and multivariate empirical mode decomposition,” IEEE Journal of Biomedical and Health Informatics , vol. 20, no. 5, pp. 1301–1308, 2015. [4] M. Shahbakhti, M. Beiramvand, M. Nazari, A. Broniec-W´ ojcik, P. Au-gustyniak, A. S. Rodrigues, M. Wierzchon, and V. Marozas, “VME-DWT: An efficient algorithm for detection and elimination of eye blink from short segments of single EEG channel,” IEEE Trans. on Neural Systems and Rehabilitation Engineering , vol. 29, pp. 408–417, 2021. [5] W. O. Tatum, B. A. Dworetzky, and D. L. Schomer, “Artifact and recording concepts in EEG,” Journal of Clinical Neurophysiology ,vol. 28, no. 3, pp. 252–263, 2011. [6] W. Chen, C. Yu, Z. Zhao, N. Zheng, H. Li, and Y. Li, “Self-supervised EEG denoising via dual-branch consistency learning with masked reconstruction,” Knowledge-Based Systems , vol. 330, p. 114703, 2025. [7] Y. Luo, L.-Z. Zhu, Z.-Y. Wan, and B.-L. Lu, “Data augmentation for enhancing EEG-based emotion recognition with deep generative models,” Journal of Neural Engineering , vol. 17, no. 5, p. 056021, 2020. [8] C. Rommel, J. Paillard, T. Moreau, and A. Gramfort, “Data augmenta-tion for learning predictive models on EEG: A systematic comparison,” 
+
+Journal of Neural Engineering , vol. 19, no. 6, p. 066020, 2022. [9] Z. Wang, S. Li, X. Chen, and D. Wu, “Time-frequency transform based EEG data augmentation for brain-computer interfaces,” Knowledge-Based Systems , vol. 311, p. 113074, 2025. [10] F. Wang, S.-h. Zhong, J. Peng, J. Jiang, and Y. Liu, “Data augmentation for EEG-based emotion recognition with deep convolutional neural net-works,” in Proc. Int’l Conf. Multimedia Modeling , Bangkok, Thailand, Feb. 2018, pp. 82–93. [11] M. N. Mohsenvand, M. R. Izadi, and P. Maes, “Contrastive repre-sentation learning for electroencephalogram classification,” in Proc. Advances in Neural Information Processing Systems Machine Learning for Health Workshops , Vancouver, Canada, Dec. 2020, pp. 238–253. [12] W. Zhang, Z. Wang, and D. Wu, “Multi-source decentralized transfer for privacy-preserving BCIs,” IEEE Trans. Neural Systems and Reha-bilitation Engineering , vol. 30, pp. 2710–2720, 2022. [13] J. T. Schwabedal, J. C. Snyder, A. Cakmak, S. Nemati, and G. D. Clifford, “Addressing class imbalance in classification problems of noisy signals by using fourier transform surrogates,” arXiv preprint arXiv:1806.08675 , 2018. [14] X. Zhao, J. Sole Casals, H. Sugano, and T. Tanaka, “Seizure onset zone classification based on imbalanced iEEG with data augmentation,” 
+
+Journal of Neural Engineering , vol. 19, no. 6, p. 065001, 2022. [15] Z. Wang, S. Li, J. Luo, J. Liu, and D. Wu, “Channel reflection: Knowledge-driven data augmentation for EEG-based brain-computer interfaces,” Neural Networks , vol. 176, p. 106351, 2024. [16] M. M. Krell and S. K. Kim, “Rotational data augmentation for electroencephalographic data,” in Int’l Conf. of the IEEE Engineering in Medicine and Biology Society , Jeju Island, Korea, July 2017, pp. 471–474. [17] Y. Pei, Z. Luo, Y. Yan, H. Yan, J. Jiang, W. Li, L. Xie, and E. Yin, “Data augmentation: Using channel-level recombination to improve classification performance for motor imagery EEG,” Frontiers in Human Neuroscience , vol. 15, p. 645952, 2021. [18] Z. Wang, W. Zhang, S. Li, X. Chen, and D. Wu, “Unsupervised domain adaptation for cross-patient seizure classification,” Journal of Neural Engineering , vol. 20, no. 6, p. 066002, 2023. [19] H.-C. Tseng, K.-Y. Tai, Y.-Z. Ma, L.-D. Van, L.-W. Ko, and T.-P. Jung, “Accurate mental stress detection using sequential backward selection and adaptive synthetic methods,” IEEE Trans. Neural Systems and Rehabilitation Engineering , vol. 32, pp. 3095–3103, 2024. [20] H. Zhang, M. Cisse, Y. N. Dauphin, and D. Lopez-Paz, “Mixup: Beyond empirical risk minimization,” in Proc. Int’l Conf. on Learning Representations , Vancouver, Canada, Apr. 2018, pp. 1–13. [21] D. Freer and G.-Z. Yang, “Data augmentation for self-paced motor imagery classification with C-LSTM,” Journal of Neural Engineering ,vol. 17, no. 1, p. 016041, 2020. IEEE TRANSACTIONS ON ... 18 
+
+[22] V. Verma, A. Lamb, C. Beckham, A. Najafi, I. Mitliagkas, D. Lopez-Paz, and Y. Bengio, “Manifold Mixup: Better representations by interpolating hidden states,” in Proc. Int’l Conf. on Machine Learning ,Long Beach, CA, USA, Jun. 2019, pp. 6438–6447. [23] Y. Ganin, E. Ustinova, H. Ajakan, P. Germain, H. Larochelle, F. Lavi-olette, M. March, and V. Lempitsky, “Domain-adversarial training of neural networks,” Journal of Machine Learning Research , vol. 17, no. 59, pp. 1–35, 2016. [24] D. P. Kingma and M. Welling, “Auto-encoding variational bayes,” in 
+
+Int’l Conf. on Learning Representations , Banff, Canada, Apr. 2014, pp. 1–14. [25] Z. Yang, Z. Dai, Y. Yang, J. Carbonell, R. R. Salakhutdinov, and Q. V. Le, “Xlnet: Generalized autoregressive pretraining for language understanding,” in Proc. Advances in Neural Information Processing Systems , Vancouver, BC, Canada, Dec. 2019. [26] J. Ho, A. Jain, and P. Abbeel, “Denoising diffusion probabilistic models,” in Proc. Advances in Neural Information Processing Systems ,Vancouver, Canada, Dec. 2020, pp. 6840–6851. [27] S. Wen, A. Yin, T. Furlanello, M. G. Perich, L. E. Miller, and L. Itti, “Rapid adaptation of brain–computer interfaces to new neuronal ensembles or participants via generative modelling,” Nature Biomedical Engineering , vol. 7, no. 4, pp. 546–558, 2023. [28] F. Fahimi, S. Dosen, K. K. Ang, N. Mrachacz-Kersting, and C. Guan, “Generative adversarial networks-based data augmentation for brain– computer interface,” IEEE Trans. Neural Networks and Learning Systems , vol. 32, no. 9, pp. 4039–4051, 2020. [29] W. Ko, E. Jeon, J. S. Yoon, and H.-I. Suk, “Semi-supervised generative and discriminative adversarial learning for motor imagery-based brain– computer interface,” Scientific Reports , vol. 12, no. 1, p. 4587, 2022. [30] G. Figueiredo, S. N. Carvalho, G. Vargas, V. Barbosa, C. Peixoto, and H. Leite, “Optimizing SSVEP-based BCI training through adversarial generative neural networks,” Int’l Journal of Electrical and Computer Engineering Research , vol. 3, no. 4, pp. 8–14, 2023. [31] P. Zeng, L. Fan, Y. Luo, H. Shen, and D. Hu, “Task-oriented EEG denoising generative adversarial network for enhancing SSVEP-BCI performance,” Journal of Neural Engineering , vol. 21, no. 6, p. 066003, 2024. [32] N. K. N. Aznan, A. Atapour-Abarghouei, S. Bonner, J. D. Connolly, and T. P. Breckon, “Leveraging synthetic subject invariant eeg signals for zero calibration BCI,” in Int’l Conf. on Pattern Recognition , Virtual, Mar. 2021, pp. 10 418–10 425. [33] J. Ma and T. Ruotsalo, “Brain-supervised conditional generative mod-eling,” IEEE Trans. on Human-Machine Systems , vol. 55, no. 3, pp. 383–393, 2025. [34] Y.-E. Lee, S.-H. Lee, S. Kim, J.-S. Lee, and D.-S. Kim, “Enhanced generative adversarial networks for unseen word generation from EEG signals,” in Int’l Winter Conf. on Brain-Computer Interface , Gangwon, South Korea, Feb. 2024, pp. 1–4. [35] S.-H. Lee, M. Lee, and S.-W. Lee, “Neural decoding of imagined speech and visual imagery as intuitive paradigms for BCI communica-tion,” IEEE Trans. on Neural Systems and Rehabilitation Engineering ,vol. 28, no. 12, pp. 2647–2659, 2020. [36] Y.-E. Lee, S.-H. Kim, S.-H. Lee, J.-S. Lee, S. Kim, and S.-W. Lee, “Speech synthesis from brain signals based on generative model,” in Int’l Winter Conf. on Brain-Computer Interface , Gangwon, South Korea, Feb. 2023, pp. 1–4. [37] Y. Song, L. Yang, X. Jia, and L. Xie, “Common spatial generative adversarial networks based EEG data augmentation for cross-subject brain-computer interface,” arXiv preprint arXiv:2102.04456 , 2021. [38] K. G. Hartmann, R. T. Schirrmeister, and T. Ball, “EEG-GAN: Gen-erative adversarial networks for electroencephalograhic (EEG) brain signals,” arXiv preprint arXiv:1806.01875 , 2018. [39] S. Palazzo, C. Spampinato, I. Kavasidis, D. Giordano, and M. Shah, “Generative adversarial networks conditioned by brain signals,” in 
+
+Proc. IEEE Int’l Conf. on Computer Vision , Venice, Italy, Oct. 2017, pp. 3410–3418. [40] X. Cheng, K. Huang, Y. Zou, and S. Ma, “SleepEGAN: A GAN-enhanced ensemble deep learning model for imbalanced classification of sleep stages,” Biomedical Signal Processing and Control , vol. 92, p. 106020, 2024. [41] D. Hazra and Y.-C. Byun, “SynSigGAN: Generative adversarial net-works for synthetic biomedical signal generation,” Biology , vol. 9, no. 12, p. 441, 2020. [42] A. Venugopal and D. Resende Faria, “Boosting EEG and ECG clas-sification with synthetic biophysical data generated via generative adversarial networks,” Applied Sciences , vol. 14, no. 23, p. 10818, 2024. [43] M. Xu, Y. Chen, Y. Wang, D. Wang, Z. Liu, and L. Zhang, “BWGAN-GP: An EEG data generation method for class imbalance problem in RSVP tasks,” IEEE Trans. on Neural Systems and Rehabilitation Engineering , vol. 30, pp. 251–263, 2022. [44] J. J. Bird, L. J. Manso, E. P. Ribeiro, A. Ekart, and D. R. Faria, “A study on mental state classification using EEG-based brain-machine interface,” in Int’l Conf. on Intelligent Systems , Funchal, Madeira, Portugal, Sep. 2018, pp. 795–800. [45] I. Kavasidis, S. Palazzo, C. Spampinato, D. Giordano, and M. Shah, “Brain2image: Converting brain signals into images,” in Proc. of ACM Int’l Conf. on Multimedia , Mountain View, CA USA, Oct. 2017, pp. 1809–1817. [46] K. Rasheed, J. Qadir, T. J. O’Brien, L. Kuhlmann, and A. Razi, “A generative model to synthesize EEG data for epileptic seizure predic-tion,” IEEE Trans. on Neural Systems and Rehabilitation Engineering ,vol. 29, pp. 2322–2332, 2021. [47] C. Tian, Y. Ma, J. Cammon, F. Fang, Y. Zhang, and M. Meng, “Dual-encoder VAE-GAN with spatiotemporal features for emotional EEG data augmentation,” IEEE Trans.on Neural Systems and Rehabilitation Engineering , vol. 31, pp. 2018–2027, 2023. [48] D. Bethge, P. Hallgarten, T. Grosse-Puppendahl, M. Kari, L. L. Chuang, O. ¨Ozdenizci, and A. Schmidt, “EEG2Vec: Learning affective EEG representations via variational autoencoders,” in IEEE Int’l Conf. on Systems, Man, and Cybernetics , Prague, Czech Republic, Oct. 2022, pp. 3150–3157. [49] H. Li, S. Yu, and J. Principe, “Causal recurrent variational autoencoder for medical time series generation,” in Proc. AAAI Conf. on Artificial Intelligence , Washington, DC, USA, Feb. 2023, pp. 8562–8570. [50] M. A. Kramer, E. D. Kolaczyk, and H. E. Kirsch, “Emergent network topology at seizure onset in humans,” Epilepsy Research , vol. 79, no. 2-3, pp. 173–186, 2008. [51] T. Zhao, Y. Cui, T. Ji, J. Luo, W. Li, J. Jiang, Z. Gao, W. Hu, Y. Yan, Y. Jiang et al. , “VAEEG: Variational auto-encoder for extracting EEG representation,” NeuroImage , vol. 304, p. 120946, 2024. [52] I. E. Tibermacine, S. Russo, G. Scarano, G. Tedesco, A. Rabehi, A. A. Alhussan, D. S. Khafaga, M. M. Eid, E.-S. M. El-Kenawy, and C. Napoli, “Conditional VAE for personalized neurofeedback in cognitive training,” PLoS One , vol. 20, no. 10, p. e0335364, 2025. [53] ˙I. Yıldız, R. Garner, M. Lai, and D. Duncan, “Unsupervised seizure identification on EEG,” Computer Methods and Programs in Biomedicine , vol. 215, p. 106604, 2022. [54] W. Cui, W. Jeong, P. Th¨ olke, T. Medani, K. Jerbi, A. A. Joshi, and R. M. Leahy, “Neuro-GPT: Towards a foundation model for EEG,” in 
+
+IEEE Int’l Symposium on Biomedical Imaging , Athens, Greece, May 2024, pp. 1–5. [55] J. J. Bird, M. Pritchard, A. Fratini, A. Ek´ art, and D. R. Faria, “Synthetic biological signals machine-generated by GPT-2 improve the classification of EEG and EMG through data augmentation,” IEEE Robotics and Automation Letters , vol. 6, no. 2, pp. 3498–3504, 2021. [56] C. Dolopikos, M. Pritchard, J. J. Bird, and D. R. Faria, “Electromyog-raphy signal-based gesture recognition for human-machine interaction in real-time through model calibration,” in Future of Information and Communication Conf. , Virtual, Apr. 2021, pp. 898–914. [57] R. Niu, Y. Wang, H. Xi, Y. Hao, and M. Zhang, “Epileptic seizure prediction by synthesizing EEG signals through GPT,” in Proc. Int’l Conf. on Artificial Intelligence and Pattern Recognition , Yibin, China, Aug. 2021, pp. 419–423. [58] R. Huang, S. Cho, C. Gohil, O. P. Jones, and M. Woolrich, “MEG-GPT: A transformer-based foundation model for magnetoencephalography data,” arXiv preprint arXiv:2510.18080 , 2025. [59] R. Csaky, M. W. J. van Es, O. P. Jones, and M. Woolrich, “Foundational GPT model for MEG,” arXiv preprint arXiv:2404.09256 , 2024. [60] R. M. Cichy, A. Khosla, D. Pantazis, A. Torralba, and A. Oliva, “Com-parison of deep neural networks to spatio-temporal cortical dynamics of human visual object recognition reveals hierarchical correspondence,” 
+
+Scientific Reports , vol. 6, no. 1, p. 27755, 2016. [61] A. Mishra, S. Shukla, J. Torres, J. Gwizdka, and S. Roychowdhury, “Thought2Text: Text generation from EEG signal using large language models,” in Proc. Annu. Conf. of the Nations of the Americas Chapter of the Assoc. for Comput. Linguist. , Albuquerque, New Mexico, Apr. 2025, pp. 3747–3759. [62] O. Ali, M. Saif-ur Rehman, M. Metzler, T. Glasmachers, I. Iossifidis, and C. Klaes, “GET: A generative EEG transformer for continuous context-based neural signals,” arXiv preprint arXiv:2406.03115 , 2024. [63] C. M. Endemann, B. M. Krause, K. V. Nourski, M. I. Banks, and B. Van Veen, “Multivariate autoregressive model estimation for high-IEEE TRANSACTIONS ON ... 19 
+
+dimensional intracranial electrophysiological data,” NeuroImage , vol. 254, p. 119057, 2022. [64] Y. Zhong, L. Yao, and Y. Wang, “Enhanced BCI performance using diffusion model for EEG generation,” in Int’l Conf. of the IEEE Engineering in Medicine and Biology Society , Houston, TX, USA, Dec. 2024, pp. 1–5. [65] S. Torma and L. Szegletes, “Generative modeling and augmentation of EEG signals using improved diffusion probabilistic models,” Journal of Neural Engineering , vol. 22, no. 1, p. 016001, 2025. [66] Q. Zhou, X. Ye, S. Li, Y. Zhao, Q. Du, and L. Ke, “Generative adver-sarial network with adaptive synthesis for brain-computer interfaces in motor imagery classification,” in IEEE Int’l Conf. on Acoustics, Speech and Signal Processing . Hyderabad, India: IEEE, Apr. 2025, pp. 1–5. [67] M. D. Dere, J.-H. Jo, and B. Lee, “Motor-intent decoding from synthetic EEG data using denoising diffusion probabilistic models,” 
+
+Expert Systems with Applications , p. 130134, 2025. [68] S. Kim, S.-H. Lee, Y.-E. Lee, J.-W. Lee, J.-H. Park, P. Kazanzides, and S.-W. Lee, “Brain-driven representation learning based on diffusion model,” in Int’l Winter Conf. on Brain-Computer Interface , Gangwon, South Korea, Feb. 2024, pp. 1–4. [69] S. Kim, Y. E. Lee, S. H. Lee, and S. W. Lee, “Diff-E: Diffusion-based learning for decoding imagined speech EEG,” in Proc. of the Annual Conf. of the Int’l Speech Communication Association , Dublin, Ireland, Aug. 2023, pp. 1159–1163. [70] K. Shu, L. Wu, Y. Zhao, A. Liu, R. Qian, and X. Chen, “Data augmentation for seizure prediction with generative diffusion model,” 
+
+IEEE Trans. on Cognitive and Developmental Systems , vol. 17, no. 3, pp. 577–591, 2024. [71] B. Aristimunha, R. Y. de Camargo, S. Chevallier, O. Lucena, A. G. Thomas, M. J. Cardoso, W. H. L. Pinaya, and J. Dafflon, “Synthetic sleep EEG signal generation using latent diffusion models,” in Proc. Advances in Neural Information Processing Systems DGM4H Work-shop , New Orleans, LA, USA, Dec. 2023. [72] Z. Jiang, W. Dai, Q. Wei, Z. Qin, R. Wei, M. Li, X. Chen, Y. Huo, J. Liu, K. Li et al. , “Diffusion model-based multi-channel EEG representation and forecasting for early epileptic seizure warning,” 
+
+Interdisciplinary Sciences: Computational Life Sciences , pp. 1–12, 2025. [73] G. Klein, P. Guetschel, G. Silvestri, and M. Tangermann, “Synthesizing EEG signals from event-related potential paradigms with conditional diffusion models,” arXiv preprint arXiv:2403.18486 , 2024. [74] T. Liu, Y. Qin, S. Zhang, and X. Tao, “A diffusion-based feature enhancement approach for driving behavior classification with EEG data,” Advanced Engineering Informatics , vol. 65, p. 103279, 2025. [75] E. I. Chetkin, B. L. Kozyrsky, and S. L. Shishkin, “Unconditional EEG synthesis based on diffusion models for sound generation,” in Int’l Multi-Conference on Engineering, Computer and Information Sciences .Akademgorodok, Russia: IEEE, Sep. 2024, pp. 416–420. [76] E. Postolache, N. Polouliakh, H. Kitano, A. Connelly, E. Rodol` a, L. Cosmo, and T. Akama, “Naturalistic music decoding from eeg data via latent diffusion models,” in IEEE Int’l Conf. on Acoustics, Speech and Signal Processing , Hyderabad, India, Apr. 2025, pp. 1–5. [77] Y. Bai, X. Wang, Y.-p. Cao, Y. Ge, C. Yuan, and Y. Shan, “DreamDif-fusion: Generating high-quality images from brain EEG signals,” arXiv preprint arXiv:2306.16934 , 2023. [78] I. J. Goodfellow, J. Pouget-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair, A. Courville, and Y. Bengio, “Generative adversarial nets,” in Proc. Advances in Neural Information Processing Systems , vol. 27, Montreal, Canada, Dec. 2014. [79] X. Mao, Q. Li, H. Xie, R. Y. K. Lau, Z. Wang, and S. Paul Smolley, “Least squares generative adversarial networks,” in Proc. of the IEEE Int’l Conf. on Computer Vision , Venice, Italy, Oct. 2017, pp. 2794– 2802. [80] C. Donahue, J. McAuley, and M. Puckette, “Adversarial audio syn-thesis,” in Proc. Int’l Conf. on Learning Representations , Vancouver, Canada, Apr. 2018, pp. 1–16. [81] J. Yoon, D. Jarrett, and M. Van der Schaar, “Time-series generative adversarial networks,” in Proc. Advances in Neural Information Pro-cessing Systems , vol. 32, Vancouver Canada, Dec. 2019. [82] F. Fahimi, Z. Zhang, W. B. Goh, K. K. Ang, and C. Guan, “Towards EEG generation using GANs for BCI applications,” in 2019 IEEE EMBS Int’l Conf. on Biomedical & Health Informatics , Chicago, IL, USA, May 2019, pp. 1–4. [83] M. Arjovsky, S. Chintala, and L. Bottou, “Wasserstein generative adversarial networks,” in Int’l Conf. on Machine Learning , Sydney, Australia, Aug. 2017, pp. 214–223. [84] I. Gulrajani, F. Ahmed, M. Arjovsky, V. Dumoulin, and A. C. Courville, “Improved training of wasserstein gans,” in Proc. Advances in Neural Information Processing Systems , Long Beach, CA, USA, Dec. 2017, pp. 1–11. [85] G. Tosato, C. M. Dalbagno, and F. Fumagalli, “EEG synthetic data generation using probabilistic diffusion models,” arXiv preprint arXiv:2303.06068 , 2023. [86] H. Zeng, N. Xia, D. Qian, M. Hattori, C. Wang, and W. Kong, “DM-RE2I: A framework based on diffusion model for the reconstruction from EEG to image,” Biomedical Signal Processing and Control ,vol. 86, p. 105125, 2023. [87] C. Du, C. Du, L. Huang, and H. He, “Conditional generative neural decoding with structured CNN feature prediction,” in Proc. AAAI Conf. on Artificial Intelligence , New York City, NY, USA, Feb. 2020, pp. 2629–2636. [88] F. R. Willett, D. T. Avansino, L. R. Hochberg, J. M. Henderson, and K. V. Shenoy, “High-performance brain-to-text communication via handwriting,” Nature , vol. 593, no. 7858, pp. 249–254, 2021. [89] A. D´ efossez, C. Caucheteux, J. Rapin, O. Kabeli, and J.-R. King, “Decoding speech perception from non-invasive brain recordings,” 
+
+Nature Machine Intelligence , vol. 5, no. 10, pp. 1097–1107, 2023. [90] C. Du, K. Fu, J. Li, and H. He, “Decoding visual neural representations by multimodal learning of brain-visual-linguistic features,” IEEE Trans. Pattern Analysis and Machine Intelligence , vol. 45, no. 9, pp. 10 760– 10 777, 2023. [91] V. Jayaram and A. Barachant, “MOABB: rustworthy algorithm bench-marking for BCIs,” Journal of Neural Engineering , vol. 15, no. 6, p. 066011, 2018. [92] M. Tangermann, K.-R. M¨ uller, A. Aertsen, N. Birbaumer, C. Braun, C. Brunner, R. Leeb, C. Mehring, K. J. Miller, G. R. M¨ uller-Putz et al. ,“Review of the BCI competition IV,” Frontiers in Neuroscience , vol. 6, p. 55, 2012. [93] B. Zhou, X. Wu, Z. Lv, L. Zhang, and X. Guo, “A fully automated trial selection method for optimization of motor imagery based brain-computer interface,” PloS One , vol. 11, no. 9, p. e0162657, 2016. [94] B. Blankertz, G. Dornhege, M. Krauledat, K.-R. M¨ uller, and G. Curio, “The non-invasive Berlin brain–computer interface: Fast acquisition of effective performance in untrained subjects,” NeuroImage , vol. 37, no. 2, pp. 539–550, 2007. [95] D. Steyrl, R. Scherer, J. Faller, and G. R. M¨ uller-Putz, “Random forests in non-invasive sensorimotor rhythm brain-computer interfaces: A practical and convenient non-linear classifier,” Biomedical Engineer-ing/Biomedizinische Technik , vol. 61, no. 1, pp. 77–86, 2016. [96] J. Faller, C. Vidaurre, T. Solis-Escalante, C. Neuper, and R. Scherer, “Autocalibration and recurrent adaptation: Towards a plug and play online ERD-BCI,” IEEE Trans. on Neural Systems and Rehabilitation Engineering , vol. 20, no. 3, pp. 313–319, 2012. [97] H. He and D. Wu, “Transfer learning for brain-computer interfaces: A Euclidean space data alignment approach,” IEEE Trans. on Biomedical Engineering , vol. 67, no. 2, pp. 399–410, 2020. [98] S. Li, Z. Wang, H. Luo, L. Ding, and D. Wu, “T-TIME: Test-time information maximization ensemble for plug-and-play BCIs,” IEEE Trans. on Biomedical Engineering , vol. 71, no. 2, pp. 423–432, 2024. [99] M. Nakanishi, Y. Wang, Y. T. Wang, and T. P. Jung, “A comparison study of canonical correlation analysis based methods for detecting steady-state visual evoked potentials,” PloS One , vol. 10, no. 10, pp. 1–18, 2015. [100] A. Ravi, N. H. Beni, J. Manuel, and N. Jiang, “Comparing user-dependent and user-independent training of CNN for SSVEP BCI,” 
+
+Journal of Neural Engineering , vol. 17, no. 2, p. 026028, 2020. [101] Y. Wang, X. Chen, X. Gao, and S. Gao, “A benchmark dataset for SSVEP-based brain–computer interfaces,” IEEE Trans. on Neural Systems and Rehabilitation Engineering , vol. 25, no. 10, pp. 1746– 1752, 2017. [102] Z. Wang, W. Zhang, S. Li, X. Chen, and D. Wu, “Unsupervised domain adaptation for cross-patient seizure classification,” Journal of Neural Engineering , vol. 20, no. 6, p. 066002, 2023. [103] N. J. Stevenson, K. Tapani, L. Lauronen, and S. Vanhatalo, “A dataset of neonatal EEG recordings with seizure annotations,” Scientific Data ,vol. 6, no. 1, pp. 1–8, 2019. [104] N. Das, W. Biesmans, A. Bertrand, and T. Francart, “The effect of head-related filtering and ear-specific decoding bias on auditory attention detection,” Journal of Neural Engineering , vol. 13, no. 5, p. 056014, 2016. [105] S. A. Fuglsang, T. Dau, and J. Hjortkjær, “Noise-robust cortical tracking of attended speech in real-world acoustic scenes,” NeuroImage ,vol. 156, pp. 435–444, 2017. IEEE TRANSACTIONS ON ... 20 
+
+[106] B. Somers, T. Francart, and A. Bertrand, “A generic EEG artifact removal algorithm based on the multi-channel Wiener filter,” Journal of neural engineering , vol. 15, no. 3, p. 036007, 2018. [107] Z. Wang, H. Wang, T. Jia, X. He, S. Li, and D. Wu, “DBConformer: Dual-branch convolutional Transformer for EEG decoding,” IEEE Journal of Biomedical and Health Informatics , pp. 1–14, 2025, early access. [108] V. J. Lawhern, N. R. Solon, Amelia J .and Waytowich, S. M. Gordon, C. P. Hung, and B. J. Lance, “EEGNet: A compact convolutional neural network for EEG-based brain-computer interfaces,” Journal of Neural Engineering , vol. 15, no. 5, p. 056013, 2018. [109] R. T. Schirrmeister, J. T. Springenberg, L. D. J. Fiederer, M. Glasstetter, K. Eggensperger, M. Tangermann, F. Hutter, W. Burgard, and T. Ball, “Deep learning with convolutional neural networks for EEG decoding and visualization,” Human Brain Mapping , vol. 38, no. 11, pp. 5391– 5420, 2017. [110] J. Wang, L. Yao, and Y. Wang, “IFNet: An interactive frequency con-volutional neural network for enhancing motor imagery decoding from EEG,” IEEE Trans. on Neural Systems and Rehabilitation Engineering ,vol. 31, pp. 1900–1911, 2023. [111] P. Thuwajit, P. Rangpong, P. Sawangjai, P. Autthasan, R. Chaisaen, N. Banluesombatkul, P. Boonchit, N. Tatsaringkansakul, T. Sud-hawiyangkul, and T. Wilaiprasitporn, “EEGWaveNet: Multiscale CNN-based spatiotemporal feature extraction for EEG seizure detection,” 
+
+IEEE Trans. on Industrial Informatics , vol. 18, no. 8, pp. 5547–5557, 2022. [112] X. Chen, Y. Wang, S. Gao, T.-P. Jung, and X. Gao, “Filter bank canon-ical correlation analysis for implementing a high-speed SSVEP-based brain–computer interface,” Journal of Neural Engineering , vol. 12, no. 4, p. 046008, 2015. [113] Z. Lin, C. Zhang, W. Wu, and X. Gao, “Frequency recognition based on canonical correlation analysis for SSVEP-based BCIs,” IEEE Trans. on Biomedical Engineering , vol. 53, no. 12, pp. 2610–2614, 2006. [114] Y. Pan, J. Chen, Y. Zhang, and Y. Zhang, “An efficient CNN-LSTM network with spectral normalization and label smoothing technologies for SSVEP frequency recognition,” Journal of Neural Engineering ,vol. 19, no. 5, p. 056014, 2022. [115] S. Yan, C. Fan, H. Zhang, X. Yang, J. Tao, and Z. Lv, “DARNet: dual attention refinement network with spatiotemporal construction for auditory attention detection,” in Proc. Advances in Neural Information Processing Systems , Vancouver, Canada, Dec. 2024, pp. 31 688–31 707. [116] Q. Ni, H. Zhang, C. Fan, S. Pei, C. Zhou, and Z. Lv, “DBPNet: Dual-branch parallel network with temporal-frequency fusion for auditory attention detection,” in Proc. of the Int’l Joint Conf. on Artificial Intelligence , Jeju, Korea, Aug. 2024. [117] Z. Wang, S. Li, and D. Wu, “Canine EEG helps human: Cross-species and cross-modality epileptic seizure detection via multi-space alignment,” National Science Review , vol. 12, no. 6, p. nwaf086, 2025. [118] Z. Wang, S. Li, X. Chen, and D. Wu, “MVCNet: Multi-view contrastive network for motor imagery classification,” Knowledge-Based Systems ,vol. 328, p. 114205, 2025. [119] L. Long, R. Wang, R. Xiao, J. Zhao, X. Ding, G. Chen, and H. Wang, “On LLMs-driven synthetic data generation, curation, and evaluation: A survey,” arXiv preprint arXiv:2406.15126 , 2024. [120] M. Giuffr` e and D. L. Shung, “Harnessing the power of synthetic data in healthcare: innovation, application, and privacy,” NPJ Digital Medicine ,vol. 6, no. 1, p. 186, 2023. [121] C. Yan, Y. Yan, Z. Wan, Z. Zhang, L. Omberg, J. Guinney, S. D. Mooney, and B. A. Malin, “A multifaceted benchmarking of synthetic electronic health record generation models,” Nature Communications ,vol. 13, no. 1, p. 7609, 2022. [122] M. Heusel, H. Ramsauer, T. Unterthiner, B. Nessler, and S. Hochreiter, “GANs trained by a two time-scale update rule converge to a local nash equilibrium,” in Proc. Advances in Neural Information Processing Systems , Long Beach, CA, USA, Dec. 2017, pp. 1–12. [123] T. Salimans, I. Goodfellow, W. Zaremba, V. Cheung, A. Radford, and X. Chen, “Improved techniques for training gans,” in Proc. Advances in Neural Information Processing ystems , Barcelona, Spain, Dec. 2016, pp. 1–9. [124] X. Chen, S. Li, Y. Tu, Z. Wang, and D. Wu, “User-wise perturbations for user identity protection in EEG-based BCIs,” Journal of Neural Engineering , vol. 22, no. 1, p. 016040, 2024. [125] G. Wang, W. Liu, Y. He, C. Xu, L. Ma, and H. Li, “EEGPT: Pretrained transformer for universal and reliable representation of EEG signals,” in Proc. Advances in Neural Information Processing Systems , vol. 37, San Diego, CA, USA, Dec. 2025, pp. 39 249–39 280. [126] W. Jiang, L. Zhao, and B.-l. Lu, “Large brain model for learning generic representations with tremendous EEG data in BCI,” in Int’l Conf. on Learning Representations , Vienna, Austria, May 2024, pp. 1–14. [127] J. Wang, S. Zhao, Z. Luo, Y. Zhou, H. Jiang, S. Li, T. Li, and G. Pan, “CBraMod: A criss-cross brain foundation model for EEG decoding,” in Int’l Conf. on Learning Representations , Singapore, Apr. 2025, pp. 1–17. [128] H. Banville, O. Chehab, A. Hyv´ arinen, D.-A. Engemann, and A. Gram-fort, “Uncovering the structure of clinical EEG signals with self-supervised learning,” Journal of Neural Engineering , vol. 18, no. 4, p. 046020, 2021. [129] Y. Roy, H. Banville, I. Albuquerque, A. Gramfort, T. H. Falk, and J. Faubert, “Deep learning-based electroencephalography analysis: A systematic review,” Journal of Neural Engineering , vol. 16, no. 5, p. 051001, 2019. [130] Q. Li, Z. Wen, Z. Wu, S. Hu, N. Wang, Y. Li, X. Liu, and B. He, “A Survey on Federated Learning Systems: Vision, Hype and Reality for Data Privacy and Protection,” IEEE Trans. on Knowledge and Data Engineering , vol. 35, no. 4, pp. 3347–3366, 2023. [131] W. Huang, M. Ye, Z. Shi, G. Wan, H. Li, B. Du, and Q. Yang, “Federated Learning for Generalization, Robustness, Fairness: A Sur-vey and Benchmark,” IEEE Trans. on Pattern Analysis and Machine Intelligence , vol. 46, no. 12, pp. 9387–9406, 2024. [132] H. Zhang, Q. Hou, T. Wu, S. Cheng, and J. Liu, “Data augmentation based federated learning,” IEEE Internet of Things Journal , vol. 10, no. 24, pp. 22 530–22 541, 2023. [133] Y. Yan, H. Fu, Y. Li, J. Xie, J. Ma, G. Yang, and L. Zhu, “A Simple Data Augmentation for Feature Distribution Skewed Federated Learning,” in Proc. of the IEEE/CVF Conf. on Computer Vision and Pattern Recognition , Seattle, WA, USA, Jun. 2025, pp. 25 749–25 758. [134] W. Hao, M. El-Khamy, J. Lee, J. Zhang, K. J. Liang, C. Chen, and L. C. Duke, “Towards fair federated learning with zero-shot data augmentation,” in Proc. of IEEE/CVF Conf. on Computer Vision and Pattern Recognition , Nashville, TN, USA, June 2021, pp. 3310–3319. [135] D. Chiaro, E. Prezioso, M. Ianni, and F. Giampaolo, “FL-Enhance: A federated learning framework for balancing non-IID data with aug-mented and shared compressed samples,” Information Fusion , vol. 98, p. 101836, 2023. [136] Z. Peng, X. Wang, S. Chen, H. Rao, and C. Shen, “Federated Learning for Diffusion Models,” IEEE Trans. on Cognitive Communications and Networking , vol. 11, no. 6, pp. 4093–4109, 2025. [137] X.-H. Liu, B.-L. Lu, and W.-L. Zheng, “MixEEG: Enhancing EEG Federated Learning for Cross-subject EEG Classification with Tailored mixup,” in Proc. of the Annual Meeting of the Cognitive Science Society , ser. CogSci 2025, San Francisco, CA, USA, Jul. 2025. [138] Z. Y. Lim, Y. H. Pang, S. Y. Ooi, S. R. Sekaran, and Y. J. Chew, “FCEEG: Federated learning-based seizure diagnosis through elec-troencephalogram analysis,” Cogent Engineering , vol. 12, no. 1, p. 2547636, 2025. [139] T. Jia, X. Chen, and D. Wu, “SAFE: Secure and accurate feder-ated learning for privacy-preserving brain-computer interfaces,” arXiv preprint arXiv:2601.05789 , 2026. [140] F. R. Willett, E. M. Kunz, C. Fan, D. T. Avansino, G. H. Wilson, E. Y. Choi, F. Kamdar, M. F. Glasser, L. R. Hochberg, S. Druckmann, K. V. Shenoy, and J. M. Henderson, “A high-performance speech neuroprosthesis,” Nature , vol. 620, no. 7976, pp. 1031–1036, 2023. [141] Z. Jia, H. Wang, Y. Shen, F. Hu, J. An, K. Shu, and D. Wu, “Magnetoencephalography (MEG) based non-invasive Chinese speech decoding,” Journal of Neural Engineering , vol. 22, no. 6, p. 066014, 2025. [142] A. Mohan and R. S. Anand, “Wavelet augmented phase coherence features for EEG-based imagined speech classification,” IEEE Sensors Letters , vol. 9, no. 8, pp. 1–4, 2025. [143] A. Balaji, A. Haldar, K. Patil, T. S. Ruthvik, V. Ca, M. Jartarkar, and V. Baths, “EEG-based classification of bilingual unspoken speech using ANN,” in Int’l Conf. of the IEEE Engineering in Medicine and Biology Society , Jeju Island, Korea, Jul. 2017, pp. 1022–1025. [144] J. T. Panachakel, R. A. Ganesan, and T. V. Ananthapadmanabha, “Com-mon spatial pattern based data augmentation technique for decoding imagined speech,” in IEEE Int’l Conf. on Electronics, Computing and Communication Technologies , Virtual, Jul. 2021, pp. 1–5. [145] T. Y.-H. Chen, Y. Chen, P. Soederhaell, S. Agrawal, and K. Shapo-valenko, “Decoding EEG speech perception with Transformers and VAE-based data augmentation,” arXiv preprint arXiv:2501.04359 ,2025.

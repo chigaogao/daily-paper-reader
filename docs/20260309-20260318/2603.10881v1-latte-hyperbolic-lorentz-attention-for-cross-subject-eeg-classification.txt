@@ -1,0 +1,815 @@
+Title: LAtte: Hyperbolic Lorentz Attention for Cross-Subject EEG Classification
+
+URL Source: https://arxiv.org/pdf/2603.10881v1
+
+Published Time: Thu, 12 Mar 2026 01:10:50 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# LAtte: Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+Johannes Burchert * 1 Ahmad Bdeir * 2 Tom Hanika 1 Lars Schmidt-Thieme 1 Niels Landwehr 2
+
+# Abstract 
+
+Electroencephalogram (EEG) classification is crit-ical for applications ranging from medical di-agnostics to brain-computer interfaces, yet it remains challenging due to the inherently low signal-to-noise ratio (SNR) and high inter-subject variability. To address these issues, we propose LAtte, a novel framework that integrates a Lorentz Attention Module with an InceptionTime-based encoder to enable robust and generalizable EEG classification. Unlike prior work, which evaluates primarily on single-subject performance, LAtte focuses on cross-subject training. First, we learn a shared baseline signal across all subjects using pretraining tasks to capture common underlying patterns. Then, we utilize novel Lorentz low-rank adapters to learn subject-specific embeddings that model individual differences. This allows us to learn a shared model that performs robustly across subjects, and can be subsequently finetuned for individual subjects or used to generalize to un-seen subjects. We evaluate LAtte on three well-established EEG datasets, achieving a substantial improvement in performance over current state-of-the-art methods. 
+
+# 1. Introduction 
+
+Electroencephalogram (EEG) classification is an important task in time-series analysis from both a theoretical and a practical perspective. The problem is inherently com-plex and faces significant challenges (Parbat & Chakraborty, 2021; Pan et al., 2022), notably, EEG sequences are often contaminated with various artifacts, including eye blinks, eye movements, and muscle activity (Kotte & Dabbakuti, 2020; Delorme, 2023). These can significantly degrade the 
+
+> 1
+
+ISMLL, University of Hildesheim, Hildesheim, Ger-many 2Data Science Group, University of Hildesheim, Hildesheim, Germany. Correspondence to: Johannes Burchert <burchert@ismll.de >, Ahmad Bdeir <bdeira@uni-hildesheim.de >, Tom Hanika <hanika@ismll.de >, Lars Schmidt-Thieme <schmidt-thieme@ismll.de >, Niels Landwehr 
+
+<landwehr@uni-hildesheim.de >.
+
+Preprint. March 12, 2026. 
+
+quality of the recorded data and have diverse effects that ob-scure relevant neural signals. For example, ocular artifacts, including eye movements and blinks, produce large volt-age fluctuations (Croft & Barry, 2000). Myogenic artifacts (Muthukumaraswamy, 2013; Pion-Tonachini et al., 2019), caused by facial and scalp muscle movements, introduce high-frequency noise that overlaps with the frequency bands of the brain signals. This reduces the signal-to-noise ratio and hinders the performance of downstream applications such as classification and clinical analysis. To address these issues, previous approaches to EEG classifi-cation have explored geometric methods (Lotte et al., 2007), and deep learning techniques (Roy et al., 2019). In their work (Pan et al., 2022) introduces the Manifold Attention network (MAtt) which models the EEG data embeddings as symmetric positive-definite (SPD) matrices on a Rieman-nian manifold. They argue that Riemannian metrics are less sensitive to outliers and noise. More recently, Bdeir et al. (2025) introduced HyperMAtt, which extends the MAtt for-mulation by replacing the SPD operations in the decoder with Lorentzian equivalents. Our work takes this a step fur-ther by developing a fully hyperbolic model that leverages the unique geometry in both the encoder and the decoder. Hyperbolic manifolds are naturally suited for representing hierarchical structures, a property that is extensively focused on in the Graph Neural Network literature (Mettes et al., 2024). At the same time, EEG data inherently exhibits spatial hierarchies from sensor arrangements and node sig-nal interactions. This makes EEG classification settings potentially appropriate for hyperbolic learning. By cap-turing these hierarchies and modeling signal interactions directly in the Lorentz space, our approach learns more expressive latent representations and achieves good cross-subject generalization without requiring a separate model for each patient. To achieve this, we introduce several novel components such as the hyperbolic inception block and Lorentzian boost-based low-rank adapters (LoRAs) (Hu et al., 2022). Specifically, the latter component is able to inject subject-specific data patterns through unique ID em-beddings. Additionally, we combat overfitting in data-sparse problems through self-supervised pretraining methods and random classifier projections. This allows us to extract global EEG features while explicitly distinguishing between subject-specific distributions, resulting in improved general-1
+
+> arXiv:2603.10881v1 [cs.LG] 11 Mar 2026 Hyperbolic Lorentz Attention for Cross-Subject EEG Classification
+
+ization and adaptability to new subjects without retraining the model from scratch. Our contributions in this paper are then focused on two key issues in the domain of EEG Classification, namely cross-subject training and generalization, and regularization for noisy input distributions: 1. We propose LAtte, a fully hyperbolic model for EEG Classification based on Lorentzian InceptionTime and attention blocks. 2. We propose a protocol for fine-tuning EEG models based on cross-subject training with subject-specific low-rank adapters. 3. We combat overfitting and data sparsity with a hyper-bolic random projection classifier and self-supervised pre-training 4. We demonstrate the efficacy of LAtte on three well-established datasets in the domain of EEG classifi-cation. Here, we achieve an average improvement of 3.93% in the subject-specific and 10.73% in the subject-conditional setting over the state-of-the-art. 
+
+# 2. Related Work 
+
+EEG Classification Deep learning for EEG classification has been largely dominated by convolutional architectures that exploit the spatio-temporal structure of neural signals. CNN models such as EEGNet (Lawhern et al., 2018) and ShallowConvNet (Schirrmeister et al., 2017) introduced lightweight pipelines combining temporal filtering with channel-wise spatial projections. Subsequent work refined this paradigm to better capture spatio-spectral structure, in-cluding SCCNet (Wei et al., 2019) and FBCNet (Mane et al., 2021), as well as temporally focused models such as EEG-TCNet (Ingolfsson et al., 2020) and TCNet-Fusion (Musal-lam et al., 2021). While effective, these methods remain Euclidean and are typically optimized in subject-specific settings with one model being trained per subject. More recent approaches incorporate attention mechanisms and non-Euclidean geometry. MBEEGSE (Altuwaijri et al., 2022) integrates transformer-style attention with EEG-specific convolutions, and MAtt (Pan et al., 2022) operates on SPD manifolds to improve robustness to noise. These works suggest the promise of geometric representations, but still rely on predominantly Euclidean encoders and do not explicitly target cross-subject generalization. Cross-subject EEG classification remains relatively under-explored outside of emotion recognition. Existing efforts include feature analyses (Li et al., 2018), meta-learning and contrastive objectives (Shen et al., 2023), pretraining (Cimtay & Ekmekcioglu, 2020), and transfer learning (Li et al., 2020). More recently, Burchert et al. (2024) adapted time-series backbones such as ResNet and InceptionTime in a subject-dependent setting and TCFormer (Altaheri et al., 2025) evaluated a leave-one-subject-out protocol (Kunjan et al., 2021). Although these studies demonstrate the feasi-bility of joint training, they primarily rely on shallow encod-ings of subject-specific features. In parallel, large-scale EEG foundation models such as LaBraM (Jiang et al., 2024) and CBraMod (Wang et al., 2025) learn universal EEG representations from large cor-pora such as Obeid & Picone (2016). However, they are not tailored to short sequence lengths due to fixed patch sizes of the pertaining process. Unlike prior cross-subject methods that treat subject identity as auxiliary input, we parameterize subject-specific varia-tion through low-rank adapters, enabling a single shared model to explicitly capture subject-specific distribution shifts. Our approach unifies hyperbolic representations and cross-subject learning within one framework. 
+
+Hyperbolic Learning Hyperbolic distance metrics scale exponentially with the distance to the origin. This allowed hyperbolic spaces higher embedding capacities and confor-mity with tree-like data relationships (Ganea et al., 2018). Early developments in hyperbolic deep learning frequently adopted hybrid architectures that paired Euclidean encoders with hyperbolic decoders (Mettes et al., 2024). This design choice mitigated the computational overhead associated with hyperbolic operations and circumvented the absence of well-established hyperbolic analogues for many standard Eu-clidean components. However, recent work has increasingly shifted towards fully hyperbolic models to better exploit the geometric inductive biases of hyperbolic space. Chen et al. (2022) advanced this direction by introducing hyperbolic counterparts to several foundational components, including fully connected layers, graph convolution layers, and the attention mechanisms. Specifically, their architec-ture employs the square Lorentzian distance as a similarity metric and learns class prototypes directly in hyperbolic space. They build on earlier works such as Atigh et al. (2022), Kim et al. (2023), and Mettes et al. (2024) by di-rectly replacing the loss with this distance metric. This approach was later extended to EEG tasks, most no-tably in the works of Nguyen et al. (2025) and Bdeir et al. (2025). Nguyen et al. (2025) proposed a unified framework for neural networks on symmetric spaces of noncompact type, which include both hyperbolic and SPD manifolds. Their approach is built around a generalized formulation of the point-to-hyperplane distance and derives closed-form expressions to construct hyperbolic fully connected layers and attention mechanisms. In parallel, Bdeir et al. (2025) introduced HyperMatt, an extension of the Matt framework 2Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+(Pan et al., 2022) that replaces the original SPD decoder with a Lorentz-based hyperbolic decoder. Specifically, they project the SPD matrices on the Lorentz space and apply Lorentzian attention and a hyperbolic MLR as a final clas-sification layer. Although this represents an important step toward leveraging hyperbolic geometry for EEG, the en-coder remains non-hyperbolic. As a result, there may still be possible performance gains from fully capturing the hier-archical relationships inherent in EEG data. 
+
+# 3. Background 
+
+Lorentz Manifold Hyperbolic space is a Riemannian manifold characterized by constant negative sectional cur-vature −1/K < 0 where K is the curvature surrogate. In the following work, we adopt the Lorentz model of hyper-bolic space (also known as the hyperboloid model), which uses the upper sheet of a two-sheeted hyperboloid within Minkowski space. The n-dimensional Lorentz space is then defined as LnK = ( Ln, gx), where the manifold Ln is 
+
+Ln := x = [ xt, xs] ∈ Rn+1 ⟨x, x⟩L = −K, x t > 0 ,
+
+The Lorentzian inner product defines the Riemannian metric 
+
+⟨x, y⟩L := −xtyt + x⊤ 
+
+> s
+
+ys. Following terminology from special relativity, we refer to xt as the time component and 
+
+xs as the space component. We can then use the definition of the inner product and the terminology to define the origin of the space as 0K = [ √K, 0, . . . , 0] ⊤.
+
+Distance The shortest path between two points on the manifold follows the curvature of space and is known as a geodesic. For any two points x, y ∈ LnK , the length of the geodesic between them is defined as 
+
+dL(x, y) = √K acosh 
+
+ −⟨ x, y⟩L
+
+K
+
+
+
+.
+
+The formulation for the squared distance, as proposed by Law et al. (2019), is simpler and can be calculated as 
+
+d2
+
+> L
+
+(x, y) = ∥x − y∥2 
+
+> L
+
+= −2K − 2⟨x, y⟩L.
+
+Exponential and Logarithmic Maps. As a Riemannian manifold, the Lorentz space is locally Euclidean, allowing approximation at any point x using the tangent space TxL.We present the exponential and logarithmic maps that move points from and to the tangent space in A.1, along with additional Lorentzian operations. 
+
+# 4. Methodology 
+
+4.1. Problem Setting 
+
+We are given a set of subject-specific EEG sequences and their corresponding classification labels. Assuming that the set of possible classes is fixed, the objective is to clas-sify new EEG recordings from the same subject based on patterns in the signals. Let xeeg ∈ Xeeg := RC×T
+
+denote an EEG recording with C channels and T time points, xid ∈ Xid := {1, . . . , S } the subject identifier, and 
+
+y ∈ Y := {1, . . . , K } the corresponding class label. Given N samples {(xeeg  
+
+> i
+
+, x id  
+
+> i
+
+, y i)}Ni=1 drawn from an un-known distribution d, the task is to learn a model that maps unseen EEG recordings xeeg from the same distribution to their ground-truth class y.
+
+4.2. Cross-Subject Training with LoRA 
+
+Conventional EEG classification methods typically train separate models for each subject, motivated by the assump-tion that inter-subject variability in neural patterns and data distributions hinders effective joint training. However, this subject-specific approach suffers from poor generalization: models specialized on individual subjects fail to perform reliably on unseen subjects. In real-world clinical settings, diagnostic predictions are typically made once per subject, and so we do not have labeled instances to train subject-specific models on. This motivates the development of models that generalize well across individuals. Previous work in this direction embeds the subject infor-mation and concatenates it with the channel dimension of the input data to the model, making the subject information available to the model (Burchert et al., 2024). However, this has several disadvantages, especially in convolutional networks, due to the position of the encoding and the lack of control on how it is incorporated with the EEG channel information. To remedy this, we directly incorporate sub-ject ID embeddings in the data transformations by adding subject-specific low-rank adapters (Hu et al., 2022). This allows us to model a richer embedding of the subject infor-mation while preserving cross-subject EEG patterns. Let 
+
+ˆy : Xeeg × Xid → Y
+
+be an EEG classification model, parametrized by P many parameter matrices Wp ∈ RIp×Jp (p = 1: P ). Here, we add low-rank adapter modules to the parameter matrices 
+
+Wp, replacing the original Wp, now called W shared  
+
+> p
+
+, by a combination of shared and subject-specific parameters: 
+
+Wp := W shared  
+
+> p
+
++ Qsp(Rsp)T ,W shared  
+
+> p
+
+∈ RIp×Jp , Qsp ∈ RIp×Kp , Rsp ∈ RJp×Kp
+
+(1) with a lower rank Kp ≪ Ip, J p for all p.3Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+The model is learned as before, and the total parameter count grows from P 
+
+> p
+
+IpJp to P 
+
+> p
+
+IpJp + ( Ip + Jp)KpS.We initialize Qsp with a random Gaussian and Rsp with zeros. Thus, QspRspT is zero at the beginning of training. This enables a rich and lightweight integration of the subject information in the training process because the parameters of the model p are directly dependent on the subject s.
+
+4.3. Lorentz Boost LoRA Layer 
+
+We also aim to use the subject-specific LoRAs at the decoder level, however, additive Euclidean updates do not respect the manifold geometry and require subsequent projection operations that may distort the adapted features. To address this, we introduce the Lorentz Boost LoRA (LB-LoRA) layer, which adapts representations using the Lorentz Boost as a native isometry of the hyperbolic space. Let x ∈ LnK , be a point on the Lorentz model. A pure Lorentz boost in the unit direction v with rapidity ξ trans-forms x = ( xt, xs) as: Boost (h; v, ξ ) = 
+
+ xt cosh ξ + ( xs · v) sinh ξ
+
+xs + v [( xs · v)(cosh ξ − 1) + xt sinh ξ]
+
+
+
+(2) For each subject s, we define learnable parameters for 
+
+r boosts: directions {v(s) 
+
+> i
+
+}ri=1 and scalar magnitudes 
+
+{μ(s) 
+
+> i
+
+}ri=1 . The final adapted output y(s) is obtained by sequentially applying these boosts to the shared output: 
+
+y(s) = ξ(s) ◦ ξr − 1(s) ◦ · · · ◦ ξ(s)1 (hshared ) (3) where ξ(s) 
+
+> i
+
+(h) = Boost (h; v(s)  
+
+> i
+> ∥v(s)
+> i∥
+
+, α ·μ(s) 
+
+> i
+
+) and α is a scaling hyperparameter. This formulation ensures that all adapta-tions remain on the manifold without requiring artificial pro-jection steps, providing a geometrically consistent method for subject-specific tuning. 
+
+4.4. LAtte Model Overview 
+
+LAtte is a fully hyperbolic architecture for cross-subject EEG classification that aims to separate and model subject-invariant EEG patterns and subject-specific variability. The model consists of three main stages: a subject-aware EEG processor, a hyperbolic temporal encoder, and a prototype hyperbolic decoder, as shown in Algorithm 1 and Figure 1. First, raw EEG signals are processed by Euclidean spatial and spatio-temporal convolutional blocks. Here, subject information is injected via LoRAs. This explicitly informs shifts in distributions between subjects. The resulting em-beddings are then projected onto the Lorentz manifold, after which all subsequent operations are performed fully in hy-perbolic space. Second, LAtte applies a dual-branch hyperbolic encoder 
+
+Algorithm 1 LAtte: Lorentz Attention for EEG Classifica-tion 
+
+Require: Dtrain = {(xeeg , x id , y 1), . . . , (xeeg  
+
+> N
+
+, x id  
+
+> N
+
+, y N )}, Ln,
+
+W pretrained proc , W pretrained inc , number of epochs M
+
+Initialization :W shared proc ← W pretrained proc 
+
+WIncMax ← W pretrained inc 
+
+Watt , W shared dec , W out , Q dec ∼ U (−σ, σ )
+
+Qproc ∼ N (μ, σ )
+
+Rproc , R dec = 0 
+
+for epoch m = 1 to M do for each training example (xeeg  
+
+> n
+
+, x id 
+
+> n
+
+, y n) ∈ D train do 
+
+zn ← Processor (xeeg  
+
+> n
+
+, x id 
+
+> n
+
+; W shared proc ; Qproc , R proc )
+
+zn ← HyperbolicProjection (zn; Ln) {Eq. 13 }
+
+zn ← Patching (zn) {Eq. 4}
+
+zbase ← HyperBaselineBlock (zn; WIncMax ) {Eq. 12 }
+
+zinc ← HyperInceptionBlock (zn) {Eq. 12 }
+
+zn ← zbase − zinc 
+
+zn ← LorentzAttention (zn; Watt ) {Eq. 17 }
+
+zn ← CentroidUnpatch (zn) {Eq. 14 }
+
+zn ← LorentzFC (zn, x id 
+
+> n
+
+; W shared dec ; Qdec , R dec ) {Eq. 10 }
+
+ˆyn ← LorentzPrototypeDecoder (zn; Wout ) {Eq. 10 }
+
+ℓn ← Cross-Entropy (ˆ yn, y n) {Eq. 15 }
+
+end for 
+
+Compute total loss: ℓ ← 1
+
+> N
+
+PNn=1 ℓn
+
+Update parameters: W, W shared , Q sp, R pn based on ∇θ L
+
+end for return W, Q, R 
+
+inspired by EEG baseline correction. A baseline branch with average pooling learns a smoothed reference represen-tation, while a task branch with max pooling models the task signals. Their difference is assumed to highlight task-relevant deviations. The embeddings are further fed into a Lorentz attention module to capture long-range temporal dependencies. Lastly, a hyperbolic random projection layer regularizes and reduces dimensionality, and classification is performed using a Lorentzian prototype decoder based on the squared geodesic distances. The full model is pretrained with self-supervised reconstruction and cut-and-fill tasks and sub-sequently trained jointly across all subjects, with subject-conditional fine-tuning. 4.4.1. P ROCESSOR 
+
+The LAtte architecture utilizes both the EEG sequences 
+
+Xeeg and the corresponding subject ids Xid as input. We generate initial embeddings zn of this input using an input processor inspired by Wei et al. (2019). The processor is compromised of two sequential stages, Spatial Component Analysis (SCA) and Spatio-Temporal Filtering (STF). Each stage consists of a convolutional layer followed by batch 4Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+normalization. The SCA block transforms the data from the channel domain to a component domain using a kernel of size (FT , 1) . This effectively performs a linear combination across channels. The following STF block uses a kernel of size (1 , F C ) to convolve along the time dimension, ex-tracting temporal features. To adapt the model to specific subjects, we inject subject information into both blocks by expanding the weight matrix according to Equation (1), such that Wproc := W shared proc + Qs
+
+> proc
+
+(Rs
+
+> proc
+
+)T .After generating zn, we map the latent representations onto the Lorentz manifold through a direct time element concate-nation. To capture local temporal patterns, the sequence is partitioned into minimally overlapping segments (patches). These patches are encoded and then aggregated using a Lorentzian centroid operation, which computes the hyper-bolic average of the patch embeddings. This patching strat-egy enhances representation learning and improves compu-tational efficiency by reducing the effective sequence length. 
+
+Patching We split the embedded EEG sequence into win-dows with minimal overlap. Let 
+
+zn = ( zn, 1, . . . , z n,T ) ∈ RT ×d
+
+denote the processed EEG sequence. For a fixed number of windows w, we define the window length L and stride g as 
+
+L := 
+
+ Tw
+
+
+
+, g := T − L
+
+max( w − 1, 1) .
+
+The patching operator slices zn into w evenly distributed temporal windows: Patching (zn) :=  z(1)  
+
+> n
+
+, . . . , z (w)
+
+> n
+
+,z(i) 
+
+> n
+
+:=  zn,τ i+1 , . . . , z n,τ i+L
+
+ ∈ RL×d,τi := ⌊(i − 1) g⌋ , i = 1 , . . . , w. 
+
+(4) The patches are then reshaped to a sequence in Rw×L×d.4.4.2. E NCODER 
+
+The LAtte encoder is inspired by baseline deduction meth-ods commonly used in EEG analysis. Traditionally, these methods leverage paired recordings where a baseline graph is generated from resting state data and a task graph is gen-erated at task time (Maess et al., 2016). Subtracting the baseline from the task graph isolates task-specific neural activity by mitigating individual variability and signal noise. However, many real-world datasets lack explicit resting state recordings, limiting the applicability of this approach. To address this challenge, we propose a dual-branch archi-tecture that learns an implicit baseline directly from the task data. The first branch, dubbed the baseline block, employs a Hyperbolic Inception Block with average pooling to es-timate a smoothed baseline representation. In parallel, the second branch uses a Hyperbolic Inception Block with max pooling to highlight strong activation signals, which act as the task graph. We compute the deviation between these two representations (see Figure 1 and Algorithm 1) to produce embeddings that better highlight task-relevant information. 
+
+Hyperbolic InceptionTime Block To effectively model latent representations across multiple temporal resolutions and extract meaningful features, we utilize the Inception-Time architecture (Ismail Fawaz et al., 2020). Specifi-cally, we translate the original Euclidean architecture to the Lorentz manifold to capture cross-channel and cross-temporal hierarchical relationships. The block begins with a bottleneck layer to reduce the chan-nel dimensionality, followed by three parallel convolutional branches with different kernel sizes to capture temporal patterns at multiple resolutions. In parallel, a max-pooling branch is included to emphasize prominent local features. We use our formulation of a Lorentzian maxpool defined in the section below. For the baseline block, we replace the max-pooling with average pooling (Bdeir et al., 2024). We define the composite convolutional operator 
+
+ϕk(·; W ) := ReLU (BN (Conv1D k(·; W ))) ,
+
+where Conv1D k denotes a one-dimensional convolution with kernel size k.Given input embeddings zn ∈ L nK , the block first applies a bottleneck projection 
+
+z(0)  
+
+> n
+
+= ϕ1(zn; W (0) ), W (0) ∈ RC′×C×1, (5) where C′ < C is the bottleneck dimension. Next, multiple convolutional branches with different kernel sizes are applied in parallel: 
+
+z(i) 
+
+> n
+
+= ϕki (z(0)  
+
+> n
+
+; W (i)), i = 1 , 2, 3 (6) with 
+
+W (i) ∈ RC′′ ×C′×ki , ki ∈ { k1, k 2, k 3},
+
+where C′′ denotes the number of filters per branch. In addition, a pooling branch is defined as 
+
+z(4)  
+
+> n
+
+= ϕpool (z(0)  
+
+> n
+
+; W (4) ). (7) The outputs of all branches are combined via direct Lorentz concatenation: 
+
+zout  
+
+> n
+
+= HCat  z(1)  
+
+> n
+
+, z (2)  
+
+> n
+
+, z (3)  
+
+> n
+
+, z (4) 
+
+> n
+
+. (8) 5Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+Hyperbolic MaxPool We introduce a distance based Lorentzian maxpooling operator. Given a 1D window of width k, stride t, padding u, and dilation δ, we first compute a scalar score for each embedding as the geodesic distance to the origin o:
+
+sb,ℓ = dL(xb,ℓ , o ) = arcosh   − ⟨ xb,ℓ , o ⟩L
+
+, (9) We then perform Euclidean maxpooling on the scalar score sequence {sb,ℓ }Lℓ=1 to obtain pooled scores and their respec-tive indices. These indices are used to gather hyperbolic vectors from the original input. No transformations are ap-plied to the hyperbolic vectors. Intuitively, this performs the pooling operations as a selection based on geodesic ra-dius. For each window, we select the point furthest from the hyperbolic origin, a choice that correlates with the highest semantic difference in hierarchical embeddings. 4.4.3. R ANDOM PROJECTION DECODER 
+
+Following the encoder, we apply an LB-LoRA layer to re-duce dimensionality and prepare the embeddings for classi-fication. During training, the shared weights W shared LFC are ran-domly initialized and frozen to simulate a random projection, borrowing from the Johnson-Lindenstrauss lemma (Blum, 2005), which states that high-dimensional points can be pro-jected into a lower-dimensional space k = O(log n/ε 2)
+
+while approximately preserving pairwise distances. By fixing W shared LFC ∼ U (−σ, σ ), we effectively perform a di-mensionality reduction on the manifold that lowers com-putational ability and acts as a regularizer. To reintroduce adaptability, we augment this frozen layer with a subject-specific LoRA. We initialize the down-projection QLFC with the same random distribution as W shared LFC to capture features, while the up-projection RLFC is initialized to zero to ensure the initial output matches the random projection. With a learnable scaling factor αs, the final output Z is defined as: 
+
+Z = W shared LFC Z + αsRLFC QT
+
+> LFC
+
+Z (10) The final classification is done using a prototype classifier (Chen et al., 2022) with frozen class embeddings. 
+
+4.5. Pretraining 
+
+Our architecture relies on the model’s ability to learn rich representations of the input data. However, due to the lim-ited amount of data per subject in smaller datasets, models often overfit to subject-specific noise. To extract meaningful patterns from EEG signals, we therefore propose a multi-subject encoder pertaining. The setting is self-supervised, which allows us to train the model without expert labels. We rely on two main surrogate tasks: cut and fill, and recon-struction. 
+
+Cut and Fill randomly select an interval of length l uni-formly sampled from a range [lmin , l max ] in the input data. We then replace this interval with the mean of the signal and predict the missing values. The cut-fill can be seen in Algorithm 2. The loss for a given cut-mask M is: 
+
+Lcf = 1
+
+∥M ∥1
+
+M ⊙ (ˆ x − x) 2 
+
+> F
+
+, (11) 
+
+Algorithm 2 Apply-Cut-and-Fill 
+
+Require: x ∈ RB×1×C×T
+
+Require: lmin , l max ∈ (0 , 1] 
+
+Require: f ∈ R1×1×C×1
+
+Ensure: xmasked ∈ RB×1×C×T , M ∈ { 0, 1}B×1×C×T ,spans {(sb, e b)}Bb=1  
+
+> 1:
+
+xmasked ← x; M ← 0B×1×C×T 
+
+> 2:
+
+for b = 1 to B do  
+
+> 3:
+
+ℓb ∼ Unif  {⌊ lmin T ⌋, . . . , ⌊lmax T ⌋}  
+
+> 4:
+
+sb ∼ Unif  {0, . . . , T − ℓb}; eb ← sb + ℓb 
+
+> 5:
+
+for c = 1 to C do  
+
+> 6:
+
+for t = sb to eb − 1 do  
+
+> 7:
+
+xmasked  
+
+> b, 1,c,t
+
+← f1,1,c, 1 
+
+> 8:
+
+Mb, 1,c,t ← 1 
+
+> 9:
+
+end for  
+
+> 10:
+
+end for  
+
+> 11:
+
+end for  
+
+> 12: 13:
+
+return xmasked , M, {(sb, e b)}Bb=1 
+
+Reconstruction The reconstruction task is a self-supervised objective, where the EEG data is passed through the encoder to generate a compact latent representation. This embedding is then fed into the decoder, which attempts to reconstruct the original input signal as closely as possible. At each pre-training step, we stochastically select a surro-gate task: with probability r, we perform a reconstruction update (minimizing Lrecon ), and with probability 1 − r we perform a cut-and-fill update (minimizing Lcf ). 
+
+4.6. Subject-conditional Fine-tuning 
+
+Despite challenges such as subject-specific noise and dis-tributional shifts, learning shared structure across subjects remains a promising strategy for constructing more robust latent representations. Building on prior work of fine-tuning for EEG Classification (Wei et al., 2019) and cross-subject training with subject features (Burchert et al., 2024), we combine both approaches and propose a fine-tuning proto-col with subject features. First, we train the cross-subject model with the LoRA embedding of the subject informa-tion and then fine-tune on the individual subject, leveraging universal patterns shared across subjects while making the different distributions explicit to the model. 6Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+# 5. Experiments 
+
+Experimental Setup We evaluate our approach on three widely studied EEG datasets, each representing a classifica-tion paradigm: motor imagery, steady-state visual responses, and error-related brain activity. For the preprocessing, we follow the common steps and use the same train/val/test splitting protocol as (Pan et al., 2022), where for the tasks of SSVEP and ERN, the data is split session-wise, and for MI, instance-wise for each subject. A detailed description can be found in Section A.3. We compare our LAtte model against well-established EEG Classification baselines, including ShallowConvNet (Schirrmeister et al., 2017), EEGNet (Lawhern et al., 2018), SCCNet (Wei et al., 2019), EEG-TCNet (Ingolfsson et al., 2020), TCNet-Fusion (Musallam et al., 2021), FBCNet (Mane et al., 2021), MBEEGSE (Altuwaijri et al., 2022), In-ceptionTime (Burchert et al., 2024), MAtt (Pan et al., 2022), CBraMod (Wang et al., 2025), HyperMatt (Bdeir et al., 2025), and TCFormer (Altaheri et al., 2025) across three commonly used datasets. Furthermore, we include three cross-subject baselines: ResNetJoint, MAttJoint, and Incep-tionJoint (Burchert et al., 2024). For the MI and SSVEP datasets, accuracy is used as the performance metric, while AUC is employed for ERN due to a class imbalance. For LAtte, we first pre-train the model with the reconstruction task and load the resulting weights for the processor and HyperBaselineBlock. In the main training loop, LAtte is trained on all subjects jointly. Hyperparameters were selected based on validation perfor-mance. The search ranges and optimal configurations for each dataset are reported in Section A.4. LAtte is trained for 200 epochs, and test performance is reported at the epoch with the best validation score. Experiments are repeated 10 times with different random seeds. 
+
+Performance Comparison In Table 1, we compare our proposed model with current state-of-the-art baselines, where baseline results are aggregated from Pan et al. (2022); Burchert et al. (2024); Bdeir et al. (2025). Additionally, we run TCFormer as the most recent baseline and CBraMod as the representative for the foundation model literature on our selection of tasks and optimize their hyperparameters based on validation performance for each dataset individually. The first table block reports results in the subject-specific (SS) setting, where a separate model is trained for each sub-ject, and the final performance is averaged across subjects. The second block presents results in the subject-conditional (SC) setting, where a single model is trained across all sub-jects with additional subject meta-features (e.g., subject ID). In the SC setting, LAtte achieves a significant performance improvement over all baselines across tasks. Unlike exist-ing models that rely on static subject embeddings, LAtte                                                                
+
+> Table 1. Performance comparison on the EEG datasets MI, SSVEP, and ERN. We repeated the experiments 10 times on random seeds and report the average accuracy for MI and SSVEP and the AUC for ERN. The best result is highlighted in bold, the second best underlined. The first block contains subject-specific (SS) models, where one model is trained per subject. In the second block are subject-conditional (SC) models, where the model is trained across subjects with additional subject information.
+> Models MI SSVEP ERN
+> ShallowConvNet 61.84 ±6.39 56.93 ±6.97 71.86 ±2.64 EEGNet 57.43 ±6.25 53.72 ±7.23 74.28 ±2.47 SCCNet 71.95 ±5.05 62.11 ±7.70 70.93 ±2.31 EEG-TCNet 67.09 ±4.66 55.45 ±7.66 77.05 ±2.46 TCNet-Fusion 56.52 ±3.07 45.00 ±6.45 70.46 ±2.94 FBCNet 71.45 ±4.45 53.09 ±5.67 60.47 ±3.06 MBEEGSE 64.58 ±6.07 56.45 ±7.27 75.46 ±2.34 InceptionTime 62.85 ±3.21 62.71 ±2.95 73.55 ±5.08 MAtt 74.71 ±5.01 65.50 ±8.20 76.01 ±2.28 CBraMod 45.22 ±1.26 40.45 ±2.12 68.49 ±1.17 HyperMAtt 74.12 ±2.91 68.10 ±2.41 78.01 ±1.30 TCFormer 71.31 ±2.22 47.64 ±3.10 78.82 ±1.68 LAtte + FT 73.77 ±3.11 73.75 ±2.05 81.70 ±1.72 ResNetJoint 55.54 ±2.72 54.15 ±1.19 73.09 ±0.72 MAttJoint 61.13 ±0.56 60.71 ±0.29 75.78 ±1.23 InceptionJoint 61.38 ±1.57 66.00 ±0.36 76.13 ±0.95 LAtte 71.63 ±2.80 71.53 ±1.00 81.57 ±1.22 SS: Relative ∆-1.25% 8.30% 4.73% SC: Relative ∆16.67% 8.38% 7.15%
+
+leverages a richer LoRA-based subject representation, en-abling better separation of subject-specific noise. In addi-tion, LAtte outperforms the subject-specific baselines on SSVEP and ERN tasks, highlighting the benefits of its more expressive hyperbolic representation. For the subject-specific (SS) setting, we fine-tune the cross-subject model separately for each subject using only that subject’s data and ID. We report the mean across subjects and the pooled standard deviation over runs, with per-subject results in Section A.4. Fine-tuning enables direct adap-tation to each subject’s data distribution while retaining subject-invariant structure learned during joint training, and converges within only a few iterations due to the strong ini-tialization and fully subject-dependent LoRA pre-decoder. Foundation models such as LaBram (Jiang et al., 2024) and its successor CBraMod (Wang et al., 2025) underper-form on these small-scale EEG datasets. In particular, their fixed patch length of 200 is poorly matched to the short sequence lengths of MI (438), SSVEP (128), and ERN (160), leading to extensive zero padding and preventing them from effectively leveraging their main advantage in large-scale pretraining. Additionally, it should be noted that our reproduced TCFormer results on MI are lower than those reported in the original paper. This is because their model was tuned directly on the test set without a valida-tion split. TCFormer remains a strong baseline for MI and ERN. However, it struggles with large inter-subject vari-7Hyperbolic Lorentz Attention for Cross-Subject EEG Classification   
+
+> Table 2. Component Analysis of LAtte. We compare the per-formance of the full LAtte model to versions without the main modules on SSVEP. We report the accuracy and std over 5 runs.
+
+Model Variant Accuracy ∆
+
+LAtte Full 71.53 ±1.00 -LAtte w/o Lorentz 57.40 ±6.53 -19.75% LAtte w/o LoRA 62.87 ±0.51 -12.11% LAtte w/o Proj 69.34 ±1.37 -3.06% LAtte w/o Cut/Fill 69.55 ±0.71 -2.77% LAtte w/o Pretrain 69.71 ±0.68 -2.54% ability in SSVEP, where 3 of 11 subjects normally achieve near-random performance (Table 5). In contrast, LAtte generalizes consistently across all three tasks, benefiting from richer hyperbolic embeddings and task-specific shared weights across subjects, which improve performance on these challenging subject distributions. 
+
+Ablation Studies In Table 2, we analyze the contribution of each component in the LAtte architecture by removing one module at a time. The largest performance drop oc-curs when replacing the Lorentz manifold with Euclidean space. Here, accuracy decreases by 19.75%, confirming the importance of a more expressive geometric representa-tion. Removing the subject-dependent LoRA parameters also leads to a substantial drop by 12.11%, as the model can no longer effectively distinguish subject-specific distri-butions, which is critical for cross-subject generalization. The decoder projection and cut/fill augmentation contribute to improved regularization and stable convergence, which is an essential property for small EEG datasets. Finally, pretraining the processor and encoder provides additional gains by offering more stable initialization. 
+
+LOSO To evaluate generalization to unseen subjects, we adopt the leave-one-subject-out (LOSO) protocol (Kunjan et al., 2021). Under this scheme, the model is trained on data from all but one subject, with the held-out subject used exclusively for testing. This process is repeated such that each subject serves once as the test subject. The final performance is averaged across all folds. For training and validation, we follow the same splitting strategy described in Section A.3: an instance-wise split for MI, and a session-wise split for SSVEP and ERN. As baselines, we consider TCFormer (Altaheri et al., 2025), which employs the same protocol for cross-subject evalu-ation, and CBraMod (Wang et al., 2025), which originally uses a fixed hold-out set of subjects for validation. However, fixed subject splits can lead to biased or unstable estimates due to extreme inter-subject variability. To ensure a fair comparison, we also evaluate CBraMod under the LOSO protocol. All reported results in Table 3 are averaged over              
+
+> Table 3. Performance comparison for LOSO protocol. We repeated the experiments 5 times on random seeds and report the average accuracy for MI and SSVEP and the AUC for ERN.
+> Models MI SSVEP ERN
+> CBraMod 35.26 ±1.51 43.58 ±2.63 66.70 ±299 TCFormer 39.84 ±3.21 42.18 ±3.91 74.28 ±4.10 LAtte 42.31 ±1.46 57.86 ±3.66 75.31 ±3.17
+
+five runs with different random seeds. As expected, all models exhibit a substantial drop in per-formance under LOSO, reflecting the strong distribution shifts between subjects. This degradation is particularly pro-nounced for CBraMod and TCFormer on MI and SSVEP, where inter-subject variability is known to be severe. In con-trast, LAtte achieves consistently higher performance across tasks. For SSVEP, this suggests that LAtte more effec-tively isolates task-relevant structure in the shared weights 
+
+W shared , while relegating subject-specific variability to the LoRA parameters Q, R . These subject parameters are set to zero for unseen subjects during training due to the initial-ization just leaving the learned shared patterns in W shared .On ERN, both LAtte and TCFormer generalize relatively well across subjects, leading to a similar reduction in per-formance, though LAtte maintains a consistent advantage. While true cross-subject generalization remains challeng-ing, explicitly conditioning model parameters on the subject appears to be a promising direction. 
+
+Runtime Comparison We adopt the parametrization trick in the CUDA implementations of Bdeir et al. (2025), en-abling efficient computation of hyperbolic operations. As a result, LAtte is substantially faster, requiring only 0.364s per epoch compared to 1.519s for TCFormer and 4.0s for MAtt, corresponding to speedups of 4.2× and 11×, respec-tively. All timings were measured on the SSVEP task using an NVIDIA GeForce RTX 4070 Ti. In addition, the subject-specific components are lightweight due to the use of LoRA. Out of the 1.2M parameters in LAtte, 278k are allocated to subject-specific adaptation. 
+
+# 6. Conclusion 
+
+In this work, we introduced LAtte, a novel hyperbolic framework for cross-subject EEG classification that unifies Lorentzian attention with an InceptionTime-based encoder. By combining subject-specific low-rank adapters with hy-perbolic representations, LAtte effectively learns shared neural patterns from subject-dependent variability. This design enables a single unified model to generalize across individuals while maintaining adaptability to new, unseen subjects. The proposed cross-subject LAtte outperforms most of its subject-specific counterparts. Our results on three well-established datasets prove that hyperbolic geom-8Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+etry offers a natural and strong inductive bias for modeling the hierarchical structure inherent in EEG data, and subject-adaptive mechanisms such as LoRA can enable scalable, generalizable EEG decoding. LAtte attempts to build on previous approaches to reduce classification sensitivity to noise and, become more accessible in real-world clinical applications. 
+
+# 7. Impact Statement 
+
+Ethics We are committed to contributing positively to so-ciety and human well-being, while respecting the privacy of the subjects involved in our evaluation. Our experiments uti-lize three established EEG datasets: MI, SSVEP, and ERN, which involve data from human subjects. These datasets are fully anonymized and do not contain any personally identi-fiable information. Additionally, they are publicly available and widely used within the machine learning community. 
+
+Reproducibility We are committed to ensuring the repro-ducibility of our model, LAtte. To support this, we provide the source code, including pre-processing steps, model ar-chitecture, and training scripts, in the supplementary mate-rial. Upon publication, the code will also be made publicly available on GitHub, along with detailed documentation to guide experiment setup and execution. Additionally, we commit to releasing the pretrained checkpoints used for writing this paper. The datasets used in our experiments are publicly available, and we additionally provide a link to the preprocessed data in a cloud service for easy access. All hyperparameters and model configurations are detailed in both the paper and the code repository to ensure easy replication. 
+
+# References 
+
+Altaheri, H., Karray, F., and Karimi, A.-H. Temporal convo-lutional transformer for eeg based motor imagery decod-ing. Scientific Reports. Nature , 15(1):32959, 2025. Altuwaijri, G. A., Muhammad, G., Altaheri, H., and Al-sulaiman, M. A multi-branch convolutional neural net-work with squeeze-and-excitation attention blocks for eeg-based motor imagery signals classification. Diagnos-tics , 12(4):995, 2022. Atigh, M. G., Schoep, J., Acar, E., van Noord, N., and Mettes, P. Hyperbolic image segmentation. In Proceed-ings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pp. 4453–4462, June 2022. Bdeir, A., Schwethelm, K., and Landwehr, N. Fully hy-perbolic convolutional neural networks for computer vision. In The Twelfth International Conference on Learning Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . OpenReview.net, 2024. URL https: //openreview.net/forum?id=ekz1hN5QNh .Bdeir, A., Burchert, J., Schmidt-Thieme, L., and Landwehr, N. Robust hyperbolic learning with curvature-aware opti-mization. Neurips 2025 , 2025. Blum, A. Random projection, margins, kernels, and feature-selection. In Proceedings of the 2005 Interna-tional Conference on Subspace, Latent Structure and Feature Selection , SLSFS’05, pp. 52–68, Berlin, Heidel-berg, 2005. Springer-Verlag. ISBN 3540341374. doi: 10.1007/11752790 3. URL https://doi.org/10. 1007/11752790_3 .Brunner, C., Leeb, R., M ¨uller-Putz, G., Schl ¨ogl, A., and Pfurtscheller, G. Bci competition 2008–graz data set a. 
+
+Institute for Knowledge Discovery (Laboratory of Brain-Computer Interfaces), Graz University of Technology , 16: 1–6, 2008. Burchert, J., Werner, T., Yalavarthi, V. K., de Portugal, D. C., Stubbemann, M., and Schmidt-Thieme, L. Are eeg sequences time series? eeg classification with time series models and joint subject training. arXiv preprint arXiv:2404.06966 , 2024. Chen, W., Han, X., Lin, Y., Zhao, H., Liu, Z., Li, P., Sun, M., and Zhou, J. Fully hyperbolic neural networks. In Mure-san, S., Nakov, P., and Villavicencio, A. (eds.), Proceed-ings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), ACL 2022, Dublin, Ireland, May 22-27, 2022 , pp. 5672–5686. Association for Computational Linguistics, 2022. doi: 10. 18653/V1/2022.ACL-LONG.389. URL https://doi. org/10.18653/v1/2022.acl-long.389 .Cimtay, Y. and Ekmekcioglu, E. Investigating the use of pretrained convolutional neural network on cross-subject and cross-dataset EEG emotion recognition. Sensors , 20 (7):2034, 2020. doi: 10.3390/S20072034. URL https: //doi.org/10.3390/s20072034 .Croft, R. J. and Barry, R. J. Removal of ocular artifact from the eeg: a review. Neurophysiologie Clinique/Clinical Neurophysiology , 30(1):5–19, 2000. Delorme, A. Eeg is better left alone. Scientific Reports , 13 (1):2372, 2023. Ganea, O.-E., B ´ecigneul, G., and Hofmann, T. Hyperbolic neural networks, 2018. URL https://arxiv.org/ abs/1805.09112 .Hu, E. J., Shen, Y., Wallis, P., Allen-Zhu, Z., Li, Y., Wang, S., Wang, L., and Chen, W. Lora: Low-rank adapta-tion of large language models. In The Tenth Interna-tional Conference on Learning Representations, ICLR 
+
+9Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+2022, Virtual Event, April 25-29, 2022 . OpenReview.net, 2022. URL https://openreview.net/forum? id=nZeVKeeFYf9 .Ingolfsson, T. M., Hersche, M., Wang, X., Kobayashi, N., Cavigelli, L., and Benini, L. Eeg-tcnet: An accurate temporal convolutional network for embedded motor-imagery brain–machine interfaces. In 2020 IEEE Int. Conf. on SMC , pp. 2958–2965, 2020. Ismail Fawaz, H., Lucas, B., Forestier, G., Pelletier, C., Schmidt, D. F., Weber, J., Webb, G. I., Idoumghar, L., Muller, P.-A., and Petitjean, F. Inceptiontime: Finding alexnet for time series classification. Data Mining and Knowledge Discovery , 34(6):1936–1962, 2020. Jiang, W., Zhao, L., and Lu, B. Large brain model for learning generic representations with tremendous EEG data in BCI. In The Twelfth International Conference on Learning Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . OpenReview.net, 2024. URL https: //openreview.net/forum?id=QzTpTRVtrP .Johnson, W. B., Lindenstrauss, J., et al. Extensions of lipschitz mappings into a hilbert space. Contemporary mathematics , 26(189-206):1, 1984. Kim, S., Jeong, B., and Kwak, S. HIER: metric learning beyond class labels via hierarchical regularization. In 
+
+IEEE/CVF Conference on Computer Vision and Pattern Recognition, CVPR 2023, Vancouver, BC, Canada, June 17-24, 2023 , pp. 19903–19912. IEEE, 2023. doi: 10. 1109/CVPR52729.2023.01906. URL https://doi. org/10.1109/CVPR52729.2023.01906 .Kotte, S. and Dabbakuti, J. K. Methods for removal of artifacts from eeg signal: A review. In Journal of Physics: Conference Series , volume 1706, pp. 012093. IOP Pub-lishing, 2020. Kunjan, S., Grummett, T. S., Pope, K. J., Powers, D. M., Fitzgibbon, S. P., Bastiampillai, T., Battersby, M., and Lewis, T. W. The necessity of leave one subject out (loso) cross validation for eeg disease diagnosis. In Inter-national conference on brain informatics , pp. 558–567. Springer, 2021. Law, M., Liao, R., Snell, J., and Zemel, R. Lorentzian dis-tance learning for hyperbolic representations. In Interna-tional Conference on Machine Learning , pp. 3672–3681. PMLR, 2019. Lawhern, V. J., Solon, A. J., Waytowich, N. R., Gordon, S. M., Hung, C. P., and Lance, B. J. Eegnet: a com-pact convolutional neural network for eeg-based brain– computer interfaces. Journal of Neural Engineering , 15 (5), 2018. Li, J., Qiu, S., Shen, Y., Liu, C., and He, H. Multi-source transfer learning for cross-subject EEG emotion recognition. IEEE Trans. Cybern. , 50(7):3281–3293, 2020. doi: 10.1109/TCYB.2019.2904052. URL https: //doi.org/10.1109/TCYB.2019.2904052 .Li, X., Song, D., Zhang, P., Zhang, Y., Hou, Y., and Hu, B. Exploring eeg features in cross-subject emotion recogni-tion. Frontiers in neuroscience , 12:162, 2018. Lotte, F., Congedo, M., L ´ecuyer, A., Lamarche, F., and Arnaldi, B. A review of classification algorithms for eeg-based brain–computer interfaces. Journal of Neural Engineering , 4(2):R1, 2007. Maess, B., Schr ¨oger, E., and Widmann, A. High-pass filters and baseline correction in m/eeg analysis. com-mentary on: “how inappropriate high-pass filters can produce artefacts and incorrect conclusions in erp stud-ies of language and cognition”. Journal of Neuro-science Methods , 266:164–165, 2016. ISSN 0165-0270. doi: https://doi.org/10.1016/j.jneumeth.2015.12. 003. URL https://www.sciencedirect.com/ science/article/pii/S0165027015004434 .Mane, R., Chew, E., Chua, K., Ang, K. K., Robinson, N., Vinod, A. P., Lee, S.-W., and Guan, C. Fbcnet: A multi-view convolutional neural network for brain-computer interface. arXiv preprint arXiv:2104.01233 , 2021. Margaux, P., Emmanuel, M., S ´ebastien, D., Olivier, B., and J ´er ´emie, M. Objective and subjective evaluation of online error correction during p300-based spelling. Advances in Human-Computer Interaction , 2012:4–4, 2012. Mettes, P., Atigh, M. G., Keller-Ressel, M., Gu, J., and Yeung, S. Hyperbolic deep learning in computer vision: A survey. Int. J. Comput. Vis. , 132(9):3484–3508, 2024. doi: 10.1007/S11263-024-02043-5. URL https:// doi.org/10.1007/s11263-024-02043-5 .Musallam, Y. K., AlFassam, N. I., Muhammad, G., Amin, S. U., Alsulaiman, M., Abdul, W., Altaheri, H., Bencherif, M. A., and Algabri, M. Electroencephalography-based motor imagery classification using temporal convolu-tional network fusion. Biomedical Signal Processing and Control , 69:102826, 2021. Muthukumaraswamy, S. D. High-frequency brain activity and muscle artifacts in meg/eeg: a review and recom-mendations. Frontiers in Human Neuroscience , 7:138, 2013. Nagano, Y., Yamaguchi, S., Fujita, Y., and Koyama, M. A wrapped normal distribution on hyperbolic space for gradient-based learning. In International conference on machine learning , pp. 4693–4702. PMLR, 2019. 10 Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+Nguyen, X. S., Yang, S., and Histace, A. Neural networks on symmetric spaces of noncompact type. In The Thirteenth International Conference on Learning Representations ,2025. Nikolopoulos, S. Mamem eeg ssvep dataset ii (256 chan-nels, 11 subjects, 5 frequencies presented simultaneously). 2021. Obeid, I. and Picone, J. The temple university hospital eeg data corpus. Frontiers in neuroscience , 10:196, 2016. Pan, Y.-T., Chou, J.-L., and Wei, C.-S. Matt: A manifold attention network for eeg decoding. Advances in Neural Information Processing Systems , 35:31116–31129, 2022. Parbat, D. and Chakraborty, M. A novel methodology to study the cognitive load induced eeg complexity changes: Chaos, fractal and entropy based approach. Biomedical Signal Processing and Control , 64:102277, 2021. Pion-Tonachini, L., Kreutz-Delgado, K., and Makeig, S. Iclabel: An automated electroencephalographic indepen-dent component classifier, dataset, and website. NeuroIm-age , 198:181–197, 2019. Roy, Y., Banville, H., Albuquerque, I., Gramfort, A., Falk, T. H., and Faubert, J. Deep learning-based electroen-cephalography analysis: a systematic review. Journal of Neural Engineering , 16(5):051001, 2019. Schirrmeister, R. T., Springenberg, J. T., Fiederer, L. D. J., Glasstetter, M., Eggensperger, K., Tangermann, M., Hut-ter, F., Burgard, W., and Ball, T. Deep learning with convolutional neural networks for eeg decoding and vi-sualization. Human Brain Mapping , 38(11):5391–5420, 2017. Shen, X., Liu, X., Hu, X., Zhang, D., and Song, S. Contrastive learning of subject-invariant EEG represen-tations for cross-subject emotion recognition. IEEE Trans. Affect. Comput. , 14(3):2496–2511, 2023. doi: 10.1109/TAFFC.2022.3164516. URL https://doi. org/10.1109/TAFFC.2022.3164516 .Wang, J., Zhao, S., Luo, Z., Zhou, Y., Jiang, H., Li, S., Li, T., and Pan, G. Cbramod: A criss-cross brain foundation model for EEG decoding. In The Thirteenth Interna-tional Conference on Learning Representations, ICLR 2025, Singapore, April 24-28, 2025 . OpenReview.net, 2025. URL https://openreview.net/forum? id=NPNUHgHF2w .Wang, Y., Liu, J., Ruan, Q., Wang, S., and Wang, C. Cross-subject eeg emotion classification based on few-label adversarial domain adaption. Expert Systems with Appli-cations , 185:115581, 2021. Wei, C.-S., Koike-Akino, T., and Wang, Y. Spatial component-wise convolutional network (sccnet) for motor-imagery eeg classification. In 2019 9th Interna-tional IEEE/EMBS Conference on Neural Engineering (NER) , pp. 328–331, 2019. 11 Hyperbolic Lorentz Attention for Cross-Subject EEG Classification 
+
+# A. Appendix 
+
+A.1. Additional Hyperbolic Operations Lorentz Concatenation Let z(i) 
+
+> n
+
+= ( z(i)
+
+> n,t
+
+, z (i) 
+
+> n,v
+
+) ∈ L di 
+
+> K
+
+, where z(i) 
+
+> n,t
+
+and z(i) 
+
+> n,v
+
+denote the time and space components, respectively. We define 
+
+HCat  z(1)  
+
+> n
+
+, . . . , z (N )
+
+> n
+
+ =
+
+vuut NX
+
+> i=1
+
+∥z(i) 
+
+> n,v
+
+∥2 + N −1 
+
+> K
+
+, z (1)  
+
+> n,v
+
+, . . . , z (N )
+
+> n,v
+
+!
+
+. (12) 
+
+Exp and Log Maps The exponential map Tx → LnK projects tangent vectors onto the manifold via: 
+
+exp K 
+
+> x
+
+(z) = cosh( α)x + sinh( α) z
+
+α , α = p1/K ∥z∥L, (13) where ∥z∥L = p⟨z, z⟩L. The inverse operation, the logarithmic map, is given by: 
+
+log K 
+
+> x
+
+(y) = acosh( β)
+
+pβ2 − 1 (y − βx), β = − 1
+
+K ⟨x, y⟩L.
+
+Lorentzian Centroid (Law et al., 2019) derive a closed-form for a Lorentzian centroid μL based on the square distances. For points {xi}mi=1 ⊂ LnK with weights ν ∈ Rm, it is computed as: 
+
+μL =
+
+√K · mP
+
+> i=1
+
+νixi
+
+> m
+
+P
+
+> i=1
+
+νixi
+
+> L
+
+, (14) where ∥z∥L := p|⟨ z, z⟩L| ensures normalization to the hyperboloid surface. This closed-form solution approximates the centroid while maintaining manifold constraints. 
+
+Lorentz Prototype Decoder A strength of hyperbolic machine learning approaches is the ability to produce fine embed-dings for input data while minimally distorting the hierarchical relationships between them. This leads to a better use of the ambient embedding space and better instance clustering. To leverage this, we utilize prototypical classification heads. As opposed to the MLR classifier proposed in (Bdeir et al., 2024), prototype classifiers employ class embeddings as cluster points and outputs the results as distances to each cluster midpoint. The center with minimal distance is the the most similar semantically and is used as the classified class. The Lorentzian prototype decoder in this work is the direct translation of the decoder proposed by (Wang et al., 2021). We first randomly initialize N points on the hyperboloid using the Wrapped Normal Lorentz distribution in (Nagano et al., 2019). We then measure similarity using the square distance as it is better defined and computationally more efficient. Additionally, this layer can be set to non-learnable, which forces the class centroids to remain static during the training process. This leads to better generalization in some datasets and avoids overfitting. We use cross-entropy as the objective function. Thus, 
+
+ℓ(Xeeg , X id , y ; W ; L) := 1
+
+N
+
+> N
+
+X
+
+> n=1
+
+cross-entropy (yn, ˆyn) with ˆy := LAtte (Xeeg , X id ; W ; L) (15) 
+
+A.2. LAtte 
+
+In Figure 1, we show the LAtte architecture overview. It is composed of several modular components that together form a unified, fully hyperbolic learning pipeline. A subject-aware EEG processor extracts low-level spatio-temporal features while injecting subject identity through low-rank adapters. These features are mapped to the Lorentz manifold and passed to a dual-branch hyperbolic encoder, which separates smooth baseline structure from salient task-related activity using 12 Hyperbolic Lorentz Attention for Cross-Subject EEG Classification  
+
+> Pretrain
+> EEG Sequences ( Xeeg )
+> Processor
+> Patching
+> Inception
+> Pretraining Decoder
+> Reconstruction  Reconstructed Sequence ( ˆXeeg )
+> Processor
+> Subject ID ( Xid )
+> Processor
+> Patching
+> Encoder
+> Inception Baseline
+> Layernorm
+> LorentzAtt
+> Decoder
+> CentroidUnpatch
+> LorentzFC
+> PrototypeDecoder
+> Classification
+> −
+
+Figure 1. LAtte architecture overview. 
+
+complementary pooling strategies. The resulting representations are refined by a Lorentz attention module to capture long-range temporal dependencies. Subject-specific Lorentz Boost LoRA layers then adapt embeddings directly in hyperbolic space, enabling personalized modeling without violating manifold constraints. Finally, a hyperbolic random projection layer regularizes the representation, and a Lorentzian prototype decoder performs classification based on geodesic similarity. The pertaining decoder is depicted in Figure 2 
+
+z
+
+Linear ReLU Linear Reshape: (B, T d in ) → (B, 1, T, d in )
+
+Conv2D    
+
+> k= (3 ,5) (local smoothing)
+
+ReLU Conv2D   
+
+> k= (1 ,1)
+
+ˆy
+
+> MLP
+> Refine (Conv Block)
+
+Figure 2. Euclidean decoder used in the reconstruction and cutfill pretraining 
+
+Lorentz Fully Connected Layer After the Lorentz Attention, we apply an LFC to reduce the dimensionality and prepare the embedding for the final classification output. During the training, the W shared LorentzFC 
+
+are frozen to simulate a random projection following the Johnson-Lindenstrauss lemma (Johnson et al., 1984), which states that a set of points in a high-dimensional space can be embedded into a space of much lower dimension in such a way that distances between points are preserved. Let 0 < ε < 1 and X ⊂ Rd be a set of n points. There exists a linear map: 
+
+f : Rd → Rk, k = O
+
+ log nε2
+
+
+
+,
+
+By freezing the LFC with randomly initialized weights W shared LFC ∼U(−σ, σ ), we are projecting the embeddings on the manifold to a lower dimension, reducing computational cost and adding regulariza-tion. To compensate for the frozen weights, we add a LoRA again to learn subject-specific features and improve the encoding for the final classification, where QLFC follows the same initialization as W shared LFC 
+
+and RLFC is set to zero. In addition, we set a learning rate αs. Thus, the output is defined as: 
+
+Z = W shared LFC Z + αsQLFC RT
+
+> LFC
+
+Z (16) 13 Hyperbolic Lorentz Attention for Cross-Subject EEG Classification  
+
+> Table 4. Overview of the datasets used for the LAtte evaluation.
+
+Dataset Subjects Instances Channels Timesteps Classes Task 
+
+BCIC IV-2a 9 7452 22 438 4 Motor Imagery MAMEM II 11 5500 8 128 5 Visual Stimulus BCI Challenge 16 5440 56 160 2 Error recognition 
+
+Lorentz Multi-Head Attention We compute Lorentzian queries, keys, and values with Lorentz Fully Connected layers (LFC) on the manifold: 
+
+Q = LFC q (X), K = LFC k(X), V = LFC v (X).
+
+The attention weights are obtained from scaled Lorentzian squared distances 
+
+αij = exp  − λτ d2
+
+> L
+
+(Qi, K j )P 
+
+> j′
+
+exp  − λτ d2
+
+> L
+
+(Qi, K j′ ) ,
+
+where λ is a learnable scaling factor and τ is the temperature. Values are aggregated by the Lorentzian weighted centroid 
+
+eVi = Centroid L
+
+ Vj , α ij 
+
+,
+
+and the final output is given by 
+
+LorentzAtt( X) = LFC o( eV ), (17) with LFC o a Lorentz fully connected layer. 
+
+A.3. Datasets MI — Motor Imagery (Brunner et al., 2008). The MI dataset, originally released as BCI Competition IV-2a (2008), is a cornerstone benchmark for motor imagery classification. It contains EEG recordings from 9 subjects, acquired with 22 Ag/AgCl electrodes over central and surrounding scalp regions at a sampling rate of 250 Hz. The experimental task involves four motor imagery conditions: right hand, left hand, feet, and tongue. Following established preprocessing protocols, signals were down-sampled to 128 Hz, band-pass filtered to 4–38 Hz, and segmented into 4-second epochs starting 0.5 s post-cue, yielding 438 time points per trial across 22 channels. 
+
+SSVEP — Steady-State Visual Evoked Potentials (Nikolopoulos, 2021). The SSVEP dataset (MAMEM II, 2016) targets frequency-tagged visual responses. EEG was collected from 11 subjects using the EGI 300 Geodesic EEG System. Participants fixated on one of five flickering visual stimuli (6.66, 7.50, 8.57, 10.00, 12.00 Hz) for 5-second intervals. Preprocessing retained 1–50 Hz activity and focused on 8 occipital channels (PO7, PO3, POz, PO4, PO8, O1, Oz, O2), corresponding to the visual cortex. Each trial was partitioned into four non-overlapping 1-second segments (125 samples per channel), producing 500 trials per subject of 8-channel SSVEP data. 
+
+ERN — Error-Related Negativity (Margaux et al., 2012). The ERN dataset, released as part of the 2015 BCI Challenge 1,captures error-related brain responses during a P300-based spelling task. EEG was recorded from 16 subjects using 56 Ag/AgCl electrodes at 600 Hz. The task poses a binary classification problem, with a natural imbalance favoring correct responses. Preprocessing included down-sampling to 128 Hz and band-pass filtering between 1–40 Hz. Each trial was represented by 56 channels with 160 time points, offering a challenging benchmark due to its class imbalance and inter-subject variability. 
+
+Data splitting To reflect realistic BCI usage, we adopt a subject-specific training scheme proposed by (Pan et al., 2022) in which data is split within each subject. For BCIC-IV-2a, the first session is used for training, with one out of eight trials reserved for validation, and evaluation is performed on the second session. For MAMEM-SSVEP-II and BCI-ERN, the first four sessions are used for training, with one out of four trials held out for validation, and testing is conducted on the remaining sessions. 
+
+> 1https://www.kaggle.com/c/inria-bci-challenge
+
+14 Hyperbolic Lorentz Attention for Cross-Subject EEG Classification  
+
+> Table 5. Performance Comparison on the SSVEP dataset for the subject-specific case. We report the average accuracy over 10 runs, respectively.
+
+Subject InceptionTime MAtt HyperMAtt LAtte 
+
+1 80 .40 ± 2.06 81 .60 ± 2.87 89 .94 ± 1.29 90.00 ± 2.18 
+
+2 86 .60 ± 1.62 89 .40 ± 1.36 90 .31 ± 0.96 94.50 ± 4.62 
+
+3 61 .60 ± 3.07 58 .20 ± 5.64 68 .05 ± 3.06 74.20 ± 0.16 
+
+4 25 .00 ± 4.00 20 .60 ± 3.88 30 .00 ± 0.58 42.67 ± 1.89 
+
+5 25 .00 ± 6.72 26 .40 ± 4.80 30 .96 ± 1.53 53.20 ± 2.34 
+
+6 79 .20 ± 1.72 79 .00 ± 2.68 80 .90 ± 1.55 86.40 ± 0.70 
+
+7 69 .20 ± 1.72 66 .00 ± 2.19 69 .08 ± 2.08 78.60 ± 2.07 
+
+8 23 .60 ± 1.74 23 .80 ± 2.71 29.04 ± 0.58 25 .20 ± 2.03 
+
+9 79 .40 ± 2.58 88 .20 ± 2.04 93.02 ± 3.61 91 .80 ± 2.84 
+
+10 68 .60 ± 3.72 70 .60 ± 4.54 75 .11 ± 2.00 76.80 ± 1.38 
+
+11 91 .20 ± 2.48 90 .20 ± 1.47 92 .96 ± 1.15 94.80 ± 2.57 
+
+Summary 62.71 ±2.95 63.90 ±1.95 68.12 ±1.91 73.47 ±1.82  
+
+> Table 6. Optimal hyperparameter settings.
+
+Hyperparameter BCI SSVEP ERN 
+
+Batch Size 32 32 32 Learning Rate 1e−3 1e−3 1e−4
+
+Weight Decay 1e−2 1e−2 1e−3
+
+Windows 5 1 4LoRA Learning Rate 1e−2 1e−5 1e−1
+
+A.4. Experiments 
+
+In Section A.4, we show the performance of our fine-tuned model LAtte and compare it to recent baselines. Here, the EEG common subject variability can be observed, where subject 3 defaults to near random performance while subject 2 achieves almost perfect accuracy. This trend is persistent for all models. However, on previously challenging subjects, e.g., 4 and 5, LAtte, with its pretraining and richer subject information, is capable of leveraging features that are shared across the dataset to increase performance. The hyperparameter search for the learning rate {1e−3, 1e−4}, weight decay, {1e−1, 1e−2, 5e−2, 1e−3}, patching windows 
+
+{1,2,3,4 } and learning rate of the LoRA weights in the decoder {1e−1, 1e−3, 1e−5} was repeated on random seeds and the optimal values selected on the best validation accuracy for MI and SSVEP and the best validation AUC for ERN. The optimal values are shown in Table 6. For CBraMod and TCFormer, we extended the weight decay search grid by adding 
+
+1e−4 as well. 15

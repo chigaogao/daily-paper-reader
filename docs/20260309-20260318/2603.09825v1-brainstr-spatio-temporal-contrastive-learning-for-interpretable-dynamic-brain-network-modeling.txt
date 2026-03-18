@@ -1,0 +1,590 @@
+Title: BrainSTR: Spatio-Temporal Contrastive Learning for Interpretable Dynamic Brain Network Modeling
+
+URL Source: https://arxiv.org/pdf/2603.09825v1
+
+Published Time: Wed, 11 Mar 2026 01:16:52 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# BrainSTR: Spatio-Temporal Contrastive Learning for Interpretable Dynamic Brain Network Modeling 
+
+Guiliang Guo 1, Guangqi Wen 2, Lingwen Liu 3, Ruoxian Song 1, Peng Cao 1⋆,Jinzhu Yang 1, Fei Wang 4, Xiaoli Liu 5, and Osmar R. Zaiane 6 
+
+> 1
+
+Computer Science and Engineering, Northeastern University, Shenyang, China 
+
+caopeng@cse.neu.edu.cn  
+
+> 2
+
+School of Computer Science and Artificial Intelligence, Shandong Normal University, Jinan, China  
+
+> 3
+
+Graduate School of Information, Production and Systems, Waseda University, Kitakyushu, Fukuoka, Japan  
+
+> 4
+
+Nanjing Medical University, Nanjing, China  
+
+> 5
+
+AiShiWeiLai AI Research, Beijing, China  
+
+> 6
+
+Amii, University of Alberta, Edmonton, Alberta, Canada 
+
+Abstract. Dynamic functional connectivity captures time-varying brain states for better neuropsychiatric diagnosis and spatio-temporal inter-pretability, i.e., identifying when discriminative disease signatures emerge and where they reside in the connectivity topology. Reliable interpretabil-ity faces major challenges: diagnostic signals are often subtle and sparsely distributed across both time and topology, while nuisance fluctuations and non-diagnostic connectivities are pervasive. To address these is-sues, we propose BrainSTR , a spatio-temporal contrastive learning framework for interpretable dynamic brain network modeling. Brain-STR learns state-consistent phase boundaries via a data-driven Adaptive Phase Partition module, identifies diagnostically critical phases with at-tention, and extracts disease-related connectivity within each phase using an Incremental Graph Structure Generator regularized by binarization, temporal smoothness, and sparsity. Then, we introduce a spatio-temporal supervised contrastive learning approach that leverages diagnosis-relevant spatio-temporal patterns to refine the similarity metric between samples and capture more discriminative spatio-temporal features, thereby con-structing a well-structured semantic space for coherent and interpretable representations. Experiments on ASD, BD, and MDD validate the effec-tiveness of BrainSTR, and the discovered critical phases and subnetworks provide interpretable evidence consistent with prior neuroimaging find-ings. Our code: https://anonymous.4open.science/r/BrainSTR1. 
+
+Keywords: Dynamic functional connectivity · Spatio-temporal inter-pretability · Brain-state phase partitioning · Topological filtering · Con-trastive learning.  
+
+> ⋆
+
+Corresponding author.  
+
+> arXiv:2603.09825v1 [cs.CV] 10 Mar 2026 2Guo et al.
+
+## 1 Introduction 
+
+Functional brain network analysis using resting-state fMRI (rs-fMRI) has shown great potential for assisting the diagnosis of neuropsychiatric disorders such as ASD, BD, and MDD [17, 20]. To characterize time-varying brain states, dynamic functional connectivity (dFC) is often estimated by constructing a sequence of time-resolved networks from BOLD signals, commonly using fixed-length sliding-window schemes or adaptive temporal partitioning strategies [11, 15, 5]. Despite its ability to model dynamic brain states, a key challenge in applying dFC to neuropsychiatric diagnosis is achieving spatio-temporal interpretability, i.e., pinpointing precisely when and where in the connectivity topology discrimina-tive disease signatures emerge, to uncover reliable biomarkers. Reliable spatio-temporal interpretability from dynamic brain networks remains challenging be-cause disease-related signals are often subtle and sparsely distributed across both time and topology, whereas disease-irrelevant fluctuations and connectivities are pervasive. To address these issues, we propose BrainSTR, a spatio-temporal contrastive learning framework for interpretable dynamic brain network modeling. Conven-tional contrastive learning suffers from interference by excessive disease-irrelevant information in brain networks, which compromises similarity estimation and leads to reduced similarity even among semantically similar subjects (positive pairs). In contrast, BrainSTR constructs a well-structured semantic space by jointly selecting temporally critical phases and identifying topologically disease-relevant connectivity patterns. Specifically, we learn state-consistent phase bound-aries via a data-driven Adaptive Phase Partition (APP) module and identify a compact set of diagnostically critical phases with attention. Meanwhile, we propose an incremental graph structure generator, which is regularized with binarization, temporal smoothness, and sparsity terms to yield stable and inter-pretable connectivity selection for retaining disease-related connectivities while filtering out disease-unrelated topology within each phase. With the spatio-temporal disease-related representations, we apply supervised contrastive learn-ing to encourage an optimal spatio-temporal semantic embedding space where the intrinsic similarity patterns of the spatio-temporal data are captured. Fi-nally, this overall spatio-temporal interpretable representation learning is jointly optimized through critical-phase identification and incremental graph structure generator to construct a disease-relevant embedding space. Experiments on ASD, BD, and MDD show that BrainSTR achieves the best ACC/AUC on all three tasks, reaching 77.2%/77.8% for MDD, 78.2%/79.6% for BD, and 72.4%/73.0% for ASD (NYU). Compared with the strongest prior results, BrainSTR im-proves performance by +2.9%/+6.5% on MDD, +4.5%/+4.9% on BD, and +3.0%/+3.3% on ASD (ACC/AUC), respectively. These consistent gains indi-cate robust cross-disorder generalization with clear performance margins. More-over, the discovered critical phases and subnetworks provide interpretable evi-dence consistent with prior neuroimaging findings. Our main contributions are: BrainSTR for Interpretable Dynamic Brain Network Modeling 3
+
+1. We propose BrainSTR , a contrastive learning framework for dynamic brain network diagnosis that shifts the focus from redundant whole-sample repre-sentations to the sparse yet critical disease-relevant spatio-temporal features. 2. We introduce a critical spatio-temporal learning scheme, involving adap-tive phase partition for capturing diagnostically informative phases and in-cremental graph structure generator for learning disease-relevant connectiv-ity patterns, reducing temporal noise and topological redundancy to improve robustness and interpretability. 3. Extensive experiments on ASD, BD, and MDD demonstrate that Brain-STR consistently outperforms state-of-the-art methods , while abla-tion studies verify the necessity of each component. Moreover, BrainSTR discovers clinically meaningful critical phases and brain subnetworks that are consistent with prior neuroimaging findings, providing strong spatio-temporal interpretability. Adaptive Phase Partition  
+
+> Patient
+> A1
+> A2
+> At
+> At+
+> FC
+> Healthy
+> Control
+> At-
+> A2+
+> A2-
+> A1+
+> A1-
+> H+-
+> H-
+> BOLD X BOLD X
+> Incremental  Graph  Structure Generator
+> S1+
+> Structure -Aware Encoder
+> MLP
+
+α1+
+
+α1-
+
+α2+
+
+α2-
+
+αt+
+
+αt-
+
+α1
+
+α2
+
+αt
+
+i
+
+j    
+
+> Neighborhood
+> of node iand node j
+
+i
+
+j
+
+> Node embedding
+> Classification
+> Weights of phases
+
+Lce  
+
+> H++
+> H0
+> ……
+
+i  
+
+> S2+
+> St+
+> S1-
+> S2-
+> St-
+> Structure Learning Structural Feature Learning Spatio -Temporal Pattern Learning
+
+Structure Regularization   
+
+> Important Phases
+> Unimportant Phases
+> Reference Feature
+> Disease -related feature
+> from Unimportant Phases
+> Disease -irrelevant Feature
+> Disease -related Feature
+> from Important Phases
+> Negative Pair
+
+Without Lstr 
+
+With Lstr 
+
+> Positive Pair
+> Align Closer
+> Align Farther
+> H-H0H++
+
+Spatio -temporal Contrastive Supervision Lstr       
+
+> Z1
+> Z2
+> Zt
+> Temporal Descriptor
+> Output
+> Original Structure
+> With Lbin With Lbin +Lsp
+
+✘  
+
+> Small Change
+> Large Change
+> With Lcon
+> St
+> St+1
+> State Boundary Learning
+
+Fig. 1. Overview of the proposed BrainSTR framework. Given a subject’s BOLD signal X ∈ RT ×N , where T and N denote the numbers of time points and ROIs, respectively, Adaptive Phase Partition (APP) infers state-consistent phase boundaries to construct phase-wise FCs {At}Wt=1 , where W is the number of partitioned phases, with each At ∈ RN ×N . Each At is decomposed into A+
+
+t /A−
+
+t via an Incremental Graph Structure Generator that learns a phase-wise structure St, and then encoded by a shared Structure-Aware Encoder. Attention then weights informative phases to form subject embeddings, while contrastive supervision makes them diagnosis-discriminative relative to original-graph embeddings. 4 Guo et al. 
+
+## 2 Method 
+
+2.1 Adaptive Phase Partition via Time-Invariant Representation 
+
+As shown in Fig. 1, we construct an overlapping segment sequence by slid-ing windowing (size w, step s=1 ), with w=200 for MDD/BD and w=40 for ASD, yielding K =  T −ws
+
+ + 1 segments {Xk}Kk=1 , Xk ∈ Rw×N . To perform boundary learning, we train a temporal autoencoder to encode each segment as 
+
+hk = fenc (Xk) ∈ Rd and disentangle hk = [ sk, uk] into time-invariant sk and time-variant uk components. We implement fenc as a dilated TCN and use a symmetric decoder to reconstruct ˆXk = fdec (hk). The training objective is: 
+
+LAPP = Lrecon + λsmooth Lsmooth + λorth Lorth , (1) where Lrecon enforces reconstruction of BOLD segments, Lsmooth penalizes abrupt changes of sk across segments to encourage stable brain-state trajectories, and 
+
+Lorth encourages disentanglement between sk and uk to reduce state–noise leak-age. Changepoints are detected on {sk} when dk > τ c (with dk = ∥sk − sk−1∥22), yielding W phases with boundaries on the original BOLD time axis 0 = c0 <
+
+· · · < c W = T , where τc is a threshold and {ct}Wt=0 are the detected bound-ary indices. Each adjacent changepoint pair (ct−1, c t) defines one phase, and we compute the phase-wise FC sequence {At}Wt=1 by Pearson correlation within each phase for subsequent modules. We set λsmooth = 0 .1 and λorth = 1 .0 for all tasks, and select τc from {0.01 , 0.05 , 0.1, 0.5} on the validation set (per dataset). 
+
+2.2 Incremental Graph Structure Generator 
+
+For each At ∈ RN ×N (t = 1 , . . . , W ), we learn a graph structure St to separate disease-relevant from irrelevant connectivities. 
+
+Base and incremental structure. We learn a trainable base structure S0 ∈ RN ×N ,initialized to a small positive constant to avoid biasing the model toward any specific connectivity. For each phase, an MLP fθ predicts an incremental update 
+
+∆S t ∈ RN ×N determinbed by a compact temporal descriptor zt ∈ R3, defined as zt =
+
+h ct−1+ct 
+
+> 2T
+
+, ct−ct−1 
+
+> T
+
+, ∥At − At−1∥F
+
+i
+
+, where the three terms encodes nor-malized location, duration, and FC change magnitude. Given zt, the structure evolves recursively as ∆S t = fθ (zt) and St = St−1 + α∆∆S t. This incremental design captures progressive topological changes across phases with shared pa-rameters and naturally supports variable-length sequences. We set α∆ = 0 .01 
+
+and choose the initialization constant ( 0.05 ) on the validation set. 
+
+Differentiable structure learning. We adopt a straight-through estimator (STE) to separate disease-related from disease-irrelevant connectivities via end-to-end trainable manner: ˜St = 1(St > 0.5) in the forward pass, with gradients back-propagated through St. We then obtain A+ 
+
+> t
+
+= ˜St ⊙ At and A− 
+
+> t
+
+= ( 1 − ˜St) ⊙ At,where ⊙ denotes the element-wise (Hadamard) product; A+ 
+
+> t
+
+retains selected disease-related connectivities and A− 
+
+> t
+
+captures the complementary topological patterns. BrainSTR for Interpretable Dynamic Brain Network Modeling 5
+
+Structure regularization. We regularize the structures with three terms: a bina-rization loss Lbin = PWt=1 ∥St ⊙ (1 − St)∥2 
+
+> F
+
+that encourages near-binary struc-tures,a temporal consistency loss Lms = PWt=2 log  1+exp( ∥St −St−1∥2 
+
+> F
+
+−δ) that promotes smooth evolution across phases, where the margin δ allows mild varia-tions but penalizes abrupt changes, and a sparsity loss Lsp = PWt=1 1  
+
+> N2
+
+∥St∥1,which encourages sparse disease-related topology and is consistent with evi-dence that large number of connectivities are not statistically associated with disease [24]. We set δ = 0 .1 on the validation set. 
+
+2.3 Structure-Aware Encoder 
+
+For each A(·) 
+
+> t
+
+∈ { A+ 
+
+> t
+
+, A − 
+
+> t
+
+, A t}, we compute a phase embedding using a shared Structure-Aware Encoder g(·). We first apply an edge-to-edge operator E(·) 
+
+> t
+
+=Conv N, 1(A(·) 
+
+> t
+
+) + Conv 1,N (A(·) 
+
+> t
+
+) to capture structured interactions among ROI pairs, and then use an edge-to-node operator F (·) 
+
+> t
+
+= Conv 1,N (E(·) 
+
+> t
+
+) to aggregate edge features. Finally, we obtain a topology-aware embedding h(·) 
+
+> t
+
+= g(A(·) 
+
+> t
+
+) = MLP(Flatten( F (·) 
+
+> t
+
+)) ∈ Rd, where d denotes the embedding dimension. The en-coder is shared across {A+ 
+
+> t
+
+, A − 
+
+> t
+
+, A t} to enforce consistent representations and reduce parameters, producing h+ 
+
+> t
+
+, h− 
+
+> t
+
+, and h0 
+
+> t
+
+, respectively. 
+
+2.4 Spatio-Temporal Contrastive Learning 
+
+Attention and aggregation. Given phase embeddings {h+ 
+
+> t
+
+, h− 
+
+> t
+
+, h0 
+
+> t
+
+}Wt=1 from the shared subgraph encoder, we assign each phase an importance weight with 
+
+α(·) 
+
+> t
+
+= exp 
+
+ fattn (h(·) 
+
+> t)
+
+ 
+
+> PWk=1 exp
+
+ fattn (h(·) 
+
+> k)
+
+ , (·) ∈ { +, −, 0}, where fattn is implemented as a two-layer MLP with a Tanh nonlinearity (Linear–Tanh–Linear) that maps an embedding to a scalar score. We identify important phases using α+ 
+
+> t
+
+by I = {t |
+
+α+ 
+
+> t
+
+> 1/W }, or I = {arg max t α+ 
+
+> t
+
+} if empty, and normalize ˜α+ 
+
+> t
+
+= α+
+
+> t
+
+ P  
+
+> k∈I
+
+α+ 
+
+> k
+
+.We then aggregate disease-related connectivity from important phases as H++ =P 
+
+> t∈I
+
+˜α+ 
+
+> t
+
+h+ 
+
+> t
+
+. Meanwhile, the original graph embedding H0 = PWt=1 α0 
+
+> t
+
+h0 
+
+> t
+
+is ob-tained for contrastive supervision. For the complementary representation, we define H− = PWt=1 α− 
+
+> t
+
+h− 
+
+> t
+
+, which is later aligned with H0 via a reference-guided contrastive term. The classifier predicts ˆy = softmax( WcH++ + bc), where Wc
+
+and bc are the learnable weight matrix and bias of the final linear classifier. 
+
+Spatio-temporal contrastive loss. With the original graph embedding H0 as ref-erence, we define an InfoNCE-style objective with two terms, Lref and Lusl :
+
+Lstr = wref Lref + wusl Lusl , (2) 
+
+Lref = − X
+
+> i
+
+1
+
+|P (i)|
+
+X
+
+> p∈P (i)
+
+log exp( ℓref  
+
+> ip
+
+)
+
+P  
+
+> j̸=i
+
+exp( ℓref  
+
+> ij
+
+) , (3) 6 Guo et al. 
+
+Lusl = − X
+
+> i
+
+log exp( ℓusl  
+
+> ii
+
+)
+
+P 
+
+> j
+
+exp( ℓusl  
+
+> ij
+
+) . (4) where Lref measures the semantic similarity gain wrt . the disease-related spatio-temporal patterns by removing the inherent similarity estimated by H0, and 
+
+Lusl aligns the disease-irrelevant spatio-temporal representation H− with H0,so H− remains stable and forces H++ to faster convergence during training. This is critical because H++ and H− are jointly learned from complemen-tary structures ( A+ 
+
+> t
+
+and A− 
+
+> t
+
+). Together, Lref and Lusl encourage H++ to fo-cus on diagnosis-relevant spatio-temporal patterns. We use temperature-scaled similarity scores, with ℓref  
+
+> ij
+
+=  sim( H++  
+
+> i
+
+, H++  
+
+> j
+
+) − β sim( H0 
+
+> i
+
+, H0 
+
+> j
+
+)/τ . Similarly, 
+
+ℓusl  
+
+> ij
+
+= sim( H0 
+
+> i
+
+, H− 
+
+> j
+
+)/τ . Here P(i) = {p̸ = i | yp = yi} denotes same-label posi-tives of subject i within a minibatch, sim( ·, ·) denotes cosine similarity, τ is the temperature, and β controls the reference strength. We set wref = wusl = 1 .0,
+
+τ = 0 .1, and β = 0 .65 on the validation set. 
+
+2.5 Loss and Training 
+
+We first pretrain APP with LAPP to infer state-consistent phase boundaries via changepoint detection, and then optimize the remaining modules end-to-end with the following objective: 
+
+L = min Lce + λstr Lstr 
+
+| {z }
+
+> Diagnosis-label supervision
+
++ λbin Lbin + λms Lms + λsp Lsp 
+
+| {z }
+
+> Structure regularization
+
+, (5) where Lce is the cross-entropy loss. We set λstr = 1 .0, λbin = 1 .0, λms = 1 .0, and 
+
+λsp = 0 .27 , tuned on the validation set. 
+
+## 3 Experiments and Results 
+
+3.1 Dataset and Experimental Details 
+
+We evaluate BrainSTR on two rs-fMRI benchmarks for three diagnoses ( MDD ,
+
+BD , ASD ). The private cohort 7 includes 246 controls, 151 MDD, and 126 BD subjects, preprocessed via DPABI [22]. From the public ABIDE dataset, we use only the NYU site ( 74 ASD, 98 controls) to reduce multi-center variability. We used AAL-based pre-processed functional data for evaluation. Five-fold cross-validation is applied, with hyperparameters tuned on internal validation set.  
+
+> 7
+
+Approved by the Medical Science Ethics Committee of **** University (Ref. ****). BrainSTR for Interpretable Dynamic Brain Network Modeling 7
+
+Table 1. Comparison with state-of-the-art methods on MDD, BD, and ASD diagnosis. The best results are in bold. The average and std of ACC and AUC are reported. Category Method HC vs. MDD HC vs. BD HC vs. ASD (NYU center) ACC(%) AUC(%) ACC(%) AUC(%) ACC(%) AUC(%) Traditional FC + SVM 68 .4 ± 2.7 67 .2 ± 3.2 65 .6 ± 3.1 67 .3 ± 3.5 68 .1 ± 2.9 69 .7 ± 3.6                                                                                                                                                                                                                                                                                                                                                                                    
+
+> FC + RF 64 .7±2.961 .2±3.465 .2±3.163 .6±4.066 .2±2.865 .1±3.7
+> SVM-RFE [3] 70 .3±3.870 .1±4.066 .9±3.767 .6±3.965 .2±4.165 .9±4.3
+> Static graph GroupINN [23] 67 .1±3.965 .7±4.268 .3±3.865 .2±4.063 .3±4.364 .3±4.4
+> BrainGNN [10] 65 .2±3.663 .7±3.969 .1±3.468 .7±3.665 .2±3.865 .4±4.0
+> MVS-GCN [19] 68 .1±3.568 .1±3.767 .1±3.665 .0±3.869 .3±3.768 .3±3.9
+> ASD-DiagNet [1] 68 .2±3.468 .0±3.672 .1±3.272 .1±3.467 .4±3.567 .5±3.7
+> FRL [8] 68 .0±3.368 .9±3.571 .1±3.270 .7±4.167 .1±3.569 .4±3.7
+> EAG-RS [6] 66 .5±3.670 .9±3.873 .5±3.172 .1±4.366 .8±3.768 .1±3.9
+> D-CoRP [4] 71 .7±2.771 .0±2.972 .6±2.771 .8±2.967 .9±1.765 .3±2.1
+> Dynamic graph MDGL [12] 67 .4±3.766 .7±3.969 .1±3.570 .3±3.766 .9±3.964 .1±4.1
+> STA-GIN [9] 73 .1±3.266 .0±3.572 .4±3.168 .5±3.368 .9±3.467 .2±3.7
+> BrainDGT [14] 74 .3±2.671 .3±2.873 .7±3.474 .7±2.769 .1±3.169 .7±4.2
+> MCDGLN [18] 72 .6±2.571 .1±3.771 .6±3.272 .1±2.667 .2±2.769 .3±2.9
+> ST-GCN [2] 60 .3±4.862 .9±5.161 .3±4.760 .9±4.956 .7±5.252 .6±5.6
+> Ours w/o APP 74 .3±3.377 .2±3.575 .9±3.276 .2±3.470 .1±3.570 .4±3.7
+> w/o ∆S 68 .6±4.464 .3±4.769 .4±4.366 .8±4.669 .4±4.666 .8±4.9
+> w/o Lstr 72 .4±3.877 .3±4.072 .4±3.774 .5±3.971 .3±4.072 .7±4.2
+> w/o Lms 74 .3±3.671 .3±3.873 .7±3.570 .2±3.771 .7±3.870 .2±4.0
+> w/o Lbin 76 .7±3.175 .2±3.377 .6±3.078 .2±3.272 .1±3.371 .8±3.5
+> w/o Lsp 76 .2±3.076 .7±3.277 .8±2.979 .0±3.172 .1±3.272 .5±3.4
+> Full Model BrainSTR 77.2 ±1.6 77.8 ±2.8 78.2 ±1.5 79.6 ±1.7 72.4 ±1.9 73.0 ±2.1
+
+3.2 Classification Results Comparison with state-of-the-art. Table 1 compares BrainSTR with tra-ditional classifiers built on handcrafted FC features, static-graph models on ag-gregated FC, and dynamic-graph models for dFC, where BrainDGT is the strongest dynamic baseline. On the private cohort, BrainSTR achieves 77 .2 ±
+
+1.6/77 .8 ± 2.8 (ACC/AUC, in %) for MDD and 78 .2 ± 1.5/79 .6 ± 1.7 for BD, surpassing BrainDGT by +2 .9% / + 6 .5% and +4 .5% / + 4 .9% , respectively. On ABIDE (NYU), BrainSTR remains the top-performing method. Overall, Brain-STR achieves the best performance in terms of both ACC and AUC across all three diseases, indicating robust cross-task superiority and generalization. We attribute the improvements to BrainSTR’s explicit extraction of diagnosis-relevant spatio-temporal patterns: It learns stable brain-state trajectories via Adaptive Phase Partition (APP), incrementally estimates phase-wise structures to separate disease-related from irrelevant connectivity, and refines discrimina-tive representations through spatio-temporal contrastive learning. 
+
+Ablation analysis. We further verify the contribution of each key compo-nent in Table 1. Removing APP degrades performance consistently, indicating that adaptive boundary learning provides a better temporal partition for down-stream FC construction and diagnosis. Discarding the transition cue ∆S causes the largest drop, highlighting that modeling incremental structure is crucial for capturing diagnosis-relevant dynamic connectivity. In addition, removing Lstr or individual structure regularizers also leads to noticeable degradation, showing 8 Guo et al.        
+
+> (a) Representative subject #1 (b) Representative subject #2
+> Fig. 2. Case-level temporal–topological interpretability of BrainSTR on representative subjects. Top: phase-wise structures, together with the overall retained-connectivity ratio Rof each phase. Bottom: normalized connectivity strength of subnetworks.
+> DMN–DMN DMN–CEN DMN–SN Imp Non
+> Fig. 3. Group-level DMN-centered structure retention. The top row (Imp) and bottom row (Non) visualize the group-aggregated retained connectivities in important and non-important phases, respectively, shown from three brain views.
+
+that these objectives are complementary in suppressing redundant connectivity patterns and promoting diagnosis-relevant spatio-temporal evidence. 
+
+3.3 Interpretability Individual-level. On the MDD cohort, important phases (red) show higher R
+
+with denser DMN–DMN/DMN–CEN/DMN–SN retention than non-important phases (blue) (Fig. 2). The normalized connectivity strength over subnetwork pairs consistently highlights these DMN-related pairs across important phases (yellow), matching prior findings on altered DMN interactions [13, 21, 16, 7]. 
+
+Population-level. On the MDD cohort, the retained structures are denser in important phases, while non-important phases remain sparse and diffuse (Fig. 3). The BD cohort and ABIDE (NYU) show similar trends, supporting that BrainSTR captures diagnosis-relevant evidence both temporally and topologi-cally. 
+
+## 4 Conclusion 
+
+In this work, we presented BrainSTR for interpretable dynamic brain-network di-agnosis. BrainSTR combines Adaptive Phase Partition, critical-phase selection, BrainSTR for Interpretable Dynamic Brain Network Modeling 9
+
+structure-based topological filtering, and reference-adjusted contrastive super-vision, shifting the focus from whole-sample aggregation to diagnosis-relevant spatio-temporal evidence. Experiments on ASD, BD, and MDD show consistent improvements over strong baselines. The identified critical phases and subnet-works are neurobiologically plausible, supporting the clinical interpretability of the proposed framework. 
+
+## References 
+
+1. Eslami, T., Mirjalili, V., Fong, A., Laird, A.R., Saeed, F.: Asd-diagnet: a hybrid learning approach for detection of autism spectrum disorder using fmri data. Fron-tiers in neuroinformatics 13 , 70 (2019) 2. Gadgil, S., Zhao, Q., Pfefferbaum, A., Sullivan, E.V., Adeli, E., Pohl, K.M.: Spatio-temporal graph convolution for resting-state fmri analysis. In: International confer-ence on medical image computing and computer-assisted intervention. pp. 528–538. Springer (2020) 3. Guyon, I., Weston, J., Barnhill, S., Vapnik, V.: Gene selection for cancer classifi-cation using support vector machines. Machine learning 46 (1), 389–422 (2002) 4. Hu, H., Zhang, H., Li, C.: D-corp: Differentiable connectivity refinement for func-tional brain networks. In: International Conference on Medical Image Computing and Computer-Assisted Intervention. pp. 119–129. Springer (2024) 5. Jiang, N., Shi, Y.: A new adaptive sliding window method for fmri dynamic func-tional connectivity analysis. International Journal of Imaging Systems and Tech-nology 35 (4), e70154 (2025) 6. Jung, W., Jeon, E., Kang, E., Suk, H.I.: Eag-rs: a novel explainability-guided roi-selection framework for asd diagnosis via inter-regional relation learning. IEEE Transactions on Medical Imaging 43 (4), 1400–1411 (2023) 7. Kaiser, R.H., Andrews-Hanna, J.R., Wager, T.D., Pizzagalli, D.A.: Large-scale network dysfunction in major depressive disorder: a meta-analysis of resting-state functional connectivity. JAMA psychiatry 72 (6), 603–611 (2015) 8. Kang, E., Heo, D.W., Lee, J., Suk, H.I.: A learnable counter-condition analysis framework for functional connectivity-based neurological disorder diagnosis. IEEE Transactions on Medical Imaging 43 (4), 1377–1387 (2023) 9. Kim, B.H., Ye, J.C., Kim, J.J.: Learning dynamic graph representation of brain connectome with spatio-temporal attention. Advances in Neural Information Pro-cessing Systems 34 , 4314–4327 (2021) 10. Li, X., Zhou, Y., Dvornek, N., Zhang, M., Gao, S., Zhuang, J., Scheinost, D., Staib, L.H., Ventola, P., Duncan, J.S.: Braingnn: Interpretable brain graph neural network for fmri analysis. Medical Image Analysis 74 , 102233 (2021) 11. Liu, L., Wen, G., Cao, P., Hong, T., Yang, J., Zhang, X., Zaiane, O.R.: Braintgl: A dynamic graph representation learning model for brain network analysis. Com-puters in Biology and Medicine 153 , 106521 (2023) 12. Ma, Y., Wang, Q., Cao, L., Li, L., Zhang, C., Qiao, L., Liu, M.: Multi-scale dynamic graph learning for brain disorder detection with functional mri. IEEE Transactions on Neural Systems and Rehabilitation Engineering 31 , 3501–3512 (2023) 13. Manoliu, A., Meng, C., Brandl, F., Doll, A., Tahmasian, M., Scherr, M., Schw-erthöffer, D., Zimmer, C., Förstl, H., Bäuml, J., et al.: Insular dysfunction within the salience network is associated with severity of symptoms and aberrant inter-network connectivity in major depressive disorder. Frontiers in human neuroscience 
+
+7, 930 (2014) 10 Guo et al. 14. Shehzad, A., Zhang, D., Yu, S., Abid, S., Xia, F.: Dynamic graph transformer for brain disorder diagnosis. IEEE Journal of Biomedical and Health Informatics (2025) 15. Šverko, Z., Vrankic, M., Vlahinić, S., Rogelj, P.: Dynamic connectivity analysis using adaptive window size. Sensors 22 (14), 5162 (2022) 16. Tozzi, L., Zhang, X., Chesnut, M., Holt-Gosselin, B., Ramirez, C.A., Williams, L.M.: Reduced functional connectivity of default mode network subsystems in de-pression: Meta-analytic evidence and relationship with trait rumination. NeuroIm-age: Clinical 30 , 102570 (2021) 17. Wang, N., Yao, D., Ma, L., Liu, M.: Multi-site clustering and nested feature ex-traction for identifying autism spectrum disorder with resting-state fmri. Medical image analysis 75 , 102279 (2022) 18. Wang, P., Wen, X., Lei, Y., Guo, Y., Li, J., Hao, Y., Cao, R., Gao, C., Cao, R.: Mcdgln: Masked connection-based dynamic graph learning network for autism spectrum disorder. Brain Research Bulletin 224 , 111290 (2025) 19. Wen, G., Cao, P., Bao, H., Yang, W., Zheng, T., Zaiane, O.: Mvs-gcn: A prior brain structure learning-guided multi-view graph convolution network for autism spec-trum disorder diagnosis. Computers in biology and medicine 142 , 105239 (2022) 20. Wen, G., Cao, P., Liu, L., Hao, M., Liu, S., Zheng, J., Yang, J., Zaiane, O.R., Wang, F.: Heterogeneous graph representation learning framework for resting-state functional connectivity analysis. IEEE Transactions on Medical Imaging (2024) 21. Yan, C.G., Chen, X., Li, L., Castellanos, F.X., Bai, T.J., Bo, Q.J., Cao, J., Chen, G.M., Chen, N.X., Chen, W., et al.: Reduced default mode network functional connectivity in patients with recurrent major depressive disorder. Proceedings of the National Academy of Sciences 116 (18), 9078–9083 (2019) 22. Yan, C.G., Wang, X.D., Zuo, X.N., Zang, Y.F.: Dpabi: data processing & analysis for (resting-state) brain imaging. Neuroinformatics 14 , 339–351 (2016) 23. Yan, Y., Zhu, J., Duda, M., Solarz, E., Sripada, C., Koutra, D.: Groupinn: Grouping-based interpretable neural network for classification of limited, noisy brain data. In: Proceedings of the 25th ACM SIGKDD international conference on knowledge discovery & data mining. pp. 772–782 (2019) 24. Zhang, P., Wen, G., Cao, P., Yang, J., Zhang, J., Zhang, X., Zhu, X., Zaiane, O.R., Wang, F.: Brainusl: Unsupervised graph structure learning for functional brain network analysis. In: International Conference on Medical Image Computing and Computer-Assisted Intervention. pp. 205–214. Springer (2023)

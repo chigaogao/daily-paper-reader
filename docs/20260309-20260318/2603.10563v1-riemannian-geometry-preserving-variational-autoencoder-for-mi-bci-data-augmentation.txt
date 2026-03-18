@@ -1,0 +1,232 @@
+Title: Riemannian Geometry-Preserving Variational Autoencoder for MI-BCI Data Augmentation
+
+URL Source: https://arxiv.org/pdf/2603.10563v1
+
+Published Time: Thu, 12 Mar 2026 00:52:58 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Riemannian Geometry-Preserving Variational Autoencoder for MI-BCI Data Augmentation 
+
+# Viktorija Pol , aka 1, Ivo Pascal De Jong 1, Andreea Ioana Sburlea 11Faculty of Science and Engineering, University of Groningen, Groningen, The Netherlands E-mail: victoria_polaka@proton.me 
+
+ABSTRACT: This paper addresses the challenge of gen-erating synthetic electroencephalogram (EEG) covari-ance matrices for motor imagery brain-computer inter-face (MI-BCI) applications. Objective . We aim to de-velop a generative model capable of producing high-fidelity synthetic covariance matrices while preserving their symmetric positive-definite nature. Approach . We propose a Riemannian geometry-preserving variational autoencoder (RGP-VAE) integrating geometric mappings with a composite loss function combining Riemannian distance, tangent space reconstruction accuracy and gen-erative diversity. Results . The model generates valid, representative EEG covariance matrices, while learning a subject-invariant latent space. Synthetic data proves practically useful for MI-BCI, with its impact depend-ing on the paired classifier. Contribution . This work introduces and validates the RGP-VAE as a geometry-preserving generative model for EEG covariance matri-ces, highlighting its potential for signal privacy, scalabil-ity and data augmentation. INTRODUCTION While Riemannian geometry-based classifiers currently dominate MI-BCI competitions, their advancement to-wards mainstream applications is hindered by data scarcity and inter-subject variability, which necessitates lengthy calibration sessions [1–4]. Deep learning alterna-tives have yet to surpass these geometric pipelines, possi-bly explained by the limited availability of subject-level data [3]. To overcome these limitations, we propose a novel data augmentation framework tailored to the spe-cific geometric properties of EEG covariance matrices, which are symmetric positive-definite (SPD), i.e., sym-metric with strictly positive eigenvalues. Previous work exploring data augmentation directly on the SPD manifold by geometrically interpolating between existing covariance matrices of the same class has suc-cessfully boosted BCI classification accuracy in data-scarce scenarios for SSVEP and ERP tasks [5]. However, this approach is fundamentally limited to the convex hull of the original data and thus cannot generate plausible variations that exist in unexplored regions of the man-ifold. A variational autoencoder (VAE) [6], which can learn a latent representation of a manifold [7], may of-fer an alternative to overcome this convex-hull limitation and generate diverse yet plausible synthetic samples that extend beyond the convex hull. However, standard VAEs assume Euclidean geometry, creating a conflict when working with the Riemannian SPD manifold structure of EEG covariance matrices; ap-plying standard Euclidean operations on this curved man-ifold causes geometric distortions (e.g., the "swelling ef-fect") [5]. We address this by proposing the Riemannian geometry-preserving VAE (RGP-VAE) designed to pre-serve geometric integrity, utilizing parallel transport [8] to align data and thus enable the model to learn subject-invariant features. The focus is specifically on the chal-lenging and practically relevant problem of cross-subject generalization, with the aim to reduce the need for exten-sive calibration [1]. Accordingly, this paper aims to: (1) establish if a Riemannian geometry-preserving VAE can generate valid synthetic EEG covariance matrices, and (2) evaluate whether this synthetic data improves cross-subject MI-BCI performance. METHODS 
+
+Data and Preprocessing: We use the dataset from Faller et al. [9], containing 13-channel EEG recordings from 12 subjects performing a two-class motor imagery task (right hand versus both feet). The data loading proce-dure, using the "Mother of All BCI Benchmarks" frame-work [10], resulted in a total of 5572 trials across the 12 subjects (398 or 597 trials per individual). The EEG trials are bandpass filtered (8–30 Hz) to capture sensorimotor rhythms. The raw voltage signals were then scaled to microvolts (10 6). To address non-stationarity, exponential moving standardization (EMS) [11] is ap-plied. EMS can be seen applied to data for training deep learning models as these models tend to be sensitive to the input scale [12]. Finally, trials are converted into spatial covariance matrices in R13 ×13 using the oracle approximating shrinkage estimator [13], yielding well-conditioned SPD matrices. To address the inherent variability between individuals’ EEG signal characteristics, which manifests as geometric differences in their location on the Riemannian manifold, parallel transport [8] was applied. This technique geo-metrically transports matrices from each subject-specific reference mean to a global (class) reference mean via a congruence transformation. 1
+
+> arXiv:2603.10563v1 [cs.LG] 11 Mar 2026
+
+Figure 1: An overview of the proposed RGP-VAE, illustrating the integration of a standard VAE with geometric operations on the SPD manifold. An input SPD matrix Xi is first projected onto the tangent space at a reference point Pref using the logarithmic map log Pref 
+
+(Eq. 3). This tangent representation Si is then vectorized to serve as the encoder input Htangent . The encoder maps this input to a latent distribution parameterized by μ and log (σ 2), from which a latent vector zi is sampled and passed to the decoder to produce the reconstructed vector Hdecoded . The vector is unvectorized back into a tangent space representation ˆ Si, which is finally mapped back onto the SPD manifold via the exponential map (exp Pref ) (Eq. 4) to produce the reconstructed SPD matrix ˆ Xi.
+
+Model Architecture: Conceptually building on prior work on Riemannian variational autoencoders for manifold-valued data [14], the modified VAE (Fig. 1) learns a latent representation z from SPD matrices by bridging the curved manifold M and the Euclidean space required by neural networks. The manifold of symmetric positive-definite matrices is defined as M = {X ∈ RN×N |
+
+X = X⊤, X ≻ 0}, where N is the number of EEG channels and X ≻ 0 indicates that the matrix is composed of strictly positive eigenvalues [2]. The proposed architecture re-lies on a class-specific reference point Pref , calculated as the Riemannian Fréchet mean of the training class. Un-like arithmetic mean, which may not yield a valid SPD matrix, the Fréchet Mean guarantees a valid point on the manifold by minimizing the sum of squared Riemannian distances to all other matrices in a set {Xi}Mset  
+
+> i=1
+
+:
+
+G = arg min 
+
+> P∈M
+> Mset
+
+# ∑
+
+> i=1
+
+d2 
+
+> r
+
+(P, Xi) (1) where P is the candidate SPD matrix over which the min-imization occurs and dr(P, Xi) is the affine-invariant Rie-mannian metric (AIRM)[5, 15, 16] which defines the dis-tance between two SPD matrices as: 
+
+dr(P1, P2) = ∥ log (P−1/21 P2P−1/21 )∥F (2) The model processes a batch of aligned SPD covariance matrices X = {X1, . . . , XB}, with batch size B = 128, se-lected as a balance between computational load and the requirements for the diversity loss. Each Xi is projected to the tangent space—a local Euclidean approximation— at the class-specific reference point Pref using the loga-rithmic map [1, 2]: 
+
+Si = log Pref (Xi) = P1/2ref log 
+
+
+
+P−1/2ref XiP−1/2ref 
+
+
+
+P1/2ref . (3) This is implemented via batched whitening followed by the matrix logarithm to support numerical stability by centring operations around the identity. The resulting batch S = {S1, . . . , SB} consists of sym-metric matrices in the tangent space at Pref and each Si
+
+is vectorized by using only the upper-triangular elements forming the batch of vectors Htangent ∈ RB×Dspd (with 
+
+Dspd = N(N + 1)/2) as input to the encoder. The encoder maps this batch of vectors to the param-eters ( M, log σ 2) of the latent distribution, where M =
+
+{μ1, . . . , μB} and log σ 2 = {log σ 21, . . . , log σ 2
+
+> B
+
+}. The en-coder consists of five sequential blocks (linear → batch normalization → LeakyReLU [17]) with dimensions 
+
+Dspd → 32 → 64 → 16 → 32 → 64, followed by two sepa-rate linear projections to produce μi, log σ 2 
+
+> i
+
+∈ RDlat where 
+
+Dlat = 64. Batch normalization stabilizes training by re-ducing internal covariate shift [18], while LeakyReLU activations are used to preserve the network’s represen-tational capacity for tangent space vectors preventing permanently inactive neurons [17]. The batch of latent vectors Z = {z1, . . . , zB} ∈ RB×Dlat is sampled via the reparameterization trick: zi = μi + εi ⊙ exp (0.5 · log σ 2 
+
+> i
+
+),where εi ∼ N (0, I), allowing gradients to flow back through M and log Σ2 during training. The decoder MLP mirrors the encoder structure, mapping the batch of latent vectors Z back to a batch of decoded vectors Hdecoded ∈ RB×Dspd , which is subsequently unvec-torized into a batch of symmetric matrices ˆ S′ ∈ RB×N×N .The decoder output ˆ S′ 
+
+> i
+
+is explicitly re-symmetrized via 2ˆS′′  
+
+> i
+
+= ( ˆS′ 
+
+> i
+
++ ( ˆS′
+
+> i
+
+)T )/2 to eliminate any asymmetries. To re-turn to the manifold, we apply the Exponential Map to each matrix: ˆXi = exp Pref ( ˆS′
+
+> i
+
+) = P1/2ref exp 
+
+
+
+P−1/2ref ˆS′
+
+> i
+
+P−1/2ref 
+
+
+
+P1/2ref (4) Numerical instability caused by floating-point arithmetic can violate the strict SPD constraints, therefore validity is enforced throughout the model architecture and paral-lel transport. During the matrix exponential computation, eigenvalues are conditionally scaled (threshold T = 20) to prevent overflow: if λmax > T , all eigenvalues are scaled by T /λmax . Throughout all geometric operations, we maintain a numerical threshold ε = 10 −6. If the minimum eigenvalue λmin of any intermediate or output matrix falls below ε, we add (ε − λmin )I to shift all eigenvalues above the threshold, ensuring positive-definiteness. 
+
+Training and Optimization: The network is optimized using a loss function Ltotal balancing reconstruction accu-racy, latent space regularization, and diversity: 
+
+Ltotal = ( Lmanifold + Ltangent ) + β LKL + γLdiversity (5) The reconstruction term combines Lmanifold which en-forces geometric fidelity using the AIRM distance (Eq. 2): 
+
+Lmanifold = 1
+
+B
+
+> B
+
+# ∑
+
+> i=1
+
+dr(Xi, ˆXi) (6) and Ltangent , which minimized the normalized Euclidean error between original and decoded tangent vectors: 
+
+Ltangent = 1
+
+B
+
+> B
+
+# ∑
+
+> i=1
+
+∑ j(hdecoded ,i, j − htangent ,i, j)2
+
+∑ j h2tangent ,i, j + ε (7) where ε = 10 −6 for numerical stability. Meanwhile, la-tent space regularization is achieved through KL diver-gence LKL toward a standard Gaussian prior: 
+
+LKL = 1
+
+B
+
+> B
+
+# ∑
+
+> i=1
+
+"
+
+−0.5
+
+> Dlat
+
+# ∑
+
+> k=1
+
+(1 + log σ 2 
+
+> i,k
+
+− μ2 
+
+> i,k
+
+− exp (log σ 2
+
+> i,k
+
+)) 
+
+#
+
+(8) We apply KL cost annealing [19], linearly increasing β
+
+from 0.0001 to 0.2 during training to prevent posterior collapse while maintaining reconstruction fidelity. The diversity loss Ldiversity encourages sample diversity by maximizing the geometric volume of generated tan-gent vectors. Since the determinant of a covariance ma-trix quantifies the generalized variance (i.e., the volume spanned by data points), maximizing it promotes wider spatial coverage in the tangent space. The loss minimizes the negative log-determinant of the batch covariance of decoded tangent space vectors Hdecoded ∈ RB×Dspd :
+
+Ldiversity = − log det (Cov (HT
+
+> decoded
+
+) + εcov I) (9) with εcov = 10 −6 for numerical stability, weighted by an empirically determined γ = 0.035 . The AdamW optimizer [20] is employed for a fixed 100 epochs with an empirically found learning rate of 1 ×
+
+> Figure 2: 2D UMAP visualization of the latent space of the RGP-VAE for right-hand movement data. Points are colored by Subject ID; their significant overlap indicates the learning of a subject-invariant representation.
+
+10 −4 and a weight decay parameter of 1 × 10 −6. Train-ing is further regularized with gradient clipping (max norm=1.0) and learning rate reduction (factor=0.5) after 20 epochs of stagnation. 
+
+Data Generation and Evaluation Protocol: leave-one-subject-out cross-validation (LOSO-CV) is employed; in each fold, class-specific RGP-VAEs are trained on aligned data from N − 1 subjects to test generalization to unseen individuals. Two synthetic generation strategies are evaluated: Posterior sampling encodes each training matrix Xi, samples zi via reparameterization, and decodes to create variations preserving core characteristics of each sample (1:5 real-to-synthetic ratio). Prior sampling draws 
+
+z ∼ N (0, I) directly to generate novel samples beyond the training convex hull (5000 per class). Three classifiers—minimum distance to mean (MDM), k-nearest neighbors (KNN), and support vector classifier (SVC)—are trained and evaluated on held-out test sub-jects under three conditions: (1) baseline using only orig-inal training data, (2) augmented with synthetic data, and (3) synthetic-only training to assess standalone quality. Balanced accuracy, averaged across all folds, serves as the primary metric due to its robustness against class im-balances from potential artifact removal. Synthetic data quality is assessed by verifying SPD prop-erties (symmetry and positive-definiteness), comparing statistical variance (element-wise and global) between real and synthetic matrices, and measuring geometric spread via mean pair-wise Riemannian distances within each class. A scrambled-label diagnostic test confirms that performance degrades to chance level, indicating no spurious correlations. Source code and additional information can be found at 
+
+https://641e16.github.io/RGP-VAE/ .RESULTS We validate the proposed RGP-VAE through an assess-ment of the generated synthetic data fidelity, addressing the fundamental question of whether the model can pro-3Figure 3: Distribution of accuracy improvement for each classifier using the prior generator. The plot shows the percentage point difference between the ‘Augmented’ and ‘Synthetic-Only’ conditions relative to the ‘Baseline’ across all subjects. The red line signifies the mean whilst the blue line is the median. 
+
+> Figure 4: Distribution of accuracy improvement for each classifier using the posterior generator, showing similar trends to the prior generator but with more pronounced fluctuations.
+
+duce valid and realistic covariance matrices, and with a comparison against a standard VAE approach. Our fi-nal analysis quantifies the impact of this data on cross-subject classification performance to determine the prac-tical value of the proposed method. 
+
+Latent Space Structure: UMAP [21] visualization (Fig. 2) reveals that latent codes organize into a unified structure where subjects are heavily intermingled rather than clustered by individual. This suggests the model learned a largely subject-invariant representation—a crit-ical property enabled by parallel transport alignment— implying generated samples will reflect generalized task patterns rather than subject-specific details. 
+
+Fidelity Assessment: Across all folds, 100% of syn-thetic matrices from both prior and posterior generators passed symmetry and positive-definiteness verification checks, confirming the effectiveness of the architecture’s geometric constraints and numerical stabilisation steps. Tab. 1 compares the statistical variance and geometric spread of synthetic data relative to the original. The cho-sen γ maintained statistical variance close to the origi-nal. To address the lower geometric diversity of synthetic samples, the noise vector is scaled by εi = 2.2 during generation, increasing the mean intra-class Riemannian distance to ≈ 1.95, closely matching the original data’s spread (2 .03) without distorting statistical properties. 
+
+Cross-Subject Classification Performance: The impact of data augmentation was evaluated by comparing classi-fication accuracies under different augmentation condi-tions using Wilcoxon signed-rank tests with Bonferroni correction ( p < 0.0083). As detailed in Tab. 2, data augmentation produced divergent effects. For the KNN classifier, augmentation consistently and significantly improved performance. Posterior-based synthetic-only training yielded the largest gain (+3.49%, p = 0.002), while augmented training provided +2.45% ( p = 0.002). Prior generation produced similar but slightly smaller significant benefits (+3.00% synthetic-only, p < 0.001; +2.19% augmented, p = 0.003). In contrast, SVC perfor-mance significantly degraded with augmentation (up to 4Table 1: Fidelity analysis of synthetic data averaged across 12 folds. The table compares the statistical variance ratio and the mean intra-class Riemannian distance, showing that the synthetic data distribution is valid. 
+
+Generator Statistical Variance Geometric Diversity Original Synthetic (Ratio) Original Synthetic 
+
+Prior 0.208 0.221 (1.061) 2.032 1.946 Posterior 0.208 0.221 (1.063) 2.032 1.918                                                                                          
+
+> Table 2: Average balanced accuracy (%) across 12 subjects for all training conditions and generators with corresponding p-values.
+> Generator Classifier Baseline Augmented Scenario Synthetic-Only Scenario Acc. (%) Acc. (%) Improvement p-value Acc. (%) Improvement p-value
+> Prior MDM 59 .52 ±5.52 58 .92 ±5.40 -0.59% 0.092 58 .36 ±5.03 -1.16% 0.043 KNN 53 .19 ±4.00 55 .38 ±4.17 +2.19% 0.003 56 .19 ±4.19 +3.00% <0.001
+> SVC 60 .67 ±5.33 57 .43 ±6.32 -3.24% 0.016 56 .75 ±6.37 -3.92% 0.002
+> Posterior MDM 59 .52 ±5.52 58 .83 ±5.29 -0.69% 0.092 58 .95 ±5.51 -0.57% 0.151 KNN 53 .19 ±4.00 55 .64 ±4.13 +2.45% 0.002 56 .68 ±4.06 +3.49% 0.002
+> SVC 60 .67 ±5.33 57 .18 ±6.57 -3.48% 0.007 56 .66 ±6.25 -4.01% 0.002
+
+-4.01%, p = 0.002), while MDM remained largely unaf-fected. Figs. 3 and 4 illustrate subject-wise distributions, revealing high variability: KNN augmentation yielded gains up to +7.8% for subject no.3 (prior generation, syn-thetic only condition). A scrambled label test confirmed classifiers learned meaningful features, yielding chance-level accuracy ( ≈ 50%) on randomized data. 
+
+Standard VAE Comparison: To validate the Rieman-nian framework, we compared the proposed RGP-VAE against a standard Euclidean VAE. The standard VAE failed to generate valid data, with > 40% of outputs in every fold violating positive-definiteness. Furthermore, augmenting with the valid portion of its data significantly degraded MDM performance ( −9.49%, p < 0.001) and offered no statistically significant benefit to KNN or SVC. This confirms that the proposed architecture’s ge-ometric constraints are essential for generating valid and useful SPD matrices in this domain. DISCUSSION This study investigated whether the proposed RGP-VAE could generate high-fidelity EEG covariance matrices to improve cross-subject MI-BCI classification. 
+
+Generative Fidelity and Validity: A primary contribu-tion of this work is confirming that the RGP-VAE frame-work inherently generates valid SPD matrices—a non-trivial task where standard Euclidean VAEs failed (pro-ducing > 40% invalid matrices). This success is at-tributable to the underlying Riemannian geometry that enforces the SPD constraint by design. Parallel Trans-port enabled the model to learn a subject-invariant latent space, a critical property for cross-subject generalization. While valid, the synthetic data exhibited a slightly ele-vated statistical variance (ratio ≈ 1.06) but reduced geo-metric diversity (ratio ≈ 0.95). With the chosen parame-ters ( γ = 0.035, εi = 2.2), the model generated more pro-totypical samples concentrated near the class geometric means rather than spanning the full outlier range of real-world data. 
+
+Classifier-Dependent Utility: The impact of the syn-thetic data was highly divergent, revealing that data aug-mentation utility is not universal but classifier-dependent. Augmentation yielded statistically significant improve-ments for the KNN classifier, with posterior sampling boosting performance up to +3.49% ( p = 0.002). KNN likely benefits because the prototypical synthetic samples densify the class manifolds, creating more dense and re-liable local neighbourhoods for distance-based classifica-tion. Conversely, performance significantly degraded for the SVC (up to −4.01%, p = 0.002). The reduced di-versity of synthetic data likely caused the SVC to learn decision boundaries too narrowly fitted around class cen-tres, reducing generalization to boundary-case real sam-ples. Meanwhile, performance for the MDM classifier re-mained stable—a positive result compared to the standard VAE, which caused a massive degradation ( −9.49% un-der posterior, synthetic-only condition). Unlike the naive Euclidean approach that failed to even generate valid SPD matrices, the RGP-VAE preserved the SPD validity and successfully learnt Riemannian class means. Beyond immediate classification impacts, synthesizing this data holds broader practical value; it provides a mechanism to test pipeline scalability, mitigates data scarcity—possibly for data hungry models—and enables privacy protection by avoiding raw signal sharing. 
+
+Future Research Directions: This study provides a foundational proof of concept that opens avenues for fu-ture research. Building on these findings, future work may explore advanced manifold sampling techniques, such as Riemannian Hamiltonian VAEs or Riemannian Monte Carlo sampling, to capture complex latent dis-tributions more faithfully [22, 23]. Additionally, as demonstrated by vEEGNet [24], integrating the RGP-VAE’s geometric constraints and subject-invariance with discriminative frameworks could potentially yield la-5tent spaces that are simultaneously geometrically valid, subject-invariant and class-discriminative. CONCLUSION This paper developed and validated a novel Rieman-nian Geometry-Preserving VAE (RGP-VAE) for generat-ing synthetic EEG covariance matrices in the challenging cross-subject MI-BCI context. The RGP-VAE is not only capable of consistently generating valid SPD matrices— overcoming the limitations of standard VAEs—but also closely matches the original data diversity. The high-fidelity synthetic data can maintain or even significantly improve classification performance for specific classi-fiers. However, divergent classifier results highlight gen-erative capabilities on the SPD manifold do not guarantee universal downstream improvements. REFERENCES [1] Congedo M, Barachant A, Bhatia R. Rieman-nian geometry for EEG-based brain-computer inter-faces; a primer and a review. Brain-Computer Interfaces. 2017;4(3):155–174. [2] Yger F, Berar M, Lotte F. Riemannian approaches in brain-computer interfaces: A review. IEEE Transac-tions on Neural Systems and Rehabilitation Engineering. 2017;25(10):1753–1762. [3] Chevallier S et al. The largest eeg-based bci repro-ducibility study for open science: The moabb benchmark. 2024. arXiv: 2404.15319 [eess.SP] .[4] Blankertz B, Dornhege G, Krauledat M, Müller KR, Curio G. The non-invasive Berlin Brain-Computer In-terface: fast acquisition of effective performance in un-trained subjects. NeuroImage. 2007;37(2):539–550. [5] Kalunga E, Chevallier S, Barthélemy Q. Data aug-mentation in Riemannian space for Brain-Computer In-terfaces. In: STAMLINS 2015 proceedings. Lille, France, Jun. 2015. [6] Kingma DP, Welling M. Auto-encoding variational bayes. 2013. arXiv: 1312 . 6114 [stat.ML] . [Online]. Available: https://arxiv.org/abs/1312.6114 
+
+[7] Shao H, Kumar A, Fletcher PT. The rieman-nian geometry of deep generative models. CoRR. 2017;abs/1711.08014. [8] Yair O, Ben-Chen M, Talmon R. Parallel trans-port on the cone manifold of SPD matrices for do-main adaptation. IEEE Transactions on Signal Process-ing. 2019;67(7):1797–1811. [9] Faller J, Vidaurre C, Solis-Escalante T, Neuper C, Scherer R. Autocalibration and recurrent adaptation: To-wards a plug and play online ERD-BCI. IEEE Transac-tions on Neural Systems and Rehabilitation Engineering. 2012;20(3):313–319. [10] Aristimunha B et al. Mother of all BCI Benchmarks .Version 1.0.0. 2023. [Online]. Available: https : / / github.com/NeuroTechX/moabb 
+
+[11] Schirrmeister RT et al. Deep learning with convo-lutional neural networks for brain mapping and decoding of movement-related information from the human EEG. CoRR. 2017;abs/1703.05051. [12] Zhu H, Forenzo D, He B. On the deep learning mod-els for EEG-based brain-computer interface using motor imagery. IEEE Transactions on Neural Systems and Re-habilitation Engineering. 2022:1–1. [13] Chen Y, Wiesel A, Eldar YC, Hero AO. Shrink-age algorithms for MMSE covariance estimation. IEEE Transactions on Signal Processing. 2010;58(10). [14] Miolane N, Holmes SP. Learning weighted sub-manifolds with variational autoencoders and riemannian variational autoencoders. 2020 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR). 2019:14491–14499. [15] Fletcher PT, Lu C, Pizer SM, Joshi S. Princi-pal geodesic analysis for the study of nonlinear statis-tics of shape. IEEE Transactions on Medical Imaging. 2004;23(8):995–1005. [16] Moakher M. A differential geometric approach to the geometric mean of symmetric positive-definite matri-ces. SIAM Journal on Matrix Analysis and Applications. 2005;26(3):735–747. [17] Maas AL, Hannun AY, Ng AY. Rectifier nonlinear-ities improve neural network acoustic models. In: Pro-ceedings of the 30th International Conference on Ma-chine Learning. 2013. [18] Ioffe S, Szegedy C. Batch normalization: Accelerat-ing deep network training by reducing internal covariate shift. CoRR. 2015;abs/1502.03167. [19] Bowman SR, Vilnis L, Vinyals O, Dai A, Jozefow-icz R, Bengio S. Generating sentences from a continuous space. In: Proceedings of the 20th SIGNLL Conference on Computational Natural Language Learning. Associ-ation for Computational Linguistics: Berlin, Germany, Aug. 2016, 10–21. [20] Loshchilov I, Hutter F. Fixing weight decay regu-larization in adam. CoRR. 2017;abs/1711.05101. [21] McInnes L, Healy J, Melville J. Umap: Uni-form manifold approximation and projection for di-mension reduction. Journal of Open Source Software. 2018;3(29):861. [22] Chadebec C, Allassonnière S. Data augmentation with variational autoencoders and manifold sampling. In: Deep Generative Models, and Data Augmentation, La-belling, and Imperfections. Springer, 2021, 184–192. [23] Chadebec C, Thibeau-Sutre E, Burgos N, Allasson-nière S. Data augmentation in high dimensional low sam-ple size setting using a geometry-based variational au-toencoder. IEEE Transactions on Pattern Analysis and Machine Intelligence. 2023;45(3):2879–2896. [24] Zancanaro A, Cisotto G, Zoppis I, Manzoni SL. Veegnet: Learning latent representations to reconstruct eeg raw data via variational autoencoders. In: Informa-tion and Communication Technologies for Ageing Well and e-Health. Springer Nature Switzerland: Cham, 2024, 114–129. 6
