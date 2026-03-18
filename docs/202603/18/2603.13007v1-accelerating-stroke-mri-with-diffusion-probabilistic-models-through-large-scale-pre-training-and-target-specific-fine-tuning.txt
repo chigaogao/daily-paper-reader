@@ -1,0 +1,287 @@
+Title: Accelerating Stroke MRI with Diffusion Probabilistic Models through Large-Scale Pre-training and Target-Specific Fine-Tuning
+
+URL Source: https://arxiv.org/pdf/2603.13007v1
+
+Published Time: Mon, 16 Mar 2026 01:25:48 GMT
+
+Number of Pages: 30
+
+Markdown Content:
+# Accelerating Stroke MRI with Diffusion Probabilistic Mod-els through Large-Scale Pre-training and Target-Specific Fine-Tuning 
+
+## Yamin Arefeen 1,2, †, Sidharth Kumar 1, †, Steven Warach 3, Hamidreza Saber 3,4 , Jonathan I. Tamir 1,5,6 
+
+> †
+
+These authors contributed equally to this work. 
+
+1 Chandra Family Department of Electrical and Computer Engineering The University of Texas at Austin Austin, TX, USA 
+
+2 Department of Imaging Physics MD Anderson Cancer Center Houston, TX, USA 
+
+3 Dell Medical School Department of Neurology The University of Texas at Austin Austin, TX, USA 
+
+4 Dell Medical School Department of Neurosurgery The University of Texas at Austin Austin, TX, USA 
+
+5 Dell Medical School Department of Diagnostic Medicine The University of Texas at Austin Austin, TX, USA 
+
+6 Oden Institute for Computational Engineering and Sciences The University of Texas at Austin Austin, TX, USA 
+
+* Corresponding author: 
+
+> arXiv:2603.13007v1 [eess.IV] 13 Mar 2026 Submited to Magnetic Resonance in Medicine
+
+Name Yamin Arefeen 
+
+Department Chandra Family Department of Electrical Engineering and Computer Science 
+
+Institute The University of Texas at Austin; Austin, TX, United States 
+
+E-mail yaminarefeen@gmail.com Word Count: 250 (Abstract) ∼ 5000 (body) Figure/Table Count: 10 2 / 28 Submited to Magnetic Resonance in Medicine 
+
+Abstract Purpose: To develop a data-efficient strategy for accelerated MRI reconstruction with Diffu-sion Probabilistic Generative Models (DPMs) that enables faster scan times in clinical stroke MRI when only limited fully-sampled data samples are available. 
+
+Methods: Our simple training strategy, inspired by the foundation model paradigm, first trains a DPM on a large, diverse collection of publicly available brain MRI data in fastMRI and then fine-tunes on a small dataset from the target application using carefully selected learning rates and fine-tuning durations. The approach is evaluated on controlled fastMRI experiments and on clinical stroke MRI data with a blinded clinical reader study. 
+
+Results: DPMs pre-trained on approximately 4000 subjects with non-FLAIR contrasts and fine-tuned on FLAIR data from only 20 target subjects achieve reconstruction performance com-parable to models trained with substantially more target-domain FLAIR data across multiple acceleration factors. Experiments reveal that moderate fine-tuning with a reduced learning rate yields improved performance, while insufficient or excessive fine-tuning degrades reconstruction quality. When applied to clinical stroke MRI, a blinded reader study involving two neuroradi-ologists indicates that images reconstructed using the proposed approach from 2× accelerated data are non-inferior to standard-of-care in terms of image quality and structural delineation. 
+
+Conclusion: Large-scale pre-training combined with targeted fine-tuning enables DPM-based MRI reconstruction in data-constrained, accelerated clinical stroke MRI. The proposed approach substantially reduces the need for large application-specific datasets while maintaining clinically acceptable image quality, supporting the use of foundation-inspired diffusion models for accel-erated MRI in targeted applications. 
+
+Keywords : Accelerated MRI; Diffusion probabilistic models; Foundation models; Stroke MRI; Clinical Translation 
+
+1 / 28 Submited to Magnetic Resonance in Medicine 
+
+# 1 Introduction 
+
+Foundation models (1) represent a powerful paradigm in machine learning where models pre-trained on large, diverse datasets adapt effectively to target applications in a zero-shot fashion or with fine-tuning (2). As a non-exhaustive list, this approach successfully applies across many domains, including natural language processing (3), vision (4), segmentation (5), fluorescence microscopy (6), and various healthcare applications (7–9). Machine learning currently achieves state-of-the-art performance in reconstructing an MRI image from under-sampled data for many anatomy, contrasts, and datasets (10–13). However, these models are typically trained on datasets specific to the application of interest and are applied without modification for inference. While effective given sufficient data, this approach degrades in settings with limited data to train the models for the desired application (10). As a motivating example, medical imaging is critical to diagnosis of ischemic stroke in patients who come to the emergency room presenting symptoms; many sites use computed tomography (CT) due to its effectiveness, widespread availability, and relatively short scan times (14). However, MRI offers improved sensitivity when detecting ischemic stroke and more precise localization of the ischemic lesion (15). Despite these advantages, MRI typically requires longer scan times and is more susceptible to degradation from patient motion, which can delay image acquisition and, consequently, time to treatment. Machine learning–based acceleration methods could mitigate these limitations by reducing scan duration and motion sensitivity, but limited stroke specific training data precludes their application. Several techniques have been proposed to train machine learning reconstruction models in set-tings with limited, fully-sampled data. Some methods train reconstruction models on just the under-sampled scan itself by leveraging calibration regions (16, 17), implicit regularization imposed by neural network structure (18, 19), and self-supervised learning through k-space splitting (20). However, these methods fall short of state-of-the-art reconstruction quality offered by methods trained on large amounts of high quality data (10–12). Other self-supervised training strategies instead utilize under-sampled or corrupt images for training (21–25) but still require a large corpus of data. In addition, these methods implement end-to-end reconstructions mapping under-sampled data to images given a specific acquisition model. Motivated by data limitations in our stroke application and inspired by the foundation model paradigm (26), we propose a method to train diffusion probabilistic generative models (DPMs) 2 / 28 Submited to Magnetic Resonance in Medicine 
+
+for accelerated MRI reconstruction given a small dataset for the contrast of interest. Inspired by similar approaches for large language models (27), our simple but effective strategy first trains a DPM on a large, public dataset of diverse MR images and then fine-tunes the DPM on the smaller, fully-sampled dataset from the target application. During fine-tuning, we select hyperparameters to adapt the model effectively without overfitting and retaining the benefits of pre-training on a large, diverse dataset (28). We select DPMs for the reconstruction model because they are agnostic to the acquisition forward model (29–38). Thus unlike end-to-end methods which require the larger external dataset and the smaller target dataset to be acquired with the same measurement model (sampling pattern, coil geometry, etc. . . ) (10), a DPM pre-trained on the larger dataset can be adapted to smaller target datasets with different acquisition models. First, we comprehensively evaluate the proposed approach on fastMRI (11) by initially pre-training a DPM on T1, T2, and T1-post brain scans from 4000 subjects. To simulate access to limited data on a target application, we then finetune the DPM on FLAIR data from just 20 subjects of fastMRI. Across a range of acceleration factors, DPMs trained with our method achieve comparable performance to DPMs trained with 344 target FLAIR subjects. Our experiments also highlight best practices when selecting inference hyperparameters for DPM-based MRI reconstruction and showcase application on prospectively under-sampled data. Next, we apply our method to the motivating setting of stroke MRI. We initially pre-train a DPM on T1, T2, T1-post, and FLAIR brain scans from approximately 4000 fastMRI subjects and then fine-tune the DPM on data from 25 stroke patients from our local hospital. Testing on 5 additional patients demonstrates that the proposed method enables reconstruction of SWI, MPRAGE, DWI, and FLAIR images from 2× further under-sampled stroke data. Finally, we conduct a clinical validation study in which two radiologists experienced in stroke MRI compared SWI, MPRAGE, DWI, and FLAIR images reconstructed from retrospective, 2×
+
+under-sampled data using our method to standard-of-care images. The reader study indicates that images reconstructed by the DPM pre-trained on fastMRI and fine-tuned on local stroke data achieves non-inferior image quality and structural delineation of anatomy relative to the standard-of-care. 3 / 28 Submited to Magnetic Resonance in Medicine 
+
+# 2 Methods 
+
+## 2.1 Diffusion Probabilistic Generative Models for MRI Reconstruction 
+
+We model the multi-coil MRI acquisition as y = P F Sx + n where y are the acquired measurements, 
+
+P is the under-sampling operator, F is the Fourier Transform, S is the multi-coil operator, n is additive gaussian noise, and x is the image to reconstruct. DPMs reconstruct accelerated MRI acquisitions by first learning the underlying probability distribution of the target MR contrast and anatomy, and then guiding the reconstruction towards solutions that both match the data and are statistically likely. Specifically, we use score-based diffusion models where a neural network Gθ
+
+approximates the score function ∇xt log pt(x), where pt(x) denotes image distribution perturbed by gaussian noise with standard deviation σt (29, 34, 35, 39). Equipped with the score function approximation, images can be reconstructed from under-sampled data by approximately sampling from the posterior p(x|y) with posterior sampling algorithms (36). In this work, we combine the prior sampling formulation from Ref. (39) with Diffusion Posterior Sampling (31) to approximately sample from p(x|y) in accelerated MRI. Specifically, we solve the following ordinary differential equation (ODE): 
+
+dx =
+
+ ˙s(t)
+
+s(t) x − s(t)2 ˙σ(t)σ(t)∇x log p
+
+ x
+
+s(t) |y; σ(t)
+
+ 
+
+dt. [1] Setting s(t) = 1 and σ(t) = t based on Ref. (39), applying Baye’s rule to separate the posterior score into the sum of the log-likelihood and prior score, and inserting the DPM that approximates the prior score function and the closed-form expression for the likelihood score (31, 32) results in the following ODE, 
+
+dx =
+
+h
+
+−t
+
+
+
+∇x ∥PFS˜ x(x) − y∥22 + Dθ(x, t 
+
+i 
+
+dt. [2] We apply the approximation ˜x(x) = E[x0|x] since the log-likelihood score is only known at t = 0 
+
+(31). 
+
+## 2.2 DPM Details 
+
+All DPMs in this work use the U-Net style architecture from Ref. (29), as implemented by Ref. (39), and we adopt a modified version of the architecture that supports inputs with varying matrix sizes (40). Initial training on the external dataset and fine-tuning on the target dataset applied the “EDM” training loss, data augmentation, optimizer choice, and noise level scheduling. 4 / 28 Submited to Magnetic Resonance in Medicine 
+
+To accommodate datasets with heterogeneous contrasts, we simultaneously train on all available data by conditioning the model on contrast type (40). Each image contrast type in the training set is assigned a one-hot vector, which is passed through a small fully-connected neural network to produce an embedding. Each U-Net block in the DPM network then takes this embedding vector as an input, allowing the model to adapt its behaviour based on the contrast. The DPM and embedding network are trained jointly. 
+
+## 2.3 Posterior Sampling Details 
+
+Algorithm 1 outlines the posterior sampling procedure utilized in this work for accelerated MRI reconstruction adapted from the ODE prior sampling procedure used in Ref. (39) and the log-likelihood approximation proposed by Ref. (31). The noise levels, ˆσi follow the recommended schedule from Ref. (39), and N denotes the number of sampling steps. Since this posterior sampling is approximate, ζi is introduced as a tunable hyperparameter that balances data consistency and learned prior score at each iteration. 
+
+Algorithm 1 Diffusion Posterior Sampling (DPS) 
+
+Require: Gθ(x; σ), N, {ζN −1 
+
+> i=0
+
+}, {ˆσi}N −1
+
+> i=0
+
+sample xt0 ∼ N(0 , I )
+
+for i ∈ { 0, ..., N − 1} do 
+
+ˆs = Gθ (x;σ)−xi
+
+> σ
+
+ˆx0 = 1√αi (xi + (1 − ¯αi ˆs)
+
+n ∼ N(0 , I )˜xp =   
+
+> √αi(1 −¯αi−1)1−¯αi
+
+xi +   
+
+> √¯αi−1βi
+> 1−¯αi−1
+
+ˆx0
+
+˜xDC = ∇xi || y − A(ˆ x0)|| 22
+
+xi+1 = ˜ xp − ζi ˜xDC + σin
+
+end for 
+
+## 2.4 Proposed Training Strategy 
+
+Inspired by strategies for foundation and large language models (27), we propose a simple and effective training approach to train DPMs for accelerated MRI when only limited target-domain data is available. Our strategy involves two stages: (i) pre-training on a large, diverse external dataset, like fastMRI (11), covering multiple MRI contrasts; and (ii) fine-tuning on the smaller, 5 / 28 Submited to Magnetic Resonance in Medicine 
+
+target dataset, updating all model weights. To mitigate overfitting during fine-tuning, we reduce the learning rate by an order of magnitude and train for a small number of epochs, corresponding to roughly 2% of pre-training time. In addition, we assign the target contrast its own one-hot encoded vector and update the weights of the embedding network during fine-tuning. Figure 1 compares (A) standard and (B) the proposed training strategies for DPMs. 
+
+Figure 1: (A) The standard DPM training pipeline trains exclusively on the target-domain dataset, but if the target dataset is small, this can lead to degraded performance. (B) The proposed training pipeline mitigates data scarcity by first pre-training the DPM on a large, diverse external MRI dataset, followed by fine-tuning on a small target-domain dataset using a reduced learning rate and limited number of epochs. The fine-tuned model is then used for posterior sampling–based reconstruction from under-sampled k-space. 
+
+## 2.5 Controlled Experiments with FastMRI 
+
+To validate the proposed training strategy, we use the multi-coil brain dataset from FastMRI (11). Our dataset included Axial T2 from 2678 subjects, Axial T1 from 498 subjects, post-contrast Axial 
+
+T1 from 949 subjects, and Axial FLAIR from 344 subjects. We focused on reconstructing Axial FLAIR images, simulating a low-data regime by limiting the FLAIR training set to only 20 subjects. All k-space data were pre-whitened and re-sized to 320 ×320 matrix size, and training was performed 6 / 28 Submited to Magnetic Resonance in Medicine 
+
+on fully-sampled, coil-combined images normalized to the 99th percentile of the maximum absolute value. For testing, 500 random Axial FLAIR slices were selected from held-out subjects not used during training. We first investigated the effect of learning rate and training time during fine-tuning. A DPM was pre-trained on the larger external dataset with a learning rate of 10 −4 for 625 , 000 epochs, and then fine-tuned on the 20-subject FLAIR dataset with learning rates of {5 × 10 −4, 1 × 10 −4, 5 ×
+
+10 −5, 5 × 10 −5} and epochs of {0, 625 , 1250 , 1875 , 2500 }.In addition, we compared our proposed training paradigm to alternative methods. 
+
+• Method 1: Trained a DPM on the full dataset, using all 2678 Axial T2, 498 Axial T1, 949 Post-contrast Axial T1, and 344 Axial FLAIR subjects. 
+
+• Method 2: Pre-trained on T1, T2 and Post-contrast T1 data and fine-tuned on all 344 FLAIR subjects. 
+
+• Method 3: Trained only on the 344-subject FLAIR dataset. 
+
+• Method 4 (Proposed): Pre-trained on all T2, T1, and T1 post-contrast data and then fine-tuned on 20 FLAIR subjects with reduced learning rate and shorter training time. 
+
+• Method 5: Trained solely on the 20-subject FLAIR dataset. 
+
+• Method 6: Trained jointly on the full external dataset and the 20-subject FLAIR dataset without fine-tuning. Methods 1-3 serve as performance upper bounds, as they use extensive target contrast (FLAIR) data. Methods 4-6 represent the constrained data regime, relying on large external datasets and limited target-domain data. All methods were evaluated on the 500 validation FLAIR slices using under-sampling rates of 
+
+R = {3, 4, 5, 6, 7, 8} with no auto-calibration (ACS) data. 
+
+## 2.6 Evaluating Posterior Sampling Hyperparameters 
+
+We evaluated the effect of hyperparameter selection in Algorithm 1 for approximate posterior sam-pling. In particular, the data consistency weighting ζ is often set to be inversely proportional to the norm of the data consistency error (31), while the number of steps N trades off between quality and computation. Given a DPM trained for FLAIR reconstruction with the proposed method, we 7 / 28 Submited to Magnetic Resonance in Medicine 
+
+compared reconstruction performance for different choices of ζ between 1/2 and 5 and N between 
+
+200 and 300 when reconstructing data at R = {3, 4, 5, 6, 7, 8}.
+
+## 2.7 Application to Clinical Stroke MRI 
+
+In collaboration with our local hospital’s medical school, under IRB approval and informed consent, we collected a small dataset of clinical stroke MRI from 30 patients on a 3T Siemens Vida scanner. Each subject underwent a standard-of-care stroke imaging protocol following triage, including T2-FLAIR, MPRAGE, SWI, and DWI. The standard-of-care data were reconstructed with SENSE-based parallel imaging using coil maps calibrated with BART (41). The list below summarizes the acquisition parameters: 
+
+• T2-FLAIR: 0.5 × 0.5 mm in-plane resolution, 5 mm slice thickness, 9000 ms TR. 
+
+• MPRAGE: 1.5 × 1.5 × 1.5 mm resolution, 240 × 240 × 168 mm FOV, 2500 ms TR. 
+
+• SWI: 1.0 × 1.0 mm resolution, 250 × 211 mm FOV, 2.5 mm slice thickness. 
+
+• DWI: 0.8 × 0.8 mm resolution, 250 × 250 mm FOV, 30 slices, 5.0 mm slice thickness, b-values: 
+
+0, 1200 s/mm 2.To evaluate our method in this clinical setting, we first pre-trained a DPM on all Axial FLAIR, Axial T2, Axial T1, and Axial T1 post contrast data available from the 4125 subjects in fastMRI. Then, we fine-tuned the DPM seperately for each clinical sequence (T2-FLAIR, MPRAGE, SWI, DWI) using 20 stroke patients from our local dataset. Fine-tuning was performed with a reduced learning rate and limited training duration as described in Section 2.4. An additional 5 stroke subjects were used for validation to select hyper-parameters for fine-tuning and posterior sampling. Fine-tuned DPMs then reconstructed retrospectively under-sampled data (accelerations around R ≈ 4) on the remaining 5 test subjects. 
+
+## 2.8 Clinical Stroke Reader Study 
+
+We acquired additional clinical stroke MRI data from 80 subjects at our local hospital with IRB ap-proval and informed consent to conduct a blinded reader study. Each subject was scanned using the standard-of-care stroke protocol, including T2-FLAIR, MPRAGE, SWI, and DWI acquisitions ob-tained at an acceleration factor of approximately R ≈ 2 and reconstructed using SENSE-based par-allel imaging. To evaluate accelerated imaging, the same data were retrospectively under-sampled 8 / 28 Submited to Magnetic Resonance in Medicine 
+
+by an additional factor of two, resulting in a total effective acceleration of approximately R ≈ 4,and reconstructed using diffusion probabilistic models (DPMs) fine-tuned with the proposed training strategy. For each of the 80 subjects, the reconstructed images corresponding to the standard-of-care and proposed accelerated protocols were grouped by subject, blinded, and randomized, yielding a total of 160 image sets for evaluation. Importantly, each image set comprised contrasts from the stroke protocol, and readers assessed the image set as a whole rather than individual sequences in isolation. Reader H.S. evaluated all 160 image sets, while reader S.W. evaluated 42 image sets (corresponding to 21 subjects) due to time constraints; H.S. and S.W. have 11 and 30 years of clinical experience, respectively. Each image set was scored for structural delineation of white matter, gray matter, and ventri-cles, as well as for image quality metrics including signal-to-noise ratio (SNR), contrast, sharpness, artifacts, and overall image quality. All evaluations were performed using a five-point ordinal scale where [1 ← repeat scan needed , 2 ← limited , 3 ← diagnostic , 4 ← good , 5 ← outstanding ]. Statis-tically significant differences in metrics was assessed using paired two-sided Wilcoxon signed-rank tests and inter-rater reliability was measured with the Cohen’s kappa coefficient. 
+
+## 2.9 Experiments on Prospectively Under-sampled Acquisitions 
+
+Noting that our clinical evaluation involved retrospective subsampling, we further evaluated our method with prospective under-sampling. We acquired SWI and FLAIR data from a healthy subject under IRB approval and informed consent using the parameters of the typical stroke protocol at our local hospital. Two acquisitions were performed: one at the standard-of-care acceleration rate, 
+
+R = 1 .7, and another at a prospective acceleration rate of R = 3 .75 . We applied the proposed method, pre-trained on all T2, T1, and post-contrast T1 from fastMRI and fine-tuned on our FLAIR and SWI stroke data, to reconstruct the data prospectively under-sampled to R = 3 .41 and R = 3 .75 
+
+respectively and to reconstruct the R = 1 .75 under-sampled data after it was further retrospectively under-sampled by R = 3 .52 and R = 3 .75 respectively. Reconstructions on both datasets were compared to a L1-wavelet baseline implemented with BART (41). 9 / 28 Submited to Magnetic Resonance in Medicine 
+
+Figure 2: Quantitative results from the controlled fastMRI experiments where DPMs were fine-tuned on 20 subjects to reconstruct fastMRI flair data. NRMSE on 500 validation slices as a function of fine-tuning duration (epochs) is plotted for different learning rates and acceleration factors. Across all acceleration factors, moderate fine-tuning improves reconstruction quality relative to no fine-tuning, while excessive fine-tuning leads to degraded performance, particularly at higher learning rates. 
+
+# 3 Results 
+
+## 3.1 Controlled Experiments with FastMRI 
+
+Figure 2 quantitatively evaluates the proposed fine-tuning method across different learning rates and training epochs, measured with normalized root mean squared error (NRMSE) at various acceleration factors on the 500 fastMRI FLAIR validation slices. Across all acceleration rates and learning rates, fine-tuning for 650 epochs yields the lowest NRMSE, outperforming both no fine-tuning (0 epochs) and longer (1250, 1875, 2500 epochs) fine-tuning durations. Similarly, a learning rate of 1 × 10 −5 achieves the best performance in comparison to higher learning rates. Figure 3 illustrates a representative example from the quantitative FLAIR experiment at R = 4 .As shown in (A), combining a learning rate of 1 × 10 −5 and 650 epochs gives the best quanti-tative performance. (B) shows the fully-sampled reference and (C) zooms into the reference and reconstructions under various learning rates and epochs. Qualitative improvements are observed, 10 / 28 Submited to Magnetic Resonance in Medicine 
+
+highlighted by the orange arrow, when the appropriate fine-tuning hyperparameters are used. Figure 4 compares DPMs fine-tuned using our method (650 epochs and 1 × 10 −5 learning rate) on FLAIR data from 20 subjects to methods (1-3) which have access to FLAIR data from 344 subjects and methods (5,6) with access to the same 20 FLAIR subjects and large external dataset. (A) plots quantitative reconstruction performance for acceleration rates R = {4, 5, 6}. Our method achieves comparable performance to methods 1-3 which have access to much more FLAIR data and improved performance in comparison to methods 5,6 with access to similar amounts of data. (B) shows example reconstructions from R = 4 under-sampled data. Quantitatively and qualitatively, as highlighted by the orange arrow, our method achieves comparable quality to methods 1-3 and outperforms methods 5 and 6. Using our best fine-tuned DPM, Figure 5 plots the average NRMSE across the validation samples for varying acceleration rates as a function of the data consistency step-size ζ in Algorithm 1. Green dots highlight the typical default setting of ζ = 1 and the red dots mark the value of ζ that achieves the lowest reconstruction error at each acceleration rate. The optimal choice of ζ increases with higher acceleration rate. Supporting Table S1 summarizes the best performing of ζ and number of posterior sampling steps N for each acceleration rate. 
+
+## 3.2 Application to Clinical Stroke MRI 
+
+Figure 6 evaluates DPMs fine-tuned using the proposed technique with limited stroke data to reconstruct R ≈ 3.75 SWI data from clinical stroke acquisitions. Similar to FLAIR in the fastMRI setting, the NRMSE plots in (A) averaged over the 5 validation subjects suggest that fine-tuning for too few or too many epochs results in worse quantitative performance. In addition, higher learning rates yield worse performance for all training epochs. These results suggest that 1250 epochs and a learning rate of 1 × 10 −5 yields improved performance for fine-tuning a DPM to stroke SWI. (B) shows an example standard-of-care SWI image and (C) compares zoomed in views of this reference with reconstruction using DPMs fine-tuned with different hyperparameters. Analysis on the 5 subject validation dataset found ζ = 2 .1 as the optimal data consistency weighting and was used for all test reconstructions. Figure 7 presents fine-tuning a DPM to reconstruct DWI acquired with b-value 1200 s/mm 2.(A) Fine-tuning with 252 epochs and a learning rate of 1 × 10 −5 yields the best performance. (B) shows an example standard-of-care DWI image and (C) compares zoomed in views of the reference and reconstructions using our fine-tuned DPM with various hyperparameters. 11 / 28 Submited to Magnetic Resonance in Medicine 
+
+Supporting Figure S1 analyzes the influence of fine-tuning epochs and learning rate for the additional FLAIR, MPRAGE, and DWI (b-value = 0) acquisitions in the test stroke data. Similar to SWI and DWI b-value 1200 s/mm 2, appropriate selection of fine-tuning hyperparameters improves reconstruction performance on R ≈ 4 under-sampled data. Supporting Figure S2 presents an example MPRAGE slice from the quantitative analysis of Supporting Figure S1. Figure 8 presents example stroke protocol images from the standard-of-care and images from the same protocol retrospectively under-sampled by an additional factor of 2 and reconstructed with DPMs fine-tuned with the proposed strategy. For DWI, we display derived trace and apparent diffusion coefficient (ADC) maps, commonly used in clinical stroke assessment, instead of displaying the raw DWI images directly. 
+
+## 3.3 Clinical Reader Study 
+
+Figure 9 summarizes the results of the blinded clinical reader study, in which two board-certified neuroradiologists evaluated full stroke-protocol image sets reconstructed from standard-of-care data and from retrospectively accelerated data, by a factor of 2, reconstructed using DPMs trained with the proposed approach. The first reader evaluated image sets from all 80 subjects. For structural delineation, the mean scores [standard, accelerated] for gray matter, white matter, and ventricles were [4.8, 4.9], [4.8, 4.9], and [4.8, 4.9], respectively. No statistically significant difference was observed for gray matter delin-eation, while the proposed accelerated reconstruction achieved statistically significant improvements for white matter and ventricular delineation. For image quality metrics, mean scores [standard, accelerated] for SNR, contrast, sharpness, artifacts, and overall image quality were [4.2, 4.7], [4.7, 4.8], [4.7, 4.8], [4.1, 4.3], and [4.5, 4.8], respectively. The accelerated reconstruction demonstrated statistically significant improvements in SNR, sharpness, artifact level, and overall image quality, while no statistically significant difference was observed for contrast. The second reader evaluated image sets from 21 subjects. For structural delineation, mean scores [standard, accelerated] for gray matter, white matter, and ventricles were [4.6, 4.1], [4.6, 4.1], and [5.0, 4.9], respectively, with no statistically significant differences observed. For image quality metrics, mean scores [standard, accelerated] for SNR, contrast, sharpness, artifacts, and overall image quality were [4.9, 4.4], [4.5, 4.1], [4.4, 4.0], [4.0, 3.9], and [4.4, 4.0], respectively. In this cohort, the standard-of-care reconstruction achieved a statistically significantly higher SNR score, while no statistically significant differences were observed for the remaining image quality metrics. 12 / 28 Submited to Magnetic Resonance in Medicine 
+
+Inter-rater reliability, as measured by Cohen’s kappa coefficient, was fair agreement ( 0.21 − 0.40 )for contrast, sharpness, artifacts, and overall image quality, slight agreement ( 0.00 − 0.20 ) for SNR, white matter, and grey matter, and poor agreement ( < 0.00 ) for ventricles 
+
+## 3.4 Experiments on Prospectively Under-sampled Data 
+
+Figure 10 displays the model pre-trained with T1, T2, and post-contrast T1 fastMRI and fine-tuned on FLAIR or SWI data from 20 subjects applied to reconstruct retrospectively and prospectively under-sampled FLAIR and SWI data. Comparison to an L1-wavelet baseline shows that the model qualitatively reduces reconstruction artifacts. In addition, the reconstructions from the retrospec-tively and prospectively under-sampled acquisitions show similar image quality. 
+
+# 4 Discussion 
+
+We proposed a simple and effective training strategy for diffusion probabilistic models (DPMs) that enables high-quality MRI reconstruction in data-constrained settings. Drawing inspiration from the foundation model paradigm, the proposed approach combines large-scale pre-training on diverse external MRI datasets followed by targeted fine-tuning on small, fully-sampled datasets from the application of interest, with an astute selection of hyperparameters. Controlled experiments on FastMRI demonstrate that DPMs trained with our strategy achieved reconstruction quality com-parable to models trained on substantially larger target specific datasets. We further validated the approach on our clinically motivated stroke MRI application, where the proposed method gener-alized across multiple contrasts within the standard stroke imaging protocol. In a blinded clinical reader study, images reconstructed from data retrospectively accelerated by an additional factor of two and fine-tuned using only 20 fully sampled subjects were rated as non-inferior to standard-of-care reconstructions for both structural delineation and image quality metrics, In the controlled fastMRI FLAIR experiments, we observed a clear trade-off between insufficient adaptation and overfitting during fine-tuning. As shown in Figures 2 and 3, omitting fine-tuning resulted in reconstructions that were poorly adapted to the target contrast, leading to suboptimal image quality. In contrast, excessive fine-tuning, either through an increased number of epochs or an overly aggressive learning rate, degraded performance, consistent with overfitting to the limited size of the target dataset. Similar trends were observed when fine-tuning to different contrasts in the clinical stroke protocol, where the optimal fine-tuning configuration varied across target datasets. 13 / 28 Submited to Magnetic Resonance in Medicine 
+
+Together, these results highlight that effective transfer of diffusion models to data-limited MRI reconstruction tasks requires careful selection of fine-tuning hyperparameters to balance contrast adaptation against overfitting or catastrophic forgetting (42). The fastMRI setting further enabled a direct comparison of the proposed training strategy against alternative approaches with access to substantially larger amounts of target-domain FLAIR data (Figure 4). Methods 1–3 incorporated FLAIR data from all 344 subjects during training and therefore represent upper-bound baselines that rely on extensive target-specific supervision. Despite being fine-tuned using FLAIR data from only 20 subjects, the proposed approach (Method 4) achieved reconstruction quality comparable to these upper-bound baselines. In contrast, Methods 5 and 6, which either trained exclusively on the limited 20-subject FLAIR dataset or jointly on the large external dataset and the 20 subject FLAIR dataset, exhibited degraded performance relative to the proposed method. These results indicate that large-scale pre-training on external data is beneficial, and that sequential fine-tuning on the target domain is more effective than joint training when target-domain data are scarce. Since Algorithm 1 represents an approximate posterior sampling procedure, fastMRI experiments in Figure 5 also characterized the effect of the data consistency weighting ζ on reconstruction performance. Higher acceleration rates corresponded to a larger optimal ζ. We suspect that less total data in the data consistency term results in a lower overall value relative to the prior term, so a larger weight needs to be placed on the consistency term with less available k-space data. Training DPMs for our limited stroke dataset motivated the proposed approach. Figures 6, 7, and 8 demonstrate that the proposed training strategy effectively fine-tunes DPMs, with just data from 20 patients, to the various contrasts used in the stroke MRI protocol, including FLAIR, MPRAGE, SWI, and DWI. Results from the blinded clinical reader study (Figure 9) demonstrate that images reconstructed using the proposed DPM-based approach from 2× less data are non-inferior to the standard-of-care reconstructions for both structural delineation and image quality metrics. For the first reader, who evaluated all 80 subjects, the proposed approach achieved statistically significant, slightly higher scores than the standard-of-care in several categories, including SNR, artifact level, and overall image quality. In contrast, the second reader, who evaluated a smaller subset of 21 subjects, tended to rate the standard-of-care images slightly higher across most metrics. However, no statistically significant differences were observed for this reader except for SNR, where the standard-of-care achieved higher scores. 14 / 28 Submited to Magnetic Resonance in Medicine 
+
+Importantly, despite these inter-reader differences, mean scores for both reconstruction ap-proaches remained consistently high for both readers, with most metrics averaging near or above a score of 4, corresponding to good image quality. This suggests that, while individual reader preferences and scoring tendencies may differ, both the proposed and standard-of-care reconstruc-tions produced clinically acceptable images across the evaluated stroke protocols. The observed improvement in SNR for the proposed approach in the first reader may be attributable to the de-noising effect of posterior sampling guided by a learned score function, while the reduced artifact scores may reflect the exclusion of motion-corrupted k-space lines when reconstructing from fewer measurements. Most experiments in this work relied on retrospective under-sampling, while the prospective evaluation was limited to data acquired from a healthy volunteer. Future work will therefore fo-cus on validating the proposed approach using prospectively under-sampled clinical stroke MRI acquisitions to more fully assess performance. In addition, future reader studies will evaluate the impact of the proposed reconstructions on downstream clinical interpretation and decision-making relative to standard-of-care images. Finally, the current posterior sampling implementation incurs substantially longer reconstruction times per slice compared to conventional parallel imaging and end-to-end learning–based methods. Future work will investigate more efficient implementations and improved posterior sampling strategies to reduce reconstruction time and facilitate practical clinical deployment. 
+
+# 5 Acknowledgment 
+
+This work was supported in part by NSF CCF-2239687 (CAREER), NSF IFML 2019844, and JCCO fellowship. 
+
+# References 
+
+1 Rishi Bommasani, Kyle Hudson, Ehsan Adeli, Russ Altman, Simran Arora, Sydney von Arx, Michael S Bernstein, Jeannette Bohg, Antoine Bosselut, Emma Brunskill, et al. On the oppor-tunities and risks of foundation models. arXiv , 2021. 2 Ce Zhou, Qian Li, Chen Li, Jun Yu, Yixin Liu, Guangjing Wang, Kai Zhang, Cheng Ji, Qiben Yan, Lifang He, Hao Peng, Jianxin Li, Jia Wu, Ziwei Liu, Pengtao Xie, Caiming Xiong, Jian 15 / 28 Submited to Magnetic Resonance in Medicine 
+
+Pei, Philip S. Yu, and Lichao Sun. A comprehensive survey on pretrained foundation models: a history from bert to chatgpt. International Journal of Machine Learning and Cybernetics , 2024. 3 Wayne Xin Zhao, Kun Zhou, Junyi Li, Tianyi Tang, Xiaolei Wang, Yupeng Hou, Yingqian Min, Beichen Zhang, Junjie Zhang, Zican Dong, Yifan Du, Chen Yang, Yushuo Chen, Zhipeng Chen, Jinhao Jiang, Ruiyang Ren, Yifan Li, Xinyu Tang, Zikang Liu, Peiyu Liu, Jian-Yun Nie, and Ji-Rong Wen. A survey of large language models. arXiv , 2023. 4 Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agar-wal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, and Ilya Sutskever. Learning transferable visual models from natural language supervision. Proceedings of Machine Learning Research , 2021. 5 Alexander Kirillov, Eric Mintun, Nikhila Ravi, Hanzi Mao, Chloe Rolland, Laura Gustafson, Tete Xiao, Spencer Whitehead, Alexander C. Berg, Wan-Yen Lo, Piotr Dollár, and Ross Girshick. Segment anything. IEEE/CVF International Conference on Computer Vision (ICCV) , 2023. 6 Chenxi Ma, Weimin Tan, Ruian He, and Bo Yan. Pretraining a foundation model for general-izable fluorescence microscopy-based image restoration. Nature Methods , 2024. 7 Zhi Huang, Federico Bianchi, Mert Yuksekgonul, Thomas J. Montine, and James Zou. A vi-sual–language foundation model for pathology image analysis using medical twitter. Nature Medicine , 2023. 8 Yukun Zhou, Mark A. Chia, Siegfried K. Wagner, Murat S. Ayhan, Dominic J. Williamson, Robbert R. Struyven, Timing Liu, Moucheng Xu, Mateo G. Lozano, Peter Woodward-Court, Yuka Kihara, UK Biobank Eye, Vision Consortium, Andre Altmann, Aaron Y. Lee, Eric J. Topol, Alastair K. Denniston, Daniel C. Alexander, and Pearse A. Keane. A visual–language foundation model for pathology image analysis using medical twitter. Nature , 2023. 9 Michael Moor, Oishi Banerjee, Zahra Shakeri Hossein Abad, Harlan M. Krumholz, Jure Leskovec, Eric J. Topol, and Pranav Rajpurkar. Foundation models for generalist medical artificial intel-ligence. Nature , 2023. 10 Reinhard Heckel, Mathews Jacob, Akshay Chaudhari, Or Perlman, and Efrat Shimron. Deep learning for accelerated and robust mri reconstruction. Magnetic Resonance Materials in Physics, Biology and Medicine , 2024. 16 / 28 Submited to Magnetic Resonance in Medicine 
+
+11 Matthew Muckley, Bruno Riemenschneider, Alireza Radmanesh, Sun Woo Kim, Geunu Jeong, Jingyu Ko, Yohan Jun, Hyungseob Shin, Dosik Hwang, Mahmoud Mostapha, Simon Arberet, Dominik Nickel, Zaccharie Ramzi, Philippe Ciuciu, Jean-Luc Starck, Jonas Teuwen, Dim-itrios Karkalousos, Chaoping Zhang, Anuroop Sriram, Zhengnan Huang, Nafissa Yakubova, Yvonne W. Lui, and Florian Knoll. Results of the 2020 fastmri challenge for machine learning mr image reconstruction. IEEE Transactions on Medical Imaging , 2021. 12 Jun Lyu, Chen Qin, Shuo Wang, Fanwen Wang, Yan Li, Zi Wang, Kunyuan Guo, Cheng Ouyang, Michael Tänzer, Meng Liu, Longyu Sun, Mengting Sun, Qing Li, Zhang Shi, Sha Hua, Hao Li, Zhensen Chen, Zhenlin Zhang, Bingyu Xin, Dimitris N. Metaxas, George Yiasemis, Jonas Teuwen, Liping Zhang, Weitian Chen, Yidong Zhao, Qian Tao, Yanwei Pang, Xiaohan Liu, Artem Razumov, Dmitry V. Dylov, Quan Dou, Kang Yan, Yuyang Xue, Yuning Du, Julia Dietlmeier, Carles Garcia-Cabrera, Ziad Al-Haj Hemidi, Nora Vogt, Ziqiang Xu, Yajing Zhang, Ying-Hua Chu, Weibo Chen, Wenjia Bai, Xiahai Zhuang, Jing Qin, Lianming Wu, Guang Yang, Xiaobo Qu, He Wang, and Chengyan Wang. Results of the 2020 fastmri challenge for machine learning mr image reconstruction. Medical Image Analysis , 2023. 13 Arjun D. Desai, Andrew M. Schmidt, Elka B. Rubin, Christopher M. Sandino, Marianne S. Black, Valentina Mazzoli, Kathryn J. Stevens, Robert Boutin, Christopher Ré, Garry E. Gold, Brian A. Hargreaves, and Akshay S. Chaudhari. Skm-tea: A dataset for accelerated mri reconstruction with dense image labels for quantitative clinical evaluation. NeurIPs , 2024. 14 Dale Birenbaum, Laura Bancroft, and Gary Felsberg. Imaging in acute stroke. Western Journal of Emergency Medicine , 12:67–76, 2011. 15 Costanza Maria Rapillo, Vincent Dunet, Silvia Pistocchi, Vincent Darioli, Bruno Bartolini, Steven David Hajdu, Patrik Michel, and Davide Strambo. Moving from ct to mri paradigm in acute ischemic stroke: Feasibility, effects on stroke diagnosis and long-term outcomes. Stroke ,2024. 16 Mehmet Akçakaya, Steen Moeller, Sebastian Weingärtner, and Kâmil Uğurbil. Scan-specific robust artificial-neural-networks for k-space interpolation (raki) reconstruction: Database-free deep learning for fast imaging. Magnetic Resonance in Medicine , 2019. 17 Yamin Arefeen, Onur Beker, Jaejin Cho, Elfar Adalsteinsson, and Berkin Bilgic. Scan-specific 17 / 28 Submited to Magnetic Resonance in Medicine 
+
+artifact reduction in k-space (spark) neural networks synergize with physics-based reconstruction to accelerate mri. Magnetic Resonance in Medicine , 2022. 18 Ruimin Feng, Qing Wu, Jie Feng, Huajun She, Chunlei Liu, Yuyao Zhang, and Hongjiang Wei. Imjense: Scan-specific implicit representation for joint coil sensitivity and image estimation in parallel mri. IEEE Transactions on Medical Imaging , 2024. 19 Mohammed Darestani and Reinhard Heckel. Accelerated mri with un-trained neural networks. 
+
+IEEE Transactions on Computational Imaging , 2021. 20 Burhaneddin Yaman, Seyed Amir Hossein Hosseini, and Mehmet Akçakaya. Zero-shot self-supervised learning for mri reconstruction. International Conference on Learning Representa-tions , 2024. 21 Burhaneddin Yaman, Seyed Amir, Hossein Hosseini, Steen Moeller, Jutta Ellermann, Kâmil Uğurbil, and Mehmet Akçakaya. Self-supervised learning of physics-guided reconstruction neural networks without fully sampled reference data. Magnetic Resonance in Medicine , 2020. 22 Charles Millard and Mark Chiew. A theoretical framework for self-supervised mr image recon-struction using sub-sampling via variable density noisier2noise. IEEE Transactions on Compu-tational Imaging , 2023. 23 Arjun D. Desai, Batu M. Ozturkler, Christopher M. Sandino, Robert Boutin, Marc Willis, Shreyas Vasanawala, Brian A. Hargreaves, Christopher Ré, John M. Pauly, and Akshay S. Chaudhari. Noise2recon: Enabling snr-robust mri reconstruction with semi-supervised and self-supervised learning. Magnetic Resonance in Medicine , 2023. 24 Andrew Wang and Mike Davies. Benchmarking self-supervised methods for accelerated mri reconstruction. arXiv , 2025. 25 Mohammad Zalbagi Darestani, Jiayu Liu, and Reinhard Heckel. Test-time training can close the natural distribution shift performance gap in deep learning based compressed sensing. ICML ,2022. 26 Matthieu Terris, Samuel Hurault, Maxime Song, and Julian Tachella. Reconstruct anything model a lightweight foundation model for computational imaging. ICLR , 2026. 18 / 28 Submited to Magnetic Resonance in Medicine 
+
+27 Jupinder Parmar, Sanjev Satheesh, Mostofa Patwary, Mohammad Shoeybi, and Bryan Catan-zaro. Reuse, don’t retrain: A recipe for continued pretraining of language models. arXiv , 2024. 28 Reinhard Heckel Kang Lin. Robustness of deep learning for accelerated mri: Benefits of diverse training data. International Conference on Machine Learning , 2024. 29 Yang Song, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-based generative modeling through stochastic differential equations, 2021. 30 Hyungjin Chung and Jong Chul Ye. Score-based diffusion models for accelerated mri. Medical Image Analysis , 2022. 31 Hyungjin Chung, Jeongsol Kim, Michael T. Mccann, Marc L. Klasky, and Jong Chul Ye. Diffu-sion posterior sampling for general noisy inverse problems, 2023. 32 Ajil Jalal, Marius Arvinte, Giannis Daras, Eric Price, Alexandros G Dimakis, and Jonathan I Tamir. Robust compressed sensing mri with deep generative priors. Advances in Neural Infor-mation Processing Systems , 2021. 33 Guanxiong Luo, Moritz Blumenthal, Martin Heide, and Martin Uecker. Bayesian mri reconstruc-tion with joint uncertainty estimation using diffusion models. Magnetic Resonance in Medicine ,2023. 34 Ling Yang, Zhilong Zhang, Yang Song, Shenda Hong, Runsheng Xu, Yue Zhao, Wentao Zhang, Bin Cui, and Ming-Hsuan Yang. Diffusion models: A comprehensive survey of methods and applications. ACM Computing Surveys , 2023. 35 Jonathan Ho, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. Advances in Neural Information Processing Systems , 2020. 36 Hongkai Zheng, Wenda Chu, Bingliang Zhang, Zihui Wu, Austin Wang, Berthy T. Feng, Caifeng Zou, Yu Sun andNikola Kovachki, Zachary E. Ross, Katherine L. Bouman, and Yisong Yue1. Inversebench: Benchmarking plug-and-play diffusion priors for inverse problems in physical sci-ences. International Conference on Learning Representations , 2025. 37 Guanxiong Luo, Na Zhao, Wenhao Jiang, Edward S Hui, and Peng Cao. Mri reconstruction using deep bayesian estimation. Magnetic Resonance in Medicine , 2020. 19 / 28 Submited to Magnetic Resonance in Medicine 
+
+38 Kerem Tezcan, Christian Baumgartner, Roger Luechinger, Klaas Pruessmann, and Ender Konukoglu. Mr image reconstruction using deep density priors. IEEE Transactions on Med-ical Imaging , 2019. 39 Tero Karras, Miika Aittala, Timo Aila, and Samuli Laine. Elucidating the design space of diffusion-based generative models. In Advances in Neural Information Processing Systems , vol-ume 35, pages 26565–26577, 2022. 40 Yamin Arefeen, Brett Levac, Bhairav Patel, Chang Ho, and Jonathan I Tamir. Diffusion prob-abilistic generative models for accelerated, in-nicu permanent magnet neonatal mri. Magnetic Resonance in Medicine , 2025. 41 Martin Uecker, Frank Ong, Jonathan I Tamir, Dara Bahri, Patrick Virtue, Joseph Y Cheng, Tao Zhang, and Michael Lustig. Berkeley advanced reconstruction toolbox. Proceedings of the International Society of Magnetic Resonance in Medicine , 2015. 42 James Kirkpatrick, Razvan Pascanu, Neil Rabinowitz, Joel Veness, Guillaume Desjardins, An-drei A. Rusu, Kieran Milan, John Quan, Tiago Ramalho, Agnieszka Grabska-Barwińska, et al. Overcoming catastrophic forgetting in neural networks. Proceedings of the National Academy of Sciences , 114(13):3521–3526, 2017. 20 / 28 Submited to Magnetic Resonance in Medicine 
+
+Figure 3: A representative example from the fastMRI FLAIR experiment. (A) Quantitative NRMSE as a function of fine-tuning duration for different learning rates, highlighting that a comparatively smaller learning rate and fewer fine-tuning epochs yields the best performance. (B) Fully sampled reference FLAIR image. (C) Zoomed reconstructions obtained using different learning rates with 650 fine-tuning epochs, compared against the fully sampled reference. (D) Reconstructions obtained using a fixed learning rate of 1×10 −5 across different fine-tuning durations. Appropriate fine-tuning hyperparameters lead to visibly improved structural fidelity and reduced artifacts, as highlighted by the orange arrows. 21 / 28 Submited to Magnetic Resonance in Medicine 
+
+Figure 4: (A) DPMs are compared across methods with access to different amounts of target-domain FLAIR data. Methods 1–3 are trained using FLAIR data from all 344 subjects, while Methods 5 and 6 are trained using 20 FLAIR subjects and the external dataset. The proposed approach (Method 4), pre-trained on a large external dataset and fine-tuned on 20 FLAIR subjects, achieves comparable NRMSE to Methods 1-3, despite using substantially less target domain data and consistently outperforms Methods 5,6 trained on the same limited data. (B) displays example reconstructions from this experiment. 22 / 28 Submited to Magnetic Resonance in Medicine 
+
+Figure 5: Using the best fine-tuned DPM, average NRMSE on fastMRI FLAIR validation data is plotted as a function of the data-consistency step size ζ for multiple acceleration factors. Red markers denote the default choice ζ = 1 , while green markers indicate the value of ζ that minimizes reconstruction error at each acceleration. The optimal ζ increases with acceleration. 23 / 28 Submited to Magnetic Resonance in Medicine 
+
+Figure 6: (A) NRMSE of SWI reconstructions averaged over five validation subjects from data ret-rospectively accelerated by R ≈ 3.75 . (B) Fully-sampled reference. (C) Zoomed-in reconstructions obtained with fixed epochs and varying learning rate and (D) fixed learning rate and varying epochs. Similar to the fastMRI FLAIR experiments, insufficient or excessive fine-tuning duration and higher learning rates consistently result in worse reconstructions, demonstrating that the proposed training strategy is effective for clinical stroke SWI data. 24 / 28 Submited to Magnetic Resonance in Medicine 
+
+Figure 7: (A) NRMSE of DWI reconstructions averaged over five validation subjects from data ret-rospectively accelerated by R ≈ 3.75 . (B) Fully-sampled reference. (C) Zoomed-in reconstructions obtained with fixed epochs and varying learning rate and (D) fixed learning rate and varying epochs. Similar to the fastMRI FLAIR experiments, insufficient or excessive fine-tuning duration and higher learning rates consistently result in worse reconstructions, demonstrating that the proposed training strategy is effective for clinical stroke DWI data. 25 / 28 Submited to Magnetic Resonance in Medicine 
+
+Figure 8: Representative images from a clinical stroke protocol are shown for a single subject, com-paring standard-of-care reconstructions (top row) with images retrospectively under-sampled by an additional factor of two and reconstructed using the proposed DPM-based approach (bottom row). The protocol includes diffusion-weighted imaging (shown as derived trace and apparent diffusion coefficient (ADC) maps), susceptibility-weighted imaging (SWI), FLAIR, and MPRAGE. Across all contrasts, the proposed accelerated reconstructions preserve structural detail and contrast compa-rable to the standard-of-care. 26 / 28 Submited to Magnetic Resonance in Medicine 
+
+Figure 9: Mean reader scores for structural delineation (left) and image quality metrics (right) are shown for two board-certified neuroradiologists evaluating full stroke-protocol image sets recon-structed from standard-of-care data (GT) and from retrospectively accelerated data reconstructed using the proposed DPM-based approach (Recon). The top row reports results from Reader 1, who evaluated all 80 subjects, while the bottom row reports results from Reader 2, who evaluated 21 subjects. For Reader 1, the proposed accelerated reconstructions achieved statistically significant higher scores for several image quality metrics and for white matter and ventricular delineation. For Reader 2, no significant differences were observed except for SNR, where the standard-of-care reconstruction scored higher; however, mean scores for both methods remained high across all cat-egories. 27 / 28 Submited to Magnetic Resonance in Medicine 
+
+Figure 10: The proposed DPM, pre-trained on fastMRI data and fine-tuned on FLAIR or SWI data from 20 subjects, is applied to reconstruct both retrospectively and prospectively under-sampled clinical stroke data. For each contrast, the fully sampled reference, retrospective reconstructions, and prospective reconstructions are displayed along with their effective acceleration factors. Across both contrasts, the proposed method qualitatively reduces reconstruction artifacts relative to the ℓ1
+
+baseline, and achieves comparable image quality between retrospectively and prospectively under-sampled acquisitions 28 / 28

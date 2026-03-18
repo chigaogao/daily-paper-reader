@@ -1,0 +1,449 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-18T20:05:47.483349+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 11,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.14161v1",
+      "title": "Deep probabilistic model synthesis enables unified modeling of whole-brain neural activity across individual subjects",
+      "abstract": "Many disciplines need quantitative models that synthesize experimental data across multiple instances of the same general system. For example, neuroscientists must combine data from the brains of many individual animals to understand the species' brain in general. However, typical machine learning models treat one system instance at a time. Here we introduce a machine learning framework, deep probabilistic model synthesis (DPMS), that leverages system properties auxiliary to the model to combine data across system instances. DPMS specifically uses variational inference to learn a conditional prior distribution and instance-specific posterior distributions over model parameters that respectively tie together the system instances and capture their unique structure. DPMS can synthesize a wide variety of model classes, such as those for regression, classification, and dimensionality reduction, and we demonstrate its ability to improve upon single-instance models on synthetic data and whole-brain neural activity data from larval zebrafish.",
+      "authors": [
+        "William E. Bishop",
+        "Luuk W. Hesselink",
+        "Bernhard Englitz",
+        "Misha B. Ahrens",
+        "James E. Fitzgerald"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "published": "2026-03-15T00:37:18+00:00",
+      "link": "https://arxiv.org/pdf/2603.14161v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "probabilistic modeling of whole-brain neural activity across subjects",
+      "llm_evidence_cn": "跨受试者全脑神经活动的概率建模",
+      "llm_evidence": "跨受试者全脑神经活动的概率建模",
+      "canonical_evidence": "跨受试者全脑神经活动的概率建模",
+      "llm_tldr_en": "Introduces DPMS to synthesize neural data across individuals using variational inference for unified brain modeling.",
+      "llm_tldr_cn": "引入DPMS框架，利用变分推理综合不同个体的神经数据，实现统一的大脑建模。",
+      "llm_tldr": "引入DPMS框架，利用变分推理综合不同个体的神经数据，实现统一的大脑建模。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.09931v1",
+      "title": "Adaptive Clinical-Aware Latent Diffusion for Multimodal Brain Image Generation and Missing Modality Imputation",
+      "abstract": "Multimodal neuroimaging provides complementary insights for Alzheimer's disease diagnosis, yet clinical datasets frequently suffer from missing modalities. We propose ACADiff, a framework that synthesizes missing brain imaging modalities through adaptive clinical-aware diffusion. ACADiff learns mappings between incomplete multimodal observations and target modalities by progressively denoising latent representations while attending to available imaging data and clinical metadata. The framework employs adaptive fusion that dynamically reconfigures based on input availability, coupled with semantic clinical guidance via GPT-4o-encoded prompts. Three specialized generators enable bidirectional synthesis among sMRI, FDG-PET, and AV45-PET. Evaluated on ADNI subjects, ACADiff achieves superior generation quality and maintains robust diagnostic performance even under extreme 80\\% missing scenarios, outperforming all existing baselines. To promote reproducibility, code is available at https://github.com/rongzhou7/ACADiff",
+      "authors": [
+        "Rong Zhou",
+        "Houliang Zhou",
+        "Yao Su",
+        "Brian Y. Chen",
+        "Yu Zhang",
+        "Lifang He",
+        "Alzheimer's Disease Neuroimaging Initiative"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-03-10T17:26:45+00:00",
+      "link": "https://arxiv.org/pdf/2603.09931v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Latent diffusion for brain image generation and multimodal synthesis",
+      "llm_evidence_cn": "用于脑图像生成和多模态合成的潜扩散模型",
+      "llm_evidence": "用于脑图像生成和多模态合成的潜扩散模型",
+      "canonical_evidence": "用于脑图像生成和多模态合成的潜扩散模型",
+      "llm_tldr_en": "Uses latent diffusion models for multimodal brain image synthesis and missing modality imputation.",
+      "llm_tldr_cn": "利用潜扩散模型进行多模态脑图像合成和缺失模态修复。",
+      "llm_tldr": "利用潜扩散模型进行多模态脑图像合成和缺失模态修复。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.16825v1",
+      "title": "Real-Time Decoding of Movement Onset and Offset for Brain-Controlled Rehabilitation Exoskeleton",
+      "abstract": "Robot-assisted therapy can deliver high-dose, task-specific training after neurologic injury, but most systems act primarily at the limb level-engaging the impaired neural circuits only indirectly-which remains a key barrier to truly contingent, neuroplasticity-targeted rehabilitation. We address this gap by implementing online, dual-state motor imagery control of an upper-limb exoskeleton, enabling goal-directed reaches to be both initiated and terminated directly from non-invasive EEG. Eight participants used EEG to initiate assistance and then volitionally halt the robot mid-trajectory. Across two online sessions, group-mean hit rates were 61.5% for onset and 64.5% for offset, demonstrating reliable start-stop command delivery despite instrumental noise and passive arm motion. Methodologically, we reveal a systematic, class-driven bias induced by common task-based recentering using an asymmetric margin diagnostic, and we introduce a class-agnostic fixation-based recentering method that tracks drift without sampling command classes while preserving class geometry. This substantially improves threshold-free separability (AUC gains: onset +56%, p = 0.0117; offset +34%, p = 0.0251) and reduces bias within and across days. Together, these results help bridge offline decoding and practical, intention-driven start-stop control of a rehabilitation exoskeleton, enabling precisely timed, contingent assistance aligned with neuroplasticity goals while supporting future clinical translation.",
+      "authors": [
+        "Kanishka Mitra",
+        "Satyam Kumar",
+        "Frigyes Samuel Racz",
+        "Deland Liu",
+        "Ashish D. Deshpande",
+        "José del R. Millán"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "published": "2026-03-17T17:32:43+00:00",
+      "link": "https://arxiv.org/pdf/2603.16825v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Real-time decoding of motor imagery from non-invasive EEG for exoskeleton control",
+      "llm_evidence_cn": "用于外骨骼控制的非侵入性脑电图运动想象实时解码",
+      "llm_evidence": "用于外骨骼控制的非侵入性脑电图运动想象实时解码",
+      "canonical_evidence": "用于外骨骼控制的非侵入性脑电图运动想象实时解码",
+      "llm_tldr_en": "Implements online EEG-based motor imagery to control the start and stop of a rehabilitation exoskeleton.",
+      "llm_tldr_cn": "实现了基于脑电图的在线运动想象，以控制康复外骨骼的启动和停止。",
+      "llm_tldr": "实现了基于脑电图的在线运动想象，以控制康复外骨骼的启动和停止。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.10680v1",
+      "title": "A Platform-Agnostic Multimodal Digital Human Modelling Framework: Neurophysiological Sensing in Game-Based Interaction",
+      "abstract": "Digital Human Modelling (DHM) is increasingly shaped by advances in AI, wearable biosensing, and interactive digital environments, particularly in research addressing accessibility and inclusion. However, many AI-enabled DHM approaches remain tightly coupled to specific platforms, tasks, or interpretative pipelines, limiting reproducibility, scalability, and ethical reuse. This paper presents a platform-agnostic DHM framework designed to support AI-ready multimodal interaction research by explicitly separating sensing, interaction modelling, and inference readiness. The framework integrates the OpenBCI Galea headset as a unified multimodal sensing layer, providing concurrent EEG, EMG, EOG, PPG, and inertial data streams, alongside a reproducible, game-based interaction environment implemented using SuperTux. Rather than embedding AI models or behavioural inference, physiological signals are represented as structured, temporally aligned observables, enabling downstream AI methods to be applied under appropriate ethical approval. Interaction is modelled using computational task primitives and timestamped event markers, supporting consistent alignment across heterogeneous sensors and platforms. Technical verification via author self-instrumentation confirms data integrity, stream continuity, and synchronisation; no human-subjects evaluation or AI inference is reported. Scalability considerations are discussed with respect to data throughput, latency, and extension to additional sensors or interaction modalities. Illustrative use cases demonstrate how the framework can support AI-enabled DHM and HCI studies, including accessibility-oriented interaction design and adaptive systems research, without requiring architectural modifications. The proposed framework provides an emerging-technology-focused infrastructure for future ethics-approved, inclusive DHM research.",
+      "authors": [
+        "Daniel J. Buxton",
+        "Mufti Mahmud",
+        "Jordan J. Bird",
+        "Thomas Hughes-Roberts",
+        "David J. Brown"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC",
+        "cs.AI"
+      ],
+      "published": "2026-03-11T11:45:17+00:00",
+      "link": "https://arxiv.org/pdf/2603.10680v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multimodal sensing framework integrating EEG for AI-ready digital human modelling",
+      "llm_evidence_cn": "集成脑电图用于AI数字人建模的多模态传感框架",
+      "llm_evidence": "集成脑电图用于AI数字人建模的多模态传感框架",
+      "canonical_evidence": "集成脑电图用于AI数字人建模的多模态传感框架",
+      "llm_tldr_en": "Presents a platform-agnostic framework for multimodal neurophysiological sensing in interactive environments.",
+      "llm_tldr_cn": "提出了一个用于交互环境中多模态神经生理传感的平台无关框架。",
+      "llm_tldr": "提出了一个用于交互环境中多模态神经生理传感的平台无关框架。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.12635v1",
+      "title": "Adaptive Diffusion Posterior Sampling for Data and Model Fusion of Complex Nonlinear Dynamical Systems",
+      "abstract": "High-fidelity numerical simulations of chaotic, high dimensional nonlinear dynamical systems are computationally expensive, necessitating the development of efficient surrogate models. Most surrogate models for such systems are deterministic, for example when neural operators are involved. However, deterministic models often fail to capture the intrinsic distributional uncertainty of chaotic systems. This work presents a surrogate modeling formulation that leverages generative machine learning, where a deep learning diffusion model is used to probabilistically forecast turbulent flows over long horizons. We introduce a multi-step autoregressive diffusion objective that significantly enhances long-rollout stability compared to standard single-step training. To handle complex, unstructured geometries, we utilize a multi-scale graph transformer architecture incorporating diffusion preconditioning and voxel-grid pooling. More importantly, our modeling framework provides a unified platform that also predicts spatiotemporally important locations for sensor placement, either via uncertainty estimates or through an error-estimation module. Finally, the observations of the ground truth state at these dynamically varying sensor locations are assimilated using diffusion posterior sampling requiring no retraining of the surrogate model. We present our methodology on two-dimensional homogeneous and isotropic turbulence and for a flow over a backwards-facing step, demonstrating its utility in forecasting, adaptive sensor placement, and data assimilation for high dimensional chaotic systems.",
+      "authors": [
+        "Dibyajyoti Chakraborty",
+        "Hojin Kim",
+        "Romit Maulik"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "nlin.CD",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-03-13T04:11:37+00:00",
+      "link": "https://arxiv.org/pdf/2603.12635v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "diffusion models for complex nonlinear dynamical systems",
+      "llm_evidence_cn": "用于复杂非线性动力系统的扩散模型",
+      "llm_evidence": "用于复杂非线性动力系统的扩散模型",
+      "canonical_evidence": "用于复杂非线性动力系统的扩散模型",
+      "llm_tldr_en": "Uses diffusion models for probabilistic forecasting of complex dynamical systems, applicable to neural time series.",
+      "llm_tldr_cn": "利用扩散模型对复杂动力系统进行概率预测，可应用于神经时间序列。",
+      "llm_tldr": "利用扩散模型对复杂动力系统进行概率预测，可应用于神经时间序列。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.13007v1",
+      "title": "Accelerating Stroke MRI with Diffusion Probabilistic Models through Large-Scale Pre-training and Target-Specific Fine-Tuning",
+      "abstract": "Purpose: To develop a data-efficient strategy for accelerated MRI reconstruction with Diffusion Probabilistic Generative Models (DPMs) that enables faster scan times in clinical stroke MRI when only limited fully-sampled data samples are available.   Methods: Our simple training strategy, inspired by the foundation model paradigm, first trains a DPM on a large, diverse collection of publicly available brain MRI data in fastMRI and then fine-tunes on a small dataset from the target application using carefully selected learning rates and fine-tuning durations. The approach is evaluated on controlled fastMRI experiments and on clinical stroke MRI data with a blinded clinical reader study.   Results: DPMs pre-trained on approximately 4000 subjects with non-FLAIR contrasts and fine-tuned on FLAIR data from only 20 target subjects achieve reconstruction performance comparable to models trained with substantially more target-domain FLAIR data across multiple acceleration factors. Experiments reveal that moderate fine-tuning with a reduced learning rate yields improved performance, while insufficient or excessive fine-tuning degrades reconstruction quality. When applied to clinical stroke MRI, a blinded reader study involving two neuroradiologists indicates that images reconstructed using the proposed approach from $2 \\times$ accelerated data are non-inferior to standard-of-care in terms of image quality and structural delineation.   Conclusion: Large-scale pre-training combined with targeted fine-tuning enables DPM-based MRI reconstruction in data-constrained, accelerated clinical stroke MRI. The proposed approach substantially reduces the need for large application-specific datasets while maintaining clinically acceptable image quality, supporting the use of foundation-inspired diffusion models for accelerated MRI in targeted applications.",
+      "authors": [
+        "Yamin Arefeen",
+        "Sidharth Kumar",
+        "Steven Warach",
+        "Hamidreza Saber",
+        "Jonathan Tamir"
+      ],
+      "primary_category": "eess.IV",
+      "categories": [
+        "eess.IV",
+        "cs.CV",
+        "cs.LG",
+        "physics.med-ph"
+      ],
+      "published": "2026-03-13T14:13:53+00:00",
+      "link": "https://arxiv.org/pdf/2603.13007v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Diffusion models with large-scale pre-training for brain MRI",
+      "llm_evidence_cn": "针对脑部MRI的大规模预训练扩散模型",
+      "llm_evidence": "针对脑部MRI的大规模预训练扩散模型",
+      "canonical_evidence": "针对脑部MRI的大规模预训练扩散模型",
+      "llm_tldr_en": "Applies diffusion probabilistic models and foundation model pre-training to accelerate brain MRI reconstruction.",
+      "llm_tldr_cn": "应用扩散概率模型和基础模型预训练来加速脑部MRI重建。",
+      "llm_tldr": "应用扩散概率模型和基础模型预训练来加速脑部MRI重建。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.13440v1",
+      "title": "Improving Channel Estimation via Multimodal Diffusion Models with Flow Matching",
+      "abstract": "Deep generative models offer a powerful alternative to conventional channel estimation by learning complex channel distributions. By integrating the rich environmental information available in modern sensing-aided networks, this paper proposes MultiCE-Flow, a multimodal channel estimation framework based on flow matching and diffusion transformer (DiT). We design a specialized multimodal perception module that fuses LiDAR, camera, and location data into a semantic condition, while treating sparse pilots as a structural condition. These conditions guide a DiT backbone to reconstruct high-fidelity channels. Unlike standard diffusion models, we employ flow matching to learn a linear trajectory from noise to data, enabling efficient one-step sampling. By leveraging environmental semantics, our method mitigates the ill-posed nature of estimation with sparse pilots. Extensive experiments demonstrate that MultiCE-Flow consistently outperforms traditional baselines and existing generative models. Notably, it exhibits superior robustness to out-of-distribution scenarios and varying pilot densities, making it suitable for environment-aware communication systems.",
+      "authors": [
+        "Xiaotian Fan",
+        "Xingyu Zhou",
+        "Le Liang",
+        "Xiao Li",
+        "Shi Jin"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.IT"
+      ],
+      "published": "2026-03-13T11:26:10+00:00",
+      "link": "https://arxiv.org/pdf/2603.13440v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multimodal diffusion models with flow matching and DiT backbone",
+      "llm_evidence_cn": "结合流匹配和DiT主干的多模态扩散模型",
+      "llm_evidence": "结合流匹配和DiT主干的多模态扩散模型",
+      "canonical_evidence": "结合流匹配和DiT主干的多模态扩散模型",
+      "llm_tldr_en": "Proposes a multimodal diffusion framework using flow matching for high-fidelity signal reconstruction.",
+      "llm_tldr_cn": "提出一种基于流匹配的多模态扩散框架，用于高保真信号重建。",
+      "llm_tldr": "提出一种基于流匹配的多模态扩散框架，用于高保真信号重建。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.13663v1",
+      "title": "PDE-SSM: A Spectral State Space Approach to Spatial Mixing in Diffusion Transformers",
+      "abstract": "The success of vision transformers-especially for generative modeling-is limited by the quadratic cost and weak spatial inductive bias of self-attention. We propose PDE-SSM, a spatial state-space block that replaces attention with a learnable convection-diffusion-reaction partial differential equation. This operator encodes a strong spatial prior by modeling information flow via physically grounded dynamics rather than all-to-all token interactions. Solving the PDE in the Fourier domain yields global coupling with near-linear complexity of $O(N \\log N)$, delivering a principled and scalable alternative to attention. We integrate PDE-SSM into a flow-matching generative model to obtain the PDE-based Diffusion Transformer PDE-SSM-DiT. Empirically, PDE-SSM-DiT matches or exceeds the performance of state-of-the-art Diffusion Transformers while substantially reducing compute. Our results show that, analogous to 1D settings where SSMs supplant attention, multi-dimensional PDE operators provide an efficient, inductive-bias-rich foundation for next-generation vision models.",
+      "authors": [
+        "Eshed Gal",
+        "Moshe Eliasof",
+        "Siddharth Rout",
+        "Eldad Haber"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-14T00:16:10+00:00",
+      "link": "https://arxiv.org/pdf/2603.13663v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Diffusion Transformers with spectral state space for generative modeling",
+      "llm_evidence_cn": "用于生成建模的光谱状态空间扩散Transformer",
+      "llm_evidence": "用于生成建模的光谱状态空间扩散Transformer",
+      "canonical_evidence": "用于生成建模的光谱状态空间扩散Transformer",
+      "llm_tldr_en": "Introduces a scalable PDE-based Diffusion Transformer for efficient generative modeling.",
+      "llm_tldr_cn": "引入一种基于偏微分方程的可扩展扩散Transformer，用于高效生成建模。",
+      "llm_tldr": "引入一种基于偏微分方程的可扩展扩散Transformer，用于高效生成建模。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.14285v1",
+      "title": "MorphSNN: Adaptive Graph Diffusion and Structural Plasticity for Spiking Neural Networks",
+      "abstract": "Spiking Neural Networks (SNNs) currently face a critical bottleneck: while individual neurons exhibit dynamic biological properties, their macro-scopic architectures remain confined within conventional connectivity patterns that are static and hierarchical. This discrepancy between neuron-level dynamics and network-level fixed connectivity eliminates critical brain-like lateral interactions, limiting adaptability in changing environments. To address this, we propose MorphSNN, a backbone framework inspired by biological non-synaptic diffusion and structural plasticity. Specifically, we introduce a Graph Diffusion (GD)mechanism to facilitate efficient undirected signal propagation, complementing the feedforward hierarchy. Furthermore, it incorporates a Spatio-Temporal Structural Plasticity (STSP) mechanism, endowing the network with the capability for instance-specific, dynamic topological reorganization, thereby overcoming the limitations of fixed topologies. Experiments demonstrate that MorphSNN achieves state-of-the-art accuracy on static and neuromorphic datasets; for instance, it reaches 83.35% accuracy on N-Caltech101 with only 5 timesteps. More importantly, its self-evolving topology functions as an intrinsic distribution fingerprint, enabling superior Out-of- Distribution (OOD) detection without auxiliary training. The code is available at anonymous.4open.science/r/MorphSNN-B0BC.",
+      "authors": [
+        "Yongsheng Huang",
+        "Peibo Duan",
+        "Yujie Wu",
+        "Kai Sun",
+        "Zhipeng Liu",
+        "Jiaxiang Liu",
+        "Guangyu Li",
+        "Changsheng Zhang",
+        "Bin Zhang",
+        "Mingkun Xu"
+      ],
+      "primary_category": "cs.NE",
+      "categories": [
+        "cs.NE"
+      ],
+      "published": "2026-03-15T08:52:57+00:00",
+      "link": "https://arxiv.org/pdf/2603.14285v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "graph diffusion in spiking neural networks for brain-like interactions",
+      "llm_evidence_cn": "脉冲神经网络中的图扩散机制模拟类脑交互",
+      "llm_evidence": "脉冲神经网络中的图扩散机制模拟类脑交互",
+      "canonical_evidence": "脉冲神经网络中的图扩散机制模拟类脑交互",
+      "llm_tldr_en": "MorphSNN uses graph diffusion and structural plasticity to improve adaptability in brain-inspired spiking networks.",
+      "llm_tldr_cn": "MorphSNN利用图扩散和结构可塑性提高了类脑脉冲神经网络的适应性。",
+      "llm_tldr": "MorphSNN利用图扩散和结构可塑性提高了类脑脉冲神经网络的适应性。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.15208v1",
+      "title": "BCMI-Driven Motion Control Detection: EEG-Based Machine Learning and Interaction Entropy for High-Order Brain Networks",
+      "abstract": "This study investigates the cognitive motor control detection and the underlying neuroregulatory mechanisms during music-assisted simulated driving. Using a dynamic higher-order network model constructed with EEG-based cross-information entropy, we quantify the dynamic coordination within brain networks activated during both music listening and driving. This approach, which contrasts with previous static network analyses, provides novel insights into how musical stimuli modulate the complex interplay of brain regions during demanding tasks. Results demonstrated enhanced third-order connectivity and elevated higher-order information entropy in music-stimulated driving compared to baseline driving, as evidenced by increasing Phi values of higher-order network indices. Supervised machine learning, including support vector machines, revealed a strong correlation between model accuracy and ROC-AUC values and the hierarchy of brain network features. This underscores the importance of higher-order features in decoding brain motor-control states during music-simulated driving. These findings deepen our understanding of the interplay between music cognition and motor control, offering valuable insights for the development of novel brain-computer-music interfaces (BCMI) and adaptive human-machine systems to enhance performance in demanding tasks like driving.",
+      "authors": [
+        "Jiajia Li",
+        "Fan Li",
+        "Jian Song"
+      ],
+      "primary_category": "q-bio.NC",
+      "categories": [
+        "q-bio.NC"
+      ],
+      "published": "2026-03-16T12:50:01+00:00",
+      "link": "https://arxiv.org/pdf/2603.15208v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "EEG-based machine learning for brain network coordination",
+      "llm_evidence_cn": "基于脑电图的机器学习用于脑网络协调",
+      "llm_evidence": "基于脑电图的机器学习用于脑网络协调",
+      "canonical_evidence": "基于脑电图的机器学习用于脑网络协调",
+      "llm_tldr_en": "Uses EEG-based cross-information entropy to detect cognitive motor control in music-assisted driving.",
+      "llm_tldr_cn": "利用基于脑电的交叉信息熵检测音乐辅助驾驶中的认知运动控制。",
+      "llm_tldr": "利用基于脑电的交叉信息熵检测音乐辅助驾驶中的认知运动控制。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.16797v1",
+      "title": "Adaptive Moments are Surprisingly Effective for Plug-and-Play Diffusion Sampling",
+      "abstract": "Guided diffusion sampling relies on approximating often intractable likelihood scores, which introduces significant noise into the sampling dynamics. We propose using adaptive moment estimation to stabilize these noisy likelihood scores during sampling. Despite its simplicity, our approach achieves state-of-the-art results on image restoration and class-conditional generation tasks, outperforming more complicated methods, which are often computationally more expensive. We provide empirical analysis of our method on both synthetic and real data, demonstrating that mitigating gradient noise through adaptive moments offers an effective way to improve alignment.",
+      "authors": [
+        "Christian Belardi",
+        "Justin Lovelace",
+        "Kilian Q. Weinberger",
+        "Carla P. Gomes"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CV"
+      ],
+      "published": "2026-03-17T17:04:07+00:00",
+      "link": "https://arxiv.org/pdf/2603.16797v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Adaptive moments for stabilizing guided diffusion sampling",
+      "llm_evidence_cn": "用于稳定引导扩散采样的自适应矩估计",
+      "llm_evidence": "用于稳定引导扩散采样的自适应矩估计",
+      "canonical_evidence": "用于稳定引导扩散采样的自适应矩估计",
+      "llm_tldr_en": "Uses adaptive moments to reduce noise in guided diffusion sampling for better generation alignment.",
+      "llm_tldr_cn": "利用自适应矩减少引导扩散采样中的噪声，从而获得更好的生成对齐效果。",
+      "llm_tldr": "利用自适应矩减少引导扩散采样中的噪声，从而获得更好的生成对齐效果。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
