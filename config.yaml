@@ -25,3 +25,43 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: EEG AI
+      description: 脑电大模型、扩散模型与AIGC相关论文检索
+      enabled: true
+      keywords:
+        - keyword: EEG foundation model
+          keyword_cn: 脑电大模型
+          query: Large-scale foundation models for EEG signal processing
+        - keyword: diffusion model EEG
+          keyword_cn: 脑电扩散模型
+          query: Diffusion probabilistic models applied to EEG data
+        - keyword: AIGC brain signals
+          keyword_cn: 脑电生成式AI
+          query: AI generated content from brain activity and EEG
+        - keyword: brain-to-image
+          keyword_cn: 脑电图像重建
+          query: Reconstructing images from EEG using generative models
+        - keyword: EEG pre-training
+          keyword_cn: 脑电预训练
+          query: Self-supervised pre-training for EEG representation learning
+        - keyword: latent diffusion EEG
+          keyword_cn: 潜空间扩散模型脑电
+          query: Latent diffusion models for brain signal decoding
+      intent_queries:
+        - query: State of the art large foundation models for EEG decoding and generation
+          query_cn: 脑电解码与生成的最新大模型研究
+          enabled: true
+          source: manual
+          note: ''
+        - query: Applications of diffusion models in brain computer interface and AIGC
+          query_cn: 扩散模型在脑机接口与AIGC中的应用
+          enabled: true
+          source: manual
+          note: ''
+        - query: Cross modal generation from EEG signals using generative AI
+          query_cn: 基于生成式AI的脑电信号跨模态生成
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-03-18T08:04:21.218Z'
