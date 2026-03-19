@@ -1,0 +1,79 @@
+{
+  "label": "2026-03-19",
+  "date": "2026-03-19",
+  "generated_at": "2026-03-19T19:52:45",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202603/19/2603.17109v1-sense-efficient-eeg-to-text-via-privacy-preserving-semantic-retrieval",
+      "section": "deep",
+      "title_en": "SENSE: Efficient EEG-to-Text via Privacy-Preserving Semantic Retrieval",
+      "authors": "Akshaj Murhekar, Christina Liu, Abhijit Mishra, Shounak Roychowdhury, Jacek Gwizdka",
+      "date": "2026-03-17",
+      "pdf": "https://arxiv.org/pdf/2603.17109v1",
+      "score": "10.0",
+      "evidence": "利用语义检索和LLM将非侵入性EEG翻译为文本",
+      "tldr": "本研究针对脑电图（EEG）转文本任务中计算成本高和隐私泄露的挑战，提出了SENSE框架。该框架通过轻量级的端侧模块将EEG信号映射为离散的词袋表示，再利用现成的预训练大语言模型进行零样本生成。SENSE仅含600万参数，在保证原始神经数据不离端的前提下，实现了与全量微调模型相当甚至更优的生成质量，为隐私保护型脑机接口提供了高效、可扩展的解决方案。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Decoding brain activity into natural language is a major challenge in AI with important applications in assistive communication, neurotechnology, and human-computer interaction. Most existing Brain-Computer Interface (BCI) approaches rely on memory-intensive fine-tuning of Large Language Models (LLMs) or encoder-decoder models on raw EEG signals, resulting in expensive training pipelines, limited accessibility, and potential exposure of sensitive neural data. We introduce SENSE (SEmantic Neural Sparse Extraction), a lightweight and privacy-preserving framework that translates non-invasive electroencephalography (EEG) into text without LLM fine-tuning. SENSE decouples decoding into two stages: on-device semantic retrieval and prompt-based language generation. EEG signals are locally mapped to a discrete textual space to extract a non-sensitive Bag-of-Words (BoW), which conditions an off-the-shelf LLM to synthesize fluent text in a zero-shot manner. The EEG-to-keyword module contains only ~6M parameters and runs fully on-device, ensuring raw neural signals remain local while only abstract semantic cues interact with language models. Evaluated on a 128-channel EEG dataset across six subjects, SENSE matches or surpasses the generative quality of fully fine-tuned baselines such as Thought2Text while substantially reducing computational overhead. By localizing neural decoding and sharing only derived textual cues, SENSE provides a scalable and privacy-aware retrieval-augmented architecture for next-generation BCIs.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/19/2603.15339v1-the-neuroscience-of-transformers",
+      "section": "quick",
+      "title_en": "The Neuroscience of Transformers",
+      "authors": "Peter Koenig, Mario Negrello",
+      "date": "2026-03-16",
+      "pdf": "https://arxiv.org/pdf/2603.15339v1",
+      "score": "7.0",
+      "evidence": "将Transformer操作映射到皮层特征",
+      "tldr": "本研究探讨了现代Transformer架构与大脑皮层微电路组织之间的计算类比。作者提出Transformer的操作（如上下文选择、内容路由）与皮层层级结构特征存在映射关系，并基于此生成了一系列关于皮层功能（如树突整合、振荡协调）的可测试假设。该框架旨在通过比较AI架构与生物大脑的计算组织，为系统神经科学和人工智能的交叉研究提供新视角。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Neuroscience has long informed the development of artificial neural networks, but the success of modern architectures invites, in turn, the converse: can modern networks teach us lessons about brain function? Here, we examine the structure of the cortical column and propose that the transformer provides a natural computational analogy for multiple elements of cortical microcircuit organization. Rather than claiming a literal implementation of transformer equations in cortex, we develop a hypothetical mapping between transformer operations and laminar cortical features, using the analogy as an orienting framework for analysis and discussion. This mapping allows us to examine in greater depth how contextual selection, content routing, recurrent integration, and interlaminar transformations may be distributed across cortical circuitry. In doing so, we generate a broad set of predictions and experimentally testable hypotheses concerning laminar specialization, contextual modulation, dendritic integration, oscillatory coordination, and the effective connectivity of cortical columns. This proposal is intended as a structured hypothesis rather than a definitive account of cortical computation. Placing transformer operations and cortical architectonics into a common descriptive framework sharpens questions, reveals new functional correspondences, and opens a productive route for reciprocal exchange between systems neuroscience and modern AI. More broadly, this perspective suggests that comparing brains and architectures at the level of computational organization can yield genuine insight into both.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/19/2603.10744v1-just-in-time-training-free-spatial-acceleration-for-diffusion-transformers",
+      "section": "quick",
+      "title_en": "Just-in-Time: Training-Free Spatial Acceleration for Diffusion Transformers",
+      "authors": "Wenhao Sun, Ji Li, Zhaoqiang Liu",
+      "date": "2026-03-11",
+      "pdf": "https://arxiv.org/pdf/2603.10744v1",
+      "score": "6.0",
+      "evidence": "扩散Transformer的空间加速技术",
+      "tldr": "扩散变换器（DiT）在图像合成中表现卓越，但迭代采样的高计算成本限制了其应用。本文提出 Just-in-Time (JiT)，一种无需训练的空间加速框架。JiT 利用生成过程中的空间冗余，通过动态选择稀疏锚点标记来驱动全潜状态演化，并引入确定性微流（micro-flow）确保新增标记时的结构连贯性。在 FLUX.1-dev 上实现了高达 7 倍的加速且几乎无损，显著提升了推理效率。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion Transformers have established a new state-of-the-art in image synthesis, but the high computational cost of iterative sampling severely hampers their practical deployment. While existing acceleration methods often focus on the temporal domain, they overlook the substantial spatial redundancy inherent in the generative process, where global structures emerge long before fine-grained details are formed. The uniform computational treatment of all spatial regions represents a critical inefficiency. In this paper, we introduce Just-in-Time (JiT), a novel training-free framework that addresses this challenge by acceleration in the spatial domain. JiT formulates a spatially approximated generative ordinary differential equation (ODE) that drives the full latent state evolution based on computations from a dynamically selected, sparse subset of anchor tokens. To ensure seamless transitions as new tokens are incorporated to expand the dimensions of the latent state, we propose a deterministic micro-flow, a simple and effective finite-time ODE that maintains both structural coherence and statistical correctness. Extensive experiments on the state-of-the-art FLUX.1-dev model demonstrate that JiT achieves up to a 7x speedup with nearly lossless performance, significantly outperforming existing acceleration methods and establishing a new and superior trade-off between inference speed and generation fidelity.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/19/2603.13069v1-fractals-made-practical-denoising-diffusion-as-partitioned-iterated-function-systems",
+      "section": "quick",
+      "title_en": "Fractals made Practical: Denoising Diffusion as Partitioned Iterated Function Systems",
+      "authors": "Ann Dooms",
+      "date": "2026-03-13",
+      "pdf": "https://arxiv.org/pdf/2603.13069v1",
+      "score": "6.0",
+      "evidence": "去噪扩散模型动力学的理论框架",
+      "tldr": "本研究将确定性DDIM反向链建模为分区迭代函数系统（PIFS），为扩散模型的调度、架构和训练提供了统一的几何设计语言。通过推导收缩阈值和扩展函数等几何量，揭示了模型在不同噪声水平下从全局上下文组装到局部细节合成的演化机制。该理论不仅解释了自注意力机制的必要性，还为余弦调度、Min-SNR权重等经验设计提供了严谨的几何优化解释，实现了分形几何理论向实用设计准则的转化。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "What is a diffusion model actually doing when it turns noise into a photograph?   We show that the deterministic DDIM reverse chain operates as a Partitioned Iterated Function System (PIFS) and that this framework serves as a unified design language for denoising diffusion model schedules, architectures, and training objectives. From the PIFS structure we derive three computable geometric quantities: a per-step contraction threshold $L^*_t$, a diagonal expansion function $f_t(λ)$ and a global expansion threshold $λ^{**}$. These quantities require no model evaluation and fully characterize the denoising dynamics. They structurally explain the two-regime behavior of diffusion models: global context assembly at high noise via diffuse cross-patch attention and fine-detail synthesis at low noise via patch-by-patch suppression release in strict variance order. Self-attention emerges as the natural primitive for PIFS contraction. The Kaplan-Yorke dimension of the PIFS attractor is determined analytically through a discrete Moran equation on the Lyapunov spectrum.   Through the study of the fractal geometry of the PIFS, we derive three optimal design criteria and show that four prominent empirical design choices (the cosine schedule offset, resolution-dependent logSNR shift, Min-SNR loss weighting, and Align Your Steps sampling) each arise as approximate solutions to our explicit geometric optimization problems tuning theory into practice.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/19/2603.17433v1-the-phasor-transformer-resolving-attention-bottlenecks-on-the-unit-circle",
+      "section": "quick",
+      "title_en": "The Phasor Transformer: Resolving Attention Bottlenecks on the Unit Circle",
+      "authors": "Dibakar Sigdel",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.17433v1",
+      "score": "6.0",
+      "evidence": "用于长上下文序列的高效Transformer",
+      "tldr": "针对长序列时间序列建模中自注意力机制的二次复杂度瓶颈，本文提出 Phasor Transformer。该模型在单位圆流形上表示序列状态，结合可训练相位偏移与离散傅里叶变换（DFT）实现全局令牌耦合，将复杂度降至 O(N log N)。实验表明，该模型在参数量极小的情况下，在多频率时间序列预测任务中表现出与传统 Transformer 相当的竞争力，为高效、可扩展的时序建模提供了基于几何约束的新路径。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Transformer models have redefined sequence learning, yet dot-product self-attention introduces a quadratic token-mixing bottleneck for long-context time-series. We introduce the \\textbf{Phasor Transformer} block, a phase-native alternative representing sequence states on the unit-circle manifold $S^1$. Each block combines lightweight trainable phase-shifts with parameter-free Discrete Fourier Transform (DFT) token coupling, achieving global $\\mathcal{O}(N\\log N)$ mixing without explicit attention maps. Stacking these blocks defines the \\textbf{Large Phasor Model (LPM)}. We validate LPM on autoregressive time-series prediction over synthetic multi-frequency benchmarks. Operating with a highly compact parameter budget, LPM learns stable global dynamics and achieves competitive forecasting behavior compared to conventional self-attention baselines. Our results establish an explicit efficiency-performance frontier, demonstrating that large-model scaling for time-series can emerge from geometry-constrained phase computation with deterministic global coupling, offering a practical path toward scalable temporal modeling in oscillatory domains.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

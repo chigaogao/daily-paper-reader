@@ -1,0 +1,3414 @@
+Title: Fractals made Practical: Denoising Diffusion as Partitioned Iterated Function Systems
+
+URL Source: https://arxiv.org/pdf/2603.13069v1
+
+Published Time: Mon, 16 Mar 2026 01:08:09 GMT
+
+Number of Pages: 50
+
+Markdown Content:
+# Fractals made Practical: Denoising Diffusion as Partitioned Iterated Function Systems 
+
+Ann Dooms Ann.Dooms@vub.be 
+
+Department of Mathematics & Data Science Vrije Universiteit Brussel Pleinlaan 2, 1050 Brussels, BELGIUM 
+
+Abstract 
+
+What is a diffusion model actually doing when it turns noise into a photograph? We show that the deterministic DDIM reverse chain operates as a Partitioned Iterated Function System (PIFS) and that this framework serves as a unified design language for denoising diffusion model schedules, architectures, and training objectives. From the PIFS structure we derive three computable geometric quantities: a per-step contraction threshold 
+
+L∗ 
+
+> t
+
+, a diagonal expansion function ft(λ) and a global expansion threshold λ∗∗ . These quantities require no model evaluation and fully characterise the denoising dynamics. They structurally explain the two-regime behaviour of diffusion models: global context assembly at high noise via diffuse cross-patch attention and fine-detail synthesis at low noise via patch-by-patch suppression release in strict variance order. Self-attention emerges as the natural primitive for PIFS contraction. The Kaplan-Yorke dimension of the PIFS attractor is determined analytically through a discrete Moran equation on the Lyapunov spectrum. Through the study of the fractal geometry of the PIFS, we derive three optimal design criteria and show that four prominent empirical design choices (the cosine schedule offset, resolution-dependent logSNR shift, Min-SNR loss weighting, and Align Your Steps sam-pling) each arise as approximate solutions to our explicit geometric optimisation problems tuning theory into practice. 
+
+Keywords: Generative AI, manifold reconstruction, diffusion models, score-matching, DDIM, partitioned iterated function systems, fractal image compression, Jacobian analysis, Kaplan-Yorke dimension. 
+
+1
+
+> arXiv:2603.13069v1 [cs.LG] 13 Mar 2026
+
+1 Introduction 
+
+Modern score-based diffusion models construct high-quality images through a sequential denoising process. The theoretical foundation lies in continuous-time stochastic differential equations (SDEs) or probability flow ODEs, which provide powerful global guarantees of distributional convergence in W2 distance (Song et al., 2021b; Ho et al., 2020). This con-tinuous perspective is elegant, but it treats the learned score network as a black-box, giving no real structural insight in how a discrete sampling chain assembles global spatial context at early steps and synthesises localised fine detail at later ones and why is self-attention so effective as a generative primitive? This paper answers both questions by establishing that the deterministic DDIM reverse chain Φ operates as a Partitioned Iterated Function System (PIFS) introduced in Jacquin (1992). We show that trained diffusion models implicitly learn such a composition to recon-struct the data manifold and that the structure of this PIFS is directly responsible for both the two-regime dynamics proved by Raya and Ambrogioni (2023) and the effectiveness of self-attention. The paper is organised around four contributions: 
+
+• Contraction structure (Section 3). We derive two contractivity conditions on the single-step DDIM operator Φ t: an Euclidean condition (EC) governed by a closed-form schedule threshold L∗ 
+
+> t
+
+and a block-max condition (PC) that separates diagonal from cross-patch behaviour. We show that score-matching training is the diffusion analogue of Barnsley’s collage minimisation and establish an L2–W1 bridge quantifying how training loss controls the Wasserstein distance to the PIFS fixed point. We propose a PIFS regulariser that directly enforces (PC) during training. 
+
+• Two-regime structure (Section 4). The contraction study allows us to compute for each step t constants κdiag  
+
+> t
+
+and δcross  
+
+> t
+
+from data statistics and architectural prop-erties that structurally explain two qualitatively distinct phases of denoising. In the high-t regime (Regime I), diffuse attention drives strong cross-patch coupling while a learned directional “suppression field” Sk,t holds every diagonal block below a so-called expansion threshold. At the highest noise levels the operator satisfies (EC) with analytically computable constants. In the low-t regime (Regime II), attention localises and suppression is released patch by patch in strict variance order, giving each release a precise geometric signature. The attention architecture is shown to control δcross  
+
+> t
+
+through a bound on the softmax weights, explaining why self-attention is the natural primitive for this PIFS structure. 
+
+• Attractor geometry (Section 5). We characterise the fractal dimension of the PIFS attractor via its Lyapunov spectrum. Under Gaussian data, the spectrum is fully determined by the per-step diagonal expansion function ft(λ) from which the Kaplan-Yorke dimension of the PIFS attractor is derived. The global expansion threshold λ∗∗ 
+
+is the unique solution to the discrete Moran equation. The dimension of the attractor is positive if and only if the data contains at least one patch direction exceeding this threshold. For real data, the suppression field shifts the effective expansion as 
+
+ft(λk) − Sk,t , shrinking the set of expanding directions and reducing the attractor dimension. 2• Practical implications (Section 6). The PIFS framework leads to the contraction threshold L∗ 
+
+> t
+
+, the per-step diagonal expansion function ft(λ) and the global expansion threshold λ∗∗ which require no model evaluation. They constitute a design language for noise schedules and training objectives. The cosine schedule offset of Nichol and Dhariwal (2021), the resolution-dependent logSNR shift of Hoogeboom et al. (2023), Min-SNR loss weighting (Hang et al., 2023), and the Align Your Steps sampling schedule (Sabour et al., 2024) each emerge as approximate solutions to one of three explicit geometric optimisation problems identified by this language. 
+
+2 Background 
+
+2.1 Score-Based Diffusion Models 
+
+GenAI evolves around building generative models that can produce new samples from an unknown data distribution pdata (x) on Rn. The approach centres on learning the so-called score function and use it to guide a sampling process. 
+
+Definition 1 For a probability density function p(x) on Rn, the score function is defined as 
+
+s(x) := ∇x log p(x) ∈ Rn.
+
+The function points in the direction of steepest increase of log-probability. If we know s(x), we can generate samples from p(x) using Langevin dynamics . Starting from an arbitrary initial point x0, iterate 
+
+xk+1 = xk + ϵ s (xk) + √2ϵ z k, zk ∼ N (0 , I ),
+
+where ϵ > 0 is a step size. Under mild conditions, as k → ∞ and ϵ → 0, the distribution of 
+
+xk converges to p(x). This is a Markov chain Monte Carlo method. But we do not know pdata , so we cannot compute its score directly. We must estimate 
+
+s(x) from data. Let {x(i)0 }Ni=1 be i.i.d. samples from pdata . We wish to train a neural network sθ(x) (with parameters θ) to approximate ∇x log pdata (x). A naive approach would minimise 
+
+Epdata 
+
+∥sθ(x0) − ∇ x log pdata (x0)∥2,
+
+but this requires the true score. Score matching Hyv¨ arinen (2005) provides an equivalent objective that avoids the unknown density: 
+
+Theorem 2 (Score matching) If sθ is differentiable and certain regularity conditions hold, then 
+
+Epdata 
+
+∥sθ(x0) − ∇ x log pdata (x0)∥2 = constant + Epdata 
+
+∥sθ(x0)∥2 + 2 ∇x · sθ(x0).
+
+The divergence term ∇x · sθ can be expensive in high dimensions, so alternative methods are used in practice. 
+
+Denoising Score Matching (DSM) by Vincent (2011) is a popular and tractable variant. Instead of directly targeting pdata , we consider a perturbed distribution. In diffusion-based 3generative models, this perturbation is defined by a forward process that gradually adds noise to the data. For a sequence of timesteps t = 1 , . . . , T , we define the noised version of a clean image x0 as 
+
+xt = √¯αt x0 + √1 − ¯αt ϵ, ϵ ∼ N (0 , I ), (1) where ¯ αt = Qts=1 αs is the cumulative noise schedule, strictly decreasing from ¯ α0 = 1 (clean image) toward ¯ αT ≈ 0 (pure noise). The residual noise variance at step t is vt := 1 − ¯αt.The specific choice of {¯αt} defines the forward process. Two widely used schedules are the 
+
+linear schedule of Ho et al. (2020) and the cosine schedule of Nichol and Dhariwal (2021). The linear schedule sets ¯ αt = Qts=1 (1 −βlin  
+
+> s
+
+) with βlin  
+
+> s
+
+increasing linearly from βlin 1 = 10 −4
+
+to βlin  
+
+> T
+
+= 0 .02. This keeps ¯ αt nearly constant at low noise ( t near 1) and drops sharply near 
+
+t = T , placing most of the signal-to-noise transition in the final steps. The cosine schedule instead defines ¯αt = f (t)
+
+f (0) , f (t) = cos 2
+
+ t/T + soff 
+
+1 + soff 
+
+· π
+
+2
+
+
+
+, (2) with offset parameter soff ≥ 0; the default value soff = 0 .008 is used in practice. The offset flattens the approach of ¯ αt toward 1 near t = 0, preventing the schedule from decaying too rapidly at the low-noise end. The log-signal-to-noise ratio at step t is log SNR t := log ¯αt
+
+1 − ¯αt
+
+. (3) We train a time-dependent network ˆ εθ(xt, t ) to predict the noise ϵ added to x0. The DSM loss becomes 
+
+L(θ) = Et∼U{ 1,...,T } Ex0∼pdata Eϵ∼N (0 ,I )
+
+h
+
+∥ˆεθ(xt, t ) − ϵ∥2i
+
+,
+
+where xt = √¯αtx0 + √1 − ¯αtϵ. Minimising this, forces ˆ εθ(xt, t ) to approximate the noise that would generate xt from x0. The score is then recovered via 
+
+∇xt log pt(xt) ≈ − ˆεθ(xt, t )
+
+√1 − ¯αt
+
+.
+
+Two popular discrete-time samplers, relying on the same trained noise-prediction net-work ˆ εθ, which encodes the score function across all noise levels, arise from different dis-cretisations of these reverse dynamics. The stochastic sampler from Denoising Diffusion Probabilistic Models (DDPM) by Ho et al. (2020) works with a Markov chain that approximates the reverse SDE. Starting from 
+
+xT ∼ N (0 , I ), for t = T, . . . , 1 they use 
+
+xt−1 = 1
+
+√αt
+
+
+
+xt − 1 − αt
+
+√1 − ¯αt
+
+ˆεθ(xt, t )
+
+
+
++ σtz, z ∼ N (0 , I ),
+
+with σt typically chosen as 
+
+q
+
+1 − ¯αt−1 − 1− ¯αt 
+
+> αt
+
+. This update corresponds to a discretisation of the reverse SDE and retains stochasticity at each step. The deterministic sampler from Denoising Diffusion Implicit Models (DDIM) by Song et al. (2021a) works with a non-Markovian formulation that yields a deterministic generative 4process. Discretising the probability flow ODE with an Euler step from t to t − 1 gives the DDIM update: 
+
+xt−1 = √¯αt−1 ˆx0(xt, t ) + p1 − ¯αt−1 ˆεθ(xt, t ),
+
+where ˆ x0(xt, t ) := xt−√1− ¯αt ˆεθ (xt,t )  
+
+> √¯αt
+
+is the network’s estimate of the clean image. Substituting ˆx0 yields the single-step operator Φt(x) = 
+
+√¯αt−1
+
+√¯αt
+
+x +
+
+p1 − ¯αt−1 −√¯αt−1
+
+√¯αt
+
+√1 − ¯αt
+
+
+
+ˆεθ(x, t ) = 
+
+√¯αt−1
+
+√¯αt
+
+x + bt ˆεθ(x, t ), (4) which uses the score (via ˆ εθ) to move one step backward in time and where the score step coefficient is given by 
+
+bt := p1 − ¯αt−1 −√¯αt−1
+
+√1 − ¯αt
+
+√¯αt
+
+. (5) Because no noise is added, the process defines a deterministic mapping xT 7 → x0 = Φ( xT )and can be run with fewer steps by sub-sampling the timesteps. This sampler will be the object of our study. 
+
+Proposition 3 (Sign of bt) For any strictly decreasing {¯αt} with ¯α0 = 1 , bt < 0 for all 
+
+t ≥ 1.
+
+Proof bt < 0 ⇐⇒ √1 − ¯αt−1 < √¯αt−1
+
+√1 − ¯αt/√¯αt, which is true as the schedule is strictly decreasing. Because the sampler is deterministic, the full reverse chain defines a deterministic map 
+
+Φ = Φ 1 ◦ · · · ◦ ΦT : Rn → Rn from noise to image, each Φ t with distinct parameters ¯ αt
+
+and bt and distinct score-network behaviour at each noise level. The trained network ˆ εθ
+
+approximates the optimal predictor ε∗
+
+> θ
+
+(xt, t ) := −√vt ∇xt log pt(xt), the true score of the noised marginal pt.The central observation motivating the PIFS connection is that each Φ t in (4) has two competing effects: the factor p¯αt−1/¯αt > 1 expands distances, while bt < 0 counteracts this expansion through the score correction. Whether the net effect is contractive depends on how strongly the score Jacobian drives the system inward. 
+
+2.2 Partitioned Iterated Function Systems 
+
+Recall that a map w : ( X, d ) → (X, d ) is a contraction if d(w(x), w (y)) ≤ s d (x, y ) for some 
+
+s ∈ [0 , 1), called contraction factor , and all x, y ∈ X.
+
+Theorem 4 (Banach Fixed Point Theorem (Banach, 1922)) Let (X, d ) be a com-plete metric space and w a contraction with factor s < 1. There exists a unique x∗ ∈ X
+
+with w(x∗) = x∗ and lim k→∞ wk(x) = x∗ for all x ∈ X, at rate d(wk(x), x ∗) ≤ skd(x, x ∗).
+
+An iterated function system (IFS) {wk}Nk=1 consists of contractions on ( X, d ). The 
+
+Hutchinson operator H(A) = S 
+
+> k
+
+wk(A) is itself a contraction on ( C(R2), d H ), the complete space of non-empty compact subsets of R2 equipped with the Hausdorff metric dH . It hence has a unique fixed point attractor A∗ reached by iterating from any starting compact set (Hutchinson, 1981). This operator was the theoretical basis for fractal image compression. 5Theorem 5 (Collage Theorem (Barnsley, 1988)) For every compact set AdH (A, A ∗) ≤ 11 − s dH (A, H(A)) , (6) Indeed, by Barnsley’s theorem we have that whenever A is close in Hausdorff distance to its image under the operator H, the distance between A and the attractor of H is smaller than the distance to its “collage” of smaller copies of itself, the collage error . This is applicable to sets with global self-similarity , like fractals for which the collage error is zero. Global self-similar compact sets A can hence be reconstructed from any other compact set by iterating an IFS consisting of contractions describing the smaller copies for which the Hutchinson operator minimises the distance to H(A). Natural images, however, do not exhibit the global self-similarity as different regions of an image are typically unrelated, so a single IFS cannot represent them accurately. (Jacquin, 1992) showed that this limitation can be overcome by extending the Collage Theorem to a 
+
+Partitioned IFS (PIFS) {wk}Nk=1 , which works at patch level as natural images exhibit local self-similarity. Indeed, parts of an image look like other parts after shrinking combined with operations like rotations, reflections and translations. For a PIFS, the image is partitioned into non-overlapping patches called range blocks 
+
+{Rk}Mk=1 (the output tiles to be encoded) and a set of larger domain blocks {Dj } (candidate source tiles, drawn from a pool that covers the image). Each range block Rk is encoded by an affine map 
+
+wk(x) = skAk(DS( Dj(k))) + ok,
+
+where DS is a spatial downsampling operator that matches domain and range block sizes, 
+
+Ak is a geometric symmetry (rotation or reflection), sk ∈ [0 , 1) is a luminance scaling fac-tor enforcing contractivity, and ok is a luminance offset. The encoder searches over the pool of domain blocks and a discrete set of symmetries to find, for each range block, the (j(k), A k, s k, o k) minimising the Euclidean distance between wk(Dj(k)) and Rk, called the 
+
+collage error at the block level . The collection {wk}Nk=1 defines a PIFS whose attractor, reached by iterating the system from any initial image approximates the original. Contrac-tivity is guaranteed per block rather than globally, enabling the system to capture local texture repetition while allowing global structure to vary across blocks. 
+
+3 Contraction Structure of the Denoising Operator 
+
+Asking whether the deterministic DDIM reverse chain Φ = Φ 1 ◦ · · · ◦ ΦT is a PIFS means investigating whether it is contractive on patch-level. As the operator is a composition of denoising steps, we will first concentrate on the Φ t.6The operator Φ t is a contraction in ( Rn, ∥ · ∥ 2) if and only if ∥JxΦt∥op < 1 for all x,where JxΦt(x) := ∇xΦt(x) ∈ Rn×n is the Jacobian . Recall that for a linear operator A,
+
+∥A∥op := sup ∥x∥2=1 ∥A(x)∥2 denotes the operator norm , which equals the largest singular value of its matrix. Differentiating (4) with respect to x gives 
+
+JxΦt(x) = 
+
+√¯αt−1
+
+√¯αt
+
+I + bt Jx ˆεθ(x, t ), (7) so the Jacobian of the denoising operator decomposes as a scaled identity plus a correction term entirely determined by the score network’s Jacobian Jx ˆεθ. Every contractivity question about Φ t therefore relates to an algebraic condition on Jx ˆεθ.
+
+3.1 Contraction in the Euclidean Norm 
+
+Because of the Jacobian formula (7), Φ t is contractive when 
+
+√¯αt−1
+
+√¯αt
+
+I + bt Jx ˆεθ(x, t ) op 
+
+< 1. (8) 
+
+Theorem 6 (Euclidean Contraction) Let ˆεθ(·, t ) : Rn → Rn be C1, and suppose its Jacobian admits, for every x ∈ Rn, the decomposition 
+
+Jx ˆεθ(x, t ) = νt(x) In + Rt(x), (9) 
+
+where νt : Rn → (0 , ∞) is a positive scalar field, In is the n × n identity, and the residual 
+
+Rt(x) ∈ Rn×n satisfies ∥Rt∥op ≤ δt. Define the contraction threshold 
+
+L∗ 
+
+> t
+
+:= 
+
+p¯αt−1/¯αt − 1
+
+|bt| > 0, (10) 
+
+and set νmin  
+
+> t
+
+:= inf x∈Rn νt(x). Assume: 
+
+(C1) νmin  
+
+> t
+
+> L ∗ 
+
+> t
+
++ δt, (11) (C2) |bt| νt(x) ≤√¯αt−1
+
+√¯αt
+
+for all x ∈ Rn. (12) 
+
+Then Φt : Rn → Rn is a contraction in (Rn, ∥ · ∥ 2) with contraction factor 
+
+κt := 1 − | bt|(νmin  
+
+> t
+
+− L∗ 
+
+> t
+
+− δt) ∈ (0 , 1) . (13) 
+
+Proof Substituting (9) into (7) gives 
+
+JxΦt = c(x) In + btRt(x), c(x) := 
+
+√¯αt−1
+
+√¯αt
+
++ btνt(x). (14) Since bt < 0, condition (C2) reads −btνt(x) ≤ p¯αt−1/¯αt, hence c(x) ≥ 0. As νt(x) ≥ νmin  
+
+> t
+
+, the scalar c(x) is decreasing in νt(x), so 
+
+c(x) ≤√¯αt−1
+
+√¯αt
+
+− | bt|νmin  
+
+> t
+
+= κt − | bt|δt.
+
+7The triangle inequality applied to JxΦt = c(x)In + btRt(x) gives 
+
+∥JxΦt∥op ≤ c(x) + |bt|∥ Rt∥op ≤ c(x) + |bt|δt ≤ κt.
+
+Condition (C1) gives κt < 1; condition (C2) and νmin  
+
+> t
+
+− L∗ 
+
+> t
+
+− δt > 0 give κt > 0. We then get that ∥Φt(x) − Φt(y)∥2 ≤ κt∥x − y∥2 for all x, y ∈ Rn.
+
+Definition 7 ((EC): Euclidean Contraction) Φt satisfies (EC) if ˆεθ(·, t ) is C1, its Ja-cobian admits decomposition (9) for all x ∈ Rn, and the constants (νmin  
+
+> t
+
+, δ t) satisfy condi-tions (C1) and (C2) .
+
+(EC) is hence a condition on the score network, where its two constants νmin  
+
+> t
+
+and δt can be derived from the score Jacobian, while the threshold L∗ 
+
+> t
+
+is determined entirely by the noise schedule and carries no dependence on the network or the data. Hence Φ t is an Euclidean contraction whenever (EC) holds. The contraction factor κt (13) makes the dependence on the score network explicit. 
+
+Corollary 8 Suppose (EC) holds for every Φt (t ∈ { 1, . . . , T }) with respective factors κt ∈
+
+(0 , 1) . Then the composition Φ = Φ 1 ◦· · ·◦ ΦT is a contraction on (Rn, ∥·∥ 2) with contraction factor s := QTt=1 κt ∈ (0 , 1) . Consequently, Φ a unique fixed point x∗ ∈ Rn such that for every starting point x ∈ Rn the iterates Φ◦k(x) (the k-fold composition of Φ with itself ) converge to x∗ at rate ∥Φ◦k(x) − x∗∥2 ≤ sk∥x − x∗∥2.Moreover, every singular value of Jx∗ Φ ∈ Rn×n satisfies si(Jx∗ Φ) ≤ s < 1.
+
+Proof The composition is again a contraction with contraction factor s = QTt=1 κt∥x−y∥2 =
+
+s∥x − y∥2. The singular-value bound follows from ∥Jx∗ Φ∥op ≤ s < 1. 
+
+3.2 Contraction in the Block-Max Norm 
+
+As a PIFS and diffusion work on patches, we now look at the block-max norm ∥x∥∞,M := max k ∥x(k)∥2, where x(k) ∈ Rnk denotes the vector of pixel values in patch Rk.From (7), the Jacobian of Φ t inherits the block structure directly from the score network. 
+
+Theorem 9 (Block-Max Contraction) Let ˆεθ(·, t ) : Rn → Rn be C1. Denote by [Jx ˆεθ]kj ∈
+
+Rnk ×nj the (k, j ) block of the Jacobian. From (7) , the corresponding blocks of JxΦt are 
+
+[JxΦt]kk =
+
+√¯αt−1
+
+√¯αt
+
+Ink + bt[Jx ˆεθ]kk ∈ Rnk ×nk , [JxΦt]kj = bt[Jx ˆεθ]kj ∈ Rnk ×nj , k ̸ = j. (15) 
+
+Define the score-coupling field Ck,t : Rn → R≥0 by 
+
+Ck,t (x) := |bt| X 
+
+> j̸=k
+
+[Jx ˆεθ]kj op = X 
+
+> j̸=k
+
+∥[JxΦt]kj ∥op . (16) Φt : Rn → Rn is a contraction in (Rn, ∥ · ∥ ∞,M ) if 
+
+∥[JxΦt]kk ∥op + Ck,t (x) < 1 holds for every patch k and all x ∈ Rn. (17) 8Setting 
+
+κdiag  
+
+> t
+
+:= max  
+
+> 1≤k≤M
+
+sup 
+
+> x∈Rn
+
+∥[JxΦt]kk ∥op , δcross  
+
+> t
+
+:= max  
+
+> 1≤k≤M
+
+sup 
+
+> x∈Rn
+
+Ck,t (x), (18) 
+
+the contraction factor in (Rn, ∥ · ∥ ∞,M ) is 
+
+κpc  
+
+> t
+
+:= κdiag  
+
+> t
+
++ δcross  
+
+> t
+
+< 1. (19) 
+
+Proof Fix x, y ∈ Rn and write δj := x(j) − y(j) ∈ Rnj . Applying the fundamental theorem of calculus along the segment z(τ ) := y + τ (x − y) to the k-th patch output of the C1 map Φt:[Φ t(x)] (k) − [Φ t(y)] (k) =
+
+Z 10
+
+
+
+[Jz(τ )Φt]kk δk + X 
+
+> j̸=k
+
+[Jz(τ )Φt]kj δj
+
+
+
+dτ. 
+
+Taking ∥ · ∥ 2 and using the triangle inequality: 
+
+∥[Φ t(x)] (k) − [Φ t(y)] (k)∥2 ≤
+
+
+
+∥[Jz Φt]kk ∥op + Ck,t (z)
+
+
+
+max  
+
+> j
+
+∥δj ∥2
+
+≤ κpc  
+
+> t
+
+∥x − y∥∞,M .
+
+Definition 10 ((PC): Block-Max Contraction) Φt satisfies (PC) whenever 
+
+κpc  
+
+> t
+
+= κdiag  
+
+> t
+
++ δcross  
+
+> t
+
+< 1,
+
+with 
+
+κdiag  
+
+> t
+
+= max  
+
+> 1≤k≤M
+
+sup 
+
+> x∈Rn
+
+∥[JxΦt]kk ∥op , δcross  
+
+> t
+
+= max  
+
+> 1≤k≤M
+
+sup 
+
+> x∈Rn
+
+Ck,t (x) = |bt| X 
+
+> j̸=k
+
+[Jx ˆεθ]kj op .
+
+Corollary 11 Suppose (PC) holds for every Φt (t ∈ { 1, . . . , T }) with respective factors 
+
+κpc  
+
+> t
+
+∈ (0 , 1) . Then the composition Φ = Φ 1 ◦ · · · ◦ ΦT is a contraction on (Rn, ∥ · ∥ ∞,M ) with contraction factor 
+
+sloc := 
+
+> T
+
+Y
+
+> t=1
+
+κpc  
+
+> t
+
+∈ (0 , 1) ,
+
+and therefore has a unique fixed point such that for every starting point x ∈ Rn the iterates 
+
+Φ◦k(x) converge to x∗ at rate ∥Φ◦k(x) − x∗∥∞,M ≤ (sloc )k∥x − x∗∥∞,M .
+
+Proof Each Φ t is a contraction on ( Rn, ∥ · ∥ ∞,M ) with factor κpc  
+
+> t
+
+< 1 by Theorem 9. The composition of finitely many contractions satisfies 
+
+∥Φ( x) − Φ( y)∥∞,M ≤
+
+> T
+
+Y
+
+> t=1
+
+κpc  
+
+> t
+
+∥x − y∥∞,M = sloc ∥x − y∥∞,M .
+
+Since all norms on Rn are equivalent, ( Rn, ∥ · ∥ ∞,M ) is complete, and Theorem 4 gives the unique fixed point and convergence rate. 9The theorem guarantees that repeatedly applying the PIFS Φ would eventually converge to a unique fixed point x∗. However in generative modelling we apply the composition Φ only once. We start from a noise vector xT and produce an image x0 by applying the composition Φ 1 ◦ · · · ◦ ΦT . Different noise vectors generally map to different images under one application of Φ, but if we would iterate Φ all inputs would eventually lead to the same output. The contraction in block-max norm guarantees stability and robustness: small pertur-bations in the input noise lead to controlled changes in the output’s coarse structure. The interplay between diagonal contractivity ( κdiag  
+
+> t
+
+) and cross-patch coupling ( δcross  
+
+> t
+
+) in (PC) will show to be the lever through which the network can generate varied, realistic detail while maintaining global coherence. 
+
+3.3 Learning the Geometry: Training as Collage Minimisation 
+
+Properties (EC) and (PC) are geometric conditions on the operator Φ. We will show that the training objective actually drives the network toward satisfying them. Score-matching turns out to be, in Barnsley’s sense, the exact analogue of minimising collage error. 
+
+3.3.1 The Training Objective as Collage Error 
+
+Theorem 12 (Collage analogue for Denoising Training) The denoising objective 
+
+L(θ) = Et,x 0,ε [∥ˆεθ(xt, t ) − ε∥22]
+
+equals, up to timestep reweighting, 
+
+X
+
+> t
+
+SNR t Ex0,x t
+
+∥ˆx0(xt, t ) − x0∥22
+
+ with SNR t = ¯αt
+
+1 − ¯αt
+
+. (20) 
+
+Proof From the forward process (1) and the reparameterisation ˆ x0 = ( xt−√1 − ¯αt ˆεθ)/√¯αt,one obtains ˆ ε(xt, t )θ −ε =   
+
+> √¯αt√1−¯αt
+
+(ˆ x0 −x0), so ∥ˆεθ(xt, t )−ε∥22 = SNR t∥ˆx0 −x0∥22. Substituting gives (20), matching (B.5) of Ho et al. (2020). The following theorem makes the quantitative link between score-matching and conver-gence to the fixed point precise. 
+
+3.3.2 Collage-Contraction Bridges 
+
+Theorem 13 (Collage-Contraction Bridge) Under the assumptions of Corollary 11, let x∗ be the unique fixed point of Φ = Φ 1 ◦ · · · ◦ ΦT : Rn → Rn. Let dt := ∥Φt(xt) − xt∥2 be the one-step displacement at time t and set ct := Qt−1 
+
+> k=1
+
+κpc  
+
+> k
+
+(with c1 := 1 ). Then: 
+
+∥x∗ − xT ∥2 ≤ 11 − sloc 
+
+> T
+
+X
+
+> t=1
+
+ct dt. (21) 
+
+Proof By Theorem 4 applied to Φ, ∥xT − x∗∥2 ≤ 11−sloc ∥Φ( xT ) − xT ∥2. Then Φ( xT ) − xT =
+
+> T
+
+X
+
+> t=1
+
+(Φ 1 ◦ · · · ◦ Φt)( xT ) − (Φ 1 ◦ · · · ◦ Φt−1)( xT ).
+
+10 The t-th term equals (Φ 1 ◦ · · · ◦ Φt−1)(Φ t(xt)) − (Φ 1 ◦ · · · ◦ Φt−1)( xt). Applying the Lipschitz bound of Φ 1 ◦ · · · ◦ Φt−1 (with factor ct) gives ∥t-th term ∥2 ≤ ct dt. Summing over t and multiplying by 1 /(1 − sloc ) yields (21). While Theorem 13 bounds the deterministic displacement of an individual sample path, generative modelling ultimately requires guarantees about probability measures. The fol-lowing theorem lifts this trajectory-level bound to a distributional guarantee. Concretely, the theorem bounds W1(q(xT ), δ x∗ ), the Wasserstein-1 distance from the 
+
+prior q(xT ) (the distribution of the initial noise) to the Dirac mass at the fixed point x∗. This is the statistical analogue of Barnsley’s Collage Theorem: minimising the score-matching objective during training not only pulls individual trajectories toward the fixed point but mathematically ensures the output measure aligns with δx∗ . A small W1 distance guarantees that the generated distribution inherits the fractal geometry of the PIFS fixed point x∗,which in turn approximates the intrinsic dimension of the true data manifold. 
+
+Theorem 14 ( L2–W1 Collage Bridge) Let 
+
+Lt(θ) = Ext ∥ˆεθ(xt, t ) − ε∗
+
+> θ
+
+(xt, t )∥22
+
+be the excess score-matching risk at step t. Define the coupling weights Bt := |bt|. Then 
+
+W1
+
+ q(xT ), δ x∗
+
+ ≤√T
+
+1 − sloc 
+
+> T
+
+X
+
+> t=1
+
+Y 
+
+> k<t
+
+κpc 
+
+> k
+
+2q 
+
+E[∥R t∥22] + Bt
+
+pLt(θ)
+
+2
+
+!1/2
+
+, (22) 
+
+where δx∗ denotes the Dirac measure concentrated at the fixed point x∗, and Rt(xt) := (p¯αt−1/¯αt − 1) xt + btε∗
+
+> θ
+
+(xt, t ) is the schedule-geometry displacement under the true score (independent of θ). 
+
+Proof W1(μ, δ x∗ ) = ExT ∼μ∥xT − x∗∥2. Apply Theorem 13 and take expectations; Cauchy-Schwarz over t gives 
+
+E∥x∗ − xT ∥2 ≤√T
+
+1 − sloc 
+
+X 
+
+> t
+
+c2 
+
+> t
+
+E[d2 
+
+> t
+
+]
+
+1/2
+
+, ct = Y
+
+> k<t
+
+κpc  
+
+> k
+
+.
+
+Here ct is the Lipschitz factor of Φ 1 ◦ · · · ◦ Φt−1, the composition of all steps applied after 
+
+step t in the reverse chain (steps with smaller index are applied last). In particular c1 = 1 (empty product), corresponding to the final applied step Φ 1, which receives the largest weight; early high-noise steps Φ T carry weight cT ≈ sloc < 1. Decompose the one-step displacement using (4): Φt(xt) − xt =
+
+ √¯αt−1
+
+√¯αt
+
+− 1
+
+
+
+xt + bt ε∗
+
+> θ
+
+(xt, t )
+
+| {z } 
+
+> =: Rt(xt)
+
++ bt
+
+ ˆεθ(xt, t ) − ε∗
+
+> θ
+
+(xt, t ).
+
+The second term is the score approximation error bt ξt where ξt := ˆ εθ(xt, t ) − ε∗
+
+> θ
+
+(xt, t ). Rt
+
+depends only on xt and the true score, so it is θ-free. Taking squared norms: 
+
+d2 
+
+> t
+
+= ∥R t∥22 + 2 bt⟨R t, ξ t⟩ + b2 
+
+> t
+
+∥ξt∥22.
+
+11 For general θ, the cross-term satisfies by Cauchy-Schwarz: 
+
+|E[⟨R t, ξ t⟩]| ≤ 
+
+q
+
+E[∥R t∥22] · pLt(θ),
+
+so 
+
+E[d2 
+
+> t
+
+] ≤ E[∥R t∥22] + 2 Bt
+
+q
+
+E[∥R t∥22]pLt(θ) + B2 
+
+> t
+
+Lt(θ) = 
+
+q 
+
+E[∥R t∥22] + Bt
+
+pLt(θ)
+
+2
+
+.
+
+Substituting E[d2 
+
+> t
+
+]1/2 ≤ pE[∥R t∥22] + Bt
+
+pLt(θ) into the Cauchy-Schwarz bound gives (22). Since the excess risk Lt(θ) = E∥ˆεθ −ε∗
+
+> θ
+
+∥22 is proportional to the reconstruction loss against the conditional mean E[x0 | xt]: ˆεθ − ε∗ 
+
+> θ
+
+= ( √¯αt/√vt)(ˆ x0 − E[x0 | xt]), giving Lt(θ) = (¯ αt/v t)E∥ˆx0 − E[x0 | xt]∥22, the bound (22) holds equally in terms of the reconstruction objective, up to the substitution Bt → | bt|p¯αt/v t inside the inner square root. 
+
+3.3.3 PIFS Collage Regulariser and Enforcement of (PC) 
+
+Theorem 15 (PIFS Collage Regulariser) Define the PIFS collage loss LPIFS (θ) := 
+
+L(θ) + μreg 
+
+P  
+
+> t,k,j ̸=k
+
+∥[Jx ˆεθ]kj ∥2 
+
+> F
+
+. Then: 
+
+(a) LPIFS (θ) = 0 if and only if the score is perfect and all off-diagonal blocks vanish. 
+
+(b) The gradient is computable in O(M 2nk) JVP/VJP operations without materialising the full Jacobian. 
+
+(c) Minimising LPIFS strictly decreases a Cauchy-Schwarz upper bound on Ck,t (x), directly widening the (PC) contraction margin 1 − κdiag  
+
+> t
+
+− δcross  
+
+> t
+
+.
+
+Proof (a) Both terms are non-negative. (b) Each [ J]kj v (JVP) and u⊤[J]kj (VJP) costs one forward pass; O(nk) per block gives O(M 2nk) total. (c). Since [ JxΦt]kj = bt[Jx ˆεθ]kj ,any decrease in P  
+
+> j̸=k
+
+∥[J]kj ∥2 
+
+> F
+
+directly decreases the Cauchy-Schwarz upper bound 
+
+Ck,t (x) = |bt| X 
+
+> j̸=k
+
+∥[Jx ˆεθ]kj ∥op ≤ | bt|
+
+X  
+
+> j̸=k
+
+∥[J]kj ∥2
+
+> F
+
+1/2√M , 
+
+reducing δcross  
+
+> t
+
+= max k sup x Ck,t (x) and widening the margin in condition (17). 
+
+4 Two-Regime Structure of the Denoising Chain 
+
+The preceding section established what the geometric conditions are (Properties (EC) and (PC)) and how training enforces them through collage minimisation. The remaining question is when and why these conditions hold across the denoising chain. This requires computing κdiag  
+
+> t
+
+and δcross  
+
+> t
+
+from actual data statistics and architectural properties. 12 4.1 Regime I: Global Context Assembly 
+
+Note that at high noise ( t near T , ¯ αt ≈ 0), the cross-patch coupling δcross  
+
+> t
+
+= O(¯ αt) is automatically negligible. We now study what happens in the next steps. 
+
+Theorem 16 (High-Noise Regime Contraction) Suppose ∥x0∥2 ≤ M almost surely, and assume the score network equals the true score: ˆεθ(xt, t ) = ε∗
+
+> θ
+
+(xt, t ) = −√vt ∇xt log pt(xt).Define 
+
+ν∗ 
+
+> t
+
+:= 1
+
+√vt
+
+, δ∗ 
+
+> t
+
+:= CM 2 ¯αt
+
+v3/2
+
+> t
+
+, (23) 
+
+where C > 0 is an absolute constant depending only on the data distribution. Then δ∗ 
+
+> t
+
+=
+
+O(¯ αt) as t → T , and (EC) holds at timestep t with νmin  
+
+> t
+
+:= ν∗ 
+
+> t
+
+and δt := δ∗ 
+
+> t
+
+. Consequently, 
+
+Φt is an Euclidean contraction with ν∗ 
+
+> t
+
+− δ∗ 
+
+> t
+
+> L ∗ 
+
+> t
+
+, at all sufficiently high-noise steps under standard schedules. 
+
+Proof Since ε∗ 
+
+> θ
+
+= −√vt ∇xt log pt,
+
+Jxt ε∗ 
+
+> θ
+
+= −√vt ∇2 
+
+> xt
+
+log pt(xt).
+
+Applying Stein’s identity to the Gaussian-mixture marginal 
+
+pt(xt) = 
+
+Z
+
+N (xt; √¯αtx0, v tI) p(x0) dx 0
+
+yields the decomposition of the log-density Hessian: 
+
+∇2 
+
+> xt
+
+log pt = −(1 /v t)I
+
+| {z }
+
+> Gaussian term
+
++ (¯ αt/v 2 
+
+> t
+
+) Cov( x0 | xt)
+
+| {z }
+
+> posterior covariance
+
++Ht(xt),
+
+where Ht(xt) collects all conditional cumulants of x0 | xt beyond second order (so Ht ≡ 0when p(x0 | xt) is Gaussian). Multiplying through by −√vt:
+
+Jxt ε∗ 
+
+> θ
+
+= 1
+
+√vt
+
+I − ¯αt
+
+v3/2
+
+> t
+
+Cov( x0 | xt) + Et(xt), (24) with Et(xt) := −√vt Ht(xt). This is decomposition (9) with νt(xt) := 1 /√vt and Rt(xt) := 
+
+−(¯ αt/v 3/2 
+
+> t
+
+)Cov( x0 | xt) + Et(xt). Let us now bound ∥Rt∥op . Since ∥x0∥2 ≤ M , we have ∥Cov( x0 | xt)∥op ≤ M 2, so 
+
+∥(¯ αt/v 3/2 
+
+> t
+
+)Cov( x0 | xt)∥op ≤ M 2 ¯αt/v 3/2 
+
+> t
+
+. Ht is the tensor of conditional cumulants of order three and higher. The leading (third-order) term satisfies 
+
+∥H(3)  
+
+> t
+
+(xt)∥op ≤ C0 (¯ αt/v 2 
+
+> t
+
+) sup 
+
+> xt
+
+E[∥x0 − μt∥32 | xt]for an absolute constant C0 > 0, where μt = E[x0 | xt]. Since ∥x0∥2 ≤ M and ∥μt∥2 ≤ M ,the bounded-support bound ∥x0 − μt∥2 ≤ 2M gives E[∥x0 − μt∥32 | xt] ≤ 8M 3, hence 
+
+∥Et(xt)∥op ≤ 8C0M 3 ¯αt
+
+v3/2
+
+> t
+
+= O(¯ αt) as t → T. (25) 13 Combining leads to δ∗ 
+
+> t
+
+:= ∥Rt∥op ≤ CM 2 ¯αt/v 3/2 
+
+> t
+
+for a suitable absolute constant C absorb-ing both terms. Both correction terms vanish as O(¯ αt), so δ∗ 
+
+> t
+
+→ 0. Meanwhile ν∗ 
+
+> t
+
+= 1 /√vt → 1, and the contraction margin ν∗ 
+
+> t
+
+− δ∗ 
+
+> t
+
+− L∗ 
+
+> t
+
+is eventually positive under standard schedules. Thus (EC) holds at high noise for any data distribution with bounded support, regardless of distributional shape. 
+
+Theorem 17 (Diagonal Block Expansion in the Fine-Detail Regime) Let pdata =
+
+N (0 , Σ0) with Σ0 block-diagonal with respect to the patch partition, Σ0 = diag(Σ 1, . . . , ΣM ),so that the patches x(1) 0 , . . . , x (M )0 are independent. Assume ˆεθ equals the true score ε∗
+
+> θ
+
+. For each patch Rk ∈ { 1, . . . , M }, let 
+
+λk := ∥Σk∥op 
+
+be the largest eigenvalue of the patch covariance and let vt = 1 − ¯αt. Define the per-step diagonal expansion function ft : (0 , ∞) → R by 
+
+ft(λ) := 
+
+r ¯αt−1
+
+¯αt
+
+− | bt|√vt
+
+λ¯αt + vt
+
+, (26) 
+
+and the per-step patch expansion threshold 
+
+λ∗(t) := 
+
+√vt (√vt − √vt−1)(√¯αt−1 − √¯αt)√¯αt
+
+. (27) 
+
+Then the diagonal block spectral norm satisfies ∥[JxΦt]kk ∥op = ft(λk) for all x ∈ Rn, with 
+
+(a) ft(λk) < 1 ⇐⇒ λk < λ ∗(t);
+
+(b) λ∗(t) > 1 for any strictly decreasing schedule, so unit-variance patches ( λk = 1 ) are always diagonally contractive; 
+
+(c) ft(λ) is strictly increasing in λ.
+
+Proof Under the block-diagonal Gaussian assumption with perfect score, the marginal score decomposes patch-wise. Differentiating the conditional mean ˆ x(k)0 (xt, t ) = Σ k(Σ k +(vt/¯αt)Ink )−1x(k) 
+
+> t
+
+/√¯αt and substituting into (7) gives, for any x:[Jxε∗
+
+> θ
+
+]kk = 1
+
+√vt
+
+Ink −√¯αt
+
+vt
+
+Σk
+
+
+
+Σk + vt
+
+¯αt
+
+Ink
+
+−1
+
+.
+
+Combined with (4) and bt < 0, the eigenvalue of [ JxΦt]kk along an eigenvector of Σ k with eigenvalue λ is precisely ft(λ) as in (26). Since ∂f t/∂λ = |bt|√vt ¯αt/(λ¯αt + vt)2 > 0, ft is strictly increasing (part (c)), and ∥[JxΦt]kk ∥op = max i ft(μk,i ) = ft(λk), where μk,i are the eigenvalues of Σ k.At λ = 1, using ¯ αt + vt = 1 and ¯ αt−1 + vt−1 = 1, 
+
+ft(1) = √¯αt−1 ¯αt + √vt−1vt.
+
+14 As √¯αt−1 ¯αt ≤ (¯ αt−1 + ¯ αt)/2 and √vt−1vt ≤ (vt−1 + vt)/2, we have that ft(1) ≤ (¯ αt−1 +¯αt + vt−1 + vt)/2 = 1, with strict inequality when ¯ αt−1̸ = ¯ αt. Thus ft(1) < 1 and λ∗(t) > 1(part (b)). Setting ft(λ∗) = 1 and solving for λ∗ yields (27). Parts (a) then follows from strict monotonicity of ft.Hence under Gaussian data and the perfect score, the diagonal block of Φ t contracts whenever λk < λ ∗(t). 
+
+4.1.1 Deviation of the Trained Score from the Gaussian Score 
+
+For non-Gaussian data the trained score deviates from the Gaussian score. Let εN 
+
+> θ
+
+(xt, t )denote the score of the Gaussian surrogate N (0 , Σ0) and ˆ εθ(xt, t ) the trained score. Define the per-step deviation field 
+
+∆t(x) := ˆ εθ(x, t ) − εN 
+
+> θ
+
+(x, t ), (28) and its Jacobian ∇x∆t(x). By linearity of the DDIM step (4) in the score, the diagonal block of the full Jacobian decomposes as [JxΦt]kk = [ JxΦN 
+
+> t
+
+]kk + bt[∇x∆t(x)] kk , (29) where Φ N 
+
+> t
+
+is the DDIM step under the Gaussian score and bt < 0. 
+
+Definition 18 (Directional Suppression and Suppression Margin) Let Σk denote the empirical patch covariance of patch Rk over the training distribution, with top eigenvalue 
+
+λk and top eigenvector v(1)  
+
+> k
+
+∈ Rnk . For patch Rk at timestep t and x ∈ Rn, define the 
+
+directional suppression field along v(1) 
+
+> k
+
+Sk,t (x) := |bt| v(1)  
+
+> k
+
+, [∇x∆t(x)] kk v(1)  
+
+> k
+
+, (30) 
+
+and the suppression margin at (x, t )
+
+γk,t (x) := Sk,t (x) − (ft(λk) − 1) . (31) Recall that the Rayleigh quotient of a matrix B along a unit vector v is ⟨v, Bv ⟩, which equals the eigenvalue of B in direction v when v is an eigenvector. 
+
+Proposition 19 (Suppression Keeps Diagonal Rayleigh Quotient Below Unity) 
+
+Assume the patch covariance is isotropic, Σk = λkInk . For patch Rk at timestep t and 
+
+x ∈ Rn, if γk,t (x) > 0 then ⟨v(1)  
+
+> k
+
+, [JxΦt]kk v(1)  
+
+> k
+
+⟩ < 1.
+
+Proof Under Gaussian pdata with Σ k = λkInk , [ JxΦN 
+
+> t
+
+]kk is a scalar multiple of the identity with eigenvalue ft(λk) along every direction (Theorem 17). From (29) and bt < 0, taking the Rayleigh quotient along v(1)  
+
+> k
+
+:
+
+v(1)  
+
+> k
+
+, [JxΦt]kk v(1)  
+
+> k
+
+= ft(λk) − | bt| v(1)  
+
+> k
+
+, [∇x∆t(x)] kk v(1)  
+
+> k
+
+= ft(λk) − Sk,t (x) < 1.
+
+The proposition identifies the precise condition under which a non-Gaussian trained score can maintain diagonal contractivity. 15 4.2 Regime II: Fine-Detail Synthesis 
+
+4.2.1 Stratified Crossover 
+
+All statements below are understood to hold q(xt)-almost surely; we write γk,t for γk,t (xt)when the trajectory evaluation is clear from context. Denote 
+
+κdiag  
+
+> k,t
+
+:= v(1)  
+
+> k
+
+, [JxΦt]kk v(1)  
+
+> k
+
+= ft(λk) − Sk,t (x). (32) 
+
+Definition 20 (Per-patch release time) For patch Rk, we define the release time as 
+
+trel  
+
+> k
+
+:= sup t ≤ T : γk,t (xt) ≤ 0 , (33) 
+
+where xt ∼ q(xt).
+
+Hence trel  
+
+> k
+
+is the largest timestep, encountered while running the reverse chain from 
+
+t = T , at which κdiag  
+
+> k,t
+
+first reaches or exceeds 1. 
+
+Definition 21 ((MM): Margin Monotonicity) The score network ˆεθ satisfies (MM) at timestep t if the following two conditions hold. 
+
+(MM1) Spectral monotonicity. The suppression margin γk,t is strictly increasing in the patch variance λk:
+
+∂γ k,t 
+
+∂λ k
+
+= ∂S k,t 
+
+∂λ k
+
+− f ′ 
+
+> t
+
+(λk) > 0. (34) 
+
+By Theorem 17, f ′ 
+
+> t
+
+(λk) = |bt|√vt ¯αt/(λk ¯αt + vt)2 > 0, so (34) requires ∂S k,t /∂λ k >f ′ 
+
+> t
+
+(λk), so the learned suppression must grow with patch variance faster than the Gaus-sian baseline does. 
+
+(MM2) Temporal decrease. The margin is strictly decreasing along the reverse chain: 
+
+∂tγk,t < 0 for every patch k. This guarantees that every patch eventually crosses from suppression ( γk,t > 0) to release ( γk,t ≤ 0). 
+
+Theorem 22 (Stratified Crossover) Assume (MM) .
+
+(a) Release order. If λk < λ k′ , then trel  
+
+> k
+
+> t rel  
+
+> k′
+
+, so lower-variance patches release earlier in the reverse chain. 
+
+(b) Sign reversal of the Spearman rank. For any two patches with λk < λ k′ and any timestep t ∈ [trel  
+
+> k
+
+, t rel  
+
+> k′
+
+):
+
+κdiag  
+
+> k,t
+
+≥ 1 > κ diag  
+
+> k′,t
+
+,
+
+so the pair (k, k ′) is discordant in the Spearman ranking of (λ·, κ diag  
+
+> ·,t
+
+). Whether dis-cordant pairs dominate globally, and hence ρ(λk, κ diag  
+
+> k,t
+
+) < 0, depends on the number of released patches at time t.
+
+16 (c) Width of the stratified window. To first order in λk, implicit differentiation of the release condition γk,t rel 
+
+> k
+
+= 0 gives 
+
+∂t rel 
+
+> k
+
+∂λ k
+
+= |∂λγk,t ||∂tγk,t | > 0, (35) 
+
+and the total spread of release times across patches satisfies 
+
+∆tstrat ≈ (λmax − λmin ) · | ∂λγk,t ||∂tγk,t | , (36) 
+
+evaluated at a representative variance ¯λ. Expanding via γk,t = Sk,t − (ft(λk) − 1) :
+
+∆tstrat ≈ (λmax − λmin ) ·  ∂λSk,t − | bt|√vt ¯αt/(¯λ¯αt + vt)2
+
+|∂tSk,t − ∂tft(¯λ)| . (37) 
+
+The derivatives ∂λSk,t and ∂tSk,t depend on the trained network and can be estimated empirically. 
+
+(d) Restoration of the Gaussian ordering. Once all patches have released, i.e. for 
+
+t < min k trel  
+
+> k
+
+, the Rayleigh quotient satisfies κdiag  
+
+> k,t
+
+= ft(λk) − Sk,t ≥ 1 for every k. As 
+
+Sk,t → 0 in deep Regime II, the ranking of κdiag  
+
+> k,t
+
+across patches converges to that of 
+
+ft(λk), which is strictly increasing in λk by Theorem 17(d), so ρ(λk, κ diag  
+
+> k,t
+
+) returns to positive values. 
+
+Proof (a) By (MM1), ∂λk γk,t > 0, so lower-variance patches have strictly smaller margin. By (MM2), ∂tγk,t < 0, so each margin decreases strictly over time and must eventually reach zero. The release condition γk,t rel 
+
+> k
+
+= 0 is therefore met at a strictly larger value of t
+
+for patches with smaller λk, giving trel  
+
+> k
+
+> t rel  
+
+> k′
+
+whenever λk < λ k′ .(b) Fix t ∈ [trel  
+
+> k
+
+, t rel  
+
+> k′
+
+). Since t ≥ trel  
+
+> k
+
+, patch Rk has released: γk,t ≤ 0, equivalently 
+
+Sk,t ≤ ft(λk) − 1, so κdiag  
+
+> k,t
+
+= ft(λk) − Sk,t ≥ 1. Since t < t rel  
+
+> k′
+
+, patch Rk′ remains suppressed: 
+
+γk′,t > 0, so κdiag  
+
+> k′,t
+
+< 1 by Proposition 19. Hence κdiag  
+
+> k,t
+
+≥ 1 > κ diag  
+
+> k′,t
+
+despite λk < λ k′ , i.e. the pair is discordant. (c) Differentiate the identity γk,t rel 
+
+> k
+
+(λk) = 0 implicitly with respect to λk:
+
+∂λγk,t + ∂tγk,t · ∂t rel 
+
+> k
+
+∂λ k
+
+= 0 , so ∂t rel 
+
+> k
+
+∂λ k
+
+= − ∂λγk,t 
+
+∂tγk,t 
+
+= |∂λγk,t ||∂tγk,t | > 0,
+
+where the positivity follows from (MM1) ( ∂λγ > 0) and (MM2) ( ∂tγ < 0). Multiplying by 
+
+λmax − λmin and evaluating at representative ¯λ yields (36). Substituting ∂λγ = ∂λSk,t −|bt|√vt ¯αt/(¯λ¯αt + vt)2 and ∂tγ = ∂tSk,t − ∂tft(¯λ) into (36) gives (37). (d) For t < min k trel  
+
+> k
+
+, all patches have released, so γk,t ≤ 0 for every k. As suppression vanishes, Sk,t → 0, and κdiag  
+
+> k,t
+
+→ ft(λk). Since ft(λk) is strictly increasing in λk by Theo-rem 17(d), the Spearman correlation ρ(λk, κ diag  
+
+> k,t
+
+) converges to positive values. 17 The theorem says that suppression is not released simultaneously across the image. Instead, low-variance patches cross the expansion threshold earlier in the reverse chain, while high-variance patches remain suppressed until later. This produces a moving window during which some patches are already expanding while others are still contracting, which is the source of the sign reversal in the Spearman rank correlation confirmed empirically in Section 7.5. Part (d) shows this inversion is transient: once all patches have released, the ranking reverts to the natural Gaussian order in which high-variance patches expand more strongly. 
+
+4.3 Training Origin of the Stratified Ordering 
+
+Theorem 22 derives the stratified release order as a consequence of (MM). We now give an heuristic argument that the training objective induces exactly the monotonicity required by (MM1). Under a Gaussian patch model, the per-patch reconstruction loss at timestep t, defined as Lk,t (θ) := E[∥ˆx(k)0 − x(k)0 ∥22], evaluates to 
+
+Lk,t (θ) = λk vt
+
+¯αtλk + vt
+
+, (38) which is strictly increasing in the patch variance λk. High-variance patches therefore con-tribute more to the total loss at every noise level and at a training optimum the score network must allocate proportionally more correction to them. To make this precise, we adopt three assumptions that are plausible for natural images, but cannot be established in full generality: (A1) the patch statistics are approximately Gaussian; (A2) per-patch losses are approximately equalised at convergence; (A3) the directional suppression satisfies Sk,t ≈ ct Lk,t (θ) for some ct > 0 independent of k.Under (A1)–(A3), the derivative of Sk,t with respect to λk is 
+
+∂S k,t 
+
+∂λ k
+
+≈ ct
+
+∂Lk,t 
+
+∂λ k
+
+= ct v2
+
+> t
+
+(¯ αtλk + vt)2 .
+
+The corresponding derivative of the Gaussian baseline is 
+
+f ′ 
+
+> t
+
+(λk) = |bt|√vt ¯αt
+
+(¯ αtλk + vt)2 .
+
+Both share the same denominator, so condition (MM1), namely ∂λSk,t > f ′ 
+
+> t
+
+(λk), reduces to 
+
+ct v2 
+
+> t
+
+> |bt|√vt ¯αt, (39) which holds whenever ct is sufficiently large or, for fixed ct, at noise levels where vt is large relative to ¯ αt. Under (39) the suppression margin γk,t is strictly increasing in λk, which is precisely (MM1). High-variance patches therefore release later in the reverse chain, producing the ordering of Theorem 22(a). 18 The underlying logic mirrors a principle from classical fractal image compression, where high-variance range blocks require more sustained encoder effort before their detail can be faithfully represented. Here the score network plays the analogous role: it sustains stronger suppression on high-variance patches and releases them progressively, enacting a learned prioritisation that concentrates reconstruction capacity where the per-patch loss is greatest. 
+
+4.4 Architectural Mechanism: Attention and the Two Regimes 
+
+The previous sections gave a complete account of κdiag  
+
+> t
+
+. In the high-noise limit of Regime I, (EC) holds and κdiag  
+
+> t
+
+≈ 1/√vt < 1. Through Regime I, it is kept below 1 by the directional suppression field Sk,t even though the Gaussian baseline ft(λk) would predict expansion. In Regime II suppression is released patch by patch in variance order, and κdiag  
+
+> k,t
+
+climbs above 1 for each patch at its release time trel  
+
+> k
+
+.The remaining constant in (PC) is δcross  
+
+> t
+
+= max k sup x Ck,t (x), which is controlled by the architectural routing mechanism of the score network. We will bound it in terms of the score network’s attention weights. 
+
+Theorem 23 (Attention Block Structure of JxΦt) Let p = ( p1, . . . , p M ) ∈ Rn denote the concatenated patch tokens with pk ∈ Rnk , and consider a score network of the form 
+
+ˆεθ(p, t ) = FF( A(p)WV p) : Rn → Rn without residual connections, where: 
+
+• d ∈ N is the attention head dimension; 
+
+• WQ, W K ∈ Rd×nk are the query and key projection matrices; 
+
+• WV ∈ Rnk ×nk is the value projection (applied per patch); 
+
+• A(p) ∈ RM ×M is the attention weight matrix with (k, j ) entry 
+
+Akj (p) = softmax j
+
+ (WQpk)⊤(WK pj )/√d,
+
+where softmax j (zj ) := ezj / P 
+
+> ℓ
+
+ezℓ normalises across the j-index so that P 
+
+> j
+
+Akj (p) = 1 
+
+for each k;
+
+• FF : Rn → Rn is a feedforward network with per-patch Lipschitz constants Lff ,k ,meaning ∥[Jp′ FF] kk ∥op ≤ Lff ,k .Then: 
+
+(a) The cross-patch Jacobian blocks satisfy 
+
+∥[Jx ˆεθ]kℓ ∥op ≤ Lff ,k 
+
+ Akℓ ∥WV ∥op + ∥p∥2∥∇ xAkℓ ∥op ∥WV ∥op 
+
+.
+
+(b) The cross-patch coupling field satisfies 
+
+δcross  
+
+> t
+
+≤ | bt|Lff 
+
+ 1 + ∥p∥2 max  
+
+> k,ℓ
+
+∥∇ xAkℓ ∥op 
+
+∥WV ∥op max 
+
+> k
+
+X 
+
+> j̸=k
+
+Akj (x), (40) 
+
+where Lff := max k Lff ,k .
+
+19 (c) The diagonal blocks satisfy ∥[Jx ˆεθ]kk ∥op ≤ Lff ,k 
+
+ Akk ∥WV ∥op +∥pk∥2∥∇ xAkk ∥op ∥WV ∥op 
+
+.
+
+(d) In the hard-attention limit τ → 0, where Akj → 1[j = j∗(k)] for a winner-take-all assignment j∗(k), all cross-patch blocks with j̸ = j∗(k) vanish and δcross  
+
+> t
+
+= 0 .
+
+Proof Attention Jacobian. For p′ 
+
+> k
+
+= P 
+
+> j
+
+Akj (x)( WV pj ), differentiating with respect to pℓ:
+
+∂p ′
+
+> k
+
+∂p ℓ
+
+= Akℓ (x)WV + X
+
+> j
+
+∂A kj (x)
+
+∂p ℓ
+
+(WV pj ). (41) The first term has norm Akℓ ∥WV ∥op ; the second is bounded by ∥WV ∥op ∥p∥2∥∇ xAkℓ ∥op by Cauchy-Schwarz.. 
+
+Feedforward composition. Without residual connection, [Jx ˆεθ]kℓ = [ Jp′ FF] kk · (∂p ′
+
+> k
+
+/∂p ℓ)with ∥[Jp′ FF] kk ∥op ≤ Lff ,k , giving parts (a) and (c). (b) Sum over ℓ̸ = k and multiply by |bt| to get (40), using Lff := max k Lff ,k to pass to a single global Lipschitz constant. Note that P  
+
+> j̸=k
+
+Akj (x) = 1 − Akk (x) ≤ 1 since softmax weights sum to 1 and Akk ≥ 0, so max k
+
+P  
+
+> j̸=k
+
+Akj (x) ≤ 1, confirming the bound is finite. (d) As τ → 0: Akj → 1[j = j∗(k)] and ∂A kj /∂p ℓ → 0 for j̸ = j∗(k). The bound in part (b) contains ∥∇ xAkℓ ∥op , the operator norm of the gradient of the softmax weight with respect to input tokens, which is dense and depends on the query/key matrices and the input. Its regime-dependent behaviour is well-characterised: near the hard-attention limit ( τ → 0, equivalently Regime II), Akj → 1[j = j∗(k)] is piecewise constant so ∇xAkℓ → 0 except at assignment boundaries, so the bound tightens to part (d). In Regime I, ∇xAkℓ is non-negligible, but appears only in δcross  
+
+> t
+
+, which is already large empirically, so the bound is loose, but directionally correct. A sharper characterisation in terms of query/key temperature is left for future work. Equation (40) connects the two-regime structure directly to attention locality and the constants of (PC). In the high-noise limit of Regime I, (EC) holds by the isotropic dominance mechanism of Theorem 16, independently of the block structure. The attention bound is consistent with this, as diffuse weights keep δcross  
+
+> t
+
+small relative to the large isotropic contraction margin. The bound (40) shows that δcross  
+
+> t
+
+is controlled by max k
+
+P  
+
+> j̸=k
+
+Akj (x), the total off-diagonal attention weight. When attention is diffuse, this sum is close to 1 − 1/M and δcross  
+
+> t
+
+is large. When attention localises toward the diagonal ( Akk → 1), the off-diagonal sum tends to zero and, in the hard-attention limit of part (d), δcross  
+
+> t
+
+= 0. The Regime I/II transition is thus tied to whether attention is diffuse or local, a connection that the empirical measurements of Section 7.4 verify directly. Theorem 23 is stated for a network without residual connections and models only the attention contribution to the Jacobian. Three components of real architectures shape δcross 
+
+> t
+
+and play distinct roles. 20 1. Self-attention (Diffusion Transformers (Peebles and Xie, 2023)) is the explicit global routing mechanism. The mechanism 
+
+p′ 
+
+> k
+
+= X
+
+> j
+
+Akj (WV pj ), Akj = softmax 
+
+ (WQpk)⊤(WK pj )
+
+√d
+
+
+
+, (42) implements a soft, differentiable analogue of the PIFS domain-range structure: query tokens {pk} are range blocks; key/value tokens are domain blocks; Akj is the soft domain-range assignment; and WV pj is the local map. In the hard-attention limit 
+
+τ → 0, Akj → 1[j = j∗(k)] and the classical PIFS structure is recovered exactly. Theorem 23 proves that δcross  
+
+> t
+
+is bounded by the attention weights, and the two-regime structure follows from how broadly versus locally attention broadcasts at each noise level. 2. Within-block residuals (Diffusion Transformers (Peebles and Xie, 2023)): con-nections of the form pk ← pk + p′ 
+
+> k
+
+add an identity term, ∂(pk + p′
+
+> k
+
+)/∂p ℓ = 1[k =
+
+ℓ]I + ∂p ′
+
+> k
+
+/∂p ℓ. Diagonal blocks increase by at most a constant of 1; cross-patch blocks are unaffected since the identity residual contributes no off-diagonal term. 3. Encoder skip connections (UNet architectures (Ho et al., 2020)) contribute a 
+
+localised structural residual : their Jacobians have non-zero cross-patch blocks de-termined by convolutional receptive fields and persist even as attention localises in Regime II. The bound (40) therefore covers only the attention component of δcross  
+
+> t
+
+.The full cross-patch coupling satisfies δcross  
+
+> t
+
+≤ δcross ,attn  
+
+> t
+
++ δcross ,skip  
+
+> t
+
+, where δcross ,skip 
+
+> t
+
+is bounded by |bt|∥ Jskip ∥cross with ∥Jskip ∥cross depending on the convolutional fil-ter weights and receptive field rather than on the attention pattern. In Regime II, 
+
+δcross ,attn  
+
+> t
+
+declines as attention localises, but δcross ,skip  
+
+> t
+
+remains a non-trivial lower bound on the total cross-patch coupling and may dominate at the finest spatial res-olution. This is consistent with the empirical spike in δcross  
+
+> t
+
+analysed in Section 7.4, where the decoder operates at finest resolution and the skip connection from the first encoder stage spans several patches. 
+
+5 Attractor Geometry 
+
+Sections 3 and 4 established Properties (EC) and (PC) and characterised the two-regime structure of the denoising chain. This section analyses the fractal geometry of the resulting PIFS attractor of Φ, in terms of size and how the chosen schedule controls it. The central tool is the Kaplan-Yorke dimension (Kaplan and Yorke, 1979), which quan-tifies the fractal dimension of an attractor from the Lyapunov spectrum of the system at its fixed point. Under Gaussian data and the block-diagonal covariance structure of Theo-rem 17, the Lyapunov exponents at x∗ can be computed in closed form as a function of patch variances and the noise schedule, yielding an explicit dimension formula. For non-Gaussian data, the directional suppression field Sk,t (x) of Section 4.1.1 modifies this formula, and the two formulas together, Gaussian baseline into a suppression-corrected version. 21 5.1 Lyapunov Exponents and the Degenerate Baseline 
+
+For a classical IFS with contraction ratios {si}Ni=1 , the Hausdorff dimension of the attractor solves the Moran equation P 
+
+> i
+
+sdi = 1 (Falconer, 1990). For a PIFS, the natural analogue is the Kaplan-Yorke dimension (Kaplan and Yorke, 1979), which is defined from the Lyapunov exponents of the operator at its fixed point. Define the Lyapunov exponents at the fixed point x∗ by 1
+
+ℓi := 1
+
+T log si(Jx∗ Φ) , (43) where si(·) denotes the i-th singular value in decreasing order, and Jx∗ Φ = Q1 
+
+> t=T
+
+Jx∗ 
+
+> t
+
+Φt is the chain-rule product along the fixed point trajectory, with x∗ 
+
+> T
+
+= x∗ and x∗ 
+
+> t−1
+
+= Φ t(x∗ 
+
+> t
+
+). The Kaplan-Yorke (KY) dimension is given by 
+
+dKY (A) = j∗ +
+
+Pj∗ 
+
+> i=1
+
+ℓi
+
+|ℓj∗+1 | , j∗ = max j : Pji=1 ℓi ≥ 0 . (44) 
+
+Proposition 24 (KY Dimension under Global Contraction) Under (EC) , all Lya-punov exponents satisfy ℓi ≤ 1 
+
+> T
+
+log s < 0, so j∗ = 0 and dKY (A) = 0 .
+
+Proof Every singular value si(Jx∗ Φ) is at most s < 1. The degenerate baseline with global contractivity collapses the attractor dimension to zero. We now show that (PC), which requires patch-wise diagonal contractivity with bounded cross-patch coupling, is exactly the structure under which dKY > 0 becomes pos-sible. 
+
+5.2 The Expansion Threshold via the Discrete Moran Equation Theorem 25 (The Discrete Moran Equation and Expansion Threshold) 
+
+Let pdata = N (0 , Σ0) with block-diagonal covariance Σ0 = diag(Σ 1, . . . , ΣM ) and let ˆεθ equal the true score ε∗
+
+> θ
+
+. For each patch Rk, let μk, 1 ≥ μk, 2 ≥ · · · ≥ μk,n k ≥ 0 be the eigenvalues of Σk in decreasing order, with μk, 1 = λk. Define the mean Lyapunov exponent function Λ : (0 , ∞) → R by Λ( μ) := 1
+
+> T
+
+PTt=1 log ft(μ), and the global expansion threshold λ∗∗ > 1
+
+as the unique solution to TY
+
+> t=1
+
+ft(λ∗∗ ) = 1 . (45) 
+
+Then 
+
+(a) For any μ > λ ∗∗ , Λ( μ) > 0.
+
+(b) Setting M ++ := PMk=1 #{i : μk,i > λ ∗∗ }, we have dKY (A) ≥ M ++ , and dKY > 0
+
+whenever any patch satisfies λk > λ ∗∗ .
+
+(c) λ∗∗ > min t λ∗(t).          
+
+> 1. Since x∗is a fixed point of Φ, we have Jx∗Φk= ( Jx∗Φ) kfor all k≥1.
+
+22 Proof The function G(λ) := QTt=1 ft(λ) is continuous and strictly increasing as each ft is strictly increasing by Theorem 17(d). By Theorem 17(c), G(1) < 1. As λ → ∞ , λ¯αt ≫ vt
+
+at each step, so ft(λ) → p¯αt−1/¯αt and G(λ) → Q
+
+> t
+
+p¯αt−1/¯αt = p¯α0/¯αT = 1 /√¯αT > 1. By the intermediate value theorem, a unique λ∗∗ > 1 satisfies (45). Under block-diagonal Σ 0 the patches are independent and by (1) so are the noised patches x(k) 
+
+> t
+
+. The marginal score decomposes as ∇xt log pt(xt) = P 
+
+> k
+
+∇x(k)
+
+> t
+
+log p(k) 
+
+> t
+
+(x(k) 
+
+> t
+
+), so 
+
+Jx∗ Φ is block-diagonal with the same patch partition. The eigenvalue of the k-th block along the i-th eigenvector of Σ k is QTt=1 ft(μk,i ), giving Lyapunov exponent Λ( μk,i ). (a) For μ > λ ∗∗ , G(μ) > G (λ∗∗ ) = 1, so Λ( μ) = 1 
+
+> T
+
+log G(μ) > 0. (b) Exactly M ++ Lyapunov exponents are positive, so j∗ ≥ M ++ and dKY ≥ M ++ > 0. (c) Let λ0 = min t λ∗(t) with minimiser t∗. By definition ft∗ (λ0) = 1. For all t̸ = t∗,monotonicity and λ0 ≤ λ∗(t) give ft(λ0) ≤ 1, hence G(λ0) ≤ 1. Equality G(λ0) = 1 would require λ∗(t) = λ0 for every t, which forces vt/v t−1 to be constant across all steps, i.e. a geometric progression in vt. Any schedule whose ratio vt/v t−1 is not identically constant gives G(λ0) < 1 = G(λ∗∗ ) and hence λ∗∗ > λ 0.
+
+Continuous-time limit. For T → ∞ with the noise schedule viewed as a continuous function ¯ α : [0 , 1] → (0 , 1], the discrete product G(λ) = QTt=1 ft(λ) converges to the expo-nential of a Riemann sum: G(λ) → exp  R 10 log f (λ, t ) dt . The Moran equation G(λ∗∗ ) = 1 therefore becomes R 10 log f (λ∗∗ , t ) dt = 0 in the continuous-time limit, consistent with the probability flow ODE framework of Song et al. (2021b). In this limit the stratified crossover (Theorem 22) remains well-defined, with the release time trel  
+
+> k
+
+converging to the zero of the continuous-time margin γk(t) = S(t) − (f (λk, t ) − 1). 
+
+5.3 The KY Dimension Formula: Gaussian and Non-Gaussian Data 
+
+Under the Gaussian baseline, the block-diagonal structure of Jx∗ Φ allows the Lyapunov spectrum to be computed in closed form, yielding an explicit dimension formula. The following two theorems derive this formula and its extension to non-Gaussian data. 
+
+Theorem 26 (Exact KY Dimension Formula Under Gaussian Data) Under the hy-potheses of Theorem 25, assume additionally that all patch covariances are isotropic, with 
+
+Σk = λkInk for each k. Under this assumption, all nk Lyapunov exponents for patch Rk
+
+equal Λ( λk), and the full Lyapunov spectrum is the multi-set {Λ( λk) repeated nk times }Mk=1 .Set N + := P  
+
+> k:λk>λ ∗∗
+
+nk (total dimension of expanding directions) and let 
+
+k∗ := arg max   
+
+> k:λk<λ ∗∗
+
+λk
+
+be the index of the contractive patch with the highest variance (so Λ− 
+
+> k∗
+
+:= Λ( λk∗ ) < 0 is the least-negative contracting exponent). Assume 
+
+X 
+
+> k:λk>λ ∗∗
+
+nk Λ( λk) < |Λ− 
+
+> k∗
+
+|, (46) 23 which ensures that the KY cutoff index is exactly j∗ = N +. Then: 
+
+dKY (A) = N + +
+
+X  
+
+> k:λk>λ ∗∗
+
+nk Λ( λk)
+
+|Λ− 
+
+> k∗
+
+| . (47) 
+
+Without condition (46) , setting Λ+ := min k:λk >λ ∗∗ Λ( λk) > 0, leads to the lower bound 
+
+dKY (A) ≥ N + + N +Λ+/|Λ− 
+
+> k∗
+
+|.
+
+Proof All nk eigenvalues of Σ k equal λk, so all nk Lyapunov exponents for patch Rk
+
+equal Λ( λk). By Theorem 25(a), Λ( λk) > 0 for λk > λ ∗∗ and Λ( λk) < 0 for λk < λ ∗∗ .Ordering the full Lyapunov spectrum in decreasing order: the first N + exponents are Λ( λk) > 0, and the ( N + + 1)-th is Λ − 
+
+> k∗
+
+< 0. Condition (46) is precisely the require-ment that P  
+
+> k:λk>λ ∗∗
+
+nkΛ( λk) + Λ − 
+
+> k∗
+
+< 0, i.e. that including the ( N + + 1)-th exponent turns the partial sum negative, so j∗ = N + in the KY formula (44). Substituting gives (47). The lower bound dKY ≥ N + + N +Λ+/|Λ− 
+
+> k∗
+
+| follows from Λ( λk) ≥ Λ+ > 0 for all k with 
+
+λk > λ ∗∗ . Since the partial sum of the first N + exponents equals P  
+
+> k:λk>λ ∗∗
+
+nkΛ( λk) > 0by Theorem 25(a), the KY definition gives j∗ ≥ N +. Using the lower bound Λ( λk) ≥ Λ+ in the numerator and the fact that j∗ ≥ N + then yields the stated bound, and holds regardless of whether condition (46) is satisfied. The Gaussian formula of Theorem 26 applies when the score is exactly the Gaussian surrogate. For a trained network on real data, the score deviates from this surrogate through the suppression field Sk,t of Section 4.1.1, modifying the diagonal eigenvalues and thereby the attractor dimension. The following theorem makes this precise. 
+
+Theorem 27 (Suppression-Corrected Kaplan-Yorke Dimension) Adopt the hypothe-ses of Theorem 26 (isotropic patches Σk = λkInk , and the perfect score assumption inherited from Theorem 25). For each patch Rk and timestep t, let 
+
+Sk,t (x) = |bt|⟨ v(1)  
+
+> k
+
+, [∇x∆t(x)] kk v(1)  
+
+> k
+
+⟩ > 0
+
+denote the directional suppression field (Definition 18), evaluated at x = xt sampled from the forward marginal q(xt). As in Definition 20, all subsequent statements involving Sk,t 
+
+are understood to hold q(xt)-almost surely, and we write Sk,t for Sk,t (xt) when the trajectory evaluation is clear from context. Define the suppression-corrected diagonal factor 
+
+gk,t := ft(λk) − Sk,t (xt), (48) 
+
+and the suppression-corrected Lyapunov exponent Λeff ,k := 1
+
+T
+
+> T
+
+X
+
+> t=1
+
+Ext∼q(xt)
+
+log gk,t 
+
+. (49) 
+
+Assume Sk,t < f t(λk) for all k, t (suppression does not reverse the sign of the diagonal factor), and that there exists at least one patch Rk with Λeff ,k > 0. Define the suppression-corrected expanding set K+++ := {k : Λ eff ,k > 0}, with N +++ := P 
+
+> k∈K +++
+
+nk, and let 
+
+k∗∗ := arg max k / ∈K +++ λk be the contractive patch closest to the expanding set. Then 
+
+24 (a) For every patch Rk: Λeff ,k ≤ Λ( λk), with equality if and only if Sk,t = 0 for all t.Consequently K+++ ⊆ K + (the expanding set can only shrink) and N +++ ≤ N +. So suppression 
+
+(b) The suppression-corrected Kaplan-Yorke dimension is 
+
+deff KY (A) = N +++ +
+
+X
+
+> k∈K +++
+
+nk Λeff ,k 
+
+|Λeff ,k ∗∗ | , (50) 
+
+under the condition that P 
+
+> k∈K +++
+
+nkΛeff ,k < |Λeff ,k ∗∗ | (the analogue of condition (46) ). 
+
+(c) deff KY (A) ≤ dKY (A), with equality if and only if Sk,t = 0 for all k, t .
+
+Proof (a) Since Sk,t (xt) > 0 almost surely, gk,t = ft(λk) − Sk,t (xt) ≤ ft(λk) almost surely, with equality iff Sk,t (xt) = 0. By Jensen’s inequality, Λ eff ,k = 1
+
+> T
+
+P 
+
+> t
+
+E[log gk,t ] ≤
+
+> 1
+> T
+
+P 
+
+> t
+
+log E[gk,t ] ≤ 1
+
+> T
+
+P 
+
+> t
+
+log ft(λk) = Λ( λk), where the second inequality uses E[gk,t ] ≤
+
+ft(λk) (since Sk,t ≥ 0). If Λ eff ,k > 0 then Λ( λk) ≥ Λeff ,k > 0, so k ∈ K +; thus K+++ ⊆ K +.(b) Under the perfect score assumption, Jx∗ Φ is block-diagonal with per-patch eigenvalue Q 
+
+> t
+
+gk,t along the leading direction of patch Rk (replacing ft(λk) by gk,t throughout the proof of Theorem 26). The Lyapunov exponent for patch Rk is Λ eff ,k , which is positive iff k ∈K+++ . Formula (50) then follows from the Kaplan-Yorke definition (44) with j∗ = N +++ ,using the stated analogue of condition (46). (c) Let {ℓi}ni=1 denote the Gaussian Lyapunov spectrum {Λ( λk) repeated nk times }
+
+sorted in decreasing order, and {ℓ′
+
+> i
+
+}ni=1 the suppressed spectrum {Λeff ,k repeated nk times }
+
+likewise sorted. From part (a), Λ eff ,k ≤ Λ( λk) for every k, so the unsorted suppressed values are componentwise dominated by the Gaussian values. By the rearrangement inequality, the same dominance holds after sorting: ℓ′ 
+
+> i
+
+≤ ℓi for all i. Consequently Pji=1 ℓ′ 
+
+> i
+
+≤ Pji=1 ℓi
+
+for every j, so j∗∗ ≤ j∗ where j∗∗ = max {j : P 
+
+> i≤j
+
+ℓ′ 
+
+> i
+
+≥ 0} and j∗ = max {j : P 
+
+> i≤j
+
+ℓi ≥ 0}.
+
+Case A (j∗∗ < j ∗): deff KY = j∗∗ + frac < j ∗∗ + 1 ≤ j∗ ≤ dKY .
+
+Case B (j∗∗ = j∗): The numerator P 
+
+> i≤j∗
+
+ℓ′ 
+
+> i
+
+≤ P 
+
+> i≤j∗
+
+ℓi (from the pointwise dominance), and the denominator |ℓ′
+
+> j∗+1
+
+| ≥ | ℓj∗+1 | (since ℓ′ 
+
+> j∗+1
+
+≤ ℓj∗+1 < 0). Hence the fractional part of deff KY is at most that of dKY , giving deff KY ≤ dKY .In both cases equality holds iff all inequalities are equalities, i.e. iff Sk,t = 0 for all k, t .The Gaussian formula of Theorem 26 is recovered exactly when Sk,t = 0 for all k, t .The release time trel  
+
+> k
+
+governs when each patch begins to contribute to dKY during the chain; whether a patch belongs to K+++ and contributes to the final deff KY depends on the sign of Λeff ,k integrated over all T steps (Theorem 27). 25 6 Practical Implications 
+
+The two-regime structure and the attractor geometry are each governed by constants that depend on the same noise schedule and patch covariance spectrum. Because L∗ 
+
+> t
+
+, ft(λ), and 
+
+Sk,t are all computable from the schedule and patch spectrum without running the model, they form a unified design language for schedule and loss choices. 
+
+6.1 L∗ 
+
+> t
+
+: Equalisation Impossibility and Asymptotic Scaling 
+
+The contraction threshold L∗ 
+
+> t
+
+of Theorem 6 depends only on the noise schedule, not on the data or the architecture. A natural question is whether the schedule can be chosen to equalise L∗ 
+
+> t
+
+across steps, making the contraction chain uniformly strong. 
+
+Theorem 28 (Impossibility of Strict L∗ 
+
+> t
+
+-Equalisation) For any strictly decreasing schedule with ¯α0 = 1 , no constant L∗ > 0 satisfies L∗ 
+
+> t
+
+= L∗ for all t ∈ { 1, . . . , T }, T ≥ 3.
+
+Proof Suppose L∗ 
+
+> t
+
+= L∗ for all t. From (10), p¯αt−1/¯αt − 1 = L∗|bt| = L∗(p¯αt−1/¯αt
+
+√vt −√vt−1). Rearranging gives h(¯ αt−1)/h (¯ αt) = p¯αt−1/¯αt where h(a) := 1 − L∗√1 − a, which forces h(¯ αt) = C√¯αt for some constant C independent of t. Since ¯ α0 = 1 (by convention), evaluating at t = 0 gives h(1) = 1 − L∗ · 0 = 1 = C√1, so C = 1 and hence h(¯ αt) = √¯αt, i.e. 
+
+g(¯ αt) := L∗√1 − ¯αt +√¯αt = 1 for all t. Since g′′ (a) = −L∗/(4(1 −a)3/2)−1/(4 a3/2) < 0, g is strictly concave and g(a) = 1 has at most two solutions. For T ≥ 3 this is a contradiction. The practical relaxation is to minimise Var t(L∗ 
+
+> t
+
+) over a parametric schedule family, subject to mean t(L∗ 
+
+> t
+
+) ≥ c, ensuring no single step is a disproportionately weak link , where 
+
+L∗ 
+
+> t
+
+becomes so small that there is almost no margin to get a contraction at that step. The threshold L∗ 
+
+> t
+
+is given in closed form by Theorem 6, from which its scaling can be derived. 
+
+Corollary 29 ( L∗ 
+
+> t
+
+at the Fine-Detail Boundary) For any denoising step that termi-nates at the clean-image reference, the contraction threshold satisfies to leading order in 
+
+vt:
+
+L∗ 
+
+> t
+
+≈ 12
+
+√vt = 12
+
+√1 − ¯αt. (51) 
+
+Proof Set r = p1/¯αt and ϵ = vt ≪ 1. Then r ≈ 1 + ϵ/ 2, so r − 1 ≈ ϵ/ 2. With vt−1 = 0 the denominator is |bt| = r√ϵ, giving L∗ 
+
+> t
+
+= ( r − 1) /(r√ϵ) ≈ (ϵ/ 2) /√ϵ = 12
+
+√vt.
+
+Corollary 30 ( L∗ 
+
+> t
+
+at Moderate Noise) For any step with small increment ( ∆¯ αt := ¯ αt−1−
+
+¯αt ≪ 1, as holds throughout a T = 1000 chain), 
+
+L∗ 
+
+> t
+
+≈ √vt. (52) 
+
+Proof Expand to first order in ∆¯ αt: p¯αt−1/¯αt − 1 ≈ ∆¯ αt/(2¯ αt) and |bt| ≈ ∆¯ αt/(2¯ αt
+
+√vt)(using ¯ αt + vt = 1). The common factor ∆¯ αt/(2¯ αt) cancels, leaving L∗ 
+
+> t
+
+≈ √vt.Both corollaries give the same O(√vt) scaling, where L∗ 
+
+> t
+
+is smallest where vt is smallest, i.e. at the fine-detail end of the diffusion chain, where the image is nearly clean. This means 26 the contraction threshold is tightest precisely when the denoiser is resolving high-frequency structure, consistent with the intuition that fine detail is the hardest and most constrained stage of generation. 
+
+Numerical schedule comparison. Table 1 computes L∗ 
+
+> t
+
+from its closed-form expression for four standard schedules at T = 1000. Table 1: Schedule comparison: statistics of the per-step contraction threshold L∗ 
+
+> t
+
+for four schedules ( T = 1000; 50-step DDIM subsamples the cosine schedule at stride 20). Lower CV indicates a more equalised schedule; higher mean indicates a stronger average contraction margin. No schedule dominates on both criteria. The final column reports L∗ 
+
+> t
+
+at the finest step actually executed by each chain. Schedule N Mean L∗ 
+
+> t
+
+CV L∗ 
+
+> t
+
+at finest step finest t
+
+Linear (DDPM) 1000 0.805 0.341 0.00500 1Cosine (orig., soff = 0) 1000 0.637 0.483 0.00079 1Cosine (impr., soff = 0 .008) 1000 0.641 0.474 0.00321 150-step DDIM (cosine) 50 0.637 0.483 0.01571 20 The linear schedule achieves the lowest CV (0 .341) at the cost of a higher mean L∗ 
+
+> t
+
+(0 .805 vs 0 .637 for cosine). Indeed, better equalisation pairs with a stronger average contraction margin. The weakest links differ sharply at t = 1: L∗ 
+
+> 1
+
+= 0 .00079 for the original cosine vs 0.00321 for the improved cosine. The 50-step DDIM chain subsamples the cosine schedule at stride 20, so its statistics (mean 0 .637, CV 0 .483) match those of the full cosine chain closely (the L∗ 
+
+> t
+
+distribution is stable under uniform subsampling). 
+
+6.2 Schedule Comparison: Expansion-Forcing Steps 
+
+Ho et al. (2020) introduced the linear schedule as a simple, parameter-free baseline: bt
+
+increases linearly from 10 −4 to 0 .02 over T = 1000 steps, keeping ¯ αt roughly constant at high noise and dropping smoothly through the mid-noise range. Table 1 shows that this gives the best equalisation of L∗ 
+
+> t
+
+among the four schedules (CV = 0 .341). What the L∗
+
+> t
+
+statistics do not reveal directly is how the schedule partitions the chain into contractive and expansive regimes, a question answered by the patch expansion threshold λ∗(t) of Theorem 17. 
+
+How many steps are expansive? Recall that the Gaussian-optimal step is diagonally expansive at step t for patch Rk if and only if λk > λ ∗(t), where 
+
+λ∗(t) = 
+
+√vt(√vt − √vt−1)(√¯αt−1 − √¯αt)√¯αt
+
+. (53) For the linear schedule, ¯ αt decreases at a roughly constant rate. At the fine-detail boundary (t = 1, ¯ α0 = 1), the formula gives λ∗(1) = v1/(√¯α1(1 − √¯α1)) ≈ 2. Through the bulk of the chain ( t ≈ 100–900), the threshold settles into the narrow band λ∗(t) ∈ [1 .002 , 1.005], 27 reaching its minimum of approximately 1 .002 near t = 349. For 8 ×8 CIFAR-10 patches, the leading eigenvalues of the patch covariance matrices span ˆλk ∈ [18 .7, 44 .4] across the M =16 positions (Section 7.2), far exceeding the minimum expansion threshold min t λ∗(t) ≈
+
+1.002 (attained near t = 349). Consequently, the Gaussian surrogate predicts ft(ˆλk) > 1for every patch at every step: every CIFAR-10 8 × 8 patch is Gaussian-expansion-forcing throughout the full T = 1000-step chain. The directional suppression field Sk,t therefore acts as the counterforce that keeps the diagonal Rayleigh quotient below 1 throughout Regime I, consistent with the block-Jacobian measurements of Section 7.4. The Regime II crossover (Sections 4.2.1 and 7.5) occurs when suppression is released patch by patch, because the learned suppression field Sk,t can no longer hold the diagonal Rayleigh quotient below 1 as the chain reaches the clean-image end. 
+
+Comparison with the cosine schedule. The cosine schedule concentrates the drop in ¯αt in the mid-to-low noise range. Evaluating (53) numerically gives the following interior minima and maxima (excluding the boundary steps t = 1 and t = T , where λ∗(t) → 2 as 
+
+vt−1 → 0 or ¯ αt → 0): 
+
+• Linear (DDPM): interior λ∗(t) ∈ [1 .002 , 1.19]; minimum near t = 350. 
+
+• Cosine ( soff = 0): interior λ∗(t) ∈ [1 .002 , 1.33]; minimum near t = 500. 
+
+• Cosine ( soff = 0 .008): interior λ∗(t) ∈ [1 .002 , 1.25]; minimum near t = 496. The design-relevant quantity is the minimum, since a patch with λk > min t λ∗(t) is expansion-forcing at every interior step. The cosine schedule achieves a lower interior minimum ex-pansion threshold (1 .0016 vs 1 .0025 for linear), meaning it is expansion-forcing for a slightly wider range of patch variances throughout the chain. This is the counterpart of the lin-ear schedule’s superior L∗ 
+
+> t
+
+equalisation: the same constant-rate ¯ αt decay that gives good threshold equalisation also keeps λ∗(t) from dipping as low as the cosine schedule achieves in its mid-noise range. The 50-step DDIM inference chain subsamples the cosine training schedule with larger per-step ∆¯ α strides. Each DDIM step covers a wider interval of ¯ α, which drives λ∗(t) lower at every selected timestep: the minimum per-step expansion threshold for the 50-step chain is min t λ∗(t) = 1 .032 (Section 7.4), which falls below the DDIM chain’s Moran threshold 
+
+λ∗∗ = 1 .050. This means patches with λk ∈ (1 .032 , 1.050) would face expansion-forcing steps in the DDIM chain, but not be globally expanding under the Moran product. All 16 CIFAR-10 patches have ˆλk ≫ 1.050, so for CIFAR-10 the attractor prediction dKY = n = 3072 holds under both chains. 
+
+6.3 Information Gain and KY-Dimension Proportionality Definition 31 (Information Gain and Per-Step KY Dimension Growth) For each timestep t, the information gain IG t := DKL (pt−1∥pt) (54) 
+
+measures the distributional work performed at step t along the reverse chain. A schedule is information-constant if IG t = c for all t (Kingma et al., 2021; Chen et al., 2023). 
+
+28 Under the block-diagonal Gaussian hypotheses of Theorem 26, the marginals factorise. Let 
+
+pt = N 
+
+> k
+
+p(k) 
+
+> t
+
+with p(k) 
+
+> t
+
+= N (0 , σ 2
+
+> t,k
+
+Ink ) and σ2 
+
+> t,k
+
+:= ¯ αtλk + vt. The KL therefore factorises as IG t = P 
+
+> k
+
+DKL (p(k)
+
+> t−1
+
+∥p(k) 
+
+> t
+
+), and for each block, setting ϵk := log( σt−1,k /σ t,k ),
+
+DKL (p(k)
+
+> t−1
+
+∥p(k) 
+
+> t
+
+) = nk
+
+2
+
+ e2ϵk − 1 − 2ϵk
+
+ = nk ϵ2 
+
+> k
+
++ O(ϵ3
+
+> k
+
+),
+
+where the last step uses e2ϵ − 1 − 2ϵ = 2 ϵ2 + O(ϵ3). Theorem 17 gives ϵk = log ft(λk) + 
+
+O(∆¯ α2 
+
+> t
+
+/¯αt), where ∆¯ αt := ¯ αt−1 − ¯αt, so to leading order in | log ft(λk)|:
+
+IG t ≈
+
+> M
+
+X
+
+> k=1
+
+nk (log ft(λk)) 2. (55) 
+
+Let dKY (t) denote the Kaplan-Yorke dimension of the partial composition Φt ◦ · · · ◦ ΦT ,evaluated at its fixed point. The per-step KY dimension growth is 
+
+∆dt := dKY (t − 1) − dKY (t) ≈ X  
+
+> k:λk>λ ∗∗
+
+nk log ft(λk), (56) 
+
+where λ∗∗ is the global expansion threshold of Theorem 25, and the approximation uses the block-diagonal Lyapunov structure of Theorem 26. 
+
+Theorem 32 (Information Gain – KY Dimension Proportionality) Under the hy-potheses of Theorem 26 and using the notation of Definition 31, the Cauchy–Schwarz in-equality gives 
+
+∆dt ≤ √N ++ · pIG t, (57) 
+
+where N ++ := P   
+
+> k:λk>λ ∗∗
+
+nk is the total dimension of globally expanding directions. Equality holds if and only if all expanding patches have equal log-expansion: log ft(λk) = μt for all k with λk > λ ∗∗ . Under this condition, IG t and ∆dt are proportional with schedule-independent constant √N ++ , and IG t = c ⇔ ∆dt = c′ for all t.
+
+Proof Apply Cauchy–Schwarz with weight vector √nk over expanding directions: ∆dt = X  
+
+> k:λk>λ ∗∗
+
+nk log ft(λk)
+
+≤
+
+q X  
+
+> k:λk>λ ∗∗
+
+nk ·
+
+s X  
+
+> k:λk>λ ∗∗
+
+nk (log ft(λk)) 2 ≤ √N ++ · pIG t.
+
+The second inequality uses P 
+
+> k
+
+nk(log ft)2 ≥ P  
+
+> k:λk>λ ∗∗
+
+nk(log ft)2 and equation (55). Equal-ity in the first step holds iff log ft(λk) is constant on expanding patches, and the propor-tionality follows: when equal, ∆ dt = μtN ++ and IG t = μ2 
+
+> t
+
+N ++ (ignoring the sub-leading contribution of contracting patches to IG t), giving the stated equivalence. 29 Empirical verification of the IG–KY proportionality. Theorem 32 predicts that IG t
+
+and |∆dt| are proportional at every step, with proportionality constant √N ++ at equality in the Cauchy–Schwarz bound. We verify this directly by computing IG t = P 
+
+> k
+
+nk(log ft(ˆλk)) 2
+
+and ∆ dt = P  
+
+> k:ˆλk>λ ∗∗
+
+nk log ft(ˆλk) analytically from the CIFAR-10 patch variances and each schedule. The Spearman rank correlation between IG t and |∆dt| is ρ = 0 .9999 ( p < 10 −300 )for both schedules, confirming near-perfect proportionality across all 1000 training steps. The ratio IG t/∆d2 
+
+> t
+
+(which equals 1 /N ++ at exact equality) has coefficient of variation CV = 3 .4% for the linear schedule and 2 .5% for the cosine schedule, with means 1 .04 × and 1.02 × the theoretical 1 /N ++ = 1 /3072 respectively: the equality condition holds to within 4% for both, confirming that the near-uniformity of log ft across CIFAR-10 patches keeps the CS bound tight. Table 2 reports CV(IG t) and CV( |∆dt|) for the two schedules. Table 2: Information gain equalisation: coefficient of variation of IG t and |∆dt| across 1000 training steps, computed analytically from CIFAR-10 patch variances ( nk = 192, 
+
+M = 16, all patches above λ∗∗ ). Lower CV indicates a more information-equalised schedule. Spearman ρ(IG t, |∆dt|) ≥ 0.9999 for both. Schedule CV(IG t) CV( |∆dt|) Spearman ρ Ratio/theory Linear (DDPM) 1.107 0.836 0.9999 1.04 ×
+
+Cosine ( soff = 0 .008) 0.867 0.570 0.9998 1.02 ×   
+
+> Ratio/theory = IG t/∆d2
+> t·N++ ; equals 1 at CS equality.
+
+Note that the cosine schedule achieves better IG equalisation than the linear schedule (CV 0 .867 vs 1 .107), while the linear schedule achieves better L∗ 
+
+> t
+
+equalisation (CV 0 .341 vs 0.474, Table 1). 
+
+6.4 Three Design Criteria 
+
+The implications of the previous sections can now be grouped into three design criteria. Let 
+
+{¯αt}Tt=1 be a noise schedule with ¯ α0 = 1, ¯ αT ≈ 0, and ¯ αt strictly decreasing. The feasible set is 
+
+S := {¯αt} ¯α0 = 1 , ¯αT ≈ 0, ∆¯ αt > 0, Q
+
+> t
+
+ft(λ∗∗ ) = 1 .
+
+1. Maximise the weakest-link contraction threshold :max   
+
+> {¯αt}∈S
+
+min  
+
+> 1≤t≤T
+
+L∗ 
+
+> t
+
+≈ max  
+
+> {¯αt}∈S
+
+√v1.
+
+The optimal schedule injects as much noise as early as possible, subject to S.2. Equalise the per-step Lyapunov contribution log ft(λ∗∗ ), or equivalently min-imise Var t(∆ dt). The Moran equation Q 
+
+> t
+
+ft(λ∗∗ ) = 1 (Theorem 25) ensures the time-average is zero, but variance in the per-step contributions means some steps do most of the manifold assembly work. By Theorem 32, minimising Var t(∆ dt) is equivalent to minimising Var t(IG t) under the near-equality condition, recovering the information-constant criterion of Kingma et al. (2021). Since IG t and vt share the same schedule dependence, this relates to a smoothness condition on {vt}.30 3. Balance the contraction workload across sampling steps : given a budget of 
+
+T steps, concentrate them where L∗ 
+
+> t
+
+is smallest (equivalently, where ∆ dt per step is largest), equalising the geometric contribution of each selected step. Criteria (1) and (3) are complementary: (1) optimises what schedule to use (push noise early, raise v1), while (3) optimises where to place steps given residual hardness. Together they amount to an optimal-transport allocation over the diffusion chain, with √vt as the common currency linking all three criteria. We will now show that the cosine offset (Section 6.5.1) instantiates Criterion (1) by moving min t L∗ 
+
+> t
+
+within the cosine schedule family. The resolution shift (Section 6.5.2) instantiates a complementary coverage requirement. The schedule must reach the logSNR range at which fine-detail patches transition, which is a prerequisite for (1) to be meaningful at all. Min-SNR loss weighting (Section 6.5.3) instantiates Criterion (2). Optimal step allocation (Section 6.5.4) instantiates Criterion (3). 
+
+6.5 Explaining Existing Empirical Design Choices 
+
+The three criteria above coming from the PIFS framework, provide the operative geometric mechanism of several prominent heuristics in the diffusion literature. 
+
+6.5.1 The Nichol–Dhariwal Cosine Offset 
+
+Nichol and Dhariwal (2021) introduced the one-parameter cosine schedule (equation (2)) and found empirically that the offset soff = 0 .008 substantially improves image quality over the unshifted ( soff = 0) baseline. The PIFS framework now supplies a structural explanation. Corollary 29 identifies the weakest link sits at the final step t = 1, where 
+
+L∗ 
+
+> 1
+
+≈ 12
+
+√v1 = 12
+
+√1 − ¯α1. (58) The cosine formula gives at t = 1 under large T ,
+
+v(soff )1 = 1 − cos 2  1/T +soff  
+
+> 1+ soff
+
+· π
+
+> 2
+
+
+
+cos 2  soff  
+
+> 1+ soff
+
+· π
+
+> 2
+
+ . (59) At soff = 0 the denominator equals 1 and v(0) 1 ≈ (π/ 2T )2, which for T = 1000 gives 
+
+v(0) 1 ≈ 2.5×10 −6, so L∗ (0) 1 ≈ 12
+
+√2.5 × 10 −6 ≈ 7.9×10 −4, an extremely small value. The offset 
+
+soff = 0 .008 evaluates to v(0 .008) 1 ≈ 4.1 × 10 −5, so L∗ (0 .008) 1 ≈ 12
+
+√4.1 × 10 −5 ≈ 3.2 × 10 −3, afactor of ≈ 4.05 larger (aligned with the numerical analysis in Table 1). 
+
+6.5.2 Resolution-Dependent Schedule Shift 
+
+Hoogeboom et al. (2023) derive the resolution-dependent schedule shift directly from how the network processes images. Since standard diffusion architectures operate on lower-resolution feature maps via average pooling, one must ask what noise level the pooled representation actually sees. When a s × s pixel block is averaged to a single feature, signal averages as xd/s = 1
+
+> s2
+
+Ps2 
+
+> i=1
+
+xi, while independent noise contributes zd/s t ∼ N (αtxd/s , σ t/s ). 31 The effective signal-to-noise ratio at the pooled resolution is therefore s2 times that at full resolution, giving SNR d/s (t) = s2 · SNR d(t), (60) or in log-space, logSNR d/s (t) = logSNR d(t) + 2 log s. Since the network was designed for a reference resolution dbase = 64 at which it operates the pooled representation, training at a higher resolution d > d base with the same nominal schedule leaves the effective logSNR too high (too little noise relative to signal at the pooled level). The fix is to shift the logSNR down by 2 log( d/d base ), i.e. logSNR (d)(t) = logSNR (dbase )(t) + 2 log  dbase /d . (61) Our PIFS framework arrives at the same formula from another direction, replacing the pooling argument with a requirement on the data’s attractor geometry. The key quantity is the Moran threshold λ∗∗ , the unique patch variance at which the attractor switches from contractive to expansive (Theorem 25). For the generated manifold to remain non-trivial at resolution d — the schedule must satisfy λ∗∗ (d) < λ signal (d), where λsignal (d) is the leading patch-covariance eigenvalue at that resolution. Under the self-similar 1 /f 2 power spectrum of natural images, an nk-pixel patch at resolution d captures finer spatial frequencies than at dbase , and the within-patch signal variance scales as λsignal (d) = ( d/d base )2 λsignal (dbase ). Meanwhile, rewriting the patch ex-pansion function ft(λ) (Theorem 17) in terms of SNR gives 
+
+ft(λ) = 
+
+p¯αt−1/¯αt λ SNR t + pvt−1/v t
+
+λ SNR t + 1 , (62) and a logSNR shift by c scales SNR t 7 → ec SNR t. In the continuous-time limit (where step-ratio terms are schedule-invariant), this acts on ft as 
+
+f ′ 
+
+> t
+
+(λ) = ft(ecλ), (63) so the Moran equation for the shifted schedule is satisfied at λ∗∗ (d) = e−cλ∗∗ (dbase ). 
+
+Proposition 33 (Resolution Shift from the Moran Equation) Under the self-similar model λsignal (d) = ( d/d base )2λsignal (dbase ), the logSNR shift c = 2 log( dbase /d ) preserves the ratio λ∗∗ /λ signal across resolutions, recovering (61) .
+
+Proof Setting c = 2 log( dbase /d ), the shift symmetry (63) gives λ∗∗ (d) = e−cλ∗∗ (dbase ) = (d/d base )2λ∗∗ (dbase ). Since λsignal scales by the same factor, the ratio is preserved: 
+
+λ∗∗ (d)/λ signal (d) = λ∗∗ (dbase )/λ signal (dbase ) < 1.
+
+The two derivations are complementary. Hoogeboom’s argument is architectural: aver-age pooling reduces effective noise by s, so the nominal schedule under-corrupts the features the network actually processes. The PIFS argument is data-geometric: raising resolution raises the patch variance threshold the attractor must clear, and the Moran symmetry (63) says the logSNR must shift to compensate. Both give the same formula for the same alge-braic reason (variance scales as d2, log turns it into a factor of 2). 32 6.5.3 Min-SNR Loss Weighting 
+
+Hang et al. (2023) identified that standard diffusion training suffers from conflicting gra-dient directions across timesteps, and showed that weighting the per-step loss by wt =min(SNR t, γ )/SNR t (Min-SNR-γ) resolves the conflict, yielding a 3 .4× training speedup and a new FID record on ImageNet-256. The weighting was motivated by a multi-task learning analogue. The PIFS framework identifies the conflict geometrically as a mismatch between train-ing weight and per-step KY dimension growth. The standard DSM loss (Proposition 12) weights step t proportionally to SNR t, concentrating gradient mass at high-noise steps where (EC) already holds automatically (Theorem 16) and ∆ dt is near zero. Fine-detail steps (Regime II), which carry the bulk of the manifold-assembly work, are correspondingly under-represented. Min-SNR-γ corrects this by clamping: for SNR t ≥ γ, wt = γ/ SNR t
+
+raises the relative weight of fine-detail steps, moving training toward the KY-equalised target of Theorem 32. 
+
+Proposition 34 (Min-SNR as KY-Dimension Equalisation) At moderate noise lev-els with small step size, L∗ 
+
+> t
+
+≈ √vt (Corollary 30, (52) ). The standard DSM loss (Proposi-tion 12) weights step t proportionally to SNR t, concentrating gradient mass at high-noise steps where ∆dt ≈ 0 (Regime I, including the high-noise limit) and under-weighting fine-detail steps where ∆dt is largest (Regime II). The Min-SNR-γ weight 
+
+wt = min(SNR t, γ )/SNR t
+
+corrects this. In the clamped regime ( SNR t ≥ γ), wt = γ/ SNR t raises the relative weight of fine-detail steps by the factor SNR t/γ ≥ 1, moving training toward the KY-equalised target of criterion 2 of Section 6.4. The clamp level γ marks the Regime I/II transition. 
+
+Proof By Corollary 30, L∗ 
+
+> t
+
+≈ √vt, which is monotone decreasing in t and smallest at the fine-detail end. The DSM training objective (equation (20)) weights step t by SNR t =¯αt/v t, which is a monotone increasing function of t (high-noise steps have high SNR in this convention) and is largest precisely where ∆ dt ≈ 0. In the clamped regime, the weight wt = γ/ SNR t is inversely proportional to SNR t,raising the relative contribution of fine-detail steps (small t, small SNR t) where ∆ dt is non-negligible, and suppressing the contribution of high-noise steps. This reweighing is a monotone approximation to equalising ∆ dt across training steps, which by Theorem 32 is equivalent to equalising IG t under near-uniform patch log-expansion. The empirically successful value γ = 5 reported by Hang et al. (2023) is consistent with the Regime I/II transition occurring near SNR t ≈ 5 for the cosine schedule at T = 1000. The SNR rises above 5 around t ≈ 260, where L∗ 
+
+> t
+
+≈ 0.41, at the boundary between denoising and fine-detail synthesis. 33 6.5.4 Optimal Sampling-Step Allocation 
+
+Sabour et al. (2024) showed that the hand-crafted heuristic schedules used in DDIM, DPM-Solver, and EDM are systematically suboptimal at small NFE, and proposed Align Your Steps (AYS), which optimises the sampling timestep set by minimising a KL-divergence upper bound between the true and linearised SDEs. AYS schedules consistently concentrate steps in the low-noise regime, in qualitative agreement with all prior adaptive schemes (DPM-Solver++, DEIS, GITS) and producing state-of-the-art FID at N ≤ 20 steps. The PIFS framework provides an independent geometric explanation for this concentration. 
+
+Theorem 35 (Optimal N -Step Sampling Schedule) Let L∗ 
+
+> t
+
+= ( p¯αt−1/¯αt − 1) /|bt| be the per-step contraction threshold for a fixed trained schedule. Since L∗ 
+
+> t
+
+≈ 12
+
+√vt at fine-detail steps, L∗ 
+
+> t
+
+is smallest at the low-noise end of the chain ( t near 1) and largest at high noise. The N -step schedule that concentrates steps where L∗ 
+
+> t
+
+is smallest, and hence equalises the per-step contraction workload, has step density in the continuous-time limit ¯α : [0 , 1] → (0 , 1] 
+
+satisfying 
+
+ρ∗(u) ∝ 1
+
+L∗(u) , (64) 
+
+i.e. the optimal schedule allocates the most steps where L∗ 
+
+> t
+
+is smallest. 
+
+Proof A step at position u with local step size ∆ u = 1 /ρ (u) must maintain the contraction margin νmin  
+
+> t
+
+− L∗(u) − δ > 0 (Theorem 6) over an interval of length ∆ u. Define the 
+
+contraction difficulty at u as D(u) := 1 /L ∗(u). Positions where L∗ is small are geometrically hard, because a small positive margin must be held with high precision. The per-step difficulty load is D(u) · ∆u = 1 /(L∗(u)ρ(u)). Minimising the maximum per-step load, subject to R 10 ρ(u) d u = N , requires equalising it across u:1
+
+L∗(u) ρ(u) = c for all u, 
+
+giving ρ(u) = 1 /(c L ∗(u)) ∝ 1/L ∗(u), with the constant c fixed by normalization to N .Since L∗ 
+
+> t
+
+≈ 12
+
+√vt at fine-detail steps (51), 1 /L ∗(u) is largest at the low-noise end of the chain, exactly where AYS and DPM-Solver++ concentrate their steps empirically. The result is a first-principles geometric explanation for the empirically observed concentration, complementing the stochastic calculus argument of Sabour et al. (2024) with a contraction-margin derivation that arrives at the same allocation density from a different direction. The AYS KL-divergence upper bound and the PIFS contraction-workload criterion are complementary. KL divergence measures distributional discrepancy, where the contrac-tion margin measures the geometric guarantees on the fixed point map. Both predict the same allocation density ρ∗(u) ∝ 1/L ∗(u), because the log-SDE discretisation error and the contraction margin are both controlled by √vt at small t (Corollary 29, (51)). 34 7 Empirical Validation 
+
+This section provides direct experimental validation of the framework’s core predictions on pretrained DDPM models for CIFAR-10 and CelebA-HQ. The following predictions and one testable assumption are verified below: 
+
+P1 All CIFAR-10 8 × 8 patches exceed λ∗(t) throughout the full denoising chain; the directional suppression field Sk,t > 0 at every step ( §7.2). 
+
+P2 (MM): Sk,t is monotone increasing in λk. Higher-variance patches receive proportion-ally stronger score suppression ( §7.3). 
+
+P3 The global spectral norm grows progressively from the high-noise limit through both regimes; the block-Jacobian decomposition resolves this into diagonal (suppression-governed) and cross-patch (attention-governed) components; cross-patch coupling tracks attention entropy monotonically ( §7.4). 
+
+P4 (PC) is violated throughout Regime I and satisfied in Regime II, with a sharp per-patch crossover; low-variance patches release suppression before high-variance patches, and Spearman ρ(λk, ˆκdiag  
+
+> t
+
+) reverses sign at the crossover ( §7.5). 
+
+P5 Score deviation scales as O(√¯αt) in the high-noise regime ( §7.6). All predictions are verified against the pretrained DDPM CIFAR-10 model (Ho et al., 2020) using the google/ddpm-cifar10-32 checkpoint. Section 7.7 tests the suppression-corrected KY dimension theory on a higher-resolution CelebA-HQ model. 
+
+7.1 Experimental Setup 
+
+All measurements use 8 × 8 patches ( M = 16, nk = 192) on generated trajectories from 
+
+google/ddpm-cifar10-32 (Ho et al., 2020). Jacobian measurements use a JVP/VJP power-iteration protocol (ˆ κt = PowerIter( JxΦt, K PI )) with a 50-step DDIM sampler ( KPI =20, Nseeds = 8; seed 8 excluded as outlier with ˆ s = 3386). Patch spectral variances λk are computed as the leading eigenvalue of the patch covariance Σ k estimated from N = 50 ,000 CIFAR-10 training images. The directional suppression field Sk,t is measured via a direc-tional JVP of the score network at trajectory points along v(1)  
+
+> k
+
+.
+
+Step-size invariance of the regime structure. We verify that the two-regime structure is robust to step size by evaluating JxΦt at six representative timesteps under both the stride-20 DDIM step and the stride-1 DDPM step. Since JxΦt = expand t · I + bt · Jx ˆεθ,the two protocols share the same score Jacobian and differ only in their scalar coefficients; changing stride rescales diagonal and off-diagonal blocks uniformly but cannot alter which blocks are negligible. Regime classification agrees at all six timesteps; ˆ κdiag  
+
+> t
+
+differs by at most 5 .1% between step sizes, and the |bt|-normalised coupling ˆδcross /|bt| agrees to within 7% on average. The two-regime structure is therefore a property of the score network, not an artefact of the DDIM step size. 35 7.2 Expansion Window and Directional Suppression Field 
+
+Theorem 17 predicts that diagonal block k expands if and only if λk > λ ∗(t), where λ∗(t)is the expansion-forcing threshold. We measure the leading patch eigenvalues λk directly from the training set and compare to λ∗(t) across the full T = 1000 training chain. 
+
+Patch eigenvalues. Top-eigenvalue measurement from the CIFAR-10 training set yields 
+
+λk ∈ [18 .7, 44 .4] across the M = 16 patches, with corner and top-row patches at the high end ( λk ≈ 29–44) and interior patches at the low end ( λk ≈ 19–25). These values are the leading eigenvalues of the patch covariance matrices; they substantially exceed the analytical threshold, which satisfies λ∗(t) ∈ [1 .002 , 1.195] for t ∈ [1 , 999] (minimum λ∗(349) ≈ 1.002, maximum λ∗(1) ≈ 1.195). 
+
+Expansion window. Every patch satisfies λk > λ ∗(t) at every t ∈ [1 , 999]: the expansion condition is active throughout the full denoising chain for all 16 patches. This is consistent with the Moran equation result reported in Section 7.4: all patch Lyapunov exponents are strictly positive under the Gaussian baseline. 
+
+Directional Suppression field. We measure Sk,t at 51 representative timesteps span-ning t ∈ [1 , 999] ( Nseeds = 5, M = 16 patches). The directional suppression field satisfies 
+
+Sk,t > 0 for all ( k, t ) pairs (with negligible noise-floor exceptions of order 10 −5 near t = 999 where ¯ αt ≈ 0): the score network consistently reduces the Rayleigh quotient below the Gaussian prediction at every patch and every timestep. The operator-norm contraction ratio κop  
+
+> k,t
+
+is below 1 throughout the chain (maximum ≈ 1.00002 near t = 780, indistinguish-able from 1 at any practical precision), confirming that the diagonal blocks remain globally non-expanding. The suppression margin γk,t = Sk,t − (ft(λk) − 1) is positive (diagonal Rayleigh quotient strictly below 1) for t ≲ 100, the deepest fine-detail steps where the diag-onal term dominates; for t ≳ 120 the Rayleigh quotient slightly exceeds 1, indicating that the diagonal term is not sufficient on its own to achieve contraction, hence the block-max contraction in Regime I is carried by cross-patch coupling (Section 7.5). 
+
+7.3 Property (MM): Suppression Scales with Patch Variance 
+
+(MM) (Definition 21) requires Sk,t to be increasing in λk: high-variance patches must receive proportionally stronger score suppression. We test this directly by computing the Spearman rank correlation ρ(λk, S k,t ) across the M = 16 patches at each timestep, using the same measurement protocol as Section 7.2. Table 3 reports ρ and the two-sided p-value at representative timesteps. (MM) is con-firmed with strong significance in the bulk of the denoising chain. The correlation peaks at ρ = 0 .953 ( p = 1 .2 × 10 −8) at t = 601 and is significant at p < 0.01 for t ∈ [461 , 841] (the full Regime I and the high-noise boundary). The non-significance at early t (fine-detail end, t ≲ 200) is expected: ft(λk) − 1 ≈ 0 here, so Sk,t values are all O(10 −4) and near-uniform across patches, making the rank test uninformative. The non-significance at late t (high-noise end, t ≳ 880) is similarly expected: Sk,t → 0 as ¯ αt → 0, so again the signal is noise-dominated. Between these boundaries, i.e. the regime where (MM) is most consequential for the theoretical conclusions of Theorem 27, the correlation is consistently strong and significant. No significantly negative ρ values are observed at any timestep, so (MM) is never violated. 36 Table 3: Spearman rank-correlation ρ(λk, S k,t ) across M = 16 patches at selected timesteps (Nseeds = 5). Positive ρ confirms (MM): higher-variance patches carry larger suppression. Significance levels: ∗ p < 0.05, ∗ ∗ p < 0.01. 
+
+t Regime ρ p-value sig 1 II +0 .118 0.664 n.s. ( Sk,t ∼ 10 −4, near-uniform) 101 II +0 .009 0.974 n.s. 201 II +0 .459 0.074 n.s. 381 I/II +0 .594 0.015 ∗
+
+461 I +0 .647 0.007 ∗∗ 
+
+601 I +0 .953 1.2 × 10 −8 ∗∗ (peak) 721 I +0 .929 1.9 × 10 −7 ∗∗ 
+
+841 I +0 .726 0.001 ∗∗ 
+
+861 high-noise +0 .603 0.013 ∗
+
+881 high-noise +0 .418 0.107 n.s. 941 high-noise −0.050 0.854 n.s. ( Sk,t → 0 as ¯ αt → 0) 
+
+7.4 Regime Structure: Global Norm and Block-Jacobian Decomposition 
+
+Table 4 reports the global per-step spectral norm ˆ κt across representative DDIM steps, confirming progressive growth from the high-noise limit of Regime I through Regime II as predicted by the two-regime structure. Table 4: Global per-step spectral norm for DDPM CIFAR-10 ( n = 3 ,072, 50-step DDIM, 7 seeds). DDIM step t (train) Mean ˆ κt Std Regime 1 of 50 980 1.0011 0.0019 high-noise 5 of 50 900 1.0002 0.0001 high-noise 10 of 50 800 1.0005 0.0004 high-noise 20 of 50 600 1.0248 0.0177 transition 30 of 50 400 1.1108 0.0247 mid-noise 35 of 50 300 1.1408 0.0859 mid-noise 40 of 50 200 1.1107 0.0211 low-noise 49 of 50 20 1.3969 0.0832 fine-detail ˆs = Q 
+
+> t
+
+ˆκt (seeds 1–7) 61, 48, 89, 45, 77, 17, 92; median = 61 The global spectral norm exceeds 1 at every step (cumulative ˆ s ≈ 50–90) and grows progressively from the high-noise limit of Regime I through Regime II, consistent with P3. A globally contractive map would have dKY = 0 (Proposition 24), so global expansion is expected; the structural test is the block decomposition below. 37 We decompose Jxt Φt into diagonal and cross-patch blocks using 8 × 8 patches ( M = 16, 
+
+nk = 192, KPI = 10 per block, Nseeds = 4). Table 5: Block-Jacobian decomposition for DDPM CIFAR-10 (8 × 8 patches, M = 16, 
+
+Nseeds = 4). Selected representative steps. 
+
+t ˆκdiag  
+
+> t
+
+±std ˆδcross  
+
+> t
+
+Global ˆ κt Regime 980 1.0004 0.0001 0.0007 1.0011 high-noise 800 1.0002 0.0001 0.0008 1.0010 high-noise 600 1.0000 0.0015 0.0853 1.0853 denoising 400 1.0026 0.0153 0.1273 1.1300 denoising 280 1.0070 0.0135 0.1038 1.1107 denoising/fine-detail 220 1.0325 0.0432 0.0768 1.1092 fine-detail 100 1.0879 0.0110 0.0779 1.1658 fine-detail 20 1.2111 0.0528 0.1858 1.3969 fine-detail 
+
+Start ( t ≥ 800 , steps 0–9): high-noise. Both diagonal and cross-patch contributions are negligible: ˆκdiag  
+
+> t
+
+≈ 1.0002–1 .0004, ˆδcross  
+
+> t
+
+< 0.001, giving ˆ κpc  
+
+> t
+
+≈ ˆκt ≈ 1.001. The gap ˆκdiag  
+
+> t
+
+− ft(ˆλmax ) ≈ − 0.002 confirms the network maintains diagonal norms slightly below the Gaussian prediction, consistent with Theorem 16. The reported ˆ κt ≈ 1.001 at t = 980 should not be read as a violation of near-contractivity: at high noise all n = 3072 singular values cluster within ∼ 10 −3 of 1, so power iteration with KPI = 20 cannot resolve the spectral norm reliably (the estimate is consistent with the true value being at or below 1). 
+
+Regime I ( t ∈ [280 , 780] , steps 10–35): denoising. ˆκdiag  
+
+> t
+
+fluctuates tightly around 1.000 (range [0 .993 , 1.007], mean ≈ 1.000) while ˆδcross  
+
+> t
+
+rises from 0 .003 at t = 780, peaks at 0 .150 near t = 360, then falls to 0 .104 at t = 280. The global norm (1 .08–1 .14) is entirely attributable to cross-patch coupling, consistent with broad attention broadcasting (Sec-tion 4.4). The diagonal near-neutrality is explained by the directional suppression field (Section 7.2): Sk,t > 0 keeps ˆ κdiag  
+
+> t
+
+≈ 1 even though all patches exceed λ∗(t) throughout Regime I. 
+
+Regime II ( t < 280 , steps 36–50): fine-detail synthesis. ˆκdiag  
+
+> t
+
+rises from 1 .007 at 
+
+t = 280 to 1 .211 ± 0.053 at t = 20, consistent with Theorem 17: all 16 patches exceed 
+
+λ∗∗ ≈ 1.0024 (full training chain, verified by bisection with |G(λ∗∗ ) − 1| < 5 × 10 −11 ). We also verify the Moran equation for the 50-step DDIM inference chain (bisection yields λ∗∗ = 1 .049681, min t λ∗(t) = 1 .031664, margin 1 .80 × 10 −2). All 16 CIFAR-10 patches satisfy G(ˆλk) > 1 under the DDIM chain, with Lyapunov exponents Λ( ˆλk) ∈
+
+[+0 .015 , +0 .024]. Since all patches expand ( N + = n = 3072), the Kaplan-Yorke formula gives the saturated prediction dKY = n = 3072. ˆδcross  
+
+> t
+
+falls from 0 .104 at t = 280 to 0 .077–0 .078 through mid Regime II (consistent with attention localisation) then rises sharply to 0 .186 at t = 20 alongside ˆ κdiag  
+
+> t
+
+= 1 .211. The re-increase at the final step reflects skip-connection cross-patch contributions that persist as attention localises (Section 4.4); it does not contradict the two-regime picture. 38 Attention entropy and cross-patch coupling. Theorem 23 predicts that δcross ,attn  
+
+> t
+
+is bounded by the off-diagonal attention mass 1 − min k Akk , so cross-patch coupling should track attention entropy. Table 6 reports both quantities at eight representative timesteps. Table 6: Cross-patch coupling ˆδcross  
+
+> t
+
+and mean attention entropy H(At) (nats) at selected DDIM timesteps. ˆδcross  
+
+> t
+
+grows 218 × from the high-noise limit of Regime I to Regime II; Spearman ρ(H, ˆδcross ) = −1.000 ( p ≈ 0.00025, exact permutation prob-ability for a perfect ranking on 8 points). 
+
+t Regime H(At) (nats) ˆδcross  
+
+> t
+
+±std 980 high-noise 4.963 0.00946 0.00018 840 high-noise 4.930 0.01511 0.00076 700 I 4.794 0.04109 0.00074 560 I 4.662 0.09463 0.01117 440 I 4.656 0.14824 0.02529 300 I 4.631 0.19204 0.00187 160 II 4.541 0.42899 0.03327 20 II 4.063 2.06175 0.03759 ˆδcross  
+
+> t
+
+grows by 218 × from t = 980 to t = 20, tracking progressive attention localisation. The Spearman rank correlation between H(At) and ˆδcross  
+
+> t
+
+is ρ = −1.000 ( p < 0.001, N = 8): coupling and entropy are perfectly inversely ranked. This result is sensitive to the specific timestep selection and should be read as strong directional confirmation rather than a precision measurement. Table 7 reports the mean coupling ¯Ckj at Chebyshev distances d = 1 , 2, 3. Table 7: Mean coupling ¯Ckj = 12 (∥[J]kj ∥F + ∥[J]jk ∥F ) vs. Chebyshev patch distance, aver-aged across all timesteps and trajectories. Distance d ¯C (mean) std 1 (adjacent) 0.0362 0.0789 2 (next-nearest) 0.0123 0.0203 3 (diagonal) 0.0117 0.0193 Coupling decays rapidly from d = 1 to d = 2 (factor ∼3) but then flattens ( d = 2 to d = 3 ratio 0 .95), producing a heavy tail consistent with global attention: the max k
+
+P  
+
+> j̸=k
+
+Akj 
+
+bound in Theorem 23(b) makes no spatial-locality assumption. 
+
+7.5 (PC) Crossover and Stratified Release 
+
+The block-Jacobian results of Section 7.4 show the regime structure in aggregate. Here we resolve it per patch. The (PC) margin slack δloc  
+
+> k,t
+
+:= (1 − ˆκdiag  
+
+> k,t
+
+) − C k,t (xt) is positive if and 39 only if patch Rk satisfies (PC). We measure this per patch at 19 timesteps spanning both regimes ( KPI = 30, Nseeds = 5). Table 8: Per-patch (PC) margin slack δloc = (1 − ˆκdiag  
+
+> k,t
+
+) − C k,t (xt) for DDPM CIFAR-10 (M = 16 patches, 8 × 8, Nseeds = 5, KPI = 30). Positive slack means (PC) is satisfied. 
+
+t Regime Mean slack Min slack Frac. violated 980 high-noise −0.000524 −0.000650 16 /16 800 high-noise −0.001927 −0.002632 16 /16 700 I −0.003942 −0.005122 16 /16 600 I −0.004958 −0.006310 16 /16 280 I −0.003904 −0.004638 16 /16 200 I/II −0.000304 −0.000717 14 /16 160 II +0 .001382 +0 .000905 0/16 40 II +0 .006412 +0 .006518 0/16 
+
+Start: (PC) structurally inapplicable. At t = 980, ˆ κdiag  
+
+> k,t
+
+≈ 1.0000 and Ck,t ≈ 0.0005: the diagonal margin is essentially zero, so any coupling violates (PC). This is consistent with the theory: the high-noise limit of Regime I contraction operates through global scaling (Theorem 16), not block structure. 
+
+Regime I: (PC) strongly violated throughout. Every patch violates (PC) at every measured Regime I timestep. The violation ratio Ck,t /(1 − ˆκdiag  
+
+> k,t
+
+) peaks at 95 × near t = 700, reaches 34 × at t = 600, and is 2 .8× at t = 280. This is the quantitative signature of Theorem 9: large cross-patch score information is what drives the positive Kaplan-Yorke dimension via Theorem 25. 
+
+Crossover ( t ∈ [160 , 200] ): sharp, ≈ 40 -timestep window. At t = 200, 14 /16 patches still violate (87 .5%); at t = 160, none (0%). The transition is consistent with the per-patch heterogeneity of Theorem 22, i.e. patches complete the transition patch-by-patch over a 
+
+∼40-step window. 
+
+Regime II: (PC) satisfied, diagonal blocks contract. From t = 160 onward every patch has positive slack. ˆκdiag  
+
+> k,t
+
+∈ [0 .991 , 0.995] throughout Regime II: the diagonal blocks contract while the global ℓ2 spectral norm still exceeds 1 (ˆ κt ≈ 1.09–1 .40) due to cross-patch coupling. 
+
+Stratified crossover: Spearman rank-correlation. Theorem 17 predicts ft strictly in-creasing, so ρ(ˆλk, ˆκdiag  
+
+> t
+
+) > 0 when data-covariance differences dominate. Near the crossover the Gaussian spread ft(ˆλmax ) − ft(ˆλmin ) ≈ 0.0001 is negligible; the learned ordering may dominate. Table 9 reports ρ(ˆλk, ˆκdiag  
+
+> t
+
+) across all 16 patches at each Regime II step. At t ∈ { 240 , 260 }, ρ is negative and statistically significant ( p ≤ 0.047), directly con-firming Theorem 22(b): interior (low-λk) patches release suppression first. The Gaussian model cannot produce any reversal ( ft is strictly increasing), and the theoretical spread 40 Table 9: Spearman rank-correlation ρ(ˆλk, ˆκdiag  
+
+> t
+
+) across 16 patches at Regime II steps (N = 16, 8 × 8 patches). Negative ρ confirms that low-variance patches release suppression first, as predicted by Theorem 22. 
+
+t ρ p-value sig Note 260 −0.668 0.005 ** transition zone: learned ordering dominates 240 −0.503 0.047 * transition zone 220 −0.391 0.134 n.s. 200 −0.268 0.316 n.s. 180 −0.344 0.192 n.s. 160 −0.165 0.542 n.s. 140 −0.156 0.564 n.s. 120 −0.065 0.812 n.s. sign flip near t ≈ 110 100 +0 .438 0.090 n.s. 80 +0 .385 0.141 n.s. 60 +0 .506 0.046 * Gaussian ordering recovers 40 +0 .771 0.001 ** deep fine-detail: data-geometric ordering 20 +0 .556 0.025 *
+
+ft(ˆλmax ) − ft(ˆλmin ) ≈ 0.0001 is orders of magnitude smaller than the observed variation, so the sign reversal is unambiguously a learned, non-Gaussian effect. In deep Regime II ( t ≤ 60), ρ is positive and significant ( ρ = 0 .771, p = 0 .001 at t = 40), confirming prediction P4: once all patches have released, expansion is governed by ft(λk)and the Gaussian ordering is restored (Theorem 22(d)). The stratified spread is quantified by (36): with ∆ λ ≈ 6.4, empirical margin slope 
+
+|∂λ ˆγ| ≈ 10 −3 per unit variance, and margin decay rate |∂t ˆγ| ≈ 3 × 10 −6 per step, equa-tion (36) gives ∆ tstrat ≈ 6.4 × 10 −3/(3 × 10 −6) ≈ 200 steps, matching the observed spread from interior release ( t ≈ 260) to corner release ( t ≈ 60). 
+
+7.6 Score Deviation Scaling 
+
+Theorem 16 predicts that the per-step deviation field ∆ t(x) = ˆ εθ(x, t )−εN 
+
+> θ
+
+(x, t ) (28) satisfies 
+
+∥∆t∥2 = O(√¯αt) in the high-noise regime. The Gaussian surrogate score εN 
+
+> θ
+
+is not directly accessible at evaluation time, so we estimate ∥∆t∥2 via a paired-difference proxy. The key observation is that at high noise the trained score is nearly isotropic and data-independent (Theorem 16): both ˆ εθ and εN 
+
+> θ
+
+reduce to approximately xt/√vt as ¯ αt → 0, so the network’s output on a pure-noise input xnoise  
+
+> t
+
+= √vt ε approximates εN 
+
+> θ
+
+(xreal  
+
+> t
+
+, t ) to leading order in ¯αt. Concretely, for each real image x0 and noise sample ε ∼ N (0 , I ), we form xreal  
+
+> t
+
+=
+
+√¯αt x0 + √vt ε and xnoise  
+
+> t
+
+= √vt ε (same ε), and measure the paired difference 
+
+b∆t(x0, ε ) := ˆ εθ(xreal  
+
+> t
+
+, t ) − ˆεθ(xnoise  
+
+> t
+
+, t ). (65) 41 By construction b∆t ≈ ∆t(xreal  
+
+> t
+
+) at high noise; at lower noise ˆ εθ(xnoise  
+
+> t
+
+, t ) no longer approxi-mates εN 
+
+> θ
+
+(xreal  
+
+> t
+
+, t ) closely, so E[∥ b∆t∥2] overestimates E[∥∆t∥2] in the mid-noise regime. We evaluate E[∥ b∆t∥2] over N = 200 images at 14 timesteps. Table 10: Paired-difference proxy E[∥ b∆t∥2] at selected timesteps for DDPM CIFAR-10 (N = 200 images, mean ±std). High-noise points ( t ≥ 800) are used for OLS log-log fit; at these timesteps b∆t ≈ ∆t.DDIM step t √¯αt E[∥ b∆t∥2] Regime 1 of 50 999 0.0064 0.18 ± 0.04 high-noise (extra) 990 0.0070 0.19 ± 0.05 high-noise (extra) 980 0.0078 0.21 ± 0.05 high-noise 2 of 50 960 0.0094 0.26 ± 0.06 high-noise 3 of 50 940 0.0114 0.31 ± 0.07 high-noise 4 of 50 920 0.0138 0.38 ± 0.09 high-noise 5 of 50 900 0.0166 0.45 ± 0.11 high-noise 10 of 50 850 0.0258 0.68 ± 0.16 high-noise 10 of 50 800 0.0391 0.98 ± 0.22 high-noise 15 of 50 700 0.0835 1.79 ± 0.40 I20 of 50 600 0.1609 2.86 ± 0.63 I25 of 50 500 0.2803 4.23 ± 0.93 I30 of 50 400 0.4418 5.67 ± 1.11 I/II 35 of 50 300 0.6296 7.42 ± 1.48 II An OLS fit of log E[∥ b∆t∥2] on log √¯αt over the high-noise points ( t ≥ 800) gives slope 0.95 (95% CI: [0 .88 , 1.02]; R2 = 0 .994; intercept 3 .10). The null H0: slope= 1 is not rejected two-sided (CI contains 1; one-sided p ≈ 0.12 for slope < 1), consistent with the predicted 
+
+O(√¯αt) scaling of ∥∆t∥2 from Theorem 16. Figure 1 shows E[∥ b∆t∥2] growing gradually through the high-noise region ( t ≳ 800) and accelerating sharply thereafter; beyond this boundary the proxy grows faster than the high-noise scaling, reflecting both growing non-Gaussian contributions to ∆ t and the increasing inaccuracy of the pure-noise approximation. 
+
+7.7 Suppression-Corrected KY Dimension 
+
+The CIFAR-10 experiments above operate in a regime where all patch variances λk ∈
+
+[18 .7, 44 .4] greatly exceed the Gaussian Moran threshold λ∗∗ ≈ 1.0024, so the Gaussian baseline predicts dKY = n = 3072 and suppression is the only mechanism that can reduce it. To test the suppression-corrected formula of Theorem 27 in a setting where suppression actually determines the sign of each patch’s Lyapunov exponent, we turn to a higher-resolution model where the patch variance structure is qualitatively different. 
+
+Setup. We use the pretrained google/ddpm-celebahq-256 model, evaluated on 64 × 64 images with 16 × 16 patches ( M = 16 patches, nk = 3 × 16 × 16 = 768 per patch). Patch covariances are estimated from N = 200 CelebA-HQ images. The directional suppression 42 Figure 1: Paired-difference proxy E[∥ b∆t∥2] for DDPM CIFAR-10 ( N = 200 images); b∆t ≈
+
+∆t at high noise and overestimates ∆ t at lower noise (see text). Left : proxy vs. timestep t; the dashed line marks the high-noise boundary at t = 800. Right :log-log plot with OLS fit over the high-noise region ( t ≥ 800, dark markers); slope 0.95 is consistent with O(√¯αt) scaling of ∥∆t∥2 (Theorem 16). Mid-noise points (light markers) lie above the extrapolated line. field Sk,t is measured via directional JVP along the leading eigenvector v(1)  
+
+> k
+
+of each patch covariance, at 20 representative timesteps, and interpolated to the full 49-step DDIM chain. Per-patch suppression-corrected Lyapunov exponents Λ eff ,k are estimated from Ntraj = 8 independent trajectories using a signed Rayleigh quotient estimator; all trajectories are checkpointed and the final values are averages over all eight. 
+
+Patch variances and thresholds. The leading patch eigenvalues span λk ∈ [38 .7, 231 .7], roughly two orders of magnitude above the Gaussian Moran threshold λ∗∗ = 1 .0497 com-puted from the 49-step DDIM schedule. Under the Gaussian baseline, every patch has a strongly positive Lyapunov exponent and the formula of Theorem 26 predicts dKY = n =12 ,288. The directional suppression field, however, is active throughout the chain on all patches: the suppression coefficient of variation across patches is CV = 0 .064, confirming that Sk,t is distributed broadly and consistently across the image (not concentrated at a few patches or timesteps). 
+
+Suppression-corrected Moran threshold. The suppression-corrected Moran equation Q 
+
+> t
+
+gk,t (λ∗∗∗ ) = 1 (equation (48), Theorem 27) is solved by bisection, incorporating the measured per-patch suppression Sk,t at each step. The result is λ∗∗∗ = 500, far exceeding the largest patch variance λmax = 231 .7, so no patch clears the suppression-corrected expansion threshold. The suppression-corrected formula therefore predicts K+++ = ∅, N +++ = 0, and 
+
+deff KY = 0. The generated distribution hence collapses to a zero-dimensional attractor under the corrected dynamics, consistent with the high visual fidelity and low sample diversity characteristic of this model at 64 × 64 resolution. 43 Empirical Lyapunov exponents. Table 11 reports the suppression-corrected predicted exponent Λ pred ,k and the empirical estimate ˆΛk for all 16 patches. All predicted expo-nents are negative, ranging from −0.106 to −0.055. All empirical exponents are negative (range −0.012 to −0.003), consistent with the prediction in sign across all 16 patches (sign agreement 16 /16 = 100%). The bootstrap 95% confidence interval on the per-trajectory sign-agreement fraction is [67 .2% , 96 .9%], reflecting genuine variability across individual trajectories; the aggregate sign agreement is the relevant object for assessing the prediction of Theorem 27. Table 11: Suppression-corrected Lyapunov exponents for CelebA-HQ (google/ddpm-celebahq-256 , 64 × 64, 16 × 16 patches, Ntraj = 8, TDDIM = 49). Λpred is the predicted exponent from the suppression-corrected formula; ˆΛk is the empirical estimate (mean ± std over trajectories). All 16 patches agree in sign: both predicted and empirical exponents are negative, so deff KY = 0. patch Rk λk Λpred ˆΛk std 0 231.7 −0.0552 −0.00496 0.0067 3 181.9 −0.0572 −0.00269 0.0068 12 184.8 −0.0587 −0.00399 0.0064 4 176.1 −0.0656 −0.00809 0.0067 8 174.1 −0.0639 −0.00666 0.0087 15 156.7 −0.0625 −0.00419 0.0068 7 137.7 −0.0687 −0.00672 0.0054 11 138.3 −0.0699 −0.00746 0.0059 1 93.7 −0.0783 −0.00838 0.0060 2 93.3 −0.0777 −0.00759 0.0054 13 72.4 −0.0860 −0.00895 0.0054 14 65.5 −0.0875 −0.00883 0.0042 6 53.6 −0.0961 −0.01126 0.0048 10 41.7 −0.1006 −0.01098 0.0058 5 42.7 −0.1012 −0.01148 0.0052 9 38.7 −0.1055 −0.01248 0.0056 The CelebA-HQ result provides the complementary case to CIFAR-10. On CIFAR-10, patch variances are small ( λk ≪ λ∗∗ for 8 × 8 patches), so the Gaussian baseline predicts no expansion and the empirically observed Regime II crossover is entirely driven by non-Gaussian score corrections; the suppression-corrected formula reduces to the CIFAR-10 case by continuity. On CelebA-HQ with 16 × 16 patches, patch variances far exceed 
+
+λ∗∗ and the Gaussian baseline predicts strong expansion, but the measured directional suppression field is large enough to suppress all patches below the corrected threshold: 
+
+λ∗∗∗ = 500 ≫ λmax = 231 .7. In both cases the suppression-corrected formula of Theorem 27 gives the correct sign prediction for every patch, and the two experiments together span the full range of the theory’s applicability: CIFAR-10 tests the regime where λk < λ ∗∗ and suppression is irrelevant to the sign (though it modifies the magnitude), while CelebA-HQ tests the regime where λk ≫ λ∗∗ and suppression is the only mechanism preventing deff KY > 0. 44 8 Conclusion 
+
+The paper answers how a discrete denoising chain Φ assembles global spatial context early and synthesises local fine detail late, and why self-attention is the natural architectural primitive for this process. The key lies in proving that the DDIM reverse chain is a PIFS whose geometry is governed by three computable quantities derived entirely from the noise schedule and patch covariance spectrum. The contraction threshold L∗ 
+
+> t
+
+sets the minimum score gain required for a contractive step. It depends only on the schedule and carries no dependence on the network or the data. The per-step diagonal expansion function ft(λ) determines when each patch’s own Jacobian block expands. The directional suppression field Sk,t measures how strongly the trained score counteracts that expansion. Together they produce the known two-regime structure. Throughout Regime I the directional suppression field keeps every diagonal block below an expansion threshold, while diffuse attention maintains strong cross-patch coupling. In Regime II attention localises as suppression is released patch by patch in variance order. The Regime I/II transition aligns with the spontaneous symmetry breaking reported by Raya and Ambrogioni (2023). Score-matching training connects to the PIFS structure through an analogue of the Collage Theorem. The denoising objective is, up to timestep reweighing, the diffusion analogue of Barnsley’s collage error. Minimising it not only pulls individual trajectories toward the PIFS fixed point but controls the Wasserstein-1 distance from the prior to that fixed point at a rate proportional to the square root of the excess score risk. The proposed PIFS regulariser enforces the block-max contraction condition (PC) directly during training, provably widening the contraction margin. The attractor dimension is governed by a discrete Moran equation Q 
+
+> t
+
+ft(λ∗∗ ) = 1 . Apatch contributes to sample diversity if and only if its leading variance exceeds λ∗∗ . The suppression-corrected Kaplan-Yorke formula quantifies how the learned score reduces attrac-tor dimension below the Gaussian baseline, and the proportionality between information gain and KY dimension growth links schedule design to diversity control. The PIFS framework leads to the contraction threshold L∗ 
+
+> t
+
+, the per-step diagonal ex-pansion function ft(λ) and the global expansion threshold λ∗∗ which require no model evaluation. They lead to three design criteria, which allow us to explain existing empirical design choices: the Nichol and Dhariwal (2021) cosine offset, the Hoogeboom et al. (2023) resolution shift, Min-SNR weighting (Hang et al., 2023) and the Align Your Steps sched-ule (Sabour et al., 2024). Next to exploring the practical applications of the framework, of course also several theoretical directions remain open. As all results are stated for the deterministic DDIM sample, a first natural question is whether the theory transfers to the stochastic case. We conclude that the power of a self-similar patch structure in natural images, which Barnsley identified in 1988, is also the driving force behind the success of denoising diffusion models. 45 References 
+
+Michael Albergo and Eric Vanden-Eijnden. Building normalizing flows with stochastic interpolants. In ICLR , 2023. Stefan Banach. Sur les op´ erations dans les ensembles abstraits et leur application aux ´equations int´ egrales. Fundamenta Mathematicae , 3:133–181, 1922. Michael F. Barnsley. Fractals Everywhere . Academic Press, 1988. Sitan Chen, Sinho Chewi, Jerry Li, Yuanzhi Li, Adil Salim, and Andrej Risteski. Sampling is as easy as learning the score: theory for diffusion models with minimal assumptions. In International Conference on Learning Representations (ICLR) , 2023. URL https: //openreview.net/forum?id=S89Zrt9p_S .Kenneth J. Falconer. Fractal Geometry: Mathematical Foundations and Applications . Wiley, 1990. Tiankai Hang, Shuyang Gu, Chen Li, Jianmin Bao, Dong Chen, Han Hu, Xin Geng, and Baining Guo. Efficient diffusion training via Min-SNR weighting strategy. In ICCV , 2023. Jonathan Ho, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. In 
+
+Advances in Neural Information Processing Systems , volume 33, pages 6840–6851, 2020. Emiel Hoogeboom, Jonathan Heek, and Tim Salimans. simple diffusion: End-to-end dif-fusion for high resolution images. In Andreas Krause, Emma Brunskill, Kyunghyun Cho, Barbara Engelhardt, Sivan Sabato, and Jonathan Scarlett, editors, Proceedings of the 40th International Conference on Machine Learning , volume 202 of Proceed-ings of Machine Learning Research , pages 13213–13232. PMLR, 23–29 Jul 2023. URL 
+
+https://proceedings.mlr.press/v202/hoogeboom23a.html .John E. Hutchinson. Fractals and self-similarity. Indiana University Mathematics Journal ,30(5):713–747, 1981. Aapo Hyv¨ arinen. Estimation of non-normalized statistical models by score matching. Jour-nal of Machine Learning Research , 6:695–709, 2005. Arnaud E. Jacquin. Image coding based on a fractal theory of iterated contractive image transformations. IEEE Transactions on Image Processing , 1(1):18–30, 1992. James L. Kaplan and James A. Yorke. Chaotic behavior of multidimensional difference equations. In H.-O. Peitgen and H.-O. Walther, editors, Functional Differential Equations and Approximation of Fixed Points , pages 204–227. Springer, Berlin, 1979. Diederik P. Kingma, Tim Salimans, Ben Poole, and Jonathan Ho. Variational diffusion mod-els. In M. Ranzato, A. Beygelzimer, Y. Dauphin, P.S. Liang, and J. Wortman Vaughan, editors, Advances in Neural Information Processing Systems , volume 34, pages 21696– 21707. Curran Associates, Inc., 2021. URL https://proceedings.neurips.cc/paper/ 2021/hash/b57888cd510c2830a35d9d2094600650-Abstract.html .46 Yaron Lipman, Ricky T. Q. Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. In International Conference on Learning Representa-tions , 2023. Xingchao Liu, Chenyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. ICLR , 2023. Alexander Quinn Nichol and Prafulla Dhariwal. Improved denoising diffusion probabilistic models. In International Conference on Machine Learning , pages 8162–8171, 2021. William Peebles and Saining Xie. Scalable diffusion models with transformers. In IEEE International Conference on Computer Vision , pages 4195–4205, 2023. Gabriel Raya and Luca Ambrogioni. Spontaneous symmetry breaking in generative diffusion models. Advances in Neural Information Processing Systems , 2023. Amirmojtaba Sabour, Sanja Fidler, and Karsten Kreis. Align your steps: Optimizing sam-pling schedules in diffusion models. In Proceedings of the 41st International Conference on Machine Learning , volume 235 of Proceedings of Machine Learning Research , pages 42738–42758. PMLR, 2024. URL https://proceedings.mlr.press/v235/sabour24a. html .Jiaming Song, Chenlin Meng, and Stefano Ermon. Denoising diffusion implicit models. In 
+
+International Conference on Learning Representations , 2021a. Yang Song, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-based generative modeling through stochastic differential equations. In International Conference on Learning Representations , 2021b. arXiv:2011.13456. Pascal Vincent. A connection between score matching and denoising autoencoders. Neural Computation , 23(7):1661–1674, 2011. 
+
+Use of AI assistance. During the preparation of this manuscript, the author used a Large Language Model to assist with brainstorming, coding and editing prose for clarity. 47 Appendix A. Extension to Flow Matching 
+
+The patch-local contraction framework extends naturally to flow matching (Lipman et al., 2023; Albergo and Vanden-Eijnden, 2023; Liu et al., 2023). In flow matching, the vector field 
+
+vθ(x, t ) is trained to interpolate between noise and data along straight paths, replacing the noise-schedule parameterisation of DDPM/DDIM. The Euler discretisation of the resulting ODE takes the same form as Φ t with a different coefficient structure, and the fixed point argument carries through under an analogous isotropy property. 
+
+Definition 36 ((PC-FM): Patch Contraction for Flow Matching) The vector field 
+
+vθ : Rn × [0 , 1) → Rn satisfies (PC-FM) at time t if: 1. Jxvθ(x, t ) = − μt(x)/(1 − t)In + Rt(x) for all x ∈ Rn, where μt : Rn → R satisfies 
+
+0 < μ min  
+
+> t
+
+≤ μt(x) ≤ μmax  
+
+> t
+
+;2. ∥Rt(x)∥op ≤ ˜δt uniformly in x;3. μmin  
+
+> t
+
+> ˜δt(1 − t) (ensures ˜κt > 0) and μmax  
+
+> t
+
+< T (1 − t) (ensures the Euler coefficient 
+
+1 − μmax  
+
+> t
+
+/(T (1 − t)) stays non-negative). 
+
+Theorem 37 (Flow Matching Fixed Point Theorem) Suppose (PC-FM) holds at each 
+
+t ∈ { 0, 1 
+
+> T
+
+, . . . , T −1 
+
+> T
+
+}. The Euler step Ψt : Rn → Rn,
+
+Ψt(x) := x + 1 
+
+> T
+
+vθ(x, t ),
+
+is a contraction on (Rn, ∥ · ∥ 2) with factor 
+
+˜κt := 
+
+
+
+1 − μmin 
+
+> t
+
+T (1 − t)
+
+
+
++ ˜δt
+
+T ∈ (0 , 1) . (66) 
+
+The composition Ψ := Ψ (T −1) /T ◦ · · · ◦ Ψ0 : Rn → Rn has a unique fixed point in (Rn, ∥ · ∥ 2)
+
+reached at geometric rate ˜s := Q 
+
+> t
+
+˜κt < 1.
+
+Proof Differentiating Ψ t(x) = x + 1 
+
+> T
+
+vθ(x, t ) and substituting (PC-FM) condition (1): 
+
+JxΨt = I + 1 
+
+> T
+
+Jxvθ =
+
+
+
+1 − μt(x)
+
+T (1 − t)
+
+
+
+In + Rt(x)
+
+T .
+
+The scalar coefficient ct(x) := 1 − μt(x)/(T (1 − t)) satisfies 0 ≤ ct(x) ≤ 1 − μmin  
+
+> t
+
+/(T (1 − t)) by conditions (1) and (3). Applying the triangle inequality: 
+
+∥JxΨt∥op ≤ ct(x) + ˜δt
+
+T ≤ 1 − μmin 
+
+> t
+
+T (1 − t) + ˜δt
+
+T = ˜ κt.
+
+The first part of condition (3) ( μmin  
+
+> t
+
+> ˜δt(1 − t)) gives ˜ κt < 1; combined with ct(x) ≥ 0(from the second part of condition (3)), this gives ˜ κt > 0. We get that ∥Ψt(x) − Ψt(y)∥2 ≤
+
+˜κt∥x − y∥2. Composing over t and applying Theorem 4 completes the proof. Near t = 1, ˜κt → 0, consistent with the sharp convergence of flow matching at the clean-data end. 48 Notation Summary 
+
+Symbol Meaning 
+
+Forward process and schedule 
+
+x0 ∈ Rn Clean image 
+
+xt ∈ Rn Noisy image at timestep t
+
+¯αt Cumulative noise schedule coefficient 
+
+vt = 1 − ¯αt Residual noise variance at step t
+
+SNR t = ¯ αt/v t Signal-to-noise ratio at step t
+
+Denoising operator 
+
+ˆεθ(xt, t ) Learned noise-prediction network 
+
+ε∗
+
+> θ
+
+(xt, t ) = −√vt∇xt log pt True (Bayes-optimal) score ˆx0(xt, t ) Predicted clean image Φt Single-step DDIM operator (4) Φ = Φ 1 ◦ · · · ◦ ΦT Full reverse chain 
+
+bt Score step coefficient (5) ∆t(x) = ˆ εθ(x, t ) − εN 
+
+> θ
+
+(x, t ) Per-step deviation field (28) 
+
+b∆t(x0, ε ) = ˆ εθ(xreal  
+
+> t
+
+, t ) − ˆεθ(xnoise  
+
+> t
+
+, t ) Paired-difference proxy for ∆ t (65) 
+
+Euclidean contraction (EC) 
+
+L∗ 
+
+> t
+
+Contraction threshold, schedule-only (10) 
+
+νt(x), ν min  
+
+> t
+
+Isotropic score coefficient and its infimum (9) 
+
+Rt(x), δ t Jacobian residual and its operator-norm bound (9) 
+
+κt, s Per-step and global (EC) contraction factors (13) 
+
+Rt(xt) Schedule-geometry displacement under true score (22) 
+
+Block-max contraction (PC) 
+
+∥ · ∥ ∞,M Block-max norm max k ∥x(k)∥2 (17) 
+
+Ck,t (x) Score-coupling field |bt| P  
+
+> j̸=k
+
+∥[Jx ˆεθ]kj ∥op (16) 
+
+κdiag  
+
+> t
+
+, δ cross  
+
+> t
+
+Diagonal block norm and cross-patch coupling, (PC) (19) 
+
+κpc  
+
+> t
+
+= κdiag  
+
+> t
+
++ δcross  
+
+> t
+
+Per-step (PC) contraction factor (19) 
+
+sloc = Q 
+
+> t
+
+κpc  
+
+> t
+
+Global (PC) contraction factor 
+
+Regime structure and suppression 
+
+λk = ∥Σk∥op Leading eigenvalue of patch k covariance 
+
+ft(λ) Per-step diagonal expansion function (26) 
+
+λ∗(t) Per-step expansion threshold (27) 
+
+Sk,t (x), γ k,t (x) Directional suppression field and suppression margin (30)–(31) 
+
+trel  
+
+> k
+
+Per-patch release time (33) 49 Attractor geometry 
+
+ℓi Lyapunov exponents of Φ at fixed point (43) Λ( μ) = 1
+
+> T
+
+P 
+
+> t
+
+log ft(μ) Mean log-expansion rate at spectral value μλ∗∗ Global Moran expansion threshold ( Q 
+
+> t
+
+ft(λ∗∗ ) = 1) (45) 
+
+dKY (A) Kaplan-Yorke dimension (44) 
+
+gk,t = ft(λk) − Sk,t (xt) Suppression-corrected diagonal factor, evaluated along xt ∼ q(xt) (48) Λeff ,k = 1
+
+> T
+
+P 
+
+> t
+
+Ext [log gk,t ] Suppression-corrected Lyapunov exponent (49) 
+
+deff KY (A) Suppression-corrected Kaplan-Yorke dimension (50) 
+
+Collage / distributional quantities 
+
+H Hutchinson operator H(A) = S 
+
+> i
+
+wi(A) on compact sets (6) 
+
+dH Hausdorff metric on K(X) (6) 
+
+W1(μ, ν ) Wasserstein-1 distance between probability measures 
+
+W2(μ, ν ) Wasserstein-2 distance between probability measures 50

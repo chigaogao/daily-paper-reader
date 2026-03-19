@@ -6,32 +6,37 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-10 ~ 2026-03-19
-- 运行时间：2026-03-19 01:32:30 UTC
+- 最新运行日期：2026-03-19
+- 运行时间：2026-03-19 19:51:52 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：0
-- 速读区：3
+- 本次总论文数：5
+- 精读区：1
+- 速读区：4
 
 ### 今日简报（AI）
-今日聚焦神经科学与物理学的跨界融合，深入探讨了大规模神经活动建模与精神分裂症的精准医疗方案。
-核心亮点在于利用受限玻尔兹曼机挖掘神经统计结构，以及通过脑电相干性预测迷走神经刺激的临床疗效。
-推荐关注机器学习在生物标志物提取中的应用，以及扩散模型噪声中蕴含的物理奥秘。
-- 详情：[/20260310-20260319/README](/20260310-20260319/README)
+今日深度探索脑机接口与生成效率，重点解析了满分论文 SENSE 如何实现隐私保护下的高效脑电转文本。
+核心结论指出语义检索能显著提升 EEG 解码精度，同时 Transformer 的神经科学关联与扩散模型加速技术也迎来新进展。
+建议优先研读 SENSE 框架，了解脑电信号与自然语言跨模态对齐的最前沿隐私保护方案。
+- 详情：[/202603/19/README](/202603/19/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [SENSE: Efficient EEG-to-Text via Privacy-Preserving Semantic Retrieval](/202603/19/2603.17109v1-sense-efficient-eeg-to-text-via-privacy-preserving-semantic-retrieval)  
+   标签：评分：10.0/10、query:eeg-ai
+   evidence：利用语义检索和LLM将非侵入性EEG翻译为文本
 
 ### 速读区论文标签
-1. [Uncovering statistical structure in large-scale neural activity with Restricted Boltzmann Machines](/20260310-20260319/2603.11032v1-uncovering-statistical-structure-in-large-scale-neural-activity-with-restricted-boltzmann-machines)  
+1. [The Neuroscience of Transformers](/202603/19/2603.15339v1-the-neuroscience-of-transformers)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：大规模神经活动建模
-2. [Fronto-parietal and fronto-temporal EEG coherence as predictive neuromarkers of transcutaneous auricular vagus nerve stimulation response in treatment-resistant schizophrenia: A machine learning study](/20260310-20260319/2603.13850v1-fronto-parietal-and-fronto-temporal-eeg-coherence-as-predictive-neuromarkers-of-transcutaneous-auricular-vagus-nerve-stimulation-response-in-treatment-resistant-schizophrenia-a-machine-learning-study)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：基于 EEG 的机器学习模型用于临床反应预测
-3. [Seeking Physics in Diffusion Noise](/20260310-20260319/2603.14294v1-seeking-physics-in-diffusion-noise)  
+   evidence：将Transformer操作映射到皮层特征
+2. [Just-in-Time: Training-Free Spatial Acceleration for Diffusion Transformers](/202603/19/2603.10744v1-just-in-time-training-free-spatial-acceleration-for-diffusion-transformers)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：探测扩散Transformer中的表示
+   evidence：扩散Transformer的空间加速技术
+3. [Fractals made Practical: Denoising Diffusion as Partitioned Iterated Function Systems](/202603/19/2603.13069v1-fractals-made-practical-denoising-diffusion-as-partitioned-iterated-function-systems)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：去噪扩散模型动力学的理论框架
+4. [The Phasor Transformer: Resolving Attention Bottlenecks on the Unit Circle](/202603/19/2603.17433v1-the-phasor-transformer-resolving-attention-bottlenecks-on-the-unit-circle)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：用于长上下文序列的高效Transformer
 
 
 <div class="dpr-home-promo-card">

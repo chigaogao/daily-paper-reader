@@ -1,0 +1,200 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-19T19:49:09.736156+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2603.17109v1",
+      "title": "SENSE: Efficient EEG-to-Text via Privacy-Preserving Semantic Retrieval",
+      "abstract": "Decoding brain activity into natural language is a major challenge in AI with important applications in assistive communication, neurotechnology, and human-computer interaction. Most existing Brain-Computer Interface (BCI) approaches rely on memory-intensive fine-tuning of Large Language Models (LLMs) or encoder-decoder models on raw EEG signals, resulting in expensive training pipelines, limited accessibility, and potential exposure of sensitive neural data. We introduce SENSE (SEmantic Neural Sparse Extraction), a lightweight and privacy-preserving framework that translates non-invasive electroencephalography (EEG) into text without LLM fine-tuning. SENSE decouples decoding into two stages: on-device semantic retrieval and prompt-based language generation. EEG signals are locally mapped to a discrete textual space to extract a non-sensitive Bag-of-Words (BoW), which conditions an off-the-shelf LLM to synthesize fluent text in a zero-shot manner. The EEG-to-keyword module contains only ~6M parameters and runs fully on-device, ensuring raw neural signals remain local while only abstract semantic cues interact with language models. Evaluated on a 128-channel EEG dataset across six subjects, SENSE matches or surpasses the generative quality of fully fine-tuned baselines such as Thought2Text while substantially reducing computational overhead. By localizing neural decoding and sharing only derived textual cues, SENSE provides a scalable and privacy-aware retrieval-augmented architecture for next-generation BCIs.",
+      "authors": [
+        "Akshaj Murhekar",
+        "Christina Liu",
+        "Abhijit Mishra",
+        "Shounak Roychowdhury",
+        "Jacek Gwizdka"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-17T19:59:41+00:00",
+      "link": "https://arxiv.org/pdf/2603.17109v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Translates non-invasive EEG into text using semantic retrieval and LLMs",
+      "llm_evidence_cn": "利用语义检索和LLM将非侵入性EEG翻译为文本",
+      "llm_evidence": "利用语义检索和LLM将非侵入性EEG翻译为文本",
+      "canonical_evidence": "利用语义检索和LLM将非侵入性EEG翻译为文本",
+      "llm_tldr_en": "A lightweight framework for EEG-to-text decoding using semantic retrieval without intensive LLM fine-tuning.",
+      "llm_tldr_cn": "一种轻量级EEG转文本框架，通过语义检索实现解码而无需大规模微调。",
+      "llm_tldr": "一种轻量级EEG转文本框架，通过语义检索实现解码而无需大规模微调。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "AI generated content from brain activity and EEG",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.15339v1",
+      "title": "The Neuroscience of Transformers",
+      "abstract": "Neuroscience has long informed the development of artificial neural networks, but the success of modern architectures invites, in turn, the converse: can modern networks teach us lessons about brain function? Here, we examine the structure of the cortical column and propose that the transformer provides a natural computational analogy for multiple elements of cortical microcircuit organization. Rather than claiming a literal implementation of transformer equations in cortex, we develop a hypothetical mapping between transformer operations and laminar cortical features, using the analogy as an orienting framework for analysis and discussion. This mapping allows us to examine in greater depth how contextual selection, content routing, recurrent integration, and interlaminar transformations may be distributed across cortical circuitry. In doing so, we generate a broad set of predictions and experimentally testable hypotheses concerning laminar specialization, contextual modulation, dendritic integration, oscillatory coordination, and the effective connectivity of cortical columns. This proposal is intended as a structured hypothesis rather than a definitive account of cortical computation. Placing transformer operations and cortical architectonics into a common descriptive framework sharpens questions, reveals new functional correspondences, and opens a productive route for reciprocal exchange between systems neuroscience and modern AI. More broadly, this perspective suggests that comparing brains and architectures at the level of computational organization can yield genuine insight into both.",
+      "authors": [
+        "Peter Koenig",
+        "Mario Negrello"
+      ],
+      "primary_category": "q-bio.NC",
+      "categories": [
+        "q-bio.NC",
+        "q-bio.SC",
+        "q-bio.TO"
+      ],
+      "published": "2026-03-16T14:27:39+00:00",
+      "link": "https://arxiv.org/pdf/2603.15339v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Mapping transformer operations to cortical features",
+      "llm_evidence_cn": "将Transformer操作映射到皮层特征",
+      "llm_evidence": "将Transformer操作映射到皮层特征",
+      "canonical_evidence": "将Transformer操作映射到皮层特征",
+      "llm_tldr_en": "Explores the computational analogy between transformer architectures and the organization of the brain's cortex.",
+      "llm_tldr_cn": "探讨了Transformer架构与大脑皮层组织之间的计算类比关系。",
+      "llm_tldr": "探讨了Transformer架构与大脑皮层组织之间的计算类比关系。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.10744v1",
+      "title": "Just-in-Time: Training-Free Spatial Acceleration for Diffusion Transformers",
+      "abstract": "Diffusion Transformers have established a new state-of-the-art in image synthesis, but the high computational cost of iterative sampling severely hampers their practical deployment. While existing acceleration methods often focus on the temporal domain, they overlook the substantial spatial redundancy inherent in the generative process, where global structures emerge long before fine-grained details are formed. The uniform computational treatment of all spatial regions represents a critical inefficiency. In this paper, we introduce Just-in-Time (JiT), a novel training-free framework that addresses this challenge by acceleration in the spatial domain. JiT formulates a spatially approximated generative ordinary differential equation (ODE) that drives the full latent state evolution based on computations from a dynamically selected, sparse subset of anchor tokens. To ensure seamless transitions as new tokens are incorporated to expand the dimensions of the latent state, we propose a deterministic micro-flow, a simple and effective finite-time ODE that maintains both structural coherence and statistical correctness. Extensive experiments on the state-of-the-art FLUX.1-dev model demonstrate that JiT achieves up to a 7x speedup with nearly lossless performance, significantly outperforming existing acceleration methods and establishing a new and superior trade-off between inference speed and generation fidelity.",
+      "authors": [
+        "Wenhao Sun",
+        "Ji Li",
+        "Zhaoqiang Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-11T13:16:41+00:00",
+      "link": "https://arxiv.org/pdf/2603.10744v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Spatial acceleration for Diffusion Transformers",
+      "llm_evidence_cn": "扩散Transformer的空间加速技术",
+      "llm_evidence": "扩散Transformer的空间加速技术",
+      "canonical_evidence": "扩散Transformer的空间加速技术",
+      "llm_tldr_en": "Introduces a training-free framework to accelerate Diffusion Transformers by exploiting spatial redundancy.",
+      "llm_tldr_cn": "引入一种无需训练的框架，通过利用空间冗余来加速扩散Transformer的采样。",
+      "llm_tldr": "引入一种无需训练的框架，通过利用空间冗余来加速扩散Transformer的采样。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.13069v1",
+      "title": "Fractals made Practical: Denoising Diffusion as Partitioned Iterated Function Systems",
+      "abstract": "What is a diffusion model actually doing when it turns noise into a photograph?   We show that the deterministic DDIM reverse chain operates as a Partitioned Iterated Function System (PIFS) and that this framework serves as a unified design language for denoising diffusion model schedules, architectures, and training objectives. From the PIFS structure we derive three computable geometric quantities: a per-step contraction threshold $L^*_t$, a diagonal expansion function $f_t(λ)$ and a global expansion threshold $λ^{**}$. These quantities require no model evaluation and fully characterize the denoising dynamics. They structurally explain the two-regime behavior of diffusion models: global context assembly at high noise via diffuse cross-patch attention and fine-detail synthesis at low noise via patch-by-patch suppression release in strict variance order. Self-attention emerges as the natural primitive for PIFS contraction. The Kaplan-Yorke dimension of the PIFS attractor is determined analytically through a discrete Moran equation on the Lyapunov spectrum.   Through the study of the fractal geometry of the PIFS, we derive three optimal design criteria and show that four prominent empirical design choices (the cosine schedule offset, resolution-dependent logSNR shift, Min-SNR loss weighting, and Align Your Steps sampling) each arise as approximate solutions to our explicit geometric optimization problems tuning theory into practice.",
+      "authors": [
+        "Ann Dooms"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CV",
+        "cs.IT",
+        "math.DS"
+      ],
+      "published": "2026-03-13T15:15:50+00:00",
+      "link": "https://arxiv.org/pdf/2603.13069v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical framework for denoising diffusion model dynamics",
+      "llm_evidence_cn": "去噪扩散模型动力学的理论框架",
+      "llm_evidence": "去噪扩散模型动力学的理论框架",
+      "canonical_evidence": "去噪扩散模型动力学的理论框架",
+      "llm_tldr_en": "Provides a unified geometric language to explain the behavior and schedules of denoising diffusion models.",
+      "llm_tldr_cn": "提供统一的几何语言来解释去噪扩散模型的行为和调度机制。",
+      "llm_tldr": "提供统一的几何语言来解释去噪扩散模型的行为和调度机制。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.17433v1",
+      "title": "The Phasor Transformer: Resolving Attention Bottlenecks on the Unit Circle",
+      "abstract": "Transformer models have redefined sequence learning, yet dot-product self-attention introduces a quadratic token-mixing bottleneck for long-context time-series. We introduce the \\textbf{Phasor Transformer} block, a phase-native alternative representing sequence states on the unit-circle manifold $S^1$. Each block combines lightweight trainable phase-shifts with parameter-free Discrete Fourier Transform (DFT) token coupling, achieving global $\\mathcal{O}(N\\log N)$ mixing without explicit attention maps. Stacking these blocks defines the \\textbf{Large Phasor Model (LPM)}. We validate LPM on autoregressive time-series prediction over synthetic multi-frequency benchmarks. Operating with a highly compact parameter budget, LPM learns stable global dynamics and achieves competitive forecasting behavior compared to conventional self-attention baselines. Our results establish an explicit efficiency-performance frontier, demonstrating that large-model scaling for time-series can emerge from geometry-constrained phase computation with deterministic global coupling, offering a practical path toward scalable temporal modeling in oscillatory domains.",
+      "authors": [
+        "Dibakar Sigdel"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-03-18T07:18:41+00:00",
+      "link": "https://arxiv.org/pdf/2603.17433v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "efficient transformer for long-context time-series",
+      "llm_evidence_cn": "用于长上下文序列的高效Transformer",
+      "llm_evidence": "用于长上下文序列的高效Transformer",
+      "canonical_evidence": "用于长上下文序列的高效Transformer",
+      "llm_tldr_en": "Introduces Phasor Transformer for efficient long-context time-series, useful for large-scale EEG modeling.",
+      "llm_tldr_cn": "提出Phasor Transformer解决长序列建模瓶颈，可用于大规模脑电时间序列建模。",
+      "llm_tldr": "提出Phasor Transformer解决长序列建模瓶颈，可用于大规模脑电时间序列建模。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
