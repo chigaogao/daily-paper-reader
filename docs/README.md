@@ -6,56 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-18
-- 运行时间：2026-03-18 20:06:41 UTC
+- 最新运行日期：2026-03-10 ~ 2026-03-19
+- 运行时间：2026-03-19 01:32:30 UTC
 - 运行状态：成功
-- 本次总论文数：11
+- 本次总论文数：3
 - 精读区：0
-- 速读区：11
+- 速读区：3
 
 ### 今日简报（AI）
-今日速览 11 篇前沿论文，深度聚焦全脑神经活动统一建模与脑控康复外骨骼的实时解码技术。
-重点关注跨个体全脑建模的概率合成方法，以及利用扩散模型解决多模态医学影像缺失的临床方案。
-建议关注 AI 如何通过概率合成与实时交互技术，推动精准医疗与神经康复设备的智能化升级。
-- 详情：[/202603/18/README](/202603/18/README)
+今日聚焦神经科学与物理学的跨界融合，深入探讨了大规模神经活动建模与精神分裂症的精准医疗方案。
+核心亮点在于利用受限玻尔兹曼机挖掘神经统计结构，以及通过脑电相干性预测迷走神经刺激的临床疗效。
+推荐关注机器学习在生物标志物提取中的应用，以及扩散模型噪声中蕴含的物理奥秘。
+- 详情：[/20260310-20260319/README](/20260310-20260319/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Deep probabilistic model synthesis enables unified modeling of whole-brain neural activity across individual subjects](/202603/18/2603.14161v1-deep-probabilistic-model-synthesis-enables-unified-modeling-of-whole-brain-neural-activity-across-individual-subjects)  
+1. [Uncovering statistical structure in large-scale neural activity with Restricted Boltzmann Machines](/20260310-20260319/2603.11032v1-uncovering-statistical-structure-in-large-scale-neural-activity-with-restricted-boltzmann-machines)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：跨受试者全脑神经活动的概率建模
-2. [Real-Time Decoding of Movement Onset and Offset for Brain-Controlled Rehabilitation Exoskeleton](/202603/18/2603.16825v1-real-time-decoding-of-movement-onset-and-offset-for-brain-controlled-rehabilitation-exoskeleton)  
+   evidence：大规模神经活动建模
+2. [Fronto-parietal and fronto-temporal EEG coherence as predictive neuromarkers of transcutaneous auricular vagus nerve stimulation response in treatment-resistant schizophrenia: A machine learning study](/20260310-20260319/2603.13850v1-fronto-parietal-and-fronto-temporal-eeg-coherence-as-predictive-neuromarkers-of-transcutaneous-auricular-vagus-nerve-stimulation-response-in-treatment-resistant-schizophrenia-a-machine-learning-study)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：用于外骨骼控制的非侵入性脑电图运动想象实时解码
-3. [Adaptive Clinical-Aware Latent Diffusion for Multimodal Brain Image Generation and Missing Modality Imputation](/202603/18/2603.09931v1-adaptive-clinical-aware-latent-diffusion-for-multimodal-brain-image-generation-and-missing-modality-imputation)  
+   evidence：基于 EEG 的机器学习模型用于临床反应预测
+3. [Seeking Physics in Diffusion Noise](/20260310-20260319/2603.14294v1-seeking-physics-in-diffusion-noise)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：用于脑图像生成和多模态合成的潜扩散模型
-4. [A Platform-Agnostic Multimodal Digital Human Modelling Framework: Neurophysiological Sensing in Game-Based Interaction](/202603/18/2603.10680v1-a-platform-agnostic-multimodal-digital-human-modelling-framework-neurophysiological-sensing-in-game-based-interaction)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：集成脑电图用于AI数字人建模的多模态传感框架
-5. [Adaptive Diffusion Posterior Sampling for Data and Model Fusion of Complex Nonlinear Dynamical Systems](/202603/18/2603.12635v1-adaptive-diffusion-posterior-sampling-for-data-and-model-fusion-of-complex-nonlinear-dynamical-systems)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：用于复杂非线性动力系统的扩散模型
-6. [Accelerating Stroke MRI with Diffusion Probabilistic Models through Large-Scale Pre-training and Target-Specific Fine-Tuning](/202603/18/2603.13007v1-accelerating-stroke-mri-with-diffusion-probabilistic-models-through-large-scale-pre-training-and-target-specific-fine-tuning)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：针对脑部MRI的大规模预训练扩散模型
-7. [Improving Channel Estimation via Multimodal Diffusion Models with Flow Matching](/202603/18/2603.13440v1-improving-channel-estimation-via-multimodal-diffusion-models-with-flow-matching)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：结合流匹配和DiT主干的多模态扩散模型
-8. [PDE-SSM: A Spectral State Space Approach to Spatial Mixing in Diffusion Transformers](/202603/18/2603.13663v1-pde-ssm-a-spectral-state-space-approach-to-spatial-mixing-in-diffusion-transformers)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：用于生成建模的光谱状态空间扩散Transformer
-9. [MorphSNN: Adaptive Graph Diffusion and Structural Plasticity for Spiking Neural Networks](/202603/18/2603.14285v1-morphsnn-adaptive-graph-diffusion-and-structural-plasticity-for-spiking-neural-networks)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：脉冲神经网络中的图扩散机制模拟类脑交互
-10. [BCMI-Driven Motion Control Detection: EEG-Based Machine Learning and Interaction Entropy for High-Order Brain Networks](/202603/18/2603.15208v1-bcmi-driven-motion-control-detection-eeg-based-machine-learning-and-interaction-entropy-for-high-order-brain-networks)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：基于脑电图的机器学习用于脑网络协调
-11. [Adaptive Moments are Surprisingly Effective for Plug-and-Play Diffusion Sampling](/202603/18/2603.16797v1-adaptive-moments-are-surprisingly-effective-for-plug-and-play-diffusion-sampling)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：用于稳定引导扩散采样的自适应矩估计
+   evidence：探测扩散Transformer中的表示
 
 
 <div class="dpr-home-promo-card">
