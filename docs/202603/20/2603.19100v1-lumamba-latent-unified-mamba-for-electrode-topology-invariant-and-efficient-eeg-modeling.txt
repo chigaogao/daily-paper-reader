@@ -1,0 +1,310 @@
+Title: LuMamba: Latent Unified Mamba for Electrode Topology-Invariant and Efficient EEG Modeling
+
+URL Source: https://arxiv.org/pdf/2603.19100v1
+
+Published Time: Fri, 20 Mar 2026 01:27:57 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+# LuMamba: Latent Unified Mamba for Electrode Topology-Invariant and Efficient EEG Modeling 
+
+Dana´ e Broustail ∗, Anna Tegon ∗, Thorir Mar Ingolfsson ∗, Yawei Li ∗, Luca Benini ∗† ∗Integrated Systems Laboratory, ETH Z¨ urich, Z¨ urich, Switzerland 
+
+†DEI, University of Bologna, Bologna, Italy 
+
+Abstract —Electroencephalography (EEG) enables non-invasive monitoring of brain activity across clinical and neurotechnology applications, yet building foundation models for EEG remains challenging due to differing electrode topologies and computa-tional scalability , as Transformer architectures incur quadratic sequence complexity. As a joint solution, we propose LuMamba (Latent Unified Mamba), a self-supervised framework combining topology-invariant encodings with linear-complexity state-space modeling, using LUNA’s learned-query cross-attention mecha-nism for channel unification [1], and FEMBA’s bidirectional Mamba blocks for efficient temporal modeling [2]. Within this architecture, we provide the first systematic investigation of the Latent-Euclidean Joint-Embedding Predictive Architecture (LeJEPA) for biosignal learning. Pre-trained on over 21,000 hours of unlabeled EEG from the TUEG corpus, LuMamba is evaluated on five downstream tasks spanning abnormality detection, artifact recognition, and mental condition classification across electrode configurations ranging from 16 to 26 channels. In the pre-training objective, masked reconstruction alone yields structured but less generalizable representations, while LeJEPA alone produces diffuse embeddings; combining both objectives achieves the most robust performance. With only 4.6M parame-ters, LuMamba attains 80.99% balanced accuracy on TUAB and achieves state-of-art performance on Alzheimer’s detection (0.97 AUPR), while requiring 377 × fewer FLOPS than state-of-art models at equivalent sequence lengths and scaling to 12 × longer sequences before reaching typical GPU memory limits. Code is available at https://github.com/pulp-bio/biofoundation 
+
+Index Terms —EEG, foundation models, state-space models, self-supervised learning, LeJEPA 
+
+I. I NTRODUCTION 
+
+Electroencephalography (EEG) provides non-invasive ac-cess to brain activity and plays a central role in clinical diagnostics, cognitive neuroscience, and brain–computer in-terfaces. The emergence of foundation models has trans-formed EEG analysis, enabling Self-Supervised Learning (SSL) on large unlabeled corpora followed by task-specific fine-tuning [3]–[5]. While Transformer-based approaches have dominated this space [6], [7], their quadratic complexity in sequence length poses challenges for long EEG recordings and resource-constrained deployment [1], [2]. State Space Models (SSMs), particularly Mamba [8], offer a compelling alternative: FEMBA [2] demonstrates that bidirectional SSMs can match Transformer performance on clinical benchmarks while reducing computational cost by up to 3.5×.
+
+Corresponding email: {ategon,thoriri }@iis.ee.ethz.ch 
+
+However, a fundamental bottleneck persists: topological het-erogeneity . Electrode count and placement vary widely across EEG datasets, causing pronounced performance degradation during cross-montage transfer. That is, models can lose 2-6% when evaluated on unseen electrode configurations [1], while approaches that retain only shared electrodes discard substantial portions of available data [6]. LUNA [1] addresses this via learned-query cross-attention, projecting electrode layouts into a fixed latent space, albeit at the cost of a computationally intensive Transformer encoder. Whether such topology-invariant encoding remains effective when combined with efficient SSM backbones is an open question. A further gap lies in the pre-training objective itself. Cur-rent EEG foundation models predominantly rely on masked reconstruction [1], [2], [4] or contrastive learning [3], yet the optimal strategy for SSM architectures remains unclear. Recently, Latent-Euclidean Joint-Embedding Predictive Archi-tecture (LeJEPA) [9] emerged as a theoretically grounded alternative that regularizes embeddings toward an isotropic Gaussian distribution while aligning local and global views, but it has not yet been applied to biosignal time series. To address these gaps, we introduce LuMamba (Latent 
+
+Unified Mamba ), a self-supervised framework that uni-fies topology-invariant encoding with linear-complexity state-space modeling. LuMamba fuses LUNA’s channel-unifying cross-attention with FEMBA’s efficient bidirectional Mamba (bi-Mamba) blocks, enabling—for the first time—evaluation of SSM architectures across heterogeneous electrode configu-rations. Within this framework, we systematically investigate the interplay between LeJEPA and masked reconstruction. Our experiments reveal that while LeJEPA alone produces embeddings with poor clustering structure, and reconstruction alone yields well-structured embeddings with lower cross-montage robustness, combining both objectives achieves the best of both worlds: strong downstream performance and 
+
+improved generalization to unseen electrode configurations. Our contributions are the following:  
+
+> •
+
+Topology-Invariant SSM for EEG: We introduce 
+
+LuMamba , a fused architecture combining FEMBA’s bi-Mamba backbone with LUNA’s channel-unifying cross-attention, enabling topology-invariant EEG modeling across heterogeneous montages (16–26 channels).  
+
+> •
+
+First Adaptation of LeJEPA to Biosignals: We adapt the LeJEPA framework to EEG time series via temporal 
+
+> arXiv:2603.19100v1 [cs.AI] 19 Mar 2026
+
+global/local view extraction, and characterize its interac-tion with masked reconstruction pre-training.  
+
+> •
+
+SSL Objective Trade-offs: We compare reconstruction-only, LeJEPA-only, and mixed pre-training objectives, revealing a trade-off between latent structure compactness and downstream generalization, especially under distri-bution shifts and unseen electrode configurations. On Alzheimer’s disease (AD) detection, the mixed objective improves Area Under the Precision-Recall (AUPR) by over 20% compared to reconstruction alone.  
+
+> •
+
+Efficiency and Scalability: With only 4.6M parameters, LuMamba requires 26 × fewer Floating-point Opera-tions Per Second (FLOPS) than LUNA and 377 × fewer 
+
+than LaBraM at equivalent sequence lengths, scaling to 
+
+12 × longer sequences before reaching memory limits. II. B ACKGROUND 
+
+Foundation Models for EEG: Foundation models have achieved remarkable success in natural language processing (NLP) and computer vision [10], motivating their application to EEG analysis. Early approaches such as BENDR [3] intro-duced contrastive SSL for large-scale EEG data, while subse-quent works refined masked modeling strategies. In particular, LaBraM [4] and EEGFormer [7] learn representations by predicting masked patches, and BIOT [5] extends these ideas to cross-dataset learning. Such EEG foundation models rely on Transformer-based architectures, motivating the exploration of more computationally efficient alternatives such as SSMs [2]. 
+
+SSMs and Mamba for EEG: SSMs model sequence dynamics through latent state evolution governed by lin-ear dynamical systems, enabling efficient long-range tempo-ral modeling. Mamba [8] introduced input-dependent selec-tion mechanisms that provide content-aware processing while maintaining linear-time complexity. For EEG signals, bidirec-tional variants are particularly important, as bidirectional token interactions enable richer contextual modeling of transient and non-stationary patterns [11]. Bi-Mamba+ [12] combines forward and backward processing through gated fusion, and FEMBA [2] demonstrated that bi-Mamba blocks can match Transformer performance on clinical EEG benchmarks while achieving up to 3.5× lower computational cost. 
+
+Topology-Invariant Encoding: EEG datasets exhibit topo-logical heterogeneity: electrode counts range from 20 (clin-ical bipolar) to 256 (research high-density), and montage conventions vary across institutions. Naive approaches either train separate models per configuration or retain shared elec-trodes, discarding substantial data. Several strategies address this challenge. Joint spatio-temporal attention in LaBraM [4] flattens channel and patch dimensions, incurring O(( S · C)2)
+
+complexity. LUNA [1] addresses this via learned queries and cross-attention that project electrode sets into a fixed latent space, achieving linear-in-channels complexity while preserv-ing spatial information through 3D coordinate encodings. 
+
+SSL Pre-training Objectives: Current EEG foundation models primarily rely on masked reconstruction, where ran-dom input patches are masked for the model to reconstruct them [1], [2], [4]. Recently, LeJEPA [9] emerged as an alter-native that promotes well-conditioned embedding distributions through (1) the Sketched Isotropic Gaussian Regularization (SIGReg), which regularizes embeddings toward an isotropic Gaussian target using the Epps–Pulley statistical test [13] on random 1D projections, and (2) a Joint-Embedding Predictive Architecture (JEPA) predictive loss aligning local and global views of the input. Unlike prior approaches based on teacher– student schemes or exponential moving averages, LeJEPA relies on a small set of hyperparameters, including the regular-ization scaling factor λ and the number of SIGReg projection slices. While effective on image and video data, its application to biosignal time series remains unexplored. 
+
+LuMamba combines LUNA’s topology-invariant encoding with FEMBA’s efficient bi-Mamba blocks, and provides the first adaptation of LeJEPA to EEG. We show that LeJEPA’s distributional regularization, together with reconstruction-based pre-training, yield complementary benefits: reconstruc-tion promotes structured latent spaces, while LeJEPA improves cross-montage generalization. III. M ETHODOLOGY 
+
+A. Dataset 
+
+We pretrain on the Temple University Hospital EEG (TUEG) corpus, comprising approximately 21 ,600 hours of recordings from more than 14 ,000 patients, recorded using the 10 –20 system with 20 –22 channels [14]. Downstream experiments rely on task-specific subsets from the Temple Uni-versity Hospital (TUH) family. TUH Abnormal EEG Corpus (TUAB) addresses normal/abnormal classification ( 2,329 sub-jects). TUH EEG Artifact Corpus (TUAR) targets multi-class artifact detection ( 213 subjects), following task defini-tions in [1], [2]. TUH EEG Slowing Corpus (TUSL) (38 
+
+patients) covers the classification of slowing events, seizures, complex background, and normal EEG activity [14]. Motivated by recent work on biosignal SSMs [11], we consider two disease-specific datasets: APAVA [15] for AD detection ( 23 patients; 16 channels) and TDBrain [16] for Parkinson’s disease (PD) detection ( 72 patients; 26 channels), both involving binary classification. 
+
+B. Preprocessing 
+
+We apply a preprocessing pipeline across all pre-training and fine-tuning datasets. Signals are bandpass-filtered between 
+
+0.1 and 75 Hz and notch-filtered at 50 Hz, resampled to 
+
+256 Hz, and segmented into non-overlapping 5-s windows. For the TDBrain PD subset, a 1.25 -s window is used to match the baseline preprocessing [11]. 
+
+C. Model Architecture 
+
+Our architecture balances performance and efficiency with a compact footprint of 4.1 million parameters, structured into four primary components as in Figure 1. 
+
+Encoder (LUNA [1]): The input x ∈ RB×C×T is tokenized into S = T /P patches of length P . Each patch is projected into RE by fusing 1D-convolutional temporal LUNA      
+
+> Embedder
+> LUNA Channel Unifier
+> Cross -attention with Q
+> queries
+> T
+> C
+> Input Signal
+> S
+> C
+> E
+> LUN A
+> Decoder
+> Masked Embeddings
+> 𝑁 !"#$! local
+> and
+> 𝑁 %!"&$! global
+> views
+
+Fine -tuning   
+
+> Classification tas k
+> Patching & Masking
+> S
+> S
+> Q
+> E
+
+LeJEPA Loss     
+
+> Similarity Prediction Loss
+> 1. Projection onto slices:
+> 2. Error of projected point
+> densities to Gaussian
+> Global Embeddings (×𝑁 !"#$%" )For each local embedding:
+> Loss
+
++
+
+> erro r
+
+<     
+
+> 0-44
+> Projection axis 𝑆 !"#$!
+> ⋅&
+> Mean pool
+> ⋅&
+> Mean pool
+> SIGReg
+> Un -masked
+> Embeddings
+
+Labeled t-SNE embeddings         
+
+>   
+> 
+> 
+> 
+> 
+> 
+>   
+>   
+> 
+> 
+> 
+> 
+>   
+
+Masked Reconstruction Loss           
+
+> LeJEPA -reconstruction
+> Reconstruction
+> Masked patc h
+> Original signal
+> Reconstruction -only Reconstruction -only
+> LeJEPA -only
+> Chewing artifact
+> Muscle movement Eye movement
+> Electrode artifact Shivering
+> Normal
+> Alzheimer’s disease
+> Healthy control
+> LeJEPA -reconstruction
+> TUAR APAVA
+> Local and
+> Global
+> Embeddings Local Embeddings (×𝑁 "#'%" )
+> FEMBA Encoder
+> Bi -Mamba Block
+> 𝑆 %!"&$!
+
+Fig. 1: Overview of the LuMamba architecture. T-distributed Stochastic Neighbor Embedding (t-SNE) of TUAR and APAVA embeddings compare reconstruction-only, LeJEPA-reconstruction, and LeJEPA-only strategies at the end of pre-training. features, Fast Fourier Transform (FFT)-based spectral features, and 3D electrode positional encodings, yielding a tensor 
+
+Xtok ∈ R(B·S)×C×E .
+
+Channel Unification (LUNA [1]): We apply a cross-attention module where Q learnable queries attend to the channel dimension C. This produces a montage-robust latent representation Xlat ∈ R(B·S)×Q×E , decoupling the encoder’s internal dimensionality from the input electrode configuration. 
+
+Temporal Modeling (FEMBA [2]): Xlat is reshaped to 
+
+B ×S ×(Q·E) and processed by two bi-Mamba blocks. These blocks leverage SSMs to capture bidirectional dependencies. 
+
+Decoder and Classifier (LUNA [1]): For pre-training, a cross-attention decoder maps Xlat back to the original channel space using C learnable queries. For fine-tuning, the decoder is replaced by a classification head. 
+
+D. Self-supervised Pre-training 
+
+We investigate whether self-supervised learning for EEG can go beyond the masked reconstruction paradigm. To this end, we adapt LeJEPA [9], originally proposed for images, to EEG signals. LeJEPA aligns local and global views while regularizing the latent space toward an isotropic distribution, which can reduce sensitivity to classifier variability. We evalu-ate whether this distribution-regularized objective yields more informative representations than reconstruction alone by pre-training LuMamba with masked reconstruction, LeJEPA, and their combination. 
+
+1) Masked reconstruction: Following [1], [2], a 60% subset of the input patches is randomly masked. The encoder is trained to extract meaningful EEG representations that enable reconstruction of the missing patches from the visible context. 
+
+2) LeJEPA: LeJEPA exploits two components:  
+
+> •
+
+SIGReg , which regularizes latent embeddings toward an isotropic Gaussian distribution.  
+
+> •
+
+A JEPA predictive loss , which aligns local views of an input with global views containing a wider input context. Inspired by the original LeJEPA view construction from cropped image patches, we adapt this idea to the temporal domain by forming local and global views through random temporal windows extracted from the input signal. Given x ∈ RB×C×T , we sample Nglobal global and Nlocal 
+
+local temporal windows of sizes Tglobal and Tlocal , where 
+
+Tglobal > T local . In our setup, Nglobal = 2 and Nlocal = 4 .We embed xlocal and xglobal with the LuMamba encoder, obtaining, after sequence flattening, embeddings of shapes 
+
+vlocal ∈ RNlocal ×B×(Q·E) and vglobal ∈ RNglobal ×B×(Q·E).The JEPA predictive loss is then given by: 
+
+1
+
+Nlocal 
+
+> Nlocal
+
+X
+
+> i=1
+
+∥μglobal − vlocal ,i ∥22, μglobal = 1
+
+Nglobal 
+
+> Nglobal
+
+X
+
+> j=1
+
+vglobal ,j .
+
+Finally, SIGReg projects local and global embeddings into a lower-dimensional space defined by a number of projection slices. On each projected dimension, the Epps–Pulley test [13] measures the discrepancy between the Empirical Characteristic Function (ECF) of the embeddings and the Characteristic Function (CF) of an isotropic Gaussian target distribution, acting as a regularizer for the similarity objective. 
+
+E. Fine-Tuning 1) Classifier Architectures: After pre-training, the decoder is replaced with a lightweight Mamba-based classification TABLE I: LuMamba pre-training strategy comparison on TUH tasks and mental condition tasks TDBrain and APAVA, evaluating Balanced Accuracy (Bal. Acc), Area Under the Receiver Operating Characteristic (AUROC), and AUPR.                                                                                                                   
+
+> Pre-training strategy TUAB TUAR TUSL TDBrain APAVA
+> Bal. Acc (%) AUROC AUPR AUROC AUPR AUROC AUPR AUROC AUPR AUROC AUPR Reconstruction-only 80.36 ±00.39 0.878 ±0.005 0.872 ±0.007 0.914 ±0.007 0.510 ±0.020 0.708 ±0.036 0.289 ±0.013 0.961 ±0.003 0.958 ±0.004 0.714 ±0.261 0.765 ±0.209 LeJEPA-only 80.02 ±0.50 0.875 ±0.004 0.882 ±0.004 0.891 ±0.006 0.502 ±0.009 0.540 ±0.038 0.261 ±0.014 0.930 ±0.033 0.938 ±0.015 0.816 ±0.102 0.819 ±0.109 LeJEPA-reconstruction 80.99 ±0.22 0.883 ±0.004 0.892 ±0.003 0.896 ±0.020 0.490 ±0.023 0.660 ±0.053 0.272 ±0.011 0.961 ±0.006 0.960 ±0.007 0.955 ±0.018 0.970 ±0.012
+
+head from FEMBA [2], consisting of a non-bidirectional Mamba-enhanced linear layer with 536 K parameters. This choice favors computational efficiency over the transformer-based cross-attention classifier used in LUNA [1]. 
+
+2) Downstream tasks: LuMamba is evaluated on five EEG datasets: three TUH benchmarks (TUAB, TUSL, TUAR) and two datasets with unseen channel montages (TDBrain and APAVA). All five datasets are strictly excluded from the pre-training stage. Following standard evaluation protocols [1], [2], TUAB uses the official split, while TUSL and TUAR use an 80/10/10 train/val/test partition. For APAVA and TD-Brain, we adopt subject-disjoint splits from the literature [11], [17]: 15/4/4 and 34/8/8 subjects for train/val/test, respectively. During fine-tuning, the entire architecture remains unfrozen. Training is limited to 30 epochs, and results are averaged over three runs with fixed random seeds. IV. R ESULTS 
+
+A. Assessing benefits of LeJEPA 1) t-SNE: We analyze the impact of LeJEPA on the la-tent space using t-SNE projections [18]. Despite the absence of class supervision, reconstruction-only pre-training yields increasingly well-separated clusters on TUAR and APAVA (Figure 1). In contrast, combining LeJEPA with reconstruction preserves signal reconstruction quality but results in more dif-fuse and isotropic embeddings (Figure 1). As the contribution of LeJEPA in pre-training increases, apparent cluster sepa-ration consistently decreases. Rather than promoting visually structured latent spaces, LeJEPA smooths the representation geometry, shifting toward more uniform and potentially trans-ferable representations. 
+
+2) Downstream tasks: To contextualize these qualitative observations, we compare the three pre-training strategies on downstream performance. Reconstruction-only pre-training yields more structured representations, which translates into slightly higher performance on in-distribution TUH tasks, outperforming LeJEPA–reconstruction by 1–2% on TUAR and up to 4% on TUSL. However, this increased clustering appears to reduce transferability across heterogeneous channel topolo-gies (Table I). In contrast, the mixed LeJEPA–reconstruction objective produces isotropic representations that generalize more effectively, yielding superior performance on three out of five tasks, including TDBrain and APAVA, which involve electrode montages unseen during pre-training. Notably, on APAVA, incorporating LeJEPA leads to an improvement of over 20% in AD detection compared to reconstruction-only (Table I). Within the LeJEPA–reconstruction setting, increas-ing the number of SIGReg projection slices improves TUAB performance, with 300 slices yielding approximately +1% 
+
+TABLE II: Performance Comparison on TUAB                                                                               
+
+> Model Size Bal. Acc (%) AUPR AUROC
+> BENDR [3] 0.39M 76.96 ±3.98 -0.8397 ±0.0344 EEGFormer-Base [7] 2.3M -0.8670 ±0.0020 0.8670 ±0.0030 BIOT [5] 3.2M 79.59 ±0.57 0.8692 ±0.0023 0.8815 ±0.0043 EEG2Rep [19] -80.52 ±2.22 -0.8843 ±0.0309 LaBraM-Base [4] 5.9M 81.40 ±0.19 0.8965 ±0.0016 0.9022 ±0.0009
+> LUNA-Base [1] 7M 80.63 ±0.08 0.8953 ±0.0016 0.8868 ±0.0015 CEReBro [6] 3.6M 79.40 ±0.19 0.8763 ±0.0031 0.8749 ±0.0033
+> LuMamba-Tiny 4.6M 80.99 ±0.22 0.8918 ±0.0032 0.8825 ±0.0038
+
+gains in both AUROC and AUPR compared to 60 slices. Overall, while reconstruction promotes visually clustered rep-resentations that favor in-distribution performance, LeJEPA regularizes the representation space, improving robustness and cross-task transferability. The two objectives therefore play complementary roles when paired, providing a reliable trade-off between representation structure and generalization. The mixed LeJEPA–reconstruction objective is subsequently used for benchmarking. 
+
+B. Comparison to state-of-the-art (SoA) baselines 
+
+On TUAB, LuMamba achieves performance comparable to LaBraM in Bal. Acc and AUROC, with overlapping confi-dence intervals, while showing slightly lower AUPR (approx-imately −2%). Despite this gap, LuMamba outperforms all other self-supervised EEG models, highlighting its competi-tiveness among current SoA approaches (Table II). On mental condition tasks with unseen montages, LuMamba demon-strates strong generalization. On APAVA (AD detection), it achieves approximately +4% AUPR over the previous SoA, while on TDBrain (PD detection) performance remains com-parable to Medformer and slightly below BioMamba (Table III). On TUAR and TUSL, LuMamba underperforms task-specific SoA methods (Table IV), with a more pronounced gap on TUSL, which is known to be highly class-imbalanced [14]. We attribute this behavior not to architectural limitations, but to our methodological focus on generalization and transferable pretraining. Notably, results in Table I indicate that the TUSL performance gap is not due to the architectural design, as the same architecture with reconstruction-based pretraining achieves near-SoA performance; rather, it stems from our choice of a generalization-oriented pretraining strategy, which is less favorable on highly imbalanced datasets such as TUSL. 
+
+C. Computational efficiency and scalability 
+
+We analyze the computational efficiency of LuMamba in terms of FLOPS with respect to sequence length. Due to the linear-time complexity of the Mamba block, LuMamba consis-tently requires fewer FLOPS than attention-based foundation TABLE III: Performance comparison on TDBrain and APAVA                                      
+
+> Model Size TDBrain APAVA
+> AUROC AUPR AUROC AUPR
+> Supervised Models
+> Medformer [17] 8M 0.959 ±0.007 0.960 ±0.006 0.811 ±0.046 0.816 ±0.429 BioMamba [11] 1M 0.994 ±0.005 0.994 ±0.005 0.938 ±0.014 0.935 ±0.014
+> LuMamba-Tiny 4.6M 0.961 ±0.006 0.960 ±0.007 0.955 ±0.018 0.970 ±0.012
+
+TABLE IV: Performance comparison on TUAR and TUSL                                                      
+
+> Model Size TUAR TUSL
+> AUROC AUPR AUROC AUPR EEGFormer-Base [7] 2.3M 0.847 ±0.014 0 .483 ±0.026 0 .713 ±0.010 0.393 ±0.003
+> FEMBA-Tiny [2] 7.8M 0.918 ±0.003 0.518 ±0.002 0.708 ±0.005 0.277 ±0.007 LUNA-Base [1] 7M 0.902 ±0.011 0 .495 ±0.010 0.767 ±0.023 0.301 ±0.003
+> LuMamba-Tiny 4.6M 0.896 ±0.020 0.490 ±0.023 0.660 ±0.053 0.272 ±0.011
+
+models at equal sequence lengths (Figure 2). At the maximum sequence length supported by each baseline before Out-Of-Memory (OOM), LuMamba requires 26.5 × fewer FLOPS than LUNA, 377 × fewer than LaBraM, and 3718 × fewer than EEGFormer when evaluated at the same sequence length, corresponding to absolute savings of up to several thousand GFLOPS. In addition to length-wise efficiency, LuMamba exhibits improved scalability, supporting sequences that are 
+
+12.6 × longer than LUNA, 501 × longer than LaBraM, and 
+
+2.5 × longer than EEGFormer before reaching the OOM limit. These results indicate that replacing the transformer-based encoder in LUNA with a bi-Mamba encoder substantially improves both computational efficiency and sequence-length scalability while preserving the overall modeling framework.      
+
+> 10 010 110 210 310 410 5
+> 10 −3
+> 10 2
+> 10 7
+
+Out Of Memory 
+
+Sequence Length 
+
+> FLOPs (GFLOPs)  LUNA
+> LuMamba
+> LaBraM
+> EEGFormer
+
+Fig. 2: FLOPS vs sequence length for different EEG founda-tion models. Dashed lines denote the out-of-memory limit on an NVIDIA A100-64GB GPU (batch size = 1). V. C ONCLUSION 
+
+We introduced LuMamba, an EEG foundation model that extends SSM-based learning to heterogeneous channel topolo-gies by combining LUNA’s topology-invariant encoding with FEMBA’s efficient bi-Mamba blocks. With only 4.6M pa-rameters, LuMamba achieves linear sequence-length scaling, requiring 377 × fewer FLOPS than LaBraM and support-ing 12 × longer sequences before reaching memory limits. We further introduced a mixed LeJEPA reconstruction pre-training objective that regularizes the latent space toward isotropic distributions, improving robustness to distribution shifts. LuMamba achieves performance comparable to estab-lished TUH baselines while exhibiting stronger generalization on unseen montages, most notably a +4% AUPR improve-ment on AD detection. Future work will expand downstream evaluations and scale the pre-training corpus to further assess the generalizability of the proposed framework. ACKNOWLEDGMENT 
+
+We acknowledge ISCRA for awarding this project access to the LEONARDO supercomputer, owned by the EuroHPC Joint Undertaking, hosted by CINECA (Italy). This work was supported by a grant from the Swiss National Supercomputing Centre (CSCS) under project ID lp12 on Alps. REFERENCES [1] B. D¨ oner et al. , “LUNA: Efficient and topology-agnostic foundation model for EEG signal analysis,” in Conference on Neural Information Processing Systems (NeurIPS) , 2025. [2] A. Tegon et al. , “FEMBA: Efficient and scalable EEG analysis with a bidirectional Mamba foundation model,” in 2025 47th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC) , 2025, pp. 1–7. [3] D. Kostas et al. , “BENDR: Using transformers and a contrastive self-supervised learning task to learn from massive amounts of EEG data,” in Frontiers in Human Neuroscience , vol. 15, 2021, pp. 653–659. [4] W.-B. Jiang et al. , “LaBraM: Large brain model for learning generic representations with tremendous EEG data in BCI,” in International Conference on Learning Representations (ICLR) , 2024. [5] C. Yang et al. , “BIOT: Cross-data Biosignal Learning in the Wild,” in 
+
+Advances in Neural Information Processing Systems (NeurIPS) , vol. 36, 2023, pp. 78 240–78 260. [6] A. Dimofte et al. , “CEReBrO: Compact encoder for representations of brain oscillations using efficient alternating attention,” 2025. [7] Y. Chen et al. , “EEGFormer: Towards transferable and interpretable large-scale EEG foundation model,” in AAAI 2024 Spring Symposium on Clinical Foundation Models , 2024. [8] A. Gu et al. , “Mamba: Linear-time sequence modeling with selective state spaces,” 2023. [9] R. Balestriero et al. , “LeJEPA: Provable and scalable self-supervised learning without the heuristics,” 2025. [10] R. Bommasani et al. , “On the opportunities and risks of foundation models,” 2022. [11] J. Qian et al. , “BioMamba: Leveraging spectro-temporal embedding in bidirectional mamba for enhanced biosignal classification,” 2025. [12] A. Liang et al. , “Bi-Mamba+: Bidirectional Mamba for time series forecasting,” 2024. [13] T. W. Epps et al. , “A test for normality based on the empirical characteristic function,” Biometrika , vol. 70, no. 3, pp. 723–726, 1983. [14] I. Obeid et al. , “The Temple University Hospital EEG data corpus,” 
+
+Frontiers in Neuroscience , vol. 10, 2016. [15] J. Escudero et al. , “Analysis of electroencephalograms in Alzheimer’s disease patients with multiscale entropy,” Physiological measurement ,vol. 27, no. 11, pp. 1091–1106, 2006. [16] H. van Dijk et al. , “The two decades brainclinics research archive for insights in neurophysiology (TDBRAIN) database,” Scientific data ,vol. 9, no. 1, p. 333, 2022. [17] Y. Wang et al. , “Medformer: A multi-granularity patching transformer for medical time-series classification,” vol. 37, 2024, pp. 36 314–36 341. [18] L. V. der Maaten et al. , “Visualizing data using t-sne,” Journal of Machine Learning Research , vol. 9, no. 86, pp. 2579–2605, 2008. [19] N. M. Foumani et al. , “EEG2Rep: Enhancing self-supervised eeg representation through informative masked inputs,” 2024.
