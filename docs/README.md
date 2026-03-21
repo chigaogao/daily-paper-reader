@@ -6,43 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-20
-- 运行时间：2026-03-20 19:48:43 UTC
+- 最新运行日期：2026-03-12 ~ 2026-03-21
+- 运行时间：2026-03-21 12:55:36 UTC
 - 运行状态：成功
-- 本次总论文数：7
-- 精读区：2
-- 速读区：5
+- 本次总论文数：4
+- 精读区：0
+- 速读区：4
 
 ### 今日简报（AI）
-今日聚焦脑电建模与科学时序预训练，LuMamba 凭借拓扑不变性实现 EEG 建模效率与性能的双重突破。
-重点关注 LuMamba 在复杂脑电信号处理中的卓越表现，以及 STEP 通过跨域蒸馏提升科学时序编码的泛化能力。
-建议优先研读满分论文 LuMamba，探索大模型架构在脑机接口与多维时序分析中的前沿应用。
-- 详情：[/202603/20/README](/202603/20/README)
+深度探索扩散模型在多模态MRI转换与大模型并行解码中的潜力，并同步关注脉冲神经网络的视觉突破。
+重点推荐多尺度结构引导的MRI生成技术，以及通过对比自监督学习显著提升脉冲神经网络（SNN）的少样本视觉识别能力。
+建议关注扩散模型在特定垂直领域的结构化生成，以及类脑计算在低功耗视觉任务中的前沿进展。
+- 详情：[/20260312-20260321/README](/20260312-20260321/README)
 
 ### 精读区论文标签
-1. [LuMamba: Latent Unified Mamba for Electrode Topology-Invariant and Efficient EEG Modeling](/202603/20/2603.19100v1-lumamba-latent-unified-mamba-for-electrode-topology-invariant-and-efficient-eeg-modeling)  
-   标签：评分：10.0/10、query:eeg-ai
-   evidence：用于脑电建模和自监督学习的基础模型
-2. [STEP: Scientific Time-Series Encoder Pretraining via Cross-Domain Distillation](/202603/20/2603.18688v1-step-scientific-time-series-encoder-pretraining-via-cross-domain-distillation)  
-   标签：评分：8.0/10、query:eeg-ai
-   evidence：利用脑信号基础模型进行跨域蒸馏和表示学习
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Variational Phasor Circuits for Phase-Native Brain-Computer Interface Classification](/202603/20/2603.18078v1-variational-phasor-circuits-for-phase-native-brain-computer-interface-classification)  
+1. [Multiscale Structure-Guided Latent Diffusion for Multimodal MRI Translation](/20260312-20260321/2603.12581v1-multiscale-structure-guided-latent-diffusion-for-multimodal-mri-translation)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：脑机接口分类架构
-2. [ALIGN: Adversarial Learning for Generalizable Speech Neuroprosthesis](/202603/20/2603.18299v1-align-adversarial-learning-for-generalizable-speech-neuroprosthesis)  
+   evidence：用于医学图像转换的潜在扩散模型
+2. [SpikeCLR: Contrastive Self-Supervised Learning for Few-Shot Event-Based Vision using Spiking Neural Networks](/20260312-20260321/2603.16338v1-spikeclr-contrastive-self-supervised-learning-for-few-shot-event-based-vision-using-spiking-neural-networks)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：用于跨会话脑机接口解码的对抗性学习
-3. [Grammar of the Wave: Towards Explainable Multivariate Time Series Event Detection via Neuro-Symbolic VLM Agents](/202603/20/2603.11479v1-grammar-of-the-wave-towards-explainable-multivariate-time-series-event-detection-via-neuro-symbolic-vlm-agents)  
+   evidence：脉冲神经网络的对比自监督学习
+3. [Dependency-Aware Parallel Decoding via Attention for Diffusion LLMs](/20260312-20260321/2603.12996v1-dependency-aware-parallel-decoding-via-attention-for-diffusion-llms)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：通过视觉语言模型进行多变量时间序列接地
-4. [Neural network-based encoding in free-viewing fMRI with gaze-aware models](/202603/20/2603.11663v1-neural-network-based-encoding-in-free-viewing-fmri-with-gaze-aware-models)  
+   evidence：扩散大语言模型的并行解码
+4. [Pathology-Aware Multi-View Contrastive Learning for Patient-Independent ECG Reconstruction](/20260312-20260321/2603.17248v1-pathology-aware-multi-view-contrastive-learning-for-patient-independent-ecg-reconstruction)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：基于神经网络的神经影像数据编码
-5. [DynHD: Hallucination Detection for Diffusion Large Language Models via Denoising Dynamics Deviation Learning](/202603/20/2603.16459v1-dynhd-hallucination-detection-for-diffusion-large-language-models-via-denoising-dynamics-deviation-learning)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：通过去噪动力学偏差学习检测扩散大语言模型的幻觉
+   evidence：用于生理信号重建的对比学习
 
 
 <div class="dpr-home-promo-card">

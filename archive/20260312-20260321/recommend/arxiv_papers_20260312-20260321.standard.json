@@ -1,0 +1,169 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-21T12:55:18.709591+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.12581v1",
+      "title": "Multiscale Structure-Guided Latent Diffusion for Multimodal MRI Translation",
+      "abstract": "Although diffusion models have achieved remarkable progress in multi-modal magnetic resonance imaging (MRI) translation tasks, existing methods still tend to suffer from anatomical inconsistencies or degraded texture details when handling arbitrary missing-modality scenarios. To address these issues, we propose a latent diffusion-based multi-modal MRI translation framework, termed MSG-LDM. By leveraging the available modalities, the proposed method infers complete structural information, which preserves reliable boundary details. Specifically, we introduce a style--structure disentanglement mechanism in the latent space, which explicitly separates modality-specific style features from shared structural representations, and jointly models low-frequency anatomical layouts and high-frequency boundary details in a multi-scale feature space. During the structure disentanglement stage, high-frequency structural information is explicitly incorporated to enhance feature representations, guiding the model to focus on fine-grained structural cues while learning modality-invariant low-frequency anatomical representations. Furthermore, to reduce interference from modality-specific styles and improve the stability of structure representations, we design a style consistency loss and a structure-aware loss. Extensive experiments on the BraTS2020 and WMH datasets demonstrate that the proposed method outperforms existing MRI synthesis approaches, particularly in reconstructing complete structures. The source code is publicly available at https://github.com/ziyi-start/MSG-LDM.",
+      "authors": [
+        "Jianqiang Lin",
+        "Zhiqiang Shen",
+        "Peng Cao",
+        "Jinzhu Yang",
+        "Osmar R. Zaiane",
+        "Xiaoli Liu"
+      ],
+      "primary_category": "eess.IV",
+      "categories": [
+        "eess.IV",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-03-13T02:26:05+00:00",
+      "link": "https://arxiv.org/pdf/2603.12581v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Latent diffusion for medical image translation",
+      "llm_evidence_cn": "用于医学图像转换的潜在扩散模型",
+      "llm_evidence": "用于医学图像转换的潜在扩散模型",
+      "canonical_evidence": "用于医学图像转换的潜在扩散模型",
+      "llm_tldr_en": "Proposes a latent diffusion framework for multimodal MRI translation, preserving anatomical structure.",
+      "llm_tldr_cn": "提出一种用于多模态MRI转换的潜在扩散框架，能够保留解剖结构。",
+      "llm_tldr": "提出一种用于多模态MRI转换的潜在扩散框架，能够保留解剖结构。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.12996v1",
+      "title": "Dependency-Aware Parallel Decoding via Attention for Diffusion LLMs",
+      "abstract": "Parallel decoding for diffusion LLMs (dLLMs) is difficult because each denoising step provides only token-wise marginal distributions, while unmasking multiple tokens simultaneously requires accounting for inter-token dependencies. We propose Dependency-Aware Parallel Decoding (DAPD), a simple, training-free decoding method that uses self-attention to induce a conditional dependency graph over masked tokens. At each iteration, edges in this graph capture strong token interactions, while non-edges indicate weak dependence. Parallel decoding is then reduced to selecting an independent set on the graph and unmasking the selected tokens in parallel. This avoids co-updating strongly coupled tokens without auxiliary models or retraining. Experiments on LLaDA and Dream show that DAPD improves the accuracy-steps trade-off over existing methods and enables more globally distributed parallel updates that better exploit the any-order generation capability of dLLMs.",
+      "authors": [
+        "Bumjun Kim",
+        "Dongjae Jeon",
+        "Moongyu Jeon",
+        "Albert No"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-13T13:52:02+00:00",
+      "link": "https://arxiv.org/pdf/2603.12996v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Parallel decoding for diffusion LLMs",
+      "llm_evidence_cn": "扩散大语言模型的并行解码",
+      "llm_evidence": "扩散大语言模型的并行解码",
+      "canonical_evidence": "扩散大语言模型的并行解码",
+      "llm_tldr_en": "Introduces a training-free parallel decoding method for diffusion-based language models using self-attention.",
+      "llm_tldr_cn": "为基于扩散的语言模型引入了一种利用自注意力机制的免训练并行解码方法。",
+      "llm_tldr": "为基于扩散的语言模型引入了一种利用自注意力机制的免训练并行解码方法。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.16338v1",
+      "title": "SpikeCLR: Contrastive Self-Supervised Learning for Few-Shot Event-Based Vision using Spiking Neural Networks",
+      "abstract": "Event-based vision sensors provide significant advantages for high-speed perception, including microsecond temporal resolution, high dynamic range, and low power consumption. When combined with Spiking Neural Networks (SNNs), they can be deployed on neuromorphic hardware, enabling energy-efficient applications on embedded systems. However, this potential is severely limited by the scarcity of large-scale labeled datasets required to effectively train such models. In this work, we introduce SpikeCLR, a contrastive self-supervised learning framework that enables SNNs to learn robust visual representations from unlabeled event data. We adapt prior frame-based methods to the spiking domain using surrogate gradient training and introduce a suite of event-specific augmentations that leverage spatial, temporal, and polarity transformations. Through extensive experiments on CIFAR10-DVS, N-Caltech101, N-MNIST, and DVS-Gesture benchmarks, we demonstrate that self-supervised pretraining with subsequent fine-tuning outperforms supervised learning in low-data regimes, achieving consistent gains in few-shot and semi-supervised settings. Our ablation studies reveal that combining spatial and temporal augmentations is critical for learning effective spatio-temporal invariances in event data. We further show that learned representations transfer across datasets, contributing to efforts for powerful event-based models in label-scarce settings.",
+      "authors": [
+        "Maxime Vaillant",
+        "Axel Carlier",
+        "Lai Xing Ng",
+        "Christophe Hurter",
+        "Benoit R. Cottereau"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-17T10:11:34+00:00",
+      "link": "https://arxiv.org/pdf/2603.16338v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Contrastive self-supervised learning for spiking neural networks",
+      "llm_evidence_cn": "脉冲神经网络的对比自监督学习",
+      "llm_evidence": "脉冲神经网络的对比自监督学习",
+      "canonical_evidence": "脉冲神经网络的对比自监督学习",
+      "llm_tldr_en": "Introduces SpikeCLR for self-supervised representation learning in SNNs, relevant to neuromorphic EEG processing.",
+      "llm_tldr_cn": "引入SpikeCLR用于脉冲神经网络的自监督表示学习，与类脑脑电处理相关。",
+      "llm_tldr": "引入SpikeCLR用于脉冲神经网络的自监督表示学习，与类脑脑电处理相关。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.17248v1",
+      "title": "Pathology-Aware Multi-View Contrastive Learning for Patient-Independent ECG Reconstruction",
+      "abstract": "Reconstructing a 12-lead electrocardiogram (ECG) from a reduced lead set is an ill-posed inverse problem due to anatomical variability. Standard deep learning methods often ignore underlying cardiac pathology losing vital morphology in precordial leads. We propose Pathology-Aware Multi-View Contrastive Learning, a framework that regularizes the latent space through a pathological manifold. Our architecture integrates high-fidelity time-domain waveforms with pathology-aware embeddings learned via supervised contrastive alignment. By maximizing mutual information between latent representations and clinical labels, the framework learns to filter anatomical \"nuisance\" variables. On the PTB-XL dataset, our method achieves approx. 76\\% reduction in RMSE compared to state-of-the-art model in patient-independent setting. Cross-dataset evaluation on the PTB Diagnostic Database confirms superior generalization, bridging the gap between hardware portability and diagnostic-grade reconstruction.",
+      "authors": [
+        "Youssef Youssef",
+        "Jitin Singla"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-03-18T01:06:30+00:00",
+      "link": "https://arxiv.org/pdf/2603.17248v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Contrastive learning for physiological signal reconstruction",
+      "llm_evidence_cn": "用于生理信号重建的对比学习",
+      "llm_evidence": "用于生理信号重建的对比学习",
+      "canonical_evidence": "用于生理信号重建的对比学习",
+      "llm_tldr_en": "Uses contrastive learning for ECG reconstruction, a method highly transferable to EEG representation learning.",
+      "llm_tldr_cn": "使用对比学习进行心电图重建，该方法在脑电表示学习中具有高度可迁移性。",
+      "llm_tldr": "使用对比学习进行心电图重建，该方法在脑电表示学习中具有高度可迁移性。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
