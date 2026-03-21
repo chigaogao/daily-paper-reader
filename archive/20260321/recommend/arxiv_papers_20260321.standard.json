@@ -1,0 +1,169 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-21T19:22:47.638596+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.12901v1",
+      "title": "A theory of learning data statistics in diffusion models, from easy to hard",
+      "abstract": "While diffusion models have emerged as a powerful class of generative models, their learning dynamics remain poorly understood. We address this issue first by empirically showing that standard diffusion models trained on natural images exhibit a distributional simplicity bias, learning simple, pair-wise input statistics before specializing to higher-order correlations. We reproduce this behaviour in simple denoisers trained on a minimal data model, the mixed cumulant model, where we precisely control both pair-wise and higher-order correlations of the inputs. We identify a scalar invariant of the model that governs the sample complexity of learning pair-wise and higher-order correlations that we call the diffusion information exponent, in analogy to related invariants in different learning paradigms. Using this invariant, we prove that the denoiser learns simple, pair-wise statistics of the inputs at linear sample complexity, while more complex higher-order statistics, such as the fourth cumulant, require at least cubic sample complexity. We also prove that the sample complexity of learning the fourth cumulant is linear if pair-wise and higher-order statistics share a correlated latent structure. Our work describes a key mechanism for how diffusion models can learn distributions of increasing complexity.",
+      "authors": [
+        "Lorenzo Bardone",
+        "Claudia Merger",
+        "Sebastian Goldt"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cond-mat.dis-nn",
+        "cs.IT",
+        "cs.LG"
+      ],
+      "published": "2026-03-13T11:07:01+00:00",
+      "link": "https://arxiv.org/pdf/2603.12901v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical analysis of learning dynamics in diffusion models",
+      "llm_evidence_cn": "扩散模型学习动力学的理论分析",
+      "llm_evidence": "扩散模型学习动力学的理论分析",
+      "canonical_evidence": "扩散模型学习动力学的理论分析",
+      "llm_tldr_en": "Analyzes how diffusion models learn data statistics, providing theoretical grounding for generative AI.",
+      "llm_tldr_cn": "分析扩散模型如何学习数据统计特性，为生成式人工智能提供理论基础。",
+      "llm_tldr": "分析扩散模型如何学习数据统计特性，为生成式人工智能提供理论基础。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.17671v1",
+      "title": "Few-Step Diffusion Sampling Through Instance-Aware Discretizations",
+      "abstract": "Diffusion and flow matching models generate high-fidelity data by simulating paths defined by Ordinary or Stochastic Differential Equations (ODEs/SDEs), starting from a tractable prior distribution. The probability flow ODE formulation enables the use of advanced numerical solvers to accelerate sampling. Orthogonal yet vital to solver design is the discretization strategy. While early approaches employed handcrafted heuristics and recent methods adopt optimization-based techniques, most existing strategies enforce a globally shared timestep schedule across all samples. This uniform treatment fails to account for instance-specific complexity in the generative process, potentially limiting performance. Motivated by controlled experiments on synthetic data, which reveals the suboptimality of global schedules under instance-specific dynamics, we propose an instance-aware discretization framework. Our method learns to adapt timestep allocations based on input-dependent priors, extending gradient-based discretization search to the conditional generative setting. Empirical results across diverse settings, including synthetic data, pixel-space diffusion, latent-space images and video flow matching models, demonstrate that our method consistently improves generation quality with marginal tuning cost compared to training and negligible inference overhead.",
+      "authors": [
+        "Liangyu Yuan",
+        "Ruoyu Wang",
+        "Tong Zhao",
+        "Dingwen Fu",
+        "Mingkun Lei",
+        "Beier Zhu",
+        "Chi Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-18T12:49:38+00:00",
+      "link": "https://arxiv.org/pdf/2603.17671v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Accelerating diffusion sampling for high-fidelity data generation",
+      "llm_evidence_cn": "加速扩散采样以实现高保真数据生成",
+      "llm_evidence": "加速扩散采样以实现高保真数据生成",
+      "canonical_evidence": "加速扩散采样以实现高保真数据生成",
+      "llm_tldr_en": "Proposes instance-aware discretization to accelerate sampling in diffusion and flow matching models.",
+      "llm_tldr_cn": "提出实例感知离散化策略，以加速扩散模型和流匹配模型的采样过程。",
+      "llm_tldr": "提出实例感知离散化策略，以加速扩散模型和流匹配模型的采样过程。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.17677v1",
+      "title": "Adaptive Guidance for Retrieval-Augmented Masked Diffusion Models",
+      "abstract": "Retrieval-Augmented Generation (RAG) improves factual grounding by incorporating external knowledge into language model generation. However, when retrieved context is noisy, unreliable, or inconsistent with the model's parametric knowledge, it introduces retrieval-prior conflicts that can degrade generation quality. While this problem has been studied in autoregressive language models, it remains largely unexplored in diffusion-based language models, where the iterative denoising process introduces unique challenges for integrating retrieved context. In this work, we propose Adaptive Retrieval-Augmented Masked Diffusion (ARAM), a training-free adaptive guidance framework for Masked Diffusion Models (MDMs) in RAG settings. ARAM dynamically calibrates the guidance scale during denoising according to the Signal-to-Noise Ratio (SNR) of the distributional shift induced by retrieved context. Intuitively, the model strengthens guidance when the retrieved context provides reliable corrective evidence and suppresses it when the contextual signal is noisy or non-supportive. Extensive experiments on multiple knowledge-intensive QA benchmarks show that ARAM improves overall QA performance over competitive RAG baselines.",
+      "authors": [
+        "Jaemin Kim",
+        "Jong Chul Ye"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-03-18T12:54:50+00:00",
+      "link": "https://arxiv.org/pdf/2603.17677v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Adaptive guidance for Masked Diffusion Models",
+      "llm_evidence_cn": "掩码扩散模型的自适应引导",
+      "llm_evidence": "掩码扩散模型的自适应引导",
+      "canonical_evidence": "掩码扩散模型的自适应引导",
+      "llm_tldr_en": "Proposes a training-free adaptive guidance framework to improve retrieval-augmented diffusion generation.",
+      "llm_tldr_cn": "提出一种无需训练的自适应引导框架，以改进检索增强的扩散生成。",
+      "llm_tldr": "提出一种无需训练的自适应引导框架，以改进检索增强的扩散生成。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.19222v1",
+      "title": "Spectrally-Guided Diffusion Noise Schedules",
+      "abstract": "Denoising diffusion models are widely used for high-quality image and video generation. Their performance depends on noise schedules, which define the distribution of noise levels applied during training and the sequence of noise levels traversed during sampling. Noise schedules are typically handcrafted and require manual tuning across different resolutions. In this work, we propose a principled way to design per-instance noise schedules for pixel diffusion, based on the image's spectral properties. By deriving theoretical bounds on the efficacy of minimum and maximum noise levels, we design ``tight'' noise schedules that eliminate redundant steps. During inference, we propose to conditionally sample such noise schedules. Experiments show that our noise schedules improve generative quality of single-stage pixel diffusion models, particularly in the low-step regime.",
+      "authors": [
+        "Carlos Esteves",
+        "Ameesh Makadia"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-03-19T17:59:12+00:00",
+      "link": "https://arxiv.org/pdf/2603.19222v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Methodological improvement for diffusion noise schedules",
+      "llm_evidence_cn": "扩散模型噪声调度的算法改进",
+      "llm_evidence": "扩散模型噪声调度的算法改进",
+      "canonical_evidence": "扩散模型噪声调度的算法改进",
+      "llm_tldr_en": "Proposes spectrally-guided noise schedules to improve efficiency and quality in diffusion-based generation.",
+      "llm_tldr_cn": "提出基于频谱引导的噪声调度方法，旨在提高扩散模型生成的效率和质量。",
+      "llm_tldr": "提出基于频谱引导的噪声调度方法，旨在提高扩散模型生成的效率和质量。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

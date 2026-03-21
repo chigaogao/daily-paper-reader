@@ -1,0 +1,65 @@
+{
+  "label": "2026-03-21",
+  "date": "2026-03-21",
+  "generated_at": "2026-03-21T19:23:12",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202603/21/2603.12901v1-a-theory-of-learning-data-statistics-in-diffusion-models-from-easy-to-hard",
+      "section": "quick",
+      "title_en": "A theory of learning data statistics in diffusion models, from easy to hard",
+      "authors": "Lorenzo Bardone, Claudia Merger, Sebastian Goldt",
+      "date": "2026-03-13",
+      "pdf": "https://arxiv.org/pdf/2603.12901v1",
+      "score": "6.0",
+      "evidence": "扩散模型学习动力学的理论分析",
+      "tldr": "本研究探讨了扩散模型的学习动力学，发现其存在“分布简单性偏置”，即优先学习简单的二阶统计量，再学习高阶相关性。作者通过“混合累积量模型”和新提出的“扩散信息指数”，从理论上证明了二阶统计量的学习具有线性样本复杂度，而高阶统计量（如四阶）则需立方级复杂度。研究还指出，若高阶与低阶统计量共享潜结构，复杂度可降至线性。该工作揭示了扩散模型逐步掌握复杂分布的核心机制。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "While diffusion models have emerged as a powerful class of generative models, their learning dynamics remain poorly understood. We address this issue first by empirically showing that standard diffusion models trained on natural images exhibit a distributional simplicity bias, learning simple, pair-wise input statistics before specializing to higher-order correlations. We reproduce this behaviour in simple denoisers trained on a minimal data model, the mixed cumulant model, where we precisely control both pair-wise and higher-order correlations of the inputs. We identify a scalar invariant of the model that governs the sample complexity of learning pair-wise and higher-order correlations that we call the diffusion information exponent, in analogy to related invariants in different learning paradigms. Using this invariant, we prove that the denoiser learns simple, pair-wise statistics of the inputs at linear sample complexity, while more complex higher-order statistics, such as the fourth cumulant, require at least cubic sample complexity. We also prove that the sample complexity of learning the fourth cumulant is linear if pair-wise and higher-order statistics share a correlated latent structure. Our work describes a key mechanism for how diffusion models can learn distributions of increasing complexity.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/21/2603.17671v1-few-step-diffusion-sampling-through-instance-aware-discretizations",
+      "section": "quick",
+      "title_en": "Few-Step Diffusion Sampling Through Instance-Aware Discretizations",
+      "authors": "Liangyu Yuan, Ruoyu Wang, Tong Zhao, Dingwen Fu, Mingkun Lei, Beier Zhu, Chi Zhang",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.17671v1",
+      "score": "6.0",
+      "evidence": "加速扩散采样以实现高保真数据生成",
+      "tldr": "本研究针对扩散模型和流匹配模型在少步采样中的离散化策略进行了优化。传统方法通常采用全局共享的时间步调度，忽略了不同样本生成过程中的复杂度差异。作者提出了一种实例感知（Instance-Aware）的离散化框架，通过学习根据输入先验动态调整时间步分配，将基于梯度的离散化搜索扩展到条件生成场景。实验证明，该方法在图像和视频生成任务中均能以极低的推理开销显著提升生成质量。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion and flow matching models generate high-fidelity data by simulating paths defined by Ordinary or Stochastic Differential Equations (ODEs/SDEs), starting from a tractable prior distribution. The probability flow ODE formulation enables the use of advanced numerical solvers to accelerate sampling. Orthogonal yet vital to solver design is the discretization strategy. While early approaches employed handcrafted heuristics and recent methods adopt optimization-based techniques, most existing strategies enforce a globally shared timestep schedule across all samples. This uniform treatment fails to account for instance-specific complexity in the generative process, potentially limiting performance. Motivated by controlled experiments on synthetic data, which reveals the suboptimality of global schedules under instance-specific dynamics, we propose an instance-aware discretization framework. Our method learns to adapt timestep allocations based on input-dependent priors, extending gradient-based discretization search to the conditional generative setting. Empirical results across diverse settings, including synthetic data, pixel-space diffusion, latent-space images and video flow matching models, demonstrate that our method consistently improves generation quality with marginal tuning cost compared to training and negligible inference overhead.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/21/2603.17677v1-adaptive-guidance-for-retrieval-augmented-masked-diffusion-models",
+      "section": "quick",
+      "title_en": "Adaptive Guidance for Retrieval-Augmented Masked Diffusion Models",
+      "authors": "Jaemin Kim, Jong Chul Ye",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.17677v1",
+      "score": "6.0",
+      "evidence": "掩码扩散模型的自适应引导",
+      "tldr": "本研究针对检索增强掩码扩散模型（MDM）中检索内容与模型先验知识冲突的问题，提出了ARAM框架。ARAM是一种无需训练的自适应引导方法，通过在去噪过程中根据检索上下文引起的分布偏移信噪比（SNR）动态调整引导尺度。当检索信息可靠时增强引导，反之则抑制，从而有效处理噪声干扰。实验证明，ARAM在多个问答基准上显著优于现有RAG基准，提升了生成的事实准确性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Retrieval-Augmented Generation (RAG) improves factual grounding by incorporating external knowledge into language model generation. However, when retrieved context is noisy, unreliable, or inconsistent with the model's parametric knowledge, it introduces retrieval-prior conflicts that can degrade generation quality. While this problem has been studied in autoregressive language models, it remains largely unexplored in diffusion-based language models, where the iterative denoising process introduces unique challenges for integrating retrieved context. In this work, we propose Adaptive Retrieval-Augmented Masked Diffusion (ARAM), a training-free adaptive guidance framework for Masked Diffusion Models (MDMs) in RAG settings. ARAM dynamically calibrates the guidance scale during denoising according to the Signal-to-Noise Ratio (SNR) of the distributional shift induced by retrieved context. Intuitively, the model strengthens guidance when the retrieved context provides reliable corrective evidence and suppresses it when the contextual signal is noisy or non-supportive. Extensive experiments on multiple knowledge-intensive QA benchmarks show that ARAM improves overall QA performance over competitive RAG baselines.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/21/2603.19222v1-spectrally-guided-diffusion-noise-schedules",
+      "section": "quick",
+      "title_en": "Spectrally-Guided Diffusion Noise Schedules",
+      "authors": "Carlos Esteves, Ameesh Makadia",
+      "date": "2026-03-19",
+      "pdf": "https://arxiv.org/pdf/2603.19222v1",
+      "score": "6.0",
+      "evidence": "扩散模型噪声调度的算法改进",
+      "tldr": "扩散模型的性能高度依赖噪声调度，但现有调度多为手工设计且需针对不同分辨率调整。本文提出一种基于图像频谱特性的自适应噪声调度方法。通过推导最小和最大噪声水平的理论边界，设计出消除冗余步骤的“紧凑”调度方案。实验证明，该方法在单阶段像素扩散模型中显著提升了生成质量，尤其是在少步采样场景下表现优异。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Denoising diffusion models are widely used for high-quality image and video generation. Their performance depends on noise schedules, which define the distribution of noise levels applied during training and the sequence of noise levels traversed during sampling. Noise schedules are typically handcrafted and require manual tuning across different resolutions. In this work, we propose a principled way to design per-instance noise schedules for pixel diffusion, based on the image's spectral properties. By deriving theoretical bounds on the efficacy of minimum and maximum noise levels, we design ``tight'' noise schedules that eliminate redundant steps. During inference, we propose to conditionally sample such noise schedules. Experiments show that our noise schedules improve generative quality of single-stage pixel diffusion models, particularly in the low-step regime.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

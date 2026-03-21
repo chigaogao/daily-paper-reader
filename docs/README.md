@@ -6,35 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-12 ~ 2026-03-21
-- 运行时间：2026-03-21 12:55:36 UTC
+- 最新运行日期：2026-03-21
+- 运行时间：2026-03-21 19:23:05 UTC
 - 运行状态：成功
 - 本次总论文数：4
 - 精读区：0
 - 速读区：4
 
 ### 今日简报（AI）
-深度探索扩散模型在多模态MRI转换与大模型并行解码中的潜力，并同步关注脉冲神经网络的视觉突破。
-重点推荐多尺度结构引导的MRI生成技术，以及通过对比自监督学习显著提升脉冲神经网络（SNN）的少样本视觉识别能力。
-建议关注扩散模型在特定垂直领域的结构化生成，以及类脑计算在低功耗视觉任务中的前沿进展。
-- 详情：[/20260312-20260321/README](/20260312-20260321/README)
+今日深入探索扩散模型的底层演化逻辑，涵盖从统计学习理论到极速采样技术的全方位优化。
+核心结论揭示了模型由易到难的学习规律，并提出实例感知离散化方案以显著减少采样步数。
+推荐关注检索增强与自适应引导的结合，这是提升生成模型精准度与效率的实用进阶方向。
+- 详情：[/202603/21/README](/202603/21/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Multiscale Structure-Guided Latent Diffusion for Multimodal MRI Translation](/20260312-20260321/2603.12581v1-multiscale-structure-guided-latent-diffusion-for-multimodal-mri-translation)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：用于医学图像转换的潜在扩散模型
-2. [SpikeCLR: Contrastive Self-Supervised Learning for Few-Shot Event-Based Vision using Spiking Neural Networks](/20260312-20260321/2603.16338v1-spikeclr-contrastive-self-supervised-learning-for-few-shot-event-based-vision-using-spiking-neural-networks)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：脉冲神经网络的对比自监督学习
-3. [Dependency-Aware Parallel Decoding via Attention for Diffusion LLMs](/20260312-20260321/2603.12996v1-dependency-aware-parallel-decoding-via-attention-for-diffusion-llms)  
+1. [A theory of learning data statistics in diffusion models, from easy to hard](/202603/21/2603.12901v1-a-theory-of-learning-data-statistics-in-diffusion-models-from-easy-to-hard)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：扩散大语言模型的并行解码
-4. [Pathology-Aware Multi-View Contrastive Learning for Patient-Independent ECG Reconstruction](/20260312-20260321/2603.17248v1-pathology-aware-multi-view-contrastive-learning-for-patient-independent-ecg-reconstruction)  
+   evidence：扩散模型学习动力学的理论分析
+2. [Few-Step Diffusion Sampling Through Instance-Aware Discretizations](/202603/21/2603.17671v1-few-step-diffusion-sampling-through-instance-aware-discretizations)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：用于生理信号重建的对比学习
+   evidence：加速扩散采样以实现高保真数据生成
+3. [Adaptive Guidance for Retrieval-Augmented Masked Diffusion Models](/202603/21/2603.17677v1-adaptive-guidance-for-retrieval-augmented-masked-diffusion-models)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：掩码扩散模型的自适应引导
+4. [Spectrally-Guided Diffusion Noise Schedules](/202603/21/2603.19222v1-spectrally-guided-diffusion-noise-schedules)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：扩散模型噪声调度的算法改进
 
 
 <div class="dpr-home-promo-card">
