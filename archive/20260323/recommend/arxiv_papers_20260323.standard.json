@@ -1,0 +1,125 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-23T20:03:32.882752+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2603.19667v1",
+      "title": "Toward High-Fidelity Visual Reconstruction: From EEG-Based Conditioned Generation to Joint-Modal Guided Rebuilding",
+      "abstract": "Human visual reconstruction aims to reconstruct fine-grained visual stimuli based on subject-provided descriptions and corresponding neural signals. As a widely adopted modality, Electroencephalography (EEG) captures rich visual cognition information, encompassing complex spatial relationships and chromatic details within scenes. However, current approaches are deeply coupled with an alignment framework that forces EEG features to align with text or image semantic representation. The dependency may condense the rich spatial and chromatic details in EEG that achieved mere conditioned image generation rather than high-fidelity visual reconstruction. To address this limitation, we propose a novel Joint-Modal Visual Reconstruction (JMVR) framework. It treats EEG and text as independent modalities for joint learning to preserve EEG-specific information for reconstruction. It further employs a multi-scale EEG encoding strategy to capture both fine- and coarse-grained features, alongside image augmentation to enhance the recovery of perceptual details. Extensive experiments on the THINGS-EEG dataset demonstrate that JMVR achieves SOTA performance against six baseline methods, specifically exhibiting superior capabilities in modeling spatial structure and chromatic fidelity.",
+      "authors": [
+        "Zhijian Gong",
+        "Tianren Yao",
+        "Wenjia Dong",
+        "Xueyuan Xu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-03-20T06:03:56+00:00",
+      "link": "https://arxiv.org/pdf/2603.19667v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "EEG-based visual reconstruction and conditioned generation",
+      "llm_evidence_cn": "基于EEG的视觉重构与条件生成",
+      "llm_evidence": "基于EEG的视觉重构与条件生成",
+      "canonical_evidence": "基于EEG的视觉重构与条件生成",
+      "llm_tldr_en": "Proposes a joint-modal framework for high-fidelity visual reconstruction from EEG signals.",
+      "llm_tldr_cn": "提出一种新型联合模态框架，利用EEG信号实现高保真视觉图像重构。",
+      "llm_tldr": "提出一种新型联合模态框架，利用EEG信号实现高保真视觉图像重构。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Reconstructing images from EEG using generative models",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.19846v1",
+      "title": "Supervised Contrastive Learning Framework for Electroencephalography-based Air-writing Recognition",
+      "abstract": "Electroencephalography (EEG) - based air-writing recognition offers a human-computer interaction paradigm by decoding neural activity associated with handwriting movements. Despite its potential, reliable EEG-based air-writing recognition remains challenging due to low signal-to-noise ratio and pronounced inter-subject variability. In this study, we examine the use of supervised contrastive learning to improve representation learning for EEG-based air-writing recognition. The analysis is conducted on preprocessed EEG signals and independent component analysis (ICA)-derived neural components obtained from five participants, with trials segmented from -1 to 2 s relative to movement on-set. EEGNet and DeepConvNet architectures are evaluated under both conventional cross-entropy training and a supervised contrastive learning framework using a subject-dependent five-fold cross-validation scheme. The results indicate that supervised contrastive learning consistently improves classification accuracy across architectures and feature representations. For preprocessed EEG signals, the mean accuracy increases from 33.45% to 43.77% and from 29.14% to 38.06% with EEGNet and DeepConvNet, respectively. Using ICA components, higher mean accuracies of 49.21% and 43.32% are achieved with EEGNet and DeepConvNet, respectively. These results suggest that the supervised contrastive learning framework offers an efficient extension to existing EEG-based air-writing recognition approaches.",
+      "authors": [
+        "Anant Jain",
+        "Ayush Tripathi"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-03-20T10:49:31+00:00",
+      "link": "https://arxiv.org/pdf/2603.19846v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "contrastive learning for EEG representation",
+      "llm_evidence_cn": "EEG表征的对比学习",
+      "llm_evidence": "EEG表征的对比学习",
+      "canonical_evidence": "EEG表征的对比学习",
+      "llm_tldr_en": "Applies supervised contrastive learning to improve EEG-based air-writing recognition performance.",
+      "llm_tldr_cn": "采用有监督对比学习提升基于EEG的空中书写识别的表征学习能力。",
+      "llm_tldr": "采用有监督对比学习提升基于EEG的空中书写识别的表征学习能力。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.19570v1",
+      "title": "Accelerating Diffusion Decoders via Multi-Scale Sampling and One-Step Distillation",
+      "abstract": "Image tokenization plays a central role in modern generative modeling by mapping visual inputs into compact representations that serve as an intermediate signal between pixels and generative models. Diffusion-based decoders have recently been adopted in image tokenization to reconstruct images from latent representations with high perceptual fidelity. In contrast to diffusion models used for downstream generation, these decoders are dedicated to faithful reconstruction rather than content generation. However, their iterative sampling process introduces significant latency, making them impractical for real-time or large-scale applications. In this work, we introduce a two-stage acceleration framework to address this inefficiency. First, we propose a multi-scale sampling strategy, where decoding begins at a coarse resolution and progressively refines the output by doubling the resolution at each stage, achieving a theoretical speedup of $\\mathcal{O}(\\log n)$ compared to standard full-resolution sampling. Second, we distill the diffusion decoder at each scale into a single-step denoising model, enabling fast and high-quality reconstructions in a single forward pass per scale. Together, these techniques yield an order-of-magnitude reduction in decoding time with little degradation in output quality. Our approach provides a practical pathway toward efficient yet expressive image tokenizers. We hope it serves as a foundation for future work in efficient visual tokenization and downstream generation.",
+      "authors": [
+        "Chuhan Wang",
+        "Hao Chen"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-20T02:24:58+00:00",
+      "link": "https://arxiv.org/pdf/2603.19570v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Accelerating diffusion decoders for image reconstruction from latent representations",
+      "llm_evidence_cn": "加速用于从潜表示重建图像的扩散解码器",
+      "llm_evidence": "加速用于从潜表示重建图像的扩散解码器",
+      "canonical_evidence": "加速用于从潜表示重建图像的扩散解码器",
+      "llm_tldr_en": "Introduces a framework to accelerate diffusion-based decoders used for high-fidelity image reconstruction.",
+      "llm_tldr_cn": "引入一种两阶段加速框架，旨在提高用于图像重建的扩散解码器的推理效率。",
+      "llm_tldr": "引入一种两阶段加速框架，旨在提高用于图像重建的扩散解码器的推理效率。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

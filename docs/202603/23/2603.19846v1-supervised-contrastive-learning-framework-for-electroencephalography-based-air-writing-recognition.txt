@@ -1,0 +1,171 @@
+Title: Supervised Contrastive Learning Framework for Electroencephalography-based Air-writing Recognition
+
+URL Source: https://arxiv.org/pdf/2603.19846v1
+
+Published Time: Mon, 23 Mar 2026 00:46:16 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+# Supervised Contrastive Learning Framework for Electroencephalography-based Air-writing Recognition 
+
+Anant Jain 1⋆ [0000 −0002 −7131 −8310] and Ayush Tripathi 2⋆ [0000 −0002 −7944 −2260]  
+
+> 1
+
+School of Technology, IFIM College, Bangalore, India 
+
+anant.jain@ifim.edu.in  
+
+> 2
+
+Department of Electrical Engineering, Indian Institute of Technology Indore, India 
+
+ayush.tripathi@iiti.ac.in 
+
+Abstract. Electroencephalography (EEG) - based air-writing recogni-tion offers a human-computer interaction paradigm by decoding neural activity associated with handwriting movements. Despite its potential, reliable EEG-based air-writing recognition remains challenging due to low signal-to-noise ratio and pronounced inter-subject variability. In this study, we examine the use of supervised contrastive learning to improve representation learning for EEG-based air-writing recognition. The anal-ysis is conducted on preprocessed EEG signals and independent compo-nent analysis (ICA)–derived neural components obtained from five par-ticipants, with trials segmented from −1 to 2 s relative to movement on-set. EEGNet and DeepConvNet architectures are evaluated under both conventional cross-entropy training and a supervised contrastive learning framework using a subject-dependent five-fold cross-validation scheme. The results indicate that supervised contrastive learning consistently im-proves classification accuracy across architectures and feature represen-tations. For preprocessed EEG signals, the mean accuracy increases from 33.45% to 43.77% and from 29.14% to 38.06% with EEGNet and Deep-ConvNet, respectively. Using ICA components, higher mean accuracies of 49.21% and 43.32% are achieved with EEGNet and DeepConvNet, re-spectively. These results suggest that the supervised contrastive learning framework offers an efficient extension to existing EEG-based air-writing recognition approaches. 
+
+Keywords: Electroencephalography (EEG) · Air-writing · Supervised contrastive learning · EEGNet · Independent component analysis. 
+
+# 1 Introduction 
+
+1.1 Background and Related Work 
+
+Air-writing recognition seeks to identify characters written in free space by un-constrained finger or wrist motions [2, 3]. This offers a natural, touchless input  
+
+> ⋆
+
+Authors contributed equally to this work.  
+
+> arXiv:2603.19846v1 [eess.SP] 20 Mar 2026 2A. Jain and A. Tripathi
+
+framework for emerging human–computer interaction (HCI) technologies [12]. In contrast to gesture-based interfaces, air-writing does not require users to adopt artificial gestures, as characters can be formed using conventional writ-ing motions. Air-writing is particularly suitable for wearable computing [13], augmented and virtual reality environments [17], and assistive technologies [23]. Most recent air-writing recognition systems utilize non-neural sensing modali-ties such as inertial measurement units (IMUs) [19, 20], surface electromyogra-phy (EMG) [21, 22], or computer vision-based techniques [10, 24]. Despite their robust performance, these modalities depend on peripheral sensors that are sen-sitive to device-specific characteristics and exhibit limited generalization across users. These limitations motivate the exploration of neural sensing modalities that capture scalp brain signals corresponding to motor execution. Electroencephalography (EEG) provides a non-invasive method for recording cerebral activity associated with motor planning and execution [6]. EEG-based BCI systems are popular due to low cost, portability, and high temporal reso-lution [7]. EEG-based brain–computer interface (BCI) systems have been used for motion recognition in various motor-execution tasks, such as biceps curl [15], grasp-and-lift [8], and turn detection [1]. Pei et al. [14] proposed an EEG-based handwritten letters recognition system using a convolutional neural net-work (CNN) decoder. Crell et al. [4] used EEG-based letter kinematics decoding to recognize 10 letters. Various EEG-based features were explored for the recog-nition of 21 letters by Tripathi et al [18]. However, most EEG-based air-writing recognition methods rely on traditional cross-entropy–based supervised learn-ing. It primarily focuses on optimizing decision boundaries and may struggle to learn robust and discriminative representations. Recently, Supervised contrastive learning (SPL) [9] has emerged as an efficient alternative, specifically promoting intra-class compactness and inter-class separability within the learned embed-ding space. The study explores the effectiveness of SPL in air-writing recognition using EEG signals. 
+
+1.2 Objectives and Contributions 
+
+This study aims to integrate supervised contrastive learning and EEG-based air-writing recognition. The objectives of the study are to apply a supervised contrastive learning framework to scalp-recorded EEG signals and evaluate its efficacy in learning discriminative neural representations for air-written character classification. The key contributions of the study are summarized as follows: 1. Developing a supervised contrastive learning framework for EEG-based air-writing recognition, facilitating structured representation learning from scalp EEG signals. 2. Integration of deep-learning architectures and performance evaluation using processed EEG and ICA-derived feature representations. 3. Comparative analysis between supervised contrastive learning and conven-tional cross-entropy–based training in a multi-subject EEG air-writing set-ting. Title Suppressed Due to Excessive Length 3
+
+This study expands contrastive representation learning to EEG-based air-writing recognition and offers a compact yet efficient methodological enhance-ment for neural HCI systems. 
+
+# 2 Materials and Methods 
+
+2.1 Data Description 
+
+In this study, the publicly available NeuroAiR dataset [18] is utilized. The dataset comprises EEG recordings from healthy right-handed participants performing an air-writing task. Data corresponding to five subjects are analyzed in this study. During the recording sessions, participants were seated comfortably and instructed to remain relaxed, with their right elbow resting on a table to minimize upper-arm movement and reduce motion-related artifacts. A custom graphical user interface developed with the Tkinter module in Python was used to present visual cues for uppercase English letters. Participants interacted with the inter-face using their non-dominant hand, while writing the prompted characters in free space using their index finger. EEG signals were recorded using a 31-channel LiveAmp EEG system (Brain Products GmbH, Germany), with electrodes placed according to the interna-tional 10–20 system using an EasyCap electrode cap. The signals were recorded with a sampling rate of 500 Hz. Electrode impedance was maintained below 20 kΩ throughout the recording sessions to ensure adequate signal quality. At the start of each trial, the participant initiated the task by pressing the space bar, after which a single character was presented on the screen. The participant was instructed to write the displayed character in free space using the index finger. The trial was ended with the press of the space bar again. Each participant completed 100 repetitions of the full set of 26 uppercase English letters, which yielded a total of 2600 samples per subject. Each letter was recorded individu-ally, and short breaks were provided after every five sets of recordings to reduce fatigue. 
+
+2.2 EEG Preprocessing 
+
+EEG preprocessing was performed using EEGLAB [5] toolbox in MATLAB soft-ware. The preprocessing enhanced the EEG signal quality by reducing artifacts and extracting neural feature representations. Raw EEG signals were common-average-referenced. Subsequently, the signals were bandpass-filtered between 0.5 and 45 Hz using zero-phase, non-causal finite-impulse-response (FIR) filters to remove slow drifts and high-frequency noise. Further, independent component analysis (ICA) was applied to decompose the EEG signals into statistically inde-pendent source components. Under the ICA model, the multichannel EEG signal is represented as a linear combination of independent components, enabling the separation of neural sources from non-neural artifacts such as eye blinks and muscle activity. Artifact-related components were identified using the ICLabel 4 A. Jain and A. Tripathi 
+
+algorithm implemented in EEGLAB. The components corresponding to the oc-ular or muscular artifacts, with a confidence score exceeding 0.8, were removed. Clean EEG signals were then reconstructed by recombining the remaining com-ponents using a modified mixing matrix. In this study, only two feature representations were retained for subsequent analysis: Preprocessed EEG signals , corresponding to artifact-free EEG data, and 
+
+ICA component time series , representing spatially filtered neural source activi-ties. Both representations were segmented into fixed-length trials corresponding to the air-writing task and normalized using z-score normalization prior to model training. 
+
+2.3 Supervised Contrastive Learning Framework 
+
+To enhance the discriminative power of EEG-based air-writing representations, this study employs a supervised contrastive learning (SCL) framework. Let a mini-batch of N labeled EEG trials be denoted as {(xi, y i)}Ni=1 , where 
+
+xi represents an EEG trial corresponding to an air-written character and yi ∈{1, . . . , C } indicates its class label. Each input trial is mapped into a latent representation via an encoder network, 
+
+ri = Enc (xi), (1) where Enc (·) corresponds to a deep neural network encoder. The latent repre-sentation ri is then normalized and passed through a projection head to obtain 
+
+zi = Proj (ri), (2) where Proj (·) denotes a nonlinear mapping implemented using a fully connected layer. The supervised contrastive loss promotes samples belonging to the same class to form compact clusters in the embedding space while enforcing separation between samples from different classes. For a given anchor sample i, let P (i)
+
+denote the set of indices corresponding to samples in the mini-batch that share the same class label as i, and let A(i) denote the set of all samples in the batch except i. The supervised contrastive loss is defined as 
+
+Lsup =
+
+> N
+
+X
+
+> i=1
+
+−1
+
+|P (i)|
+
+X 
+
+> p∈P(i)
+
+log exp( zi · zp/τ )
+
+P 
+
+> a∈A(i)
+
+exp( zi · za/τ ) , (3) where τ is a temperature scaling parameter and (·) denotes the inner product between normalized embedding vectors. The minimization of the loss function explicitly promotes intra-class simi-larity and inter-class dissimilarity within the learned embedding space. In con-trast to the conventional cross-entropy loss, which focuses on optimizing decision boundaries, the supervised contrastive loss directly shapes the geometry of the latent space. Hence, it improves representation robustness in the presence of inter-trial and inter-subject variability commonly observed in EEG signals. Title Suppressed Due to Excessive Length 5
+
+The overall learning strategy follows a two-stage training protocol . In the first stage, the encoder and projection head are jointly optimized using the supervised contrastive loss to learn discriminative EEG representations. In the second stage, the projection head is discarded, and a linear classification head is trained on the frozen encoder outputs using cross-entropy loss. This strategy ensures that, at inference time, the model complexity remains identical to that of a standard classification network while leveraging contrastively learned representations. 
+
+2.4 Model Architectures 
+
+In the present study, two established convolutional neural network architec-tures— EEGNet [11] and DeepConvNet [16] —are utilized for EEG-based air-writing recognition. These models were selected due to their demonstrated ef-fectiveness in EEG decoding tasks. Both architectures are evaluated with and without the supervised contrastive learning (SCL) framework across all five par-ticipants. 
+
+EEGNet EEGNet is a compact convolutional neural network specifically de-signed for EEG-based brain–computer interface applications. The architecture seeks to extract interpretable spatial–temporal features from multichannel EEG signals with constrained training data. EEGNet consists of two primary stages. In the first stage, temporal convolutions are applied to the input EEG signal using two-dimensional convolutional filters to learn frequency-selective repre-sentations. This is followed by a depthwise convolution operation that acts as a spatial filter across EEG channels, enabling the model to learn channel-wise spatial patterns associated with neural activity. Batch normalization and the ex-ponential linear unit (ELU) activation function are applied to stabilize training and introduce nonlinearity, respectively. Average pooling and dropout layers are utilized to reduce dimensionality and avoid overfitting. In the second stage, sep-arable convolutions are employed to enhance the representation learning while maintaining a minimal parameter count. The output feature maps are flattened and passed to a fully connected classification layer with softmax activation in the cross-entropy–based training setup. In the supervised contrastive learning framework, the softmax classifier is replaced by a projection head during the representation learning stage, while the encoder remains unchanged. 
+
+DeepConvNet DeepConvNet is a convolutional neural network architecture comprising a sequence of convolutional and pooling blocks that hierarchically extract temporal and spatial features from EEG signals. The first block of Deep-ConvNet consists of consecutive convolutional layers that perform temporal fil-tering, followed by spatial filtering across EEG channels. Subsequent blocks con-sist of convolutional layers with increasing numbers of filters, each followed by batch normalization, ELU activation, and max-pooling operations. This hierar-chical structure enables the model to learn progressively abstract representations 6 A. Jain and A. Tripathi                              
+
+> Table 1. EEGNet Model Architecture
+> Layer Configuration
+> Input EEG signal ( 31 ×1500 )Conv2D 8 filters, kernel (1 ×64)
+> Batch Normalization – Depthwise Conv2D kernel (31 ×1) , depth multiplier = 2 Batch Normalization – Activation ELU Average Pooling (1 ×4)
+> Dropout 0.5 Separable Conv2D kernel (1 ×16)
+> Batch Normalization – Activation ELU Average Pooling (1 ×8)
+> Flatten –Dense (CE setup) 26 units, softmax Dense (SCL setup) Projection head (during Stage 1)
+
+of EEG activity related to air-writing movements. In the conventional classifica-tion setting, the output of the final convolutional block is flattened and fed into a fully connected softmax layer trained using cross-entropy loss. In the supervised contrastive learning configuration, the DeepConvNet encoder is coupled with a projection head during the first training stage, as in the EEGNet-based SCL setup. For both EEGNet and DeepConvNet, the supervised contrastive learning framework is implemented by treating the convolutional backbone as an encoder network . During the first stage of training, the encoder is enhanced with a projec-tion head and optimized using supervised contrastive loss to learn discriminative latent representations. The projection head comprises of a single fully connected layer with 128 neurons and ReLU activation. The encoder and projection head parameters are jointly optimized by minimizing the supervised contrastive loss using the Adam optimizer. During the classification stage, the projection head is discarded and substituted by a fully connected output layer consisting 26 neu-rons with softmax activation. A dropout rate of 0.5 is applied to the classifier to reduce overfitting, and the classification network is trained using the standard cross-entropy loss. To evaluate the impact of contrastive representation learning, each model is trained and evaluated in two configurations: 1. Standard supervised learning, using cross-entropy loss alone, and 2. Supervised contrastive learning–based training, following the two-stage pro-tocol. All experiments are uniformly conducted across the five participants, facili-tating a direct comparison of architectures and training strategies while isolating the effect of supervised contrastive learning on EEG-based air-writing recogni-tion. Title Suppressed Due to Excessive Length 7                                            
+
+> Table 2. DeepConvNet Model Architecture
+> Layer Configuration
+> Input EEG signal ( 31 ×1500 )Conv2D 25 filters, kernel (1 ×5)
+> Conv2D 25 filters, kernel (31 ×1)
+> Batch Normalization – Activation ELU Max Pooling (1 ×2)
+> Conv2D 50 filters, kernel (1 ×5)
+> Batch Normalization – Activation ELU Max Pooling (1 ×2)
+> Conv2D 100 filters, kernel (1 ×5)
+> Batch Normalization – Activation ELU Max Pooling (1 ×2)
+> Conv2D 200 filters, kernel (1 ×5)
+> Batch Normalization – Activation ELU Max Pooling (1 ×2)
+> Flatten –Dense (CE setup) 26 units, softmax Dense (SCL setup) Projection head (during Stage 1)
+
+# 3 Results and Discussion 
+
+3.1 Experimental Details 
+
+In this study, experiments were conducted using preprocessed EEG signals and 
+
+independent component analysis (ICA) component time series as input features for EEG-based air-writing recognition. For each trial, EEG segments were ex-tracted from a temporal window spanning −1 s to 2 s relative to the onset of the air-writing task. This window was selected to capture both pre-movement neu-ral activity and execution-related dynamics. Since EEG signals were recorded at a sampling rate of 500 Hz , each trial segment consisted of 1500 time samples. For shorter-duration trials, zero-padding was applied to ensure a fixed-length representation across all samples. The resulting input feature matrices were of dimension κ × 1500 , where κ = 31 for both preprocessed EEG signals and ICA component time series. All input data were normalized using z-score normaliza-tion to achieve a mean of 0 and a variance of 1. A user-dependent 5-fold cross-validation technique was employed to evaluate the model’s performance. For each participant, the dataset was split into five mutually exclusive folds. Four folds are used for training, while one fold is re-served for testing in each iteration. This procedure was repeated until each fold functioned as the test set once. Within each training fold, a subset of the data was allocated as a validation set for early stopping. The performance metrics 8 A. Jain and A. Tripathi                                                        
+
+> Table 3. Mean accuracy score across the participants using pre-processed EEG and ICA components time series data in cross-entropy loss and supervised contrastive loss settings.
+> Pre-processed EEG participants Cross-Entropy Loss Supervised Contrastive Loss EEGNet DeepConvNet EEGNet DeepConvNet
+> Sub01 33.58 33.85 43.88 39.58 Sub02 30.62 24.00 38.73 34.54 Sub03 35.31 28.23 55.88 44.31 Sub04 42.69 36.85 50.92 43.65 Sub05 25.04 22.77 29.42 28.23
+> Average 33.45 29.14 43.77 38.06
+> ICA Components participants Cross-Entropy Loss Supervised Contrastive Loss EEGNet DeepConvNet EEGNet DeepConvNet
+> Sub01 35.04 35.62 49.65 44.77 Sub02 35.04 29.31 44.46 38.88 Sub03 41.12 30.62 59.04 50.35 Sub04 43.62 42.12 57.88 49.85 Sub05 27.65 24.73 35.00 32.73
+> Average 36.49 32.48 49.21 43.32
+
+were averaged across the folds to obtain subject-specific results. All deep learn-ing models were trained with a mini-batch size of 32 . Model optimization was performed using the Adam optimizer with early stopping configured to a pa-tience of 20 on validation accuracy. The final reported results correspond to the average performance across all five participants, ensuring a uniform evaluation of the proposed and baseline models. 
+
+3.2 Results 
+
+Table 3 summarizes the mean classification accuracy obtained across five partic-ipants using preprocessed EEG signals and ICA component time series , evalu-ated under cross-entropy (CE) and supervised contrastive learning (SCL) train-ing paradigms with EEGNet and DeepConvNet architectures. For preprocessed EEG inputs, models trained using supervised contrastive learning consistently outperform their cross-entropy-trained counterparts across all participants and architectures. Averaged across participants, EEGNet trained with CE achieves a mean accuracy of 33.45%, which increases to 43.77% when trained using the SCL framework. A similar trend is observed for DeepConvNet, with mean ac-curacy increasing from 29.14% (CE) to 38.06% (SCL). Mean accuracy analysis shows that the SCL framework yields significant improvements in classification performance. For Sub03, an increase in accuracy from 35.31% (CE) to 55.88% (SCL) is observed with the EEGNet decoder. This shows the efficiency of super-vised contrastive representation learning for class separability. Overall, EEGNet Title Suppressed Due to Excessive Length 9
+
+consistently outperforms DeepConvNet on preprocessed EEG data across both training strategies. Improvement in classification performance is observed when ICA component time series were utilized as input features across training paradigms and archi-tectures. With cross-entropy training, the mean accuracy increases to 36.49% for EEGNet and 32.48% for DeepConvNet. Further, the supervised contrastive learning framework improved the accuracy to 49.21% and 43.32% for EEGNet and DeepConvNet, respectively. For ICA-based features, the improvements in performance using the SCL framework are significantly greater than those with preprocessed EEG signals. The highest average accuracy of 49.21% is achieved with EEGNet and the SCL framework using ICA-features, an improvement of ≈12.7% over the cross-entropy baseline. SCL framework consistently out-performs the traditional cross-entropy-based training framework. Furthermore, ICA-derived features outperform preprocessed EEG signals, which shows the significance of spatially decomposed neural representations for EEG-based air-writing recognition. Mean accuracy scores demonstrate that integrating super-vised contrastive learning with deep learning classifiers yields better discrimina-tive latent representations for EEG-based air-writing recognition. 
+
+# 4 Discussion 
+
+The experimental results demonstrate the efficiency of the supervised contrastive learning framework for EEG-based air-writing recognition in comparison to cross-entropy-based training. The improvements are observed in both preprocessed EEG signals and ICA component-based features, using both the EEGNet and DeepConvNet classifiers. ICA-based features achieve higher classification accu-racy than preprocessed EEG signals. This indicates that independent component representations provide better discriminative input for learning neural embed-dings. Across both training configurations, EEGNet outperforms DeepConvNet, highlighting the importance of compact, EEG-specific architectural inductive bi-ases. Overall, the classification analysis shows the robustness and efficiency of the supervised contrastive learning framework for EEG-based air-writing recog-nition. 
+
+# 5 Conclusion 
+
+This study introduced the supervised contrastive learning framework for EEG-based air-writing recognition. The preprocessed EEG signals and ICA-derived neural components were used as input features. The proposed framework in-tegrates contrastive representation learning with EEGNet and DeepConvNet classifiers to improve classification performance. Experimental results demon-strate the superiority of supervised contrastive learning over conventional cross-entropy-based training. A significant performance improvement while using ICA 10 A. Jain and A. Tripathi 
+
+component features. EEGNet outperforms DeepConvNet, showing the effective-ness of compact EEG-specific architectures. Overall, the framework provides an effective extension to existing EEG-based air-writing recognition frameworks. 
+
+# References 
+
+1. Anand, P., Jain, A., Muthukrishnan, S.P., Bhasin, S., Roy, S., Kumar, L.: EEG-based 90-Degree Turn Intention Detection for Brain-Computer Interface. arXiv preprint arXiv:2410.11339 (2024) 2. Chen, M., AlRegib, G., Juang, B.H.: Air-writing recognition—Part I: Modeling and recognition of characters, words, and connecting motions. IEEE Transactions on Human-Machine Systems 46 (3), 403–413 (2015) 3. Chen, M., AlRegib, G., Juang, B.H.: Air-writing recognition—Part II: Detection and recognition of writing activity in continuous stream of motion data. IEEE Transactions on Human-Machine Systems 46 (3), 436–444 (2015) 4. Crell, M.R., Müller-Putz, G.R.: Handwritten character classification from EEG through continuous kinematic decoding. Computers in Biology and Medicine 182 ,109132 (2024) 5. Delorme, A., Makeig, S.: EEGLAB: an open source toolbox for analysis of single-trial EEG dynamics including independent component analysis. Journal of neuro-science methods 134 (1), 9–21 (2004) 6. Falk, T.H., Guger, C., Volosyak, I.: Brain–computer interfaces: recent advances, challenges, and future directions. Handbook of Human-Machine Systems pp. 11–22 (2023) 7. Jain, A., Kumar, L.: PreMovNet: Premovement EEG-based hand kinematics esti-mation for grasp-and-lift task. IEEE Sensors Letters 6(7), 1–4 (2022) 8. Jain, A., Kumar, L.: ESI-GAL: EEG source imaging-based trajectory estimation for grasp and lift task. Computers in Biology and Medicine 186 , 109608 (2025) 9. Khosla, P., Teterwak, P., Wang, C., Sarna, A., Tian, Y., Isola, P., Maschinot, A., Liu, C., Krishnan, D.: Supervised contrastive learning. Advances in neural information processing systems 33 , 18661–18673 (2020) 10. Kim, U.H., Hwang, Y., Lee, S.K., Kim, J.H.: Writing in the air: Unconstrained text recognition from finger movement using spatio-temporal convolution. IEEE Transactions on Artificial Intelligence 4(6), 1386–1398 (2022) 11. Lawhern, V.J., Solon, A.J., Waytowich, N.R., Gordon, S.M., Hung, C.P., Lance, B.J.: EEGNet: a compact convolutional neural network for EEG-based brain– computer interfaces. Journal of neural engineering 15 (5), 056013 (2018) 12. Mitra, S., Acharya, T.: Gesture recognition: A survey. IEEE Transactions on Sys-tems, Man, and Cybernetics, Part C (Applications and Reviews) 37 (3), 311–324 (2007) 13. Patil, S., Kim, D., Park, S., Chai, Y.: Handwriting recognition in free space using WIMU-based hand motion analysis. Journal of Sensors 2016 (1), 3692876 (2016) 14. Pei, L., Ouyang, G.: Online recognition of handwritten characters from scalp-recorded brain activities during handwriting. Journal of Neural Engineering 18 (4), 046070 (2021) 15. Saini, M., Jain, A., Muthukrishnan, S.P., Bhasin, S., Roy, S., Kumar, L.: BiCur-Net: Premovement EEG-based neural decoder for biceps curl trajectory estimation. IEEE Transactions on Instrumentation and Measurement 73 , 1–11 (2023) Title Suppressed Due to Excessive Length 11 16. Schirrmeister, R.T., Springenberg, J.T., Fiederer, L.D.J., Glasstetter, M., Eggensperger, K., Tangermann, M., Hutter, F., Burgard, W., Ball, T.: Deep learn-ing with convolutional neural networks for EEG decoding and visualization. Human brain mapping 38 (11), 5391–5420 (2017) 17. Shivener, R., Caravella, E.: Writing in Virtual Reality: Understanding Inven-tion, Collaboration, and Friction in Hybrid Spaces. Written Communication p. 07410883251328315 (2025) 18. Tripathi, A., Gupta, A., Muthukrishnan, S.P., Kumar, L., et al.: NeuroAiR: Deep learning framework for airwriting recognition from scalp-recorded neural signals. IEEE Transactions on Instrumentation and Measurement 73 , 1–13 (2024) 19. Tripathi, A., Mondal, A.K., Kumar, L., AP, P.: SCLAiR: Supervised contrastive learning for user and device independent airwriting recognition. IEEE Sensors Let-ters 6(2), 1–4 (2021) 20. Tripathi, A., Mondal, A.K., Kumar, L., Prathosh, A.: ImAiR: Airwriting recogni-tion framework using image representation of IMU signals. IEEE Sensors Letters 
+
+6(10), 1–4 (2022) 21. Tripathi, A., Prathosh, A., Muthukrishnan, S.P., Kumar, L.: SurfMyoAiR: A sur-face electromyography-based framework for airwriting recognition. IEEE Transac-tions on Instrumentation and Measurement 72 , 1–12 (2023) 22. Tripathi, A., Prathosh, A., Muthukrishnan, S.P., Kumar, L.: TripCEAiR: A multi-loss minimization approach for surface EMG based airwriting recognition. Biomed-ical Signal Processing and Control 85 , 104991 (2023) 23. Vaidya, V., Pravanth, T., Viji, D.: Air writing recognition application for dyslexic people. In: 2022 International Mobile and Embedded Technology Conference (MECON). pp. 553–558. IEEE (2022) 24. Wu, M., Huang, K., Cai, Y., Hu, S., Zhao, Y., Wang, W.: Finger in camera speaks everything: Unconstrained air-writing for real-world. IEEE Transactions on Cir-cuits and Systems for Video Technology 34 (9), 8602–8613 (2024)
