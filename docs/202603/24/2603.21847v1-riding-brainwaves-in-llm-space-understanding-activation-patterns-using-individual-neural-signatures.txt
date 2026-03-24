@@ -1,0 +1,510 @@
+Title: Riding Brainwaves in LLM Space: Understanding Activation Patterns Using Individual Neural Signatures
+
+URL Source: https://arxiv.org/pdf/2603.21847v1
+
+Published Time: Tue, 24 Mar 2026 02:11:22 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+Preprint. Under review. 
+
+# Riding Brainwaves in LLM Space: Understanding Activation Patterns Using Individual Neural Signatures 
+
+Ajan Subramanian ∗ Sumukh Bettadapura ∗ Rohan Sathish 
+
+Kubo Technologies 
+
+## Abstract 
+
+Consumer-grade EEG is entering everyday devices, from earbuds to head-bands, raising the question of whether language models can be adapted to individual neural signatures. We test this by asking whether frozen LLM representations encode person-specific EEG signals, directions in ac-tivation space that predict one person’s brain activity but not another’s. Using word-level EEG from 30 participants reading naturalistic sentences (ZuCo corpus), we train a separate linear probe for each person, mapping hidden states from a frozen Qwen 2.5 7B to that individual’s EEG power. Person-specific probes outperform a single population probe on every EEG feature tested; for high-gamma power, the person-specific probe achieves 
+
+ρ = 0.183, a ninefold improvement over the population probe ( ρ = 0.020, 
+
+p < 10 −4). A negative control, fixation count, shows no person-specific advantage ( p = 0.360); fixation count reflects word length and frequency rather than individual cognition. The individual directions are tempo-rally stable (split-half cosine = 0.824), non-transferable across people (self 
+
+ρ = 0.369 vs. other ρ = 0.143, p < 10 −19 ), and distinct from the shared population signal: person-specific probes retain predictive power after the population component is removed. The person-specific signal concentrates in the model’s deep layers, rising consistently with depth and peaking at Layer 24 of 28. The results are consistent across architectures (LLaMA 3.1 8B) and survive word-level confound controls. Frozen language mod-els contain stable, person-specific neural directions in their deep layers, providing a geometric foundation for EEG-driven personalization. 
+
+## 1 Introduction 
+
+When two people read the same word, their brains respond differently. Precision neu-roimaging has shown that this individual variation is not noise: it is a dominant source of variance in how brains are organized, exceeding task and session effects (Gratton et al., 2018; Visconti di Oleggio Castello et al., 2025). As EEG hardware moves from the laboratory to consumer devices, individual neural variation is becoming not just a scientific question but a practical one: can systems adapt to the person wearing the headset? We ask whether these individual differences have structure in the geometry of large language models. The standard approach to comparing language models with brains averages neural data across participants and evaluates at the population level (Schrimpf et al., 2021; Caucheteux & King, 2022; Goldstein et al., 2022; Toneva & Wehbe, 2019). This has been productive, but it retains only what is shared across people and discards what is specific to any one of them. A separate line of work has shown that linear directions in LLM activation space encode high-level concepts such as truthfulness and sentiment (Zou et al., 2023; Turner et al., 2023), but these directions are defined by what the text says, not by who reads it. Neither tradition has asked whether language models encode properties of the individual processing the text. 
+
+> ∗
+
+Equal contribution. 
+
+1
+
+> arXiv:2603.21847v1 [cs.CL] 23 Mar 2026
+
+Preprint. Under review. We test this directly. The key idea is simple: instead of training a single linear probe that maps LLM hidden states to the average neural signature across all participants, we train a separate probe for each person. If the model’s representations contain individual-specific structure, each person’s probe should find a different direction in activation space. That direction should predict that person’s neural signatures better than a one-size-fits-all mapping. We apply this to the ZuCo corpus (Hollenstein et al., 2018; 2020), which provides word-level EEG and eye-tracking from 30 participants reading naturalistic sentences, using PCA-reduced hidden states from a frozen Qwen 2.5 7B as the representation space. Our contribution is to show that frozen language model representations encode individual-level neural structure: person-specific linear probes find distinct directions in activation space that are temporally stable, non-transferable across people, and separable from the shared population signal. We validate this across two architectures, two datasets, and multiple negative controls. The remainder of the paper presents the experimental setup (§3), core results and characteri-zation (§4), robustness and generality tests (§5), and discussion (§6). 
+
+## 2 Related Work 
+
+Representation engineering. The Linear Representation Hypothesis, that high-level con-cepts are encoded as linear directions in activation space, has received growing support (Park et al., 2023; Nanda et al., 2023; Elhage et al., 2022). Representation engineering extracts such directions and uses them to read or steer model behavior (Zou et al., 2023): Activation Addition (Turner et al., 2023) and its contrastive variant (Panickssery et al., 2023) steer generation along concept axes, and inference-time intervention elicits truthful outputs (Li et al., 2023; Marks & Tegmark, 2023). In all of this work, the target concept is defined by text: “truthful” versus “false” statements, “helpful” versus “harmful” completions. 
+
+Neuro-linguistic alignment. A parallel literature maps LLM representations onto neural data. Brain-Score benchmarks (Schrimpf et al., 2021) and related work (Caucheteux & King, 2022; Goldstein et al., 2022; Toneva & Wehbe, 2019; Jain & Huth, 2018) find that mid-layer representations best predict population-averaged neural signals during language comprehension. Scaling improves this alignment (Gao et al., 2025), though the role of instruction tuning is debated (Aw et al., 2023; Tuckute et al., 2024). This paradigm has been productive, but it evaluates alignment at the population level. 
+
+Precision neuroimaging. Recent precision neuroimaging has established that individual-level variation in brain function is substantial. Functional connectivity fingerprints are unique and stable across sessions, predicting individual cognitive abilities (Finn et al., 2015). Individual-level factors exceed task-level and daily variance in functional brain networks (Gratton et al., 2018), and individual differences shape conceptual representation in brain regions where personal knowledge meets sensory input (Visconti di Oleggio Castello et al., 2025). 
+
+Word-level EEG prediction. At the intersection of these two fields, a growing body of work predicts word-level neural signals from LLM representations: information-theoretic measures predict ERP amplitudes (Frank et al., 2015), LLM surprisal explains N400 ef-fects (Michaelov et al., 2024), and cognitive evaluation frameworks benchmark embeddings against EEG (Hollenstein et al., 2019; 2023). Across these four traditions, neural prediction targets population-averaged signals or text-defined concepts. Whether language model representations also encode structure specific to individual readers has not been explored. 2Preprint. Under review. 
+
+## 3 Experimental Setup 
+
+If frozen language models encode individual-level neural structure, a simple test should reveal it: train one linear probe per person and check whether it outperforms a single probe trained on everyone pooled. We implement this as follows (Figure 1). The economic impact of the recession   
+
+> Reader A
+> Reader B
+> Reader C
+> word-level EEG: same word, different signatures
+> LM hidden state
+> h("recession")
+> 3,584d
+> A
+> B
+> C
+> pop
+> activation space (L24)
+> Each reader's probe
+> finds a different
+> direction in this space
+> ZuCo
+> 30 participants
+> 594 sentences
+> Per word:
+> EEG · eye-tracking
+> Frozen LM
+> Qwen 2.5 7B
+> Layers 1 28
+> PCA
+> 3584 50d
+> Person Probes
+> Ridge, ×30
+> Target: individual EEG
+> Population Probe
+> Ridge, ×1 (pooled)
+> Target: pooled EEG
+> Result (Spearman )
+
+Person = 0.183 
+
+> vs.
+
+Pop = 0.020 
+
+= +0.163 
+
+> p < 10
+> TRT_g2 (high- ) · Layer 24 · PCA 50
+
+a) Same text, different neural signatures 
+
+b) Probing pipeline and key result 
+
+Figure 1: (a) Different readers produce distinct neural signatures for the same word; each person-specific probe learns a different direction in the LM’s activation space (“pop” = population). (b) Probing pipeline: words pass through a frozen LM and PCA; 30 person-specific Ridge probes are compared against a single population probe. The person-specific probe achieves ¯ ρ = 0.183 vs. 0.020 for the population probe on TRT g2 (high-γ, Layer 24). 
+
+3.1 Data 
+
+We combine ZuCo 1.0 (Hollenstein et al., 2018) (12 participants, 300 sentences) and ZuCo 2.0 (Hollenstein et al., 2020) (18 participants, 349 sentences), yielding 30 participants, 594 unique sentences, and 196,162 word-level observations. Both corpora provide simultaneous EEG and eye-tracking during naturalistic sentence reading. For each fixated word, EEG power is decomposed into eight frequency sub-bands (theta through high-gamma) across five temporal reading windows: First Fixation Duration (FFD), Gaze Duration (GD), Total Reading Time (TRT), Single Fixation Duration (SFD), and Go-Past Time (GPT), yielding 5 × 8 = 40 EEG features per word per participant. All values are averaged across 105 electrode channels. We also extract mean pupil size and fixation count (nFixations) per word. Mean pupil size varies across individuals due to physiological factors such as age and baseline arousal, making it a natural person-specific target. Fixation count depends primarily on word length and frequency rather than on who is reading, so it serves as a negative control: if person-specific probes show no advantage for fixation count, the advantage for EEG is not simply per-participant noise. Full dataset details are in Appendix D. 3Preprint. Under review. 
+
+3.2 Hidden-State Extraction 
+
+We extract hidden states from Qwen 2.5 7B Instruct (Qwen et al., 2025), a 28-layer decoder with 3,584-dimensional representations. Each sentence is passed through the frozen model; we extract hidden states at layers ℓ ∈ { 1, 4, 8, 12, 16, 20, 24, 28 }. For multi-token words, we average constituent token representations. The raw hidden dimension (3,584) is too large for reliable regression with the available data ( ∼5 ,000 words per participant), so we reduce it via Principal Component Analysis (PCA), which selects the directions of greatest variance. We fit PCA on all 12,200 unique words and project to d = 50 dimensions per layer. For replication, we run the same pipeline on LLaMA 3.1 8B Instruct (Grattafiori et al., 2024) (32 layers, 4,096-dim) at layers {1, 4, 8, 12, 16, 20, 24, 28, 32 }.
+
+3.3 Probing Framework 
+
+A probe is a linear regression that maps the model’s hidden-state representation of a word to the neural signature that word elicited. We say a person-specific probe outperforms the population probe if it achieves a higher Spearman correlation on held-out data for that participant. For each participant i and EEG feature f , we train a person-specific Ridge regression: ˆyi, f (w) = x(w)⊤ βi, f + bi, f (1) where x(w) ∈ R50 is the PCA-reduced hidden state of word w, βi, f ∈ R50 is the learned weight vector, bi, f is a scalar bias, and ˆyi, f (w) is the predicted EEG power for participant i
+
+on feature f . The Ridge regularization strength α ∈ { 0.01, 0.1, 1, 10, 100, 1000 } is selected by held-out validation. As a baseline, a single population probe is trained on all 30 participants pooled: ˆypop, f (w) = x(w)⊤ βpop, f + bpop, f (2) We evaluate via 5-fold cross-validation, splitting at the sentence level (all words from a given sentence appear in the same fold) to prevent within-sentence context leakage. We report Spearman ρ between predicted and actual values at the word level, averaged across folds and participants. Person-specific ¯ρ versus population ¯ρ is tested via paired t-test across the 30 participants. 
+
+3.4 Confound Features 
+
+Each word is annotated with log word frequency, word length, normalized sentence position, and GPT-2 surprisal. These capture the major lexical confounds known to modulate both EEG and eye-tracking signals and are used in §5.1 to test whether the person-specific advantage survives after these word-level properties are regressed out. 
+
+## 4 Results 
+
+4.1 Person-Specific Probes Outperform Population Probes 
+
+Table 1 reports person-specific and population probe performance across all 40 EEG features at the best configuration (Layer 24, PCA 50). Person-specific probes outperform the population probe on every feature, with all compar-isons significant at p < 10 −4 (N = 30). The largest person-specific advantage is for mean pupil size ( ∆ = + 0.189), consistent with pupil diameter being shaped by physiological factors such as age and baseline arousal that vary across individuals. Among EEG features, the advantage is largest in gamma ( ∆ = 0.113–0.163) and beta ( ∆ = 0.077), and smallest in theta. Gamma and beta oscillations are associated with active semantic processing and cortical binding (Buzs ´aki & Draguhn, 2004; Engel et al., 2001), suggesting the person-specific signal reflects higher-order cognition rather than low-level perception. In word-level EEG 4Preprint. Under review.           
+
+> Feature Person ρPop ρ∆p
+> meanPupilSize 0.261 0.071 +0.189
+
+< 10 −4    
+
+> TRT g2 (gamma high) 0.183 0.020 +0.163
+
+< 10 −4    
+
+> TRT g1 (gamma low) 0.156 0.043 +0.113
+
+< 10 −4    
+
+> TRT b2 (beta high) 0.145 0.069 +0.077
+
+< 10 −4    
+
+> TRT t1 (theta low) 0.100 0.024 +0.075
+
+< 10 −4    
+
+> TRT a1 (alpha low) 0.127 0.054 +0.073
+
+< 10 −4    
+
+> FFD t1 0.090 0.023 +0.067
+
+< 10 −4    
+
+> FFD a1 0.117 0.053 +0.064
+
+< 10 −4     
+
+> TRT (reading time) 0.269 0.247 +0.023 3.0
+
+× 10 −5    
+
+> nFixations 0.234 0.231 +0.004 0.360
+
+Table 1: Person-specific vs. population probe performance (Spearman ρ) at Layer 24, PCA 50. All EEG comparisons are significant at p < 10 −4 (paired t-test, N = 30). nFixations (a text-structural measure) shows no person-specific advantage ( p = 0.360). prediction, where population-level correlations typically fall in the 0.02–0.07 range (Table 1), person-specific ρ values of 0.10–0.18 represent a substantial individual signal. Person-specific performance increases consistently with layer depth, peaking at Layer 24 (Figure 2). The population probe remains near zero at every layer, confirming that the individual signal is encoded in directions that a single shared probe cannot recover. The final layer (28) shows a slight decline, though it still outperforms all layers below 20; this is expected because PCA 50 retains only 69% of variance at this depth (vs. >99% at layers 4–24), so some person-specific signal is lost to dimensionality reduction. 1 4 8 12 16 20 24 28 
+
+Layer (Qwen 2.5 7B) 
+
+−0.05 
+
+0.00 
+
+0.05 
+
+0.10 
+
+0.15 
+
+0.20     
+
+> Spearman  ρ
+> ρ= 0.183
+> ρ= 0.020
+> Population probe (all participants pooled)
+> Person-specific probe (mean ρ,N=30)
+
+Figure 2: Layer-wise probe performance on Qwen 2.5 7B (ZuCo, TRT g2). Person-specific probes (solid blue, mean ρ across 30 participants) increase with depth, peaking at Layer 24. The population probe (dashed orange) remains near zero throughout. Layer 28 shows a slight decline relative to Layer 24. Fixation count (nFixations) serves as a negative control. The number of times a reader fixates a word depends primarily on word length and frequency, not on who is reading. If 5Preprint. Under review. the person-specific advantage were an artifact of per-participant noise fitting, we would expect it to appear for fixation count as well. It does not: person-specific and population probes perform nearly identically ( ρ = 0.234 vs. 0.231, ∆ = 0.004, p = 0.360), confirming the advantage is specific to neural signals. 
+
+4.2 Characterization: Genuine Individual Signatures 
+
+Several alternative explanations must be ruled out. All characterization results use the best configuration (Layer 24, PCA 50, meanPupilSize). 
+
+Cross-person transfer. If person-specific directions are genuinely individual, a probe trained on one participant should fail when applied to another. We test this with a full 30 × 30 transfer matrix: participant i’s probe evaluated on participant j’s data. Self-prediction averages ρ = 0.369, while cross-person prediction drops to ρ = 0.143 ( p = 5.8 × 10 −20 ,paired t-test; Figure 3). Each probe captures information specific to the person it was trained on. A small number of participant pairs show moderate cross-person correlation (visible as off-diagonal warm cells), suggesting partial overlap in neural processing style between those individuals. Geometrically, the learned weight vectors confirm this pattern: the mean pairwise cosine similarity across all (30 2 ) = 435 participant pairs is 0.351, and cosine to the population probe averages 0.228: the directions share some common structure but occupy distinct regions of activation space. YAC 
+
+> YAG
+> YAK
+> YDG
+> YDR
+> YFR
+> YFS
+> YHS
+> YIS
+> YLS
+> YMD
+> YMS
+> YRH
+> YRK
+> YRP
+> YSD
+> YSL
+> YTL
+> ZAB
+> ZDM
+> ZDN
+> ZGW
+> ZJM
+> ZJN
+> ZJS
+> ZKB
+> ZKH
+> ZKW
+> ZMG
+> ZPH
+
+Test participant (probe applied to)     
+
+> YAC
+> YAG
+> YAK
+> YDG
+> YDR
+> YFR
+> YFS
+> YHS
+> YIS
+> YLS
+> YMD
+> YMS
+> YRH
+> YRK
+> YRP
+> YSD
+> YSL
+> YTL
+> ZAB
+> ZDM
+> ZDN
+> ZGW
+> ZJM
+> ZJN
+> ZJS
+> ZKB
+> ZKH
+> ZKW
+> ZMG
+> ZPH
+> Train participant (probe trained on)
+> Diagonal (self): ρ= 0.369
+> Off-diagonal (other): ρ= 0.143
+> −0.1
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> Spearman  ρ
+
+Figure 3: Cross-person transfer matrix (Qwen 2.5 7B, mean pupil size, Layer 24, PCA 50). Each cell (i, j) shows Spearman ρ when participant i’s probe predicts participant j’s mean pupil size. The diagonal (self ρ = 0.369) is consistently higher than the off-diagonal (other 
+
+ρ = 0.143), confirming person-specificity. LLaMA 3.1 8B shows the same pattern (Table 4). 
+
+Independence from population signal. A subtler concern is that each person’s probe might learn a slightly different weighting of the same population-level mapping rather than a genuinely different direction. To test this, we subtract the population probe’s prediction from each participant’s actual EEG and re-evaluate the person-specific probe on the residuals. If the person-specific direction were merely a rescaled version of the population direction, it should fail on these residuals. It does not: the person-specific probes retain significant 6Preprint. Under review. predictive power on the residuals ( p < 10 −4), confirming that they capture signal distinct from the population mapping. 
+
+Temporal stability. We split each participant’s reading session into temporal halves and train independent probes on each half. The cosine similarity between the two weight vectors averages 0.824 ( p = 6.6 × 10 −31 ). Whatever these probes are finding, it persists across the reading session. 
+
+## 5 Robustness and Generality 
+
+We now test whether the person-specific advantage survives confound removal, holds up under targeted negative controls, and replicates in a second model architecture. 
+
+5.1 Word-Level Confound Controls 
+
+Word-level EEG power correlates with basic lexical properties: frequent words are read faster, longer words attract more fixations, and word predictability (surprisal) modulates processing effort. If person-specific probes merely learned that “participant A reads frequent words more quickly than participant B,” the advantage would be an artifact of per-person reading speed interacting with word difficulty. To test this, we regress out four word-level confounds (log word frequency, word length, sentence position, and GPT-2 surprisal) from each EEG feature on a per-participant basis, then retrain the full probe pipeline on the residual signal, the part of each person’s EEG that cannot be predicted from word properties alone. The nuisance regressions explain very little variance (mean R2 < 0.01 for all EEG bands; R2 = 0.045 for meanPupilSize), confirming that word properties are only weakly related to the EEG signals the probes predict.                                         
+
+> Feature Person ρPerson ρPop ρp
+> (raw) (confounds removed) (confounds removed) (confounds removed)
+> TRT g2 0.183 0.169 0.057 8.2 ×10 −8
+> TRT g1 0.151 0.141 0.065 3.5 ×10 −6
+> meanPupilSize 0.258 0.181 0.118 1.9 ×10 −7
+> TRT b2 0.153 0.124 0.068 3.1 ×10 −5
+> TRT a1 0.125 0.107 0.070 3.5 ×10 −5
+
+Table 2: Person-specific probe performance before and after removing word-level confounds (word frequency, length, sentence position, GPT-2 surprisal) via per-participant nuisance regression. The person-specific advantage survives for all five features ( p < 10 −4). Raw values come from re-running probes within the confound-control pipeline (same CV folds as the residualized condition) and may differ slightly from Table 1. The person-specific advantage survives confound removal for every feature ( p < 10 −4;Table 2), confirming the probes detect individual neural signatures that persist after word-level properties have been regressed out. 
+
+5.2 Specificity Controls 
+
+A second class of concern is statistical: perhaps any per-person noisy signal would produce a similar advantage, simply because individual probes overfit to per-participant noise. We address this with six targeted controls (Table 3); the cross-person transfer test (§4.2) serves as a seventh. The shuffled control scrambles which neural signature is paired with which word (10 permu-tations), and performance collapses to zero ( ρ ≈ 0.001), confirming the probes require correct word-to-response alignment. The nFixations control uses a text-structural feature (number of fixations) that shows no person-specific advantage ( ∆ = 0.004, p = 0.360), confirming 7Preprint. Under review.                                   
+
+> Condition Person ρPop ρ∆p
+> Full model (TRT g2) 0.183 0.020 +0.163 3.1 ×10 −9
+> Shuffled (word ↔EEG scrambled) 0.001 0.001 ≈0.000 †
+> nFixations (neg. ctrl.) 0.234 0.231 +0.004 0.360 Random proj. (50 random dirs.) 0.179 0.014 +0.165 ‡
+> GloVe 50d (static, no LLM) 0.057 −0.006 +0.063 4.8 ×10 −7
+> Random emb. (no LLM) 0.010 0.004 +0.006 §
+
+Table 3: Specificity controls for TRT g2 at Layer 24, PCA 50. Shuffled : word-to-EEG pairings randomly scrambled (10 permutations). Random proj. : PCA’s top-50 directions replaced with 50 random orthogonal directions. GloVe 50d : LLM activations replaced with static GloVe word vectors (Pennington et al., 2014). Random emb. : LLM activations replaced with fixed random vectors per word. †Both collapse to zero; no meaningful comparison. ‡Single run; paired test not applicable. §Both collapse to near zero; no meaningful comparison. the effect is specific to neural signals. The random-projection baseline replaces PCA’s top-50 directions with 50 random orthogonal directions; performance is nearly identical ( ∆ = 0.165 vs. 0.163), indicating the person-specific signal is distributed broadly across the activation space. The final two controls test whether the advantage requires LLM representations at all. The 
+
+random-embedding control replaces LLM activations with fixed random vectors per word (N (0, 1 ) in R50 ): both probes collapse to near zero ( ρ ≈ 0.01, ∆ = 0.006, p = 0.203), ruling out regression artifacts. The GloVe control (Pennington et al., 2014) uses static 50-dimensional word embeddings: a small but significant advantage emerges ( ∆ = 0.063, p = 4.8 × 10 −7), yet it is 2.6 × smaller than the LLM’s ( ∆ = 0.163) and absolute accuracy is 3.2 × lower (ρ = 0.057 vs. 0.183). Together, these controls establish a clear hierarchy: random vectors (no effect) < static embeddings (small effect) ≪ contextual LLM representations (large effect). 
+
+5.3 Second Model: LLaMA 3.1 8B 
+
+If person-specific directions are a property of how decoder transformers represent text in general, the finding should not depend on Qwen. We replicate the full pipeline on LLaMA 3.1 8B Instruct (Grattafiori et al., 2024) (32 layers, 4,096-dim hidden states), extracting activations at layers 1, 4, 8, 12, 16, 20, 24, 28, and 32.                      
+
+> Metric Qwen 2.5 7B LLaMA 3.1 8B
+> Best layer 24 24 TRT g2 person ρ0.183 0.196 TRT g2 pop ρ0.020 0.012 meanPupilSize person ρ0.261 0.278 Self transfer ρ0.369 0.384 Other transfer ρ0.143 0.154 Split-half cosine 0.824 0.841
+
+Table 4: Side-by-side comparison of person-specific probe metrics for Qwen 2.5 7B and LLaMA 3.1 8B (both at Layer 24, PCA 50). All key metrics replicate quantitatively. The replication is quantitatively close (Table 4): LLaMA peaks at the same depth (Layer 24), produces a nearly identical person-specific advantage ( ∆ = 0.183 for both models), and matches Qwen on cross-person transfer (self ρ = 0.384 vs. other ρ = 0.154, p < 10 −19 ) and split-half reliability (cosine = 0.841). The person-specific directions emerge at the same depth, with the same magnitude, in two independently trained architectures. 8Preprint. Under review. 
+
+5.4 Cross-Dataset Validation 
+
+Our primary results pool ZuCo 1.0 (12 participants) and ZuCo 2.0 (18 participants), collected in separate sessions with different stimuli. To test generalization, we train population probes on one corpus and evaluate on the other. Transfer varies by feature type: nFixations (text-structural) retains 97% (cross ρ = 0.226 vs. within ρ = 0.233); mean pupil size retains 61%; and high-frequency EEG bands retain 26–35%, consistent with these features being the most person-specific. 
+
+## 6 Discussion 
+
+A mechanistic finding. This work establishes that frozen language model representations encode individual-level neural structure accessible through simple linear probes. The finding is mechanistic: person-specific directions exist in the deep layers of the network, are temporally stable, non-transferable across people, and capture signal that persists after the population component is removed. A practical consequence for brain-alignment benchmarks such as Brain-Score (Schrimpf et al., 2021) follows directly: evaluating at the population level retains only the coarsest shared signal, while person-specific probing recovers substantially more of the decodable information. 
+
+The individual signal is encoded in directions, not layers. The layer profile (Figure 2) clarifies the structure of this encoding. The population probe remains near zero at every layer, not just at the wrong depth. The individual signal is encoded in directions that pooling across participants destroys. This distinction matters: the barrier to capturing individual variation is not about choosing the right layer, but about training separate mappings for each person. 
+
+Implications for personalization. Person-specific linear directions in activation space open the possibility of biologically grounded personalization. Current personalization methods rely on text-based proxies such as user profiles or preference histories (Zhang et al., 2024); person-specific neural directions offer a complementary signal that is grounded in how the individual’s brain processes language. As EEG hardware moves from the laboratory to consumer devices, brief calibration sessions could in principle extract a person’s neural direction in model space, creating a compact individual signature. Inference-time steering methods (Turner et al., 2023; Zhao et al., 2025) could then use this direction to adapt generation to the person wearing the headset. The present work identifies the directions but does not inject them. The mechanistic next step is causal intervention: adding person-specific directions to the residual stream during generation and measuring whether this produces meaningful behavioral changes. Whether these directions can be extracted from brief calibration sessions and mapped onto a shared representational space is a natural follow-up question. 
+
+Limitations. Several limitations should temper interpretation. Our probes are linear, and nonlinear methods might capture additional structure, though they risk overfitting at the current data scale (roughly 5,000 words per participant). We do not attempt causal interventions: the person-specific directions are identified, not injected into the residual stream. The ZuCo dataset provides 30 participants, which is standard for simultaneous EEG and eye-tracking but modest for claims about the generality of individual differences. EEG power is computed during fixation windows (FFD, GD, TRT), so the EEG signal is not fully decoupled from fixation mechanics; the nFixations control addresses this partially, but a more thorough disentanglement would require time-locked analysis independent of fixation structure. Finally, all EEG features are averaged across 105 electrodes; electrode-level analysis could reveal whether the effect is concentrated in language-related brain regions. Two natural extensions are causal intervention (injecting person-specific directions during generation to adapt model behavior) and electrode-level analysis linking the computational finding to known language-processing areas. 9Preprint. Under review. 
+
+## 7 Conclusion 
+
+Frozen decoder language models contain person-specific linear directions that predict individual neural signatures during naturalistic reading. These directions are temporally stable, non-transferable across people, and distinct from the shared population signal. They concentrate in the deepest layers of the network and emerge consistently across two independently trained architectures. As EEG hardware becomes portable, this geometry offers a path toward neural personalization: locating an individual’s direction in model space from a brief calibration session and steering generation accordingly. 
+
+## References 
+
+Khai Loong Aw, Syrielle Montariol, Badr AlKhamissi, Martin Schrimpf, and Antoine Bosse-lut. Instruction-tuning aligns LLMs to the human brain. arXiv preprint arXiv:2312.00575 ,2023. Gy ¨orgy Buzs ´aki and Andreas Draguhn. Neuronal oscillations in cortical networks. Science ,304(5679):1926–1929, 2004. Charlotte Caucheteux and Jean-R ´emi King. Brains and algorithms partially converge in natural language processing. Communications Biology , 5(1):134, 2022. Nelson Elhage, Tristan Hume, Catherine Olsson, Nicholas Schiefer, Tom Henighan, Shauna Kravec, Zac Hatfield-Dodds, Robert Lasenby, Dawn Drain, Carol Chen, Roger Gross, Sam McCandlish, Jared Kaplan, Dario Amodei, Martin Wattenberg, and Christopher Olah. Toy models of superposition. Transformer Circuits Thread , 2022. URL https: //transformer-circuits.pub/2022/toy model/index.html .Andreas K. Engel, Pascal Fries, and Wolf Singer. Dynamic predictions: Oscillations and synchrony in top-down processing. Nature Reviews Neuroscience , 2(10):704–716, 2001. Emily S. Finn, Xilin Shen, Dustin Scheinost, Monica D. Rosenberg, Jessica Huang, Marvin M. Chun, Xenophon Papademetris, and R. Todd Constable. Functional connectome finger-printing: Identifying individuals using patterns of brain connectivity. Nature Neuroscience ,18(11):1664–1671, 2015. Stefan L. Frank, Leun J. Otten, Giulia Galli, and Gabriella Vigliocco. The ERP response to the amount of information conveyed by words in sentences. Brain and Language , 140:1–11, 2015. Changjiang Gao, Zhengwu Ma, Jiajun Chen, Ping Li, Shujian Huang, Jixing Li, et al. Scaling, but not instruction tuning, increases large language models’ alignment with language processing in the human brain. Nature Computational Science , 2025. doi: 10.1038/s43588-025-00863-0. Ariel Goldstein, Zaid Zada, Eliav Buchnik, Mariano Schain, Amy Price, Bobbi Aubrey, Samuel A. Nastase, Amir Feder, Dotan Emanuel, Alon Cohen, Aren Jansen, Haim Som-polinsky, and Uri Hasson. Shared computational principles for language processing in humans and deep language models. Nature Neuroscience , 25(3):369–380, 2022. Thomas H. Grandy, Markus Werkle-Bergner, Christian Chicherio, Florian Schmiedek, Michael L ¨ovd ´en, and Ulman Lindenberger. Individual alpha peak frequency is related to latent factors of general cognitive abilities. NeuroImage , 79:10–18, 2013. Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten, Alex Vaughan, et al. The Llama 3 herd of models. arXiv preprint arXiv:2407.21783 , 2024. Caterina Gratton, Timothy O. Laumann, Ashley N. Nielsen, Deanna J. Greene, Evan M. Gordon, Adrian W. Gilmore, Steven M. Nelson, Rebecca S. Coalson, Abraham Z. Snyder, Bradley L. Schlaggar, Steven E. Petersen, and Nico U. F. Dosenbach. Functional brain networks are dominated by stable group and individual factors, not cognitive or daily variation. Neuron , 98(2):439–452, 2018. 10 Preprint. Under review. Nora Hollenstein, Jonathan Rotsztejn, Marius Troendle, Andreas Pedroni, Ce Zhang, and Nicolas Langer. ZuCo, a simultaneous EEG and eye-tracking resource for natural sentence reading. Scientific Data , 5:180291, 2018. Nora Hollenstein, Antonio de la Torre, Nicolas Langer, and Ce Zhang. CogniVal: A frame-work for cognitive word embedding evaluation. In Proceedings of the 23rd Conference on Computational Natural Language Learning (CoNLL) , 2019. Nora Hollenstein, Marius Troendle, Ce Zhang, and Nicolas Langer. ZuCo 2.0: A dataset of physiological recordings during natural reading and annotation. In Proceedings of the 12th Language Resources and Evaluation Conference (LREC) , 2020. Nora Hollenstein, Marius Tr ¨ondle, Martyna Plomecka, Samuel Kiegeland, Yilmazcan ¨Ozyurt, Lena A J ¨ager, and Nicolas Langer. The ZuCo benchmark on cross-subject reading task classification with EEG and eye-tracking data. Frontiers in Psychology , 13:1028824, 2023. Shailee Jain and Alexander Huth. Incorporating context into language encoding models for fmri. Advances in neural information processing systems , 31, 2018. Kenneth Li, Oam Patel, Fernanda Vi ´egas, Hanspeter Pfister, and Martin Wattenberg. Inference-time intervention: Eliciting truthful answers from a language model. Advances in Neural Information Processing Systems , 36:41451–41530, 2023. Samuel Marks and Max Tegmark. The geometry of truth: Emergent linear structure in large language model representations of true/false datasets. arXiv preprint arXiv:2310.06824 ,2023. James A. Michaelov, Megan D. Bardolph, Cyma K. Van Petten, Benjamin K. Bergen, and Seana Coulson. Strong prediction: Language model surprisal explains multiple N400 effects. Neurobiology of Language , 5(1):107–135, 2024. Neel Nanda, Andrew Lee, and Martin Wattenberg. Emergent linear representations in world models of self-supervised sequence models. In Proceedings of the 6th BlackboxNLP Workshop: Analyzing and Interpreting Neural Networks for NLP , pp. 16–30, 2023. Nina Panickssery, Nick Gabrieli, Julian Schulz, Meg Tong, Evan Hubinger, and Alexan-der Matt Turner. Steering Llama 2 via contrastive activation addition. arXiv preprint arXiv:2312.06681 , 2023. Kiho Park, Yo Joong Choe, and Victor Veitch. The linear representation hypothesis and the geometry of large language models. arXiv preprint arXiv:2311.03658 , 2023. Jeffrey Pennington, Richard Socher, and Christopher D. Manning. GloVe: Global vectors for word representation. In Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP) , pp. 1532–1543, 2014. Qwen, An Yang, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chengyuan Li, Dayiheng Liu, Fei Huang, Haoran Wei, Huan Lin, Jian Yang, Jianhong Tu, Jianwei Zhang, Jianxin Yang, Jiaxi Yang, Jingren Zhou, Junyang Lin, Kai Dang, Keming Lu, Keqin Bao, Kexin Yang, Le Yu, Mei Li, Mingfeng Xue, Pei Zhang, Qin Zhu, Rui Men, Runji Lin, Tianhao Li, Tianyi Tang, Tingyu Xia, Xingzhang Ren, Xuancheng Ren, Yang Fan, Yang Su, Yichang Zhang, Yu Wan, Yuqiong Liu, Zeyu Cui, Zhenru Zhang, and Zihan Qiu. Qwen2.5 technical report, 2025. URL https://arxiv.org/abs/2412.15115 .Martin Schrimpf, Idan Asher Blank, Greta Tuckute, Carina Kauf, Eghbal A. Hosseini, Nancy Kanwisher, Joshua B. Tenenbaum, and Evelina Fedorenko. The neural architecture of language: Integrative modeling converges on predictive processing. Proceedings of the National Academy of Sciences (PNAS) , 118(45):e2105646118, 2021. Mariya Toneva and Leila Wehbe. Interpreting and improving natural-language processing (in machines) with natural language-processing (in the brain). In Advances in Neural Information Processing Systems (NeurIPS) , 2019. 11 Preprint. Under review. Greta Tuckute, Aalok Sathe, Shashank Srikant, Maya Taliaferro, Mingye Wang, Martin Schrimpf, Kendrick Kay, and Evelina Fedorenko. Driving and suppressing the human language network using large language models. Nature Human Behaviour , 8:544–561, 2024. Alexander Matt Turner, Lisa Thiergart, Gavin Leech, David Udell, Juan J Vazquez, Ulisse Mini, and Monte MacDiarmid. Steering language models with activation engineering. 
+
+arXiv preprint arXiv:2308.10248 , 2023. Matteo Visconti di Oleggio Castello, Tom Dupr ´e la Tour, and Jack L. Gallant. Individual differences shape conceptual representation in the brain. bioRxiv , 2025. doi: 10.1101/ 2025.08.22.671848. URL https://www.biorxiv.org/content/early/2025/08/22/2025.08. 22.671848 .Thomas Wolf, Lysandre Debut, Victor Sanh, Julien Chaumond, Clement Delangue, Anthony Moi, Pierric Cistac, Tim Rault, R ´emi Louf, Morgan Funtowicz, Joe Davison, Sam Shleifer, Patrick von Platen, Clara Ma, Yacine Jernite, Julien Plu, Canwen Xu, Teven Le Scao, Sylvain Gugger, Mariama Drame, Quentin Lhoest, and Alexander M. Rush. Transformers: State-of-the-art natural language processing. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations (EMNLP) , 2020. Zhehao Zhang, Ryan A. Rossi, Branislav Kveton, Yijia Shao, Diyi Yang, Hamed Zamani, Franck Dernoncourt, Joe Barrow, Tong Yu, Sungchul Kim, Ruiyi Zhang, Jiuxiang Gu, Tyler Derr, Nedim Lipka, Tong Sun, et al. Personalization of large language models: A survey. 
+
+arXiv preprint arXiv:2411.00027 , 2024. Xiaoyan Zhao, Ming Yan, Yilun Qiu, Haoting Ni, Yang Zhang, Fuli Feng, Hong Cheng, and Tat-Seng Chua. SteerX: Disentangled steering for LLM personalization. arXiv preprint arXiv:2510.22256 , 2025. Andy Zou, Long Phan, Sarah Chen, James Campbell, Phillip Guo, Richard Ren, Alexander Pan, Xuwang Yin, Mantas Mazeika, Ann-Kathrin Dombrowski, et al. Representation engineering: A top-down approach to AI transparency. arXiv preprint arXiv:2310.01405 ,2023. 
+
+## A LLM Usage Declaration 
+
+This work uses two pretrained language models as objects of study: Qwen 2.5 7B In-struct (Qwen et al., 2025) and LLaMA 3.1 8B Instruct (Grattafiori et al., 2024). No models were fine-tuned; all experiments extract hidden states from frozen forward passes. LLM-based code assistants were used for experiment scripting and data analysis pipelines. LLM agents were used to draft and refine the manuscript text, search for and format references, and generate figure layouts. All results were verified by the authors against raw experimen-tal outputs. The scientific claims, experimental design, and interpretations were authored by the research team. 
+
+## B Ethics Statement 
+
+Both datasets are publicly available under institutional ethical approval obtained by the original collectors. The ZuCo 1.0 corpus (Hollenstein et al., 2018) was collected at the University of Zurich with ethics board approval; ZuCo 2.0 (Hollenstein et al., 2020) was collected under the same framework. All participants provided informed consent. Our work involves no new human data collection. Cognitive-load detection technology could potentially be misused for attention surveillance or manipulative content optimization. The person-specific neural signatures we identify are derived from controlled laboratory recordings and cannot currently be extracted from naturalistic interaction. We encourage responsible deployment of bioadaptive systems with informed consent and transparent user controls. 12 Preprint. Under review. 
+
+## C Reproducibility Details 
+
+Model identifiers. Qwen 2.5 7B Instruct: Qwen/Qwen2.5-7B-Instruct . LLaMA 3.1 8B Instruct: meta-llama/Llama-3.1-8B-Instruct . All accessed via HuggingFace Transform-ers (Wolf et al., 2020). 
+
+PCA and probe details. PCA is fit on the full set of 12,200 unique words per layer, pro-jecting to 50 dimensions. Ridge regression α is selected from {0.01, 0.1, 1, 10, 100, 1000 } via held-out validation on fold 1. 5-fold cross-validation is sentence-stratified: all words from a given sentence appear in the same fold. 
+
+Hardware. Embedding extraction and probe training were performed on an NVIDIA L4 GPU (24 GB VRAM) with CUDA 12.8. Ridge regression was accelerated via cuml.accel dis-patching to GPU. Total compute for the full probe sweep (8 layers × 2 PCA dimensions × 30 participants × 40+ features) was approximately 11–17 hours with 6-worker parallelization. 
+
+Software. Python 3.11, PyTorch 2.7.1, Transformers, NumPy, Pandas, SciPy, scikit-learn, cuML 25.12. 
+
+## D Data Details 
+
+ZuCo 1.0. The Zurich Cognitive Language Processing Corpus (Hollenstein et al., 2018) recorded 12 native English-speaking participants reading 300 Wikipedia and movie-review sentences under a natural reading task (task2-NR). Participants were healthy adults with normal or corrected-to-normal vision. EEG was recorded at 500 Hz from 105 electrodes using a BioSemi ActiveTwo system; eye movements were recorded simultaneously with an EyeLink 1000 Plus at 1000 Hz. 
+
+ZuCo 2.0. A second recording (Hollenstein et al., 2020) collected data from 18 additional participants reading 349 Wikipedia sentences under the same protocol (task1-NR). Of these, 250 sentences pass quality filtering. The same hardware and preprocessing pipeline were used. No overlap exists in participants or stimulus sentences. 
+
+EEG frequency bands. Eight sub-bands are extracted: theta 1 (t1, 4–6 Hz), theta 2 (t2, 6.5–8 Hz), alpha 1 (a1, 8.5–10 Hz), alpha 2 (a2, 10.5–13 Hz), beta 1 (b1, 13.5–18 Hz), beta 2 (b2, 18.5–30 Hz), gamma 1 (g1, 30.5–40 Hz), and gamma 2 (g2, 40–49.5 Hz). 
+
+Reading windows. Five temporal windows from eye-tracking are used: First Fixation Duration (FFD), Gaze Duration (GD), Total Reading Time (TRT), Single Fixation Duration (SFD), and Go-Past Time (GPT). 
+
+Coverage. Words that a participant did not fixate receive no EEG data and are excluded. EEG coverage ranges from 44% to 83% across participants. 
+
+## E Scaling Comparison: 12 vs. 30 Participants 
+
+We originally ran the pipeline on ZuCo 1.0 alone (12 participants). Scaling to the combined 30-participant dataset strengthened every characterization metric (Table 5). 
+
+## F EEG Band Specificity Analysis 
+
+Figure 4 shows the person-specific advantage ( ∆ ¯ρ) across all 40 EEG features (5 reading windows × 8 frequency sub-bands). All 40 cells are significant ( p < 0.001, paired t-test). Gamma bands ( γ1, γ2) show the strongest person-specific advantage across every reading window, with γ2 reaching ∆ ¯ρ > 0.15 in all five windows. Lower-frequency bands ( θ, α) show 13 Preprint. Under review. 
+
+Metric N=12 N=30 Change 
+
+TRT g2 person ρ 0.158 0.183 +16% meanPupilSize person ρ 0.265 0.261 stable Self transfer ρ 0.227 0.369 +63% Other transfer ρ 0.011 0.143 increased Transfer p-value 3.2 ×10 −7 5.8 ×10 −20 10 13 × stronger Split-half cosine 0.752 0.824 +10% 
+
+Table 5: Comparison of characterization metrics at N=12 (ZuCo 1.0 only) vs. N=30 (com-bined). All metrics improve or remain stable with more participants. smaller but still reliable effects ( ∆ ¯ρ ≈ 0.05–0.07). Across rows, TRT and GPT windows carry slightly more signal than FFD and SFD. This pattern connects the computational finding to the neuroscience literature on individual differences in oscillation frequency (Buzs ´aki & Draguhn, 2004; Engel et al., 2001; Grandy et al., 2013): high-gamma activity, which reflects local cortical processing, varies most across individuals. θ1 θ2 α1 α2 β1 β2 γ1 γ2
+
+Frequency band 
+
+TRT 
+
+GPT 
+
+GD 
+
+FFD 
+
+SFD  
+
+> Reading window
+> 0.075
+> ***
+> 0.069
+> **
+> 0.073
+> ***
+> 0.062
+> **
+> 0.062
+> **
+> 0.077
+> **
+> 0.113
+> ***
+> 0.163
+> ***
+> 0.068
+> ***
+> 0.066
+> **
+> 0.072
+> ***
+> 0.059
+> **
+> 0.063
+> **
+> 0.076
+> ***
+> 0.110
+> ***
+> 0.165
+> ***
+> 0.070
+> ***
+> 0.065
+> **
+> 0.061
+> **
+> 0.057
+> **
+> 0.064
+> **
+> 0.077
+> ***
+> 0.105
+> ***
+> 0.157
+> ***
+> 0.067
+> ***
+> 0.066
+> ***
+> 0.064
+> ***
+> 0.049
+> **
+> 0.061
+> **
+> 0.075
+> ***
+> 0.099
+> **
+> 0.163
+> ***
+> 0.057
+> **
+> 0.052
+> **
+> 0.056
+> **
+> 0.048
+> *
+> 0.046
+> *
+> 0.071
+> **
+> 0.095
+> **
+> 0.154
+> *** 0.04
+> 0.06
+> 0.08
+> 0.10
+> 0.12
+> 0.14
+> 0.16
+> Δ̄ ρ (person  − population)
+
+Figure 4: Person-specific advantage ( ∆ ¯ρ = ¯ρperson − ¯ρpop ) for 40 EEG features at Layer 24. Stars indicate significance: * p < 0.001, ** p < 10 −4, *** p < 10 −6. Gamma bands carry the strongest individual signal regardless of reading window. 
+
+## G Effect Sizes and Confidence Intervals 
+
+Feature Cohen’s d Person ρ 95% CI Pop ρ 95% CI p
+
+TRT g2 1.53 [0.155, 0.209 ] [−0.002, 0.040 ] 3.1 ×10 −9
+
+meanPupilSize 1.99 [0.225, 0.300 ] [0.050, 0.093 ] 9.3 ×10 −12 
+
+TRT g1 1.17 [0.127, 0.187 ] [0.020, 0.066 ] 5.1 ×10 −7
+
+TRT a1 1.18 [0.103, 0.152 ] [0.034, 0.075 ] 4.8 ×10 −7
+
+TRT b2 1.08 [0.118, 0.174 ] [0.050, 0.087 ] 2.0 ×10 −6
+
+Table 6: Effect sizes and 95% bootstrap confidence intervals ( B = 10 ,000) for the person-specific advantage at Layer 24, Qwen 2.5 7B. Cohen’s d is computed from the paired person-vs-population ρ difference across 30 participants. All five features show large effects (d > 1); the population probe CI for TRT g2 includes zero, confirming that the population signal is negligible for this feature. 14

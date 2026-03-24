@@ -1,0 +1,281 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-24T20:31:03.210350+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2603.20738v1",
+      "title": "SATTC: Structure-Aware Label-Free Test-Time Calibration for Cross-Subject EEG-to-Image Retrieval",
+      "abstract": "Cross-subject EEG-to-image retrieval for visual decoding is challenged by subject shift and hubness in the embedding space, which distort similarity geometry and destabilize top-k rankings, making small-k shortlists unreliable. We introduce SATTC (Structure-Aware Test-Time Calibration), a label-free calibration head that operates directly on the similarity matrix of frozen EEG and image encoders. SATTC combines a geometric expert, subject-adaptive whitening of EEG embeddings with an adaptive variant of Cross-domain Similarity Local Scaling (CSLS), and a structural expert built from mutual nearest neighbors, bidirectional top-k ranks, and class popularity, fused via a simple Product-of-Experts rule. On THINGS-EEG under a strict leave-one-subject-out protocol, standardized inference with cosine similarities, L2-normalized embeddings, and candidate whitening already yields a strong cross-subject baseline over the original ATM retrieval setup. Building on this baseline, SATTC further improves Top-1 and Top-5 accuracy, reduces hubness and per-class imbalance, and produces more reliable small-k shortlists. These gains transfer across multiple EEG encoders, supporting SATTC as an encoder-agnostic, label-free test-time calibration layer for cross-subject neural decoding.",
+      "authors": [
+        "Qunjie Huang",
+        "Weina Zhu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-21T09:53:19+00:00",
+      "link": "https://arxiv.org/pdf/2603.20738v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "EEG-to-image retrieval and visual decoding using frozen encoders",
+      "llm_evidence_cn": "跨被试脑电到图像检索与视觉解码",
+      "llm_evidence": "跨被试脑电到图像检索与视觉解码",
+      "canonical_evidence": "跨被试脑电到图像检索与视觉解码",
+      "llm_tldr_en": "Proposes a calibration method for cross-subject EEG-to-image retrieval to improve visual decoding accuracy.",
+      "llm_tldr_cn": "提出一种跨被试脑电-图像检索校准方法，旨在提升视觉解码的准确性。",
+      "llm_tldr": "提出一种跨被试脑电-图像检索校准方法，旨在提升视觉解码的准确性。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Reconstructing images from EEG using generative models",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.21042v1",
+      "title": "Statistical Learning for Latent Embedding Alignment with Application to Brain Encoding and Decoding",
+      "abstract": "Brain encoding and decoding aims to understand the relationship between external stimuli and brain activities, and is a fundamental problem in neuroscience. In this article, we study latent embedding alignment for brain encoding and decoding, with a focus on improving sample efficiency under limited fMRI-stimulus paired data and substantial subject heterogeneity. We propose a lightweight alignment framework equipped with two statistical learning components: inverse semi-supervised learning that leverages abundant unpaired stimulus embeddings through inverse mapping and residual debiasing, and meta transfer learning that borrows strength from pretrained models across subjects via sparse aggregation and residual correction. Both methods operate exclusively at the alignment stage while keeping encoders and decoders frozen, allowing for efficient computation, modular deployment, and rigorous theoretical analysis. We establish finite-sample generalization bounds and safety guarantees, and demonstrate competitive empirical performance on the large-scale fMRI-image reconstruction benchmark data.",
+      "authors": [
+        "Shuoxun Xu",
+        "Zhanhao Yan",
+        "Lexin Li"
+      ],
+      "primary_category": "stat.ME",
+      "categories": [
+        "stat.ME",
+        "cs.LG"
+      ],
+      "published": "2026-03-22T03:48:16+00:00",
+      "link": "https://arxiv.org/pdf/2603.21042v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "latent embedding alignment for brain encoding and decoding",
+      "llm_evidence_cn": "用于大脑编码和解码的潜嵌入对齐",
+      "llm_evidence": "用于大脑编码和解码的潜嵌入对齐",
+      "canonical_evidence": "用于大脑编码和解码的潜嵌入对齐",
+      "llm_tldr_en": "Proposes a framework for brain encoding and decoding using latent embedding alignment and transfer learning.",
+      "llm_tldr_cn": "提出了一种利用潜嵌入对齐和迁移学习进行大脑编码和解码的框架。",
+      "llm_tldr": "提出了一种利用潜嵌入对齐和迁移学习进行大脑编码和解码的框架。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.21847v1",
+      "title": "Riding Brainwaves in LLM Space: Understanding Activation Patterns Using Individual Neural Signatures",
+      "abstract": "Consumer-grade EEG is entering everyday devices, from earbuds to headbands, raising the question of whether language models can be adapted to individual neural responses. We test this by asking whether frozen LLM representations encode person-specific EEG signals, directions in activation space that predict one person's brain activity but not another's. Using word-level EEG from 30 participants reading naturalistic sentences (ZuCo corpus), we train a separate linear probe for each person, mapping hidden states from a frozen Qwen 2.5 7B to that individual's EEG power. Person-specific probes outperform a single population probe on every EEG feature tested; for high-gamma power, the person-specific probe achieves rho = 0.183, a ninefold improvement over the population probe (rho = 0.020, p < 10^-4). A negative control, fixation count, shows no person-specific advantage (p = 0.360); fixation count reflects word length and frequency rather than individual cognition. The individual directions are temporally stable (split-half cosine = 0.824), non-transferable across people (self rho = 0.369 vs. other rho = 0.143, p < 10^-19), and distinct from the shared population signal: person-specific probes retain predictive power after the population component is removed. The person-specific signal concentrates in the model's deep layers, rising consistently with depth and peaking at Layer 24 of 28. The results are consistent across architectures (LLaMA 3.1 8B) and survive word-level confound controls. Frozen language models contain stable, person-specific neural directions in their deep layers, providing a geometric foundation for EEG-driven personalization.",
+      "authors": [
+        "Ajan Subramanian",
+        "Sumukh Bettadapura",
+        "Rohan Sathish"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-23T11:36:00+00:00",
+      "link": "https://arxiv.org/pdf/2603.21847v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Mapping frozen LLM hidden states to individual EEG power features",
+      "llm_evidence_cn": "将冻结的LLM隐藏状态映射到个人EEG功率特征",
+      "llm_evidence": "将冻结的LLM隐藏状态映射到个人EEG功率特征",
+      "canonical_evidence": "将冻结的LLM隐藏状态映射到个人EEG功率特征",
+      "llm_tldr_en": "Explores how large language model representations can be adapted to individual neural EEG signatures.",
+      "llm_tldr_cn": "探索了大语言模型表示如何适应个人神经EEG特征。",
+      "llm_tldr": "探索了大语言模型表示如何适应个人神经EEG特征。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.20348v1",
+      "title": "Toward a Multi-View Brain Network Foundation Model: Cross-View Consistency Learning Across Arbitrary Atlases",
+      "abstract": "Brain network analysis provides an interpretable framework for characterizing brain organization and has been widely used for neurological disorder identification. Recent advances in self-supervised learning have motivated the development of brain network foundation models. However, existing approaches are often limited by atlas dependency, insufficient exploitation of multiple network views, and weak incorporation of anatomical priors. In this work, we propose MV-BrainFM, a multi-view brain network foundation model designed to learn generalizable and scalable representations from brain networks constructed with arbitrary atlases. MV-BrainFM explicitly incorporates anatomical distance information into Transformer-based modeling to guide inter-regional interactions, and introduces an unsupervised cross-view consistency learning strategy to align representations from multiple atlases of the same subject in a shared latent space. By jointly enforcing within-view robustness and cross-view alignment during pretraining, the model effectively captures complementary information across heterogeneous network views while remaining atlas-aware. In addition, MV-BrainFM adopts a unified multi-view pretraining paradigm that enables simultaneous learning from multiple datasets and atlases, significantly improving computational efficiency compared to conventional sequential training strategies. The proposed framework also demonstrates strong scalability, consistently benefiting from increasing data diversity while maintaining stable performance across unseen atlas configurations. Extensive experiments on more than 20K subjects from 17 fMRI datasets show that MV-BrainFM consistently outperforms 14 existing brain network foundation models and task-specific baselines under both single-atlas and multi-atlas settings.",
+      "authors": [
+        "Jiaxing Xu",
+        "Jingying Ma",
+        "Xin Lin",
+        "Yuxiao Liu",
+        "Kai He",
+        "Qika Lin",
+        "Yiping Ke",
+        "Yang Li",
+        "Dinggang Shen",
+        "Mengling Feng"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-20T11:55:00+00:00",
+      "link": "https://arxiv.org/pdf/2603.20348v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Brain network foundation model using self-supervised learning",
+      "llm_evidence_cn": "基于自监督学习的脑网络基础模型",
+      "llm_evidence": "基于自监督学习的脑网络基础模型",
+      "canonical_evidence": "基于自监督学习的脑网络基础模型",
+      "llm_tldr_en": "A foundation model for brain networks that learns generalizable representations across different atlases.",
+      "llm_tldr_cn": "一种脑网络基础模型，可跨不同图谱学习泛化表示。",
+      "llm_tldr": "一种脑网络基础模型，可跨不同图谱学习泛化表示。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.19676v1",
+      "title": "ATHENA: Adaptive Test-Time Steering for Improving Count Fidelity in Diffusion Models",
+      "abstract": "Text-to-image diffusion models achieve high visual fidelity but surprisingly exhibit systematic failures in numerical control when prompts specify explicit object counts. To address this limitation, we introduce ATHENA, a model-agnostic, test-time adaptive steering framework that improves object count fidelity without modifying model architectures or requiring retraining. ATHENA leverages intermediate representations during sampling to estimate object counts and applies count-aware noise corrections early in the denoising process, steering the generation trajectory before structural errors become difficult to revise. We present three progressively more advanced variants of ATHENA that trade additional computation for improved numerical accuracy, ranging from static prompt-based steering to dynamically adjusted count-aware control. Experiments on established benchmarks and a new visually and semantically complex dataset show that ATHENA consistently improves count fidelity, particularly at higher target counts, while maintaining favorable accuracy-runtime trade-offs across multiple diffusion backbones.",
+      "authors": [
+        "Mohammad Shahab Sepehri",
+        "Asal Mehradfar",
+        "Berk Tinaz",
+        "Salman Avestimehr",
+        "Mahdi Soltanolkotabi"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-03-20T06:20:44+00:00",
+      "link": "https://arxiv.org/pdf/2603.19676v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "steering framework for diffusion models",
+      "llm_evidence_cn": "扩散模型的引导框架",
+      "llm_evidence": "扩散模型的引导框架",
+      "canonical_evidence": "扩散模型的引导框架",
+      "llm_tldr_en": "Introduces ATHENA to improve object count fidelity in text-to-image diffusion models via test-time steering.",
+      "llm_tldr_cn": "引入 ATHENA 框架，通过测试时引导提高文本到图像扩散模型的目标计数保真度。",
+      "llm_tldr": "引入 ATHENA 框架，通过测试时引导提高文本到图像扩散模型的目标计数保真度。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.19939v1",
+      "title": "Timestep-Aware Block Masking for Efficient Diffusion Model Inference",
+      "abstract": "Diffusion Probabilistic Models (DPMs) have achieved great success in image generation but suffer from high inference latency due to their iterative denoising nature. Motivated by the evolving feature dynamics across the denoising trajectory, we propose a novel framework to optimize the computational graph of pre-trained DPMs on a per-timestep basis. By learning timestep-specific masks, our method dynamically determines which blocks to execute or bypass through feature reuse at each inference stage. Unlike global optimization methods that incur prohibitive memory costs via full-chain backpropagation, our method optimizes masks for each timestep independently, ensuring a memory-efficient training process. To guide this process, we introduce a timestep-aware loss scaling mechanism that prioritizes feature fidelity during sensitive denoising phases, complemented by a knowledge-guided mask rectification strategy to prune redundant spatial-temporal dependencies. Our approach is architecture-agnostic and demonstrates significant efficiency gains across a broad spectrum of models, including DDPM, LDM, DiT, and PixArt. Experimental results show that by treating the denoising process as a sequence of optimized computational paths, our method achieves a superior balance between sampling speed and generative quality. Our code will be released.",
+      "authors": [
+        "Haodong He",
+        "Yuan Gao",
+        "Weizhong Zhang",
+        "Gui-Song Xia"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-20T13:35:03+00:00",
+      "link": "https://arxiv.org/pdf/2603.19939v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Efficiency optimization for diffusion model inference",
+      "llm_evidence_cn": "扩散模型推理效率优化，适用于实时脑电应用",
+      "llm_evidence": "扩散模型推理效率优化，适用于实时脑电应用",
+      "canonical_evidence": "扩散模型推理效率优化，适用于实时脑电应用",
+      "llm_tldr_en": "Optimizes diffusion model inference speed through timestep-aware block masking.",
+      "llm_tldr_cn": "通过时间步感知的模块遮蔽优化扩散模型推理速度。",
+      "llm_tldr": "通过时间步感知的模块遮蔽优化扩散模型推理速度。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.21085v1",
+      "title": "Taming Sampling Perturbations with Variance Expansion Loss for Latent Diffusion Models",
+      "abstract": "Latent diffusion models have emerged as the dominant framework for high-fidelity and efficient image generation, owing to their ability to learn diffusion processes in compact latent spaces. However, while previous research has focused primarily on reconstruction accuracy and semantic alignment of the latent space, we observe that another critical factor, robustness to sampling perturbations, also plays a crucial role in determining generation quality. Through empirical and theoretical analyses, we show that the commonly used $β$-VAE-based tokenizers in latent diffusion models, tend to produce overly compact latent manifolds that are highly sensitive to stochastic perturbations during diffusion sampling, leading to visual degradation. To address this issue, we propose a simple yet effective solution that constructs a latent space robust to sampling perturbations while maintaining strong reconstruction fidelity. This is achieved by introducing a Variance Expansion loss that counteracts variance collapse and leverages the adversarial interplay between reconstruction and variance expansion to achieve an adaptive balance that preserves reconstruction accuracy while improving robustness to stochastic sampling. Extensive experiments demonstrate that our approach consistently enhances generation quality across different latent diffusion architectures, confirming that robustness in latent space is a key missing ingredient for stable and faithful diffusion sampling.",
+      "authors": [
+        "Qifan Li",
+        "Xingyu Zhou",
+        "Jinhua Zhang",
+        "Weiyi You",
+        "Shuhang Gu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-22T06:56:12+00:00",
+      "link": "https://arxiv.org/pdf/2603.21085v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "robustness of latent diffusion models and sampling perturbations",
+      "llm_evidence_cn": "潜扩散模型的鲁棒性与采样扰动",
+      "llm_evidence": "潜扩散模型的鲁棒性与采样扰动",
+      "canonical_evidence": "潜扩散模型的鲁棒性与采样扰动",
+      "llm_tldr_en": "Improves latent diffusion models by addressing sampling perturbations and latent manifold compactness.",
+      "llm_tldr_cn": "通过解决采样扰动和潜流形紧凑性问题来改进潜扩散模型。",
+      "llm_tldr": "通过解决采样扰动和潜流形紧凑性问题来改进潜扩散模型。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
