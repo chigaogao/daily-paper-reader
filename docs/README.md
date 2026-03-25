@@ -6,41 +6,43 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-24
-- 运行时间：2026-03-24 20:32:11 UTC
+- 最新运行日期：2026-03-25
+- 运行时间：2026-03-25 19:45:30 UTC
 - 运行状态：成功
 - 本次总论文数：7
-- 精读区：3
-- 速读区：4
+- 精读区：2
+- 速读区：5
 
 ### 今日简报（AI）
-今日深度探索脑机接口前沿，重点攻克 EEG 图像检索校准与多模态脑网络对齐难题。
-- 详情：[/202603/24/README](/202603/24/README)
+今日聚焦脑机对齐前沿，深度剖析视觉与语言模型在生物一致性上的技术突破与潜在风险。
+重点关注 HyFI 算法利用双曲空间优化脑视对齐，以及语言模型偏离大脑机制后可能引发的功能性后果。
+建议从认知科学视角审视 AI 演进，关注模型如何通过模拟人类思维来提升性能与安全性。
+- 详情：[/202603/25/README](/202603/25/README)
 
 ### 精读区论文标签
-1. [SATTC: Structure-Aware Label-Free Test-Time Calibration for Cross-Subject EEG-to-Image Retrieval](/202603/24/2603.20738v1-sattc-structure-aware-label-free-test-time-calibration-for-cross-subject-eeg-to-image-retrieval)  
-   标签：评分：9.0/10、query:eeg-ai
-   evidence：跨被试脑电到图像检索与视觉解码
-2. [Statistical Learning for Latent Embedding Alignment with Application to Brain Encoding and Decoding](/202603/24/2603.21042v1-statistical-learning-for-latent-embedding-alignment-with-application-to-brain-encoding-and-decoding)  
+1. [HyFI: Hyperbolic Feature Interpolation for Brain-Vision Alignment](/202603/25/2603.22721v1-hyfi-hyperbolic-feature-interpolation-for-brain-vision-alignment)  
    标签：评分：8.0/10、query:eeg-ai
-   evidence：用于大脑编码和解码的潜嵌入对齐
-3. [Riding Brainwaves in LLM Space: Understanding Activation Patterns Using Individual Neural Signatures](/202603/24/2603.21847v1-riding-brainwaves-in-llm-space-understanding-activation-patterns-using-individual-neural-signatures)  
+   evidence：将神经活动与语义和感知特征对齐，用于脑-视觉解码
+2. [When Language Models Lose Their Mind: The Consequences of Brain Misalignment](/202603/25/2603.23091v1-when-language-models-lose-their-mind-the-consequences-of-brain-misalignment)  
    标签：评分：8.0/10、query:eeg-ai
-   evidence：将冻结的LLM隐藏状态映射到个人EEG功率特征
+   evidence：研究大语言模型与大脑活动及语言能力的对齐
 
 ### 速读区论文标签
-1. [Toward a Multi-View Brain Network Foundation Model: Cross-View Consistency Learning Across Arbitrary Atlases](/202603/24/2603.20348v1-toward-a-multi-view-brain-network-foundation-model-cross-view-consistency-learning-across-arbitrary-atlases)  
+1. [A Foundation Model for Instruction-Conditioned In-Context Time Series Tasks](/202603/25/2603.22586v1-a-foundation-model-for-instruction-conditioned-in-context-time-series-tasks)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：基于自监督学习的脑网络基础模型
-2. [ATHENA: Adaptive Test-Time Steering for Improving Count Fidelity in Diffusion Models](/202603/24/2603.19676v1-athena-adaptive-test-time-steering-for-improving-count-fidelity-in-diffusion-models)  
+   evidence：用于时间序列数据上下文学习的基础模型
+2. [Uncertainty Quantification for Distribution-to-Distribution Flow Matching in Scientific Imaging](/202603/25/2603.21717v1-uncertainty-quantification-for-distribution-to-distribution-flow-matching-in-scientific-imaging)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：扩散模型的引导框架
-3. [Timestep-Aware Block Masking for Efficient Diffusion Model Inference](/202603/24/2603.19939v1-timestep-aware-block-masking-for-efficient-diffusion-model-inference)  
+   evidence：生成模型中分布到分布流匹配的不确定性量化
+3. [Uncertainty Quantification for Distribution-to-Distribution Flow Matching in Scientific Imaging](/202603/25/2603.21717v2-uncertainty-quantification-for-distribution-to-distribution-flow-matching-in-scientific-imaging)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：扩散模型推理效率优化，适用于实时脑电应用
-4. [Taming Sampling Perturbations with Variance Expansion Loss for Latent Diffusion Models](/202603/24/2603.21085v1-taming-sampling-perturbations-with-variance-expansion-loss-for-latent-diffusion-models)  
+   evidence：用于科学成像的流匹配与生成模型
+4. [Conditionally Identifiable Latent Representation for Multivariate Time Series with Structural Dynamics](/202603/25/2603.22886v1-conditionally-identifiable-latent-representation-for-multivariate-time-series-with-structural-dynamics)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：潜扩散模型的鲁棒性与采样扰动
+   evidence：多变量时间序列的可识别潜表示学习
+5. [Asymptotic Learning Curves for Diffusion Models with Random Features Score and Manifold Data](/202603/25/2603.22962v1-asymptotic-learning-curves-for-diffusion-models-with-random-features-score-and-manifold-data)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：流形上扩散模型与得分匹配的理论分析
 
 
 <div class="dpr-home-promo-card">

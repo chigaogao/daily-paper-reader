@@ -1,0 +1,273 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-25T19:44:11.820424+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2603.22721v1",
+      "title": "HyFI: Hyperbolic Feature Interpolation for Brain-Vision Alignment",
+      "abstract": "Recent progress in artificial intelligence has encouraged numerous attempts to understand and decode human visual system from brain signals. These prior works typically align neural activity independently with semantic and perceptual features extracted from images using pre-trained vision models. However, they fail to account for two key challenges: (1) the modality gap arising from the natural difference in the information level of representation between brain signals and images, and (2) the fact that semantic and perceptual features are highly entangled within neural activity. To address these issues, we utilize hyperbolic space, which is well-suited for considering differences in the amount of information and has the geometric property that geodesics between two points naturally bend toward the origin, where the representational capacity is lower. Leveraging these properties, we propose a novel framework, Hyperbolic Feature Interpolation (HyFI), which interpolates between semantic and perceptual visual features along hyperbolic geodesics. This enables both the fusion and compression of perceptual and semantic information, effectively reflecting the limited expressiveness of brain signals and the entangled nature of these features. As a result, it facilitates better alignment between brain and visual features. We demonstrate that HyFI achieves state-of-the-art performance in zero-shot brain-to-image retrieval, outperforming prior methods with Top-1 accuracy improvements of up to +17.3% on THINGS-EEG and +9.1% on THINGS-MEG.",
+      "authors": [
+        "Sangmin Jo",
+        "Wootaek Jeong",
+        "Da-Woon Heo",
+        "Yoohwan Hwang",
+        "Heung-Il Suk"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-03-24T02:35:54+00:00",
+      "link": "https://arxiv.org/pdf/2603.22721v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Aligning neural activity with semantic and perceptual features for brain-vision decoding",
+      "llm_evidence_cn": "将神经活动与语义和感知特征对齐，用于脑-视觉解码",
+      "llm_evidence": "将神经活动与语义和感知特征对齐，用于脑-视觉解码",
+      "canonical_evidence": "将神经活动与语义和感知特征对齐，用于脑-视觉解码",
+      "llm_tldr_en": "Uses hyperbolic space to align brain signals with visual features, addressing modality gaps in neural decoding.",
+      "llm_tldr_cn": "利用双曲空间将脑信号与视觉特征对齐，解决了神经解码中的模态差异问题。",
+      "llm_tldr": "利用双曲空间将脑信号与视觉特征对齐，解决了神经解码中的模态差异问题。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Cross modal generation from EEG signals using generative AI",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.23091v1",
+      "title": "When Language Models Lose Their Mind: The Consequences of Brain Misalignment",
+      "abstract": "While brain-aligned large language models (LLMs) have garnered attention for their potential as cognitive models and for potential for enhanced safety and trustworthiness in AI, the role of this brain alignment for linguistic competence remains uncertain. In this work, we investigate the functional implications of brain alignment by introducing brain-misaligned models--LLMs intentionally trained to predict brain activity poorly while maintaining high language modeling performance. We evaluate these models on over 200 downstream tasks encompassing diverse linguistic domains, including semantics, syntax, discourse, reasoning, and morphology. By comparing brain-misaligned models with well-matched brain-aligned counterparts, we isolate the specific impact of brain alignment on language understanding. Our experiments reveal that brain misalignment substantially impairs downstream performance, highlighting the critical role of brain alignment in achieving robust linguistic competence. These findings underscore the importance of brain alignment in LLMs and offer novel insights into the relationship between neural representations and linguistic processing.",
+      "authors": [
+        "Gabriele Merlin",
+        "Mariya Toneva"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-24T11:39:54+00:00",
+      "link": "https://arxiv.org/pdf/2603.23091v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Investigating LLM alignment with brain activity and linguistic competence",
+      "llm_evidence_cn": "研究大语言模型与大脑活动及语言能力的对齐",
+      "llm_evidence": "研究大语言模型与大脑活动及语言能力的对齐",
+      "canonical_evidence": "研究大语言模型与大脑活动及语言能力的对齐",
+      "llm_tldr_en": "Studies the functional implications of aligning large language model activations with human brain activity.",
+      "llm_tldr_cn": "研究了大语言模型激活与人类大脑活动对齐的功能性影响。",
+      "llm_tldr": "研究了大语言模型激活与人类大脑活动对齐的功能性影响。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.22586v1",
+      "title": "A Foundation Model for Instruction-Conditioned In-Context Time Series Tasks",
+      "abstract": "In-context learning (ICL) allows a model to adapt at inference time by conditioning on examples rather than updating parameters. Existing time-series foundation models use implicit positional context, retrieval, or task-specific objectives, but rarely explicit instruction-conditioned demonstrations. We present a foundation model for instruction-conditioned in-context time-series tasks based on a quantile-regression T5 encoder-decoder. Historical examples and queries are encoded with a structured tokenization scheme that marks target series, covariates, context, and task-specific future information. A hierarchical Transformer with per-example encoding, example-level fusion, and cross-example attention conditions decoding on demonstration pairs, enabling forecasting and related tasks without task-specific fine-tuning. We train on large-scale real and synthetic time series using supervised forecasting plus self-supervised tasks, including imputation, reconstruction, classification, anomaly detection, and source demixing. This multi-task training learns a distribution over task mappings and improves adaptation to local structure at inference time. Across diverse datasets, frequencies, and horizons, our method outperforms strong foundation baselines on point and probabilistic forecasting benchmarks, including fev-bench and GIFT-Eval, while remaining competitive on classification and anomaly detection.",
+      "authors": [
+        "Anish Saha",
+        "Konstantin Shmakov"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-23T21:24:41+00:00",
+      "link": "https://arxiv.org/pdf/2603.22586v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Foundation model for in-context learning on time series data",
+      "llm_evidence_cn": "用于时间序列数据上下文学习的基础模型",
+      "llm_evidence": "用于时间序列数据上下文学习的基础模型",
+      "canonical_evidence": "用于时间序列数据上下文学习的基础模型",
+      "llm_tldr_en": "Introduces a foundation model for time series tasks using instruction-conditioned in-context learning.",
+      "llm_tldr_cn": "引入了一种基于指令调节上下文学习的时间序列任务基础模型。",
+      "llm_tldr": "引入了一种基于指令调节上下文学习的时间序列任务基础模型。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.21717v1",
+      "title": "Uncertainty Quantification for Distribution-to-Distribution Flow Matching in Scientific Imaging",
+      "abstract": "Distribution-to-distribution generative models support scientific imaging tasks ranging from modeling cellular perturbation responses to translating medical images across conditions. Trustworthy generation requires both reliability (generalization across labs, devices, and experimental conditions) and accountability (detecting out-of-distribution cases where predictions may be unreliable). Uncertainty quantification (UQ) based approaches serve as promising candidates for these tasks, yet UQ for distribution-to-distribution generative models remains underexplored. We present a unified UQ framework, Bayesian Stochastic Flow Matching (BSFM), that disentangles aleatoric and epistemic uncertainty. The Stochastic Flow Matching (SFM) component augments deterministic flows with a diffusion term to improve model generalization to unseen scenarios. For UQ, we develop a scalable Bayesian approach -- MCD-Antithetic -- that combines Monte Carlo Dropout with sample-efficient antithetic sampling to produce effective anomaly scores for out-of-distribution detection. Experiments on cellular imaging (BBBC021, JUMP) and brain fMRI (Theory of Mind) across diverse scenarios show that SFM improves reliability while MCD-Antithetic enhances accountability.",
+      "authors": [
+        "Dongxia Wu",
+        "Yuhui Zhang",
+        "Serena Yeung-Levy",
+        "Emma Lundberg",
+        "Emily B. Fox"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-23T09:01:02+00:00",
+      "link": "https://arxiv.org/pdf/2603.21717v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Uncertainty quantification for distribution-to-distribution flow matching in generative models",
+      "llm_evidence_cn": "生成模型中分布到分布流匹配的不确定性量化",
+      "llm_evidence": "生成模型中分布到分布流匹配的不确定性量化",
+      "canonical_evidence": "生成模型中分布到分布流匹配的不确定性量化",
+      "llm_tldr_en": "Introduces a framework for uncertainty quantification in flow-based generative models for scientific imaging.",
+      "llm_tldr_cn": "介绍了一种用于科学成像中基于流的生成模型不确定性量化的框架。",
+      "llm_tldr": "介绍了一种用于科学成像中基于流的生成模型不确定性量化的框架。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.21717v2",
+      "title": "Uncertainty Quantification for Distribution-to-Distribution Flow Matching in Scientific Imaging",
+      "abstract": "Distribution-to-distribution generative models support scientific imaging tasks ranging from modeling cellular perturbation responses to translating medical images across conditions. Trustworthy generation requires both reliability (generalization across labs, devices, and experimental conditions) and accountability (detecting out-of-distribution cases where predictions may be unreliable). Uncertainty quantification (UQ) based approaches serve as promising candidates for these tasks, yet UQ for distribution-to-distribution generative models remains underexplored. We present a unified UQ framework, Bayesian Stochastic Flow Matching (BSFM), that disentangles aleatoric and epistemic uncertainty. The Stochastic Flow Matching (SFM) component augments deterministic flows with a diffusion term to improve model generalization to unseen scenarios. For UQ, we develop a scalable Bayesian approach -- MCD-Antithetic -- that combines Monte Carlo Dropout with sample-efficient antithetic sampling to produce effective anomaly scores for out-of-distribution detection. Experiments on cellular imaging (BBBC021, JUMP) and brain fMRI (Theory of Mind) across diverse scenarios show that SFM improves reliability while MCD-Antithetic enhances accountability.",
+      "authors": [
+        "Dongxia Wu",
+        "Yuhui Zhang",
+        "Serena Yeung-Levy",
+        "Emma Lundberg",
+        "Emily B. Fox"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-23T09:01:02+00:00",
+      "link": "https://arxiv.org/pdf/2603.21717v2",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow matching and generative models for scientific imaging",
+      "llm_evidence_cn": "用于科学成像的流匹配与生成模型",
+      "llm_evidence": "用于科学成像的流匹配与生成模型",
+      "canonical_evidence": "用于科学成像的流匹配与生成模型",
+      "llm_tldr_en": "Develops a Bayesian framework for uncertainty quantification in distribution-to-distribution generative models.",
+      "llm_tldr_cn": "开发了一个用于分布到分布生成模型中不确定性量化的贝叶斯框架。",
+      "llm_tldr": "开发了一个用于分布到分布生成模型中不确定性量化的贝叶斯框架。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.22886v1",
+      "title": "Conditionally Identifiable Latent Representation for Multivariate Time Series with Structural Dynamics",
+      "abstract": "We propose the Identifiable Variational Dynamic Factor Model (iVDFM), which learns latent factors from multivariate time series with identifiability guarantees. By applying iVAE-style conditioning to the innovation process driving the dynamics rather than to the latent states, we show that factors are identifiable up to permutation and component-wise affine (or monotone invertible) transformations. Linear diagonal dynamics preserve this identifiability and admit scalable computation via companion-matrix and Krylov methods. We demonstrate improved factor recovery on synthetic data, stable intervention accuracy on synthetic SCMs, and competitive probabilistic forecasting on real-world benchmarks.",
+      "authors": [
+        "Minkey Chang",
+        "Jae-Young Kim"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "q-fin.GN",
+        "q-fin.ST"
+      ],
+      "published": "2026-03-24T07:35:27+00:00",
+      "link": "https://arxiv.org/pdf/2603.22886v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Identifiable latent representation learning for multivariate time series",
+      "llm_evidence_cn": "多变量时间序列的可识别潜表示学习",
+      "llm_evidence": "多变量时间序列的可识别潜表示学习",
+      "canonical_evidence": "多变量时间序列的可识别潜表示学习",
+      "llm_tldr_en": "Develops a variational model for learning identifiable latent factors in multivariate time series data.",
+      "llm_tldr_cn": "开发了一种变分模型，用于学习多变量时间序列数据中可识别的潜在因子。",
+      "llm_tldr": "开发了一种变分模型，用于学习多变量时间序列数据中可识别的潜在因子。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.22962v1",
+      "title": "Asymptotic Learning Curves for Diffusion Models with Random Features Score and Manifold Data",
+      "abstract": "We study the theoretical behavior of denoising score matching--the learning task associated to diffusion models--when the data distribution is supported on a low-dimensional manifold and the score is parameterized using a random feature neural network. We derive asymptotically exact expressions for the test, train, and score errors in the high-dimensional limit. Our analysis reveals that, for linear manifolds the sample complexity required to learn the score function scales linearly with the intrinsic dimension of the manifold, rather than with the ambient dimension. Perhaps surprisingly, the benefits of low-dimensional structure starts to diminish once we have a non-linear manifold. These results indicate that diffusion models can benefit from structured data; however, the dependence on the specific type of structure is subtle and intricate.",
+      "authors": [
+        "Anand Jerry George",
+        "Nicolas Macris"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-03-24T08:58:12+00:00",
+      "link": "https://arxiv.org/pdf/2603.22962v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical analysis of diffusion models and score matching on manifolds",
+      "llm_evidence_cn": "流形上扩散模型与得分匹配的理论分析",
+      "llm_evidence": "流形上扩散模型与得分匹配的理论分析",
+      "canonical_evidence": "流形上扩散模型与得分匹配的理论分析",
+      "llm_tldr_en": "Analyzes learning curves of diffusion models on low-dimensional manifolds, relevant to signal distribution modeling.",
+      "llm_tldr_cn": "分析了低维流形上扩散模型的学习曲线，与信号分布建模相关。",
+      "llm_tldr": "分析了低维流形上扩散模型的学习曲线，与信号分布建模相关。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
