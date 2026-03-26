@@ -1,0 +1,377 @@
+Title: Detecting Neurovascular Instability from Multimodal Physiological Signals Using Wearable-Compatible Edge AI: A Responsible Computational Framework
+
+URL Source: https://arxiv.org/pdf/2603.20442v1
+
+Published Time: Tue, 24 Mar 2026 00:18:33 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+> IEEE JOURNAL OF BIOMEDICAL AND HEALTH INFORMATICS 1
+
+# Detecting Neurovascular Instability from Multimodal Physiological Signals Using Wearable-Compatible Edge AI: A Responsible Computational Framework 
+
+Truong Quynh Hoa, Hoang Dinh Cuong, and Truong Xuan Khanh 
+
+Preprint. Submitted to IEEE Journal of Biomedical and Health Informatics. arXiv:cs.LG (cross-listed: cs.AI, eess.SP, q-bio.NC). 
+
+Abstract —Contribution: We propose and validate Melaguard, a multimodal machine learning framework based on a Transformer-lite classifier (1.2M parameters, 4-head self-attention, 2 en-coder layers) for detecting neurovascular instability (NVI) from wearable-compatible physiological signals prior to structural stroke pathology . The model fuses four modalities—heart rate variability (HRV), peripheral perfusion index, SpO 2, and bilateral phase coherence—into a composite NVI Score, and is designed for deterministic edge inference (WCET ≤4 ms on Cortex-M4 @ 168 MHz). 
+
+Problem: Neurovascular functional instability (NVI)—the pre-structural dysregulation of cerebrovascular autoregulation preced-ing overt stroke—remains undetectable by existing single-modality wearable approaches. With 12.2 million incident strokes annually, continuous multimodal physiological monitoring offers a practical path to community-scale pre-structural screening. 
+
+Validation: Three-stage independent evaluation: (1) synthetic benchmark (n=10 ,000 ), AUC = 0 .88 [0.83–0.92]; (2) clinical cohort, PhysioNet CVES (n=172 ; 84 stroke, 88 control)— Transformer-lite achieves AUC = 0 .755 [0.630–0.778], outperform-ing LSTM (0.643), Random Forest (0.665), and SVM (0.472); HRV-SDNN significantly discriminates stroke ( p=0 .011 ); (3) PPG signal-processing pipeline, PhysioNet BIDMC ( n=53 )— PPG-derived pulse rate r=0 .748 and HRV surrogate r=0 .690 vs. ECG ground truth. Cross-modality validation on PPG-BP ( n=219 )confirms PPG morphology classifies cerebrovascular disease at AUC = 0 .923 [0.869–0.968]. 
+
+Findings: Multimodal fusion consistently outperforms single-modality baselines; AUC = 0 .755 on pre-structural NVI—an inherently harder task than post-event stroke classification— represents a clinically meaningful baseline for a first-generation screening instrument. All code and notebooks are publicly available at https://github.com/ClevixLab/Melaguard. 
+
+Index Terms —machine learning, Transformer, multimodal fusion, heart rate variability, photoplethysmography, neurovas-cular instability, wearable biosensors, edge AI, stroke screening, responsible AI. 
+
+I. I NTRODUCTION Manuscript received March 24, 2026; revised –; accepted –. This work received no external funding. T.Q.H. is inventor of USPTO PPA 63/814,537 (Melaguard, filed 30 May 2025). T.X.K. is inventor of USPTO PPA 63/838,707 (AeroKernel, filed 04 Jul. 2025). Code and data: https://github.com/ClevixLab/ Melaguard. Extended from the paper accepted at RAIDS 2026 Proceedings. T.Q.H. and T.X.K. are with H&K Research Studio, Clevix LLC, Hanoi, Vietnam (e-mail: hoa@clevix.vn; khanh@clevix.vn). H.D.C. is with the Department of Cardiology, Hanoi Heart Hospital, Hanoi, Vietnam (e-mail: hoangdinhcuong@hanoihospital.vn). 
+
+# STROKE remains the second leading cause of death and the primary cause of long-term disability worldwide, with 12.2 million incident strokes occurring annually [1]. Despite advances in acute reperfusion therapy, more than 80% of strokes remain preventable through earlier identification of modifiable risk factors [2]. With the rapid proliferation of wearable biosensing devices and edge-capable microcontrollers, physiological monitoring approaches for early cardiovascular risk stratification are now practically deployable at community scale—making this an opportune moment to establish their scientific and computational foundations. A critical translational gap exists between the vascular dysregulation that precedes structural cerebral injury—which we term neurovascular func-tional instability (NVI)—and the clinical triggers that currently prompt intervention [3]. NVI encompasses the early dysregulation of cerebrovascular autoregulation, arterial baroreflex sensitivity, and bilateral hemispheric flow synchrony, which may precede overt stroke by hours to years [4]. Existing community-based screening tools are insensitive to this pre-structural phase. Wearable pho-toplethysmography (PPG) devices have demonstrated promise for HRV-based cardiovascular risk stratification [5], but existing implementations are limited by: (i) single-modality sensing; (ii) cloud-dependent AI inference incompatible with privacy regulations [6]; (iii) optical signal degradation in highly melaninated skin [7], [8]; and (iv) absence of validated edge-AI architectures for deterministic clinical deployment. We present Melaguard , a responsible edge-AI framework addressing all four limitations through three integrated in-novations: a hydration-activated PHBV:eumelanin composite biosensor [9], [10], a Transformer-lite multimodal fusion classifier [11], [12], and AeroKernel—a POSIX-compliant microkernel for deterministic, privacy-by-design execution [13]. 
+
+Novelty statement. To our knowledge, this is the first work to systematically validate NVI detection (i) on a real clinical stroke cohort (CVES, n=172 ), (ii) with independent PPG pipeline cross-validation (BIDMC, n=53 ), and (iii) with cross-modality PPG morphology validation on a labelled cerebrovascular dataset (PPG-BP, n=219 ), within a unified, fully reproducible framework. Each dataset is independent; no features or labels cross dataset boundaries. 
+
+Central insight. A key hypothesis underlying this work is that neurovascular instability is fundamentally a physiological signal problem rather than a structural imaging problem. Brain mi-crovascular dysfunction manifests as measurable derangements in heart rate variability, cerebrovascular autoregulation, and  
+
+> arXiv:2603.20442v1 [cs.LG] 20 Mar 2026 2IEEE JOURNAL OF BIOMEDICAL AND HEALTH INFORMATICS
+
+peripheral perfusion before structural lesions are detectable by CT or MRI. If validated, this repositions early stroke risk stratification from episodic, imaging-based diagnostics toward continuous, wearable-based physiological monitoring— a paradigm shift with substantial implications for community-level prevention [2], [3]. This work provides the first systematic computational validation of this hypothesis across synthetic, clinical, and cross-modality datasets. The principal contributions of this work are: Main claim. 
+
+We show that neurovascular instability is detectable from multimodal physiological signals—specifically HRV, perfusion index, and bilateral phase coherence—prior to structural pathology, and that these signals are accessible from wearable-compatible PPG-based sensing modalities, as validated across three independent public datasets. 1) A novel hydration-activated melanin biosensing mecha-nism validated via COMSOL finite-element simulation (USPTO PPA 63/814,537). 2) A Transformer-lite architecture with demonstrated AUC = 0 .755 on a real clinical stroke cohort. 3) An independently validated PPG signal processing pipeline (PRV r=0 .690 vs. ECG ground truth, n=53 
+
+ICU recordings). 4) A responsible AI framework integrating privacy-by-design, equity-by-design, and explainability. 5) Full reproducibility: code, data, and pre-generated figures available at https://github.com/ClevixLab/Melaguard. II. R ELATED WORK 
+
+A. Wearable Neurovascular Monitoring 
+
+Continuous wearable monitoring of cerebrovascular physiol-ogy has evolved from simple heart rate monitors to multimodal platforms integrating PPG, electrodermal activity, and inertial sensing [5], [14]. HRV-based stroke risk stratification has been validated in longitudinal cohort studies, with SDNN and RMSSD demonstrating modest but consistent associations with cerebrovascular events [14], [15]. 
+
+B. Equitable Optical Biosensing 
+
+Melanin absorption at 660 nm and 810 nm creates sys-tematic SpO 2 and PPG signal attenuation in individuals with Fitzpatrick skin types IV–VI [7], [8]. Eumelanin-based organic bioelectronic materials exhibit hydration-activated ionic conductivity [9], [10], a property that can simultaneously amplify the pulsatile signal component and reduce the skin-tone bias intrinsic to conventional silicon-based sensors. 
+
+C. Edge AI for Privacy-Preserving Inference 
+
+Cloud-dependent AI inference raises substantive concerns regarding patient data sovereignty under GDPR [6]. Micro-kernel operating systems offer formal isolation guarantees through minimal trusted computing bases [13]. The AeroKernel AppBox model represents, to our knowledge, the first explicit instantiation of responsible AI principles [16] at the systems level for a neurovascular wearable.  
+
+> Fig. 1. System architecture of the Melaguard NVI framework, comprising four hierarchical layers: (A) PHBV:eumelanin composite material biosensing substrate with passive NFC; (B) multimodal signal acquisition (SpO 2, HRV, perfusion index, bilateral phase coherence proxy); (C) AeroKernel edge-AI inference with privacy-by-design AppBox isolation (USPTO PPA 63/838,707); (D) clinical NVI Score output with three-tier risk stratification. Dashed border denotes the responsibility-by-design boundary.
+
+D. Transformer Architectures for Biosignals 
+
+The self-attention mechanism [11] has shown superior performance over recurrent architectures for physiological time-series classification [12]. Our Transformer-lite design (1.2M parameters, 4-head attention, 2 encoder layers) is specifically optimized for Cortex-M4 class hardware while maintaining competitive performance. III. S YSTEM DESIGN AND METHODS 
+
+A. Framework Architecture 
+
+The Melaguard NVI framework comprises four hierarchical layers (Fig. 1): Layer A , the material biosensing substrate; 
+
+Layer B , multimodal signal acquisition and feature extraction; 
+
+Layer C , edge AI inference via AeroKernel; and Layer D ,clinical output and risk stratification. 
+
+B. Hydration-Activated Melanin Biosensor 
+
+The biosensing substrate is a free-standing film of poly(3-hydroxybutyrate-co-3-hydroxyvalerate) (PHBV) and eume-lanin (EM) at 60:40 w/w ratio, fabricated by solvent casting from dimethyl sulfoxide. Eumelanin exhibits ambipolar charge transport combining electronic (polaron hopping) and ionic (proton transfer along the dihydroxyindole backbone) con-duction [9], [10]. The resulting film demonstrates hydration-activated conductivity: σ ≈ 10 −8 S/m (dry, RH < 20%) to 
+
+σ ≈ 10 −4 S/m (hydrated, RH 60–80%), as validated by COMSOL 6.1 finite-element simulation (Fig. 2). 
+
+Scope note. The signal-level NVI framework is validated independently of the specific sensor implementation—CVES and BIDMC use clinical ECG/PPG; PPG-BP uses a commodity fingertip sensor. The PHBV:eumelanin substrate is a forward-looking equity-motivated extension; its computational valida-tion establishes theoretical feasibility. Material-level biosensing is validated computationally. Experimental fabrication and in-vitro characterisation of the PHBV:eumelanin composite HOA ET AL. : DETECTING NEUROVASCULAR INSTABILITY VIA WEARABLE-COMPATIBLE EDGE AI 3      
+
+> Fig. 2. Hydration-activated biosensing mechanism (COMSOL-validated, computational). (A) Conductivity curve of PHBV:eumelanin (60:40) vs. relative humidity; operating point at 60% RH (dashed orange), target conductivity thresholds ( 10 −8and 10 −4S/m). Green shaded region indicates active sensing zone. (B) Theoretical signal amplification model: hydrated melanin ionic conduction increases AC component amplitude. Note: Experimental fabrication constitutes planned future work (Section VI).
+
+constitute planned future work (Section VI). Claims regarding 
+
+×3 SNR gain represent theoretical estimates from simulation and require empirical confirmation. 
+
+C. NVI Score Formulation 
+
+The Neurovascular Instability Index (NVI Score) is acomposite score ∈ [0 , 100] defined as: NVI = X
+
+> i
+
+wi · fi(x)
+
+!
+
+× 100 , fi ∈ [0 , 1] , (1) where x is the multimodal biosignal vector and weights wi
+
+are: SpO 2 (w=0 .30 ), HRV ( w=0 .25 ), Microvascular Perfusion (w=0 .20 ), Bilateral Phase Coherence ( w=0 .25 ). Individual modality scores are: 
+
+SSpO 2 = clip 
+
+ SpO 2−85 15 , 0, 1
+
+
+
+, (2) 
+
+SHRV = σ  RMSSD −40 25 
+
+ , (3) 
+
+SPerf = clip   P I  
+
+> 0.20
+
+, 0, 1 , (4) 
+
+SPhase = 1 − |ΦL−ΦR| 
+
+> 180 ◦
+
+, (5) where σ(·) is the sigmoid function and P I = AC/DC is the PPG perfusion index (standard clinical formula). When a modality is unavailable, its weight is redistributed proportion-ally among remaining modalities (degraded-mode operation). Risk tiers: NVI ≥ 80 (normal); 60 ≤ NVI < 80 (Alert Level 1, monitor); NVI < 60 (Alert Level 2, refer). Synthetic signal trajectories and NVI dynamics under controlled perturbation are shown in Figs. 3 and 4. 
+
+D. Transformer-lite Classifier 
+
+The Transformer-lite classifier accepts 60-second, 4-channel biosignal inputs at 100 Hz (post-resampling) and produces a continuous NVI score and binary NVI flag. 
+
+Architecture: input projection (Linear → LayerNorm), 2-layer Transformer encoder (4-head self-attention, 
+
+dmodel =128 , FFN dim = 256 , dropout = 0 .15 , GELU, pre-norm), global average pooling, classification head (Linear( 128 →32 ) → GELU → Dropout → Linear( 32 →1)).                      
+
+> Fig. 3. Synthetic biosignal trajectories over 60 s comparing stable (green) and neurovascular instability (red) conditions across four NVI modalities. Pertur-bation onset at t=30 s (dashed vertical). Bottom panel: composite NVI Score with alert threshold at 80 (dashed orange). Generated from physiologically informed parametric models with Gaussian noise perturbation [17].
+> Fig. 4. NVI dynamics under controlled perturbation and recovery. (A) NVI score decline vs. perturbation intensity (mean ±SD, 100 Monte Carlo simulations); Alert Level 1 (NVI <80, orange) and Level 2 (NVI <60, red) thresholds. (B) NVI recovery following signal normalisation; exponential recovery model with τ=60 s.
+
+Total parameters: 1.2M. Training: AdamW [18] (lr = 10 −3, weight decay = 10 −2), cosine annealing (Tmax =100 , ηmin =10 −5), class-weighted BCE loss (pos_weight = nneg /n pos ), early stopping (patience = 25 
+
+epochs). 
+
+E. AeroKernel Edge Execution 
+
+AeroKernel (USPTO PPA 63/838,707) is a POSIX-compliant microkernel providing deterministic, privacy-by-design infer-ence execution [13]. Key features: minimum trusted computing base ( <10K LoC), AppBox capability-addressed sandboxing, BATS scheduling (bounded worst-case latency target <100 ms), and local-only inference ensuring GDPR/HIPAA compliance by design [6]. Note: AeroKernel latency benchmarking constitutes planned future work (Section VI). 4 IEEE JOURNAL OF BIOMEDICAL AND HEALTH INFORMATICS 
+
+F. Datasets 
+
+CVES. The PhysioNet Cerebral Vasoregulation in Elderly with Stroke dataset [19], [20] comprises recordings from 
+
+n=172 subjects (84 ischemic stroke, 88 healthy controls; mean age ≈70 years). Signals were acquired at 500 Hz during a head-up-tilt protocol and include ECG, arterial blood pressure (ABP), bilateral middle cerebral artery transcranial Doppler (TCD), and expired O 2. Pre-computed 24-hour HRV indices in subjects.csv are stored in seconds and were converted to milliseconds ( ×1000 ) prior to analysis. 
+
+PPG-BP. The Liang et al. PPG-BP dataset [21] comprises PPG recordings from n=219 subjects (age 21–86 years, me-dian 58, 48% male) recruited at Guilin People’s Hospital, China. Labels are extracted from hospital electronic medical records and include normotension, hypertension, diabetes, cerebral infarction (CI) , and insufficient brain blood supply. Signal acquisition: fingertip PPG at 1 kHz, 12-bit ADC, dual LED at 660 nm and 905 nm, hardware 0.5–12 Hz bandpass; three 2.1-second segments per subject (657 total). The dataset is publicly available via Figshare (DOI: 10.6084/m9.figshare.5459299.v5, CC-BY 4.0). Scope note: The 2.1-second segment duration precludes HRV computation (minimum ∼30 s required for RMSSD/SDNN). This dataset validates PPG morphology classification of cerebrovascular status, not the HRV pipeline. 
+
+BIDMC. 
+
+The PhysioNet BIDMC PPG and Respiration dataset [20], [22] comprises n=53 recordings of 8 minutes each from ICU adults (age 19–90 +, 32 female). Signals: PPG (PLETH), ECG (Lead II), impedance respiration at 125 Hz; reference SpO 2, HR, and pulse rate from clinical monitor at 1 Hz. 
+
+G. Statistical Analysis 
+
+Group comparisons used Mann-Whitney U tests (two-sided; α=0 .05 ) with effect size reported as Cohen’s d.Classifier performance used 5-fold stratified cross-validation; AUC with 1000-iteration bootstrap 95% CI; sensitiv-ity/specificity/PPV/NPV at threshold optimised by Youden’s J.Agreement analysis used Pearson r and Bland–Altman limits of agreement (bias ± 1.96 SD) per [23]. All analyses were performed in Python 3.12 (scipy 1.13, scikit-learn 1.4, Py-Torch 2.3). IV. C OMPUTATIONAL VALIDATION RESULTS 
+
+A. Synthetic Validation 
+
+On the held-out synthetic test set ( n=10 ,000 ; 70/15/15 split), Transformer-lite achieved AUC = 0 .88 [95% CI: 0.83– 0.92], accuracy = 0 .90 , sensitivity = 0 .92 , specificity = 0 .88 ,outperforming LSTM (AUC = 0 .82 ), GRU (0.80), Random Forest (0.76), and SVM (0.72) (Fig. 5). The combined NVI loss ( 0.7×MSE + 0 .3×BCE) converged within 47 ±12 epochs. These results represent an upper-bound estimate under idealised, noise-controlled conditions. 
+
+B. CVES Clinical Cohort: Statistical Analysis 
+
+Table I presents Mann-Whitney U comparisons of NVI component features between 84 stroke patients and 88 healthy  
+
+> Fig. 5. Model comparison on synthetic validation data ( n=10 ,000 ; 5-fold CV). (A) ROC curves; shaded region shows bootstrap 95% CI for Transformer-lite. (B) Performance metrics comparison (AUC, accuracy, sensitivity, specificity); Transformer-lite achieves superior AUC = 0 .88 .
+
+controls. HRV indices demonstrated statistically significant impairment in stroke patients: RMSSD 24h (24 .3±27 .9 ms vs. 33 .3±32 .7 ms, p=0 .037 ; d=0 .29 ) and SDNN 24h 
+
+(96 .1±28 .6 ms vs. 110 .5±29 .5 ms, p=0 .011 ; d=0 .49 ), consis-tent with established autonomic dysfunction post-stroke [14]. Waveform-extracted HRV independently cross-validated these results (RMSSD waveform: p=0 .038 ; SDNN waveform: 
+
+p=0 .043 ), providing methodological triangulation across two independent measurement modalities [5]. Bilateral phase coherence (MMPF phase asymmetry) showed the expected directional trend ( 9.76 ◦±15 .3◦ vs. 7.18 ◦±7.1◦)but did not reach statistical significance ( p=0 .829 ). Post-hoc power analysis (G*Power 3.1, Mann-Whitney U , two-tailed, 
+
+α=0 .05 ) indicates ≈15% power at the observed effect size (Cohen´ s d≈0.18 , n=69 ). Achieving 80% power at this effect size would require n≈280 subjects with complete MMPF data— a sample size constraint attributable to the original CVES study design rather than framework failure. 
+
+C. CVES Clinical Cohort: Classification Performance 
+
+Under 5-fold stratified cross-validation (n=172 ), Transformer-lite achieved AUC = 0 .755 [95% CI: 0.630– 0.778] , outperforming LSTM (0.643), Random Forest (0.665), and SVM (0.472) (Table II, Fig. 6). High sensitivity (0.906) with moderate specificity (0.400) reflects the screening-optimised threshold, consistent with the framework’s primary purpose of minimising missed NVI cases. NPV = 0 .843 
+
+indicates that a negative screen has substantial negative predictive value in this cohort. 
+
+D. BIDMC Signal Processing Validation 
+
+Table III presents the BIDMC pipeline validation results (Fig. 7). PPG-derived pulse rate correlated significantly with clinical monitor reference (r=0 .748 , p< 0.001 ; Bland–Altman bias =+1 .53 bpm, LoA ±20 .9 bpm, n=53 ), confirming ac-curate pulse peak detection at 125 Hz. PPG-derived pulse rate variability (PRV) as a surrogate for HRV correlated significantly with ECG-derived RMSSD (r=0 .690 , p< 0.001 ;bias =+14 .5 ms, LoA ±81 .5 ms, n=42 ), consistent with es-tablished PRV–HRV agreement literature [5]. The positive bias reflects the known pulse-wave-velocity effect on PPG peak timing relative to ECG R-peaks [5]. HOA ET AL. : DETECTING NEUROVASCULAR INSTABILITY VIA WEARABLE-COMPATIBLE EDGE AI 5
+
+TABLE I STATISTICAL COMPARISON OF NVI C OMPONENT FEATURES : S TROKE PATIENTS VS . H EALTHY CONTROLS (P HYSIO NET CVES, n=172 ). MANN -W HITNEY U , T WO -S IDED . ∗p< 0.05 ; ∗∗ p< 0.01 ; NS = NOT SIGNIFICANT .
+
+Feature Stroke (n=84 ) Control (n=88 ) n (S/C) p-value Sig. Effect 
+
+HRV RMSSD 24h (ms) 24 .3 ± 27 .9 33 .3 ± 32 .7 40/45 0.037 ∗ d = 0 .29 
+
+HRV SDNN 24h (ms) 96 .1 ± 28 .6 110 .5 ± 29 .5 40/45 0.011 ∗∗ d = 0 .49 
+
+HRV LF/HF ratio 2.19 ± 1.18 2.56 ± 2.09 39/44 0.931 ns —RMSSD waveform (ms) 63 .7 ± 59 .5 110 .6 ± 124 .3 40/28 0.038 ∗ cross-val. 24h SDNN waveform (ms) 82 .1 ± 30 .5 114 .7 ± 70 .6 40/28 0.043 ∗ cross-val. 24h Phase asymmetry MMPF ( ◦) 9.76 ± 15 .3 7.18 ± 7.1 34/35 0.829 ns power ≈15% TCD velocity asymmetry 0.24 ± 0.18 0.23 ± 0.25 33/35 0.320 ns —ABP mean (mmHg) 89 .3 ± 8.3 85 .3 ± 10 .5 40/28 0.082 ns —O2 utilisation index 3.79 ± 0.32 3.90 ± 0.30 40/28 0.229 ns —NVI Score (0–100) 50 .0 ± 13 .3 49 .6 ± 14 .0 45/49 0.856 ns phase data 40% missing Note: 24h HRV from Holter pre-computed ( subjects.csv , converted s → ms). Waveform HRV independently extracted from head-up-tilt ECG. 
+
+Fig. 6. Real-data validation on PhysioNet CVES ( n=172 ; Stroke = 84 , Control = 88 ). (A) ROC curves under 5-fold stratified CV; shaded region: Transformer-lite bootstrap 95% CI. (B) AUC comparison with bootstrap 95% CI error bars. (C) NVI score distribution; overlap attributable to phase coherence data missingness. (D) HRV RMSSD (24h Holter): significantly lower in stroke ( p=0 .037 ∗). (E) MMPF bilateral phase asymmetry: directional trend ( p=0 .829 ns; 
+
+n=69 /172 , power ≈15% ). (F) Random Forest feature importance: HRV metrics and TCD velocity ( mcal_mean ) dominate. 
+
+SpO 2 cannot be computed from single-wavelength PPG— dual wavelength (660/940 nm) is required for the R-ratio method. Reference SpO 2 (mean 96 .7±3.3% ) contextualises the narrow oxygenation range in this monitored cohort, explaining the non-significant PI–SpO 2 correlation ( r=−0.087 , p=0 .538 ). 
+
+E. Modality Alignment: Bridging ECG/TCD to PPG 
+
+A key concern for end-to-end validity is the modality gap between the CVES validation—which uses ECG and TCD signals—and the intended Melaguard sensor, which acquires PPG. We address this gap through two complementary arguments. 
+
+Argument 1 (BIDMC cross-validation): The BIDMC 6 IEEE JOURNAL OF BIOMEDICAL AND HEALTH INFORMATICS 
+
+Fig. 7. Signal processing pipeline validation on PhysioNet BIDMC ( n=53 ICU recordings). (A) PPG-derived pulse rate vs. monitor reference ( r=0 .748 ,
+
+p< 0.001 , bias =+1 .53 bpm). (B) PRV RMSSD vs. ECG RMSSD ground truth ( r=0 .690 , p< 0.001 , bias =+14 .5 ms). (C) Bland–Altman analysis for RMSSD. (D) Perfusion index distribution (AC/DC ratio; mean =0 .278 ). (E) Reference SpO 2 from ICU monitor; note narrow range explaining non-significant PI–SpO 2
+
+correlation. (F) Summary statistics table. TABLE II CLASSIFIER PERFORMANCE ON PHYSIO NET CVES ( n=172 , 5-FOLD 
+
+STRATIFIED CV). AUC WITH 1000-ITERATION BOOTSTRAP 95% CI. SENSITIVITY , S PECIFICITY , PPV, NPV AT YOUDEN -O PTIMAL THRESHOLD . 
+
+> †
+
+OUR MODEL .
+
+Model AUC [95% CI] Sens. Spec. PPV NPV 
+
+Transformer-lite † 0.755 [0.630–0.778] 0.906 0.400 0.592 0.843 
+
+LSTM 0.643 [0.524–0.691] 0.630 0.501 0.533 0.627 Random Forest 0.665 [0.576–0.742] 0.751 0.469 0.579 0.709 SVM 0.472 [0.414–0.578] 0.240 0.787 0.326 0.516 
+
+results (Section IV-D) demonstrate that HRV-equivalent features (PRV RMSSD r=0 .690 vs. ECG RMSSD, p< 0.001 ) and pulse rate ( r=0 .748 ) are accessible from PPG with clinically acceptable agreement. Since the CVES HRV discrimination (p=0 .011 ) relies on the same RMSSD and SDNN features, and BIDMC confirms these features can be extracted from PPG, the biological signal validated on CVES is reachable from the target modality. 
+
+Argument 2 (Feature-level compatibility): The Transformer-lite classifier in CVES validation operates on tabular HRV and ABP features—not on raw ECG waveforms. The same feature set (RMSSD, SDNN, LF/HF, 
+
+TABLE III BIDMC S IGNAL PROCESSING VALIDATION RESULTS (n=53 ICU RECORDINGS ). B LAND –A LTMAN ANALYSIS PER [23]. PRV = PULSE RATE VARIABILITY (PPG-DERIVED HRV SURROGATE ). S PO2 FROM CLINICAL MONITOR REFERENCE ONLY .
+
+Signal / Metric Pearson r B-A Bias Notes 
+
+Pulse rate 0.748 ∗∗∗ +1 .53 bpm LoA ±20 .9 bpm, n=53 
+
+PRV RMSSD vs ECG 0.690 ∗∗∗ +14 .5 ms LoA ±81 .5 ms, n=42 
+
+PRV SDNN vs ECG 0.511 ∗∗∗ +1 .7 ms n=42 
+
+LF/HF (PRV vs ECG) 0.286 — n=42 
+
+PI mean (AC/DC) — — 0.278 ±0.086 , n=53 
+
+PI vs SpO 2 −0.087 — p=0 .538 ns, exploratory 
+
+> ∗∗∗
+
+p< 0.001 ; ns = not significant. 
+
+perfusion index) is extractable from PPG via the validated BIDMC pipeline. This makes the CVES classifier directly applicable to PPG-derived inputs without architectural modification. 
+
+Remaining gap: A PPG-labelled stroke dataset would enable direct end-to-end PPG-to-classification validation—this constitutes the highest-priority future experiment (Section VI). Candidate datasets include the Liang et al. PPG-BP (Figshare, DOI: 10.6084/m9.figshare.5459320) and MIMIC-IV [20] with HOA ET AL. : DETECTING NEUROVASCULAR INSTABILITY VIA WEARABLE-COMPATIBLE EDGE AI 7
+
+ICD-10 stroke code filtering, both of which are under active investigation. 
+
+F. PPG-BP Morphology Validation 
+
+To address the modality gap between the ECG/TCD-based CVES validation and the target PPG sensor, we evaluated PPG morphology-based cerebrovascular classification on the Liang et al. PPG-BP dataset [21] under two binary classification strategies: Strategy A (cerebral infarction [CI] vs. normal; 
+
+n=88 , CI = 20, normal = 68) and Strategy B (any cerebrovas-cular disease [CI+CBVD] vs. normal; n=113 , positive = 45, normal = 68). Feature extraction yielded 30 features: 14 PPG morphology (perfusion index, rise/fall time, augmentation index, pulse area, notch ratio, skewness, kurtosis), 7 frequency domain (dominant frequency, spectral entropy, centroid), and 3 nonlinear (sample entropy, DFA α, permutation entropy), plus 6 clinical covariates (age, sex, SBP, DBP, HR, BMI). The top-15 features selected by mutual information were used per fold (5-fold stratified CV, identical protocol to Section IV-B). Table V summarises classification performance with bootstrap 95% CI (1000 iterations). On Strategy B(any cerebrovascular vs. normal, n=113 ), Transformer-lite achieved AUC = 0 .923 [0.869–0.968] , sensitivity = 0 .933 ,specificity = 0 .881 , NPV = 0 .958 —confirming that PPG wave-form morphology carries discriminative information for cere-brovascular status accessible from the target Melaguard sensor modality (Fig. 8). Random Forest achieved AUC = 0 .953 
+
+[0.880–0.999] on Strategy A (CI vs. normal, n=88 ). The dominant features were SBP (28%), age (17%), spectral centroid/entropy (15%), PPG rise time (6%), and nonlinear indices (11%), confirming that both PPG morphology and haemodynamic covariates contribute to cerebrovascular dis-crimination (Fig. 8D). 
+
+Age Confounding — Sensitivity Analysis. Cerebrovascular pa-tients were significantly older than normal controls ( 69 .0±10 .3
+
+vs. 46 .8±16 .5 years; Mann-Whitney p< 0.001 ), raising the question of whether classifiers learn age rather than PPG pathology. We address this in three ways. 
+
+(i) Age-only baseline: A classifier using age as the sole feature achieved AUC = 0 .872 for Strategy B (CBV vs. normal), compared to the full multimodal PPG model AUC = 0 .923 —a significant increment of ∆=+0 .051 , confirming that PPG morphology carries discriminative information beyond chrono-logical age alone. 
+
+(ii) Age-excluded model: Removing age from the feature set, the Random Forest achieved AUC = 0 .923 on the full dataset, unchanged from the age-included model, demonstrating that the model does not rely on age as a shortcut feature. 
+
+(iii) Age-matched subsets: Restricting analysis to sub-jects aged ≥60 years ( n=51 ; CBV = 35, Normal = 16), nar-rowing the age gap substantially, Random Forest achieved AUC = 0 .933 —comparable to the full-dataset result— and SVM AUC = 0 .826 , confirming that the discriminative signal persists after reducing age confounding. Table IV summarises these results. 
+
+(iv) Remaining limitation: Formal age-stratified propensity-score matching is deferred to the planned prospective pilot                                            
+
+> TABLE IV AGE SENSITIVITY ANALYSIS FOR PPG-BP S TRATEGY B (A NY
+> CEREBROVASCULAR VS . N ORMAL ). RF =RANDOM FOREST . “A GE EXCL .”
+> REMOVES M E T A _A G E FROM FEATURE SET .
+> Subset nRF AUC SVM AUC
+> Full ( ≥21 yr, age incl.) 113 0.927 0.908 Full ( ≥21 yr, age excl.) 113 0.923 0.882 Age-only baseline 113 0.872 —
+> ∆(full model vs. age-only) —+0.051 —Subset ≥50 yr (age incl.) 80 0.881 0.854 Subset ≥55 yr (age incl.) 66 0.856 0.802 Subset ≥60 yr (age incl.) 51 0.933 0.826 Subset ≥60 yr (age excl.) 51 0.914 0.807 AUC remains ≥0.82 across all age-restricted subsets and without age as a feature, confirming that PPG morphology carries genuine cerebrovascular discriminative information independent of age.
+
+study (Section VI), where age-matched recruitment will be built into the inclusion criteria. 
+
+Additional caveats. First , the 2.1-second segments do not permit HRV computation; this validation is complementary to, not a replacement of, the HRV-based CVES results. Second ,Strategy A CI sample size is small ( npos =20 ), yielding wide bootstrap CIs. 
+
+G. Validation Scorecard 
+
+Table VI summarises the validation status of all primary framework claims across both real-data datasets. V. D ISCUSSION 
+
+A. Interpretation of Key Findings 
+
+The statistically significant HRV impairment in stroke pa-tients (SDNN p=0 .011 , d=0 .49 ) is consistent with established autonomic dysfunction post-ischaemic stroke [14], [15]. The cross-validation of this finding by independently extracted waveform HRV ( p=0 .038 ) strengthens the methodological claim that the NVI HRV pipeline recovers clinically meaningful signal. The Transformer-lite AUC of 0.755 on real clinical data demonstrates that the multimodal fusion architecture generalises beyond synthetic conditions [12]. While the AUC is moderate in absolute terms, it reflects an inherently harder 
+
+task than post-event stroke classification: the target is pre-structural physiological dysregulation where ground-truth labels are imperfect surrogates for true NVI (existing stroke/control cohorts label outcome, not pre-structural instability). Under these conditions, AUC = 0 .755 represents a clinically meaning-ful and methodologically sound baseline for a first-generation pre-structural NVI screening instrument. The high sensitivity (0.906) relative to specificity (0.400) reflects a threshold choice optimised for screening [24]. In population-based NVI screening, the clinical cost of a missed pre-stroke state substantially exceeds the cost of a false alert, justifying the sensitivity-first operating point [3]. The NPV of 0.843 provides sufficient negative predictive value for a first-line screening instrument. The false positive rate of 0.600 at the Youden-optimal threshold—while high in absolute terms—is 8 IEEE JOURNAL OF BIOMEDICAL AND HEALTH INFORMATICS 
+
+TABLE V PPG M ORPHOLOGY CLASSIFICATION ON LIANG et al. PPG-BP ( n=219 , 5-FOLD CV, B OOTSTRAP 95% CI). S TRATEGY A: CI VS . NORMAL (n=88 ); STRATEGY B: A NY CEREBROVASCULAR VS . NORMAL (n=113 ). B OLD = BEST AUC PER STRATEGY . † OUR MODEL .
+
+Strategy Model AUC [Bootstrap 95% CI] Sens. Spec. NPV 
+
+A: CI vs. Normal (n=88 )Transformer-lite † 0.915 [0.826–0.984] 1.000 0.957 1.000 LSTM 0.728 [0.608–0.833] 0.900 0.942 0.975 Random Forest 0.953 [0.880–0.999] 0.900 1.000 0.973 SVM 0.905 [0.793–0.986] 0.900 0.879 0.972 B: CBV vs. Normal (n=113 )Transformer-lite † 0.923 [0.869–0.968] 0.933 0.881 0.958 LSTM 0.912 [0.859–0.958] 0.911 0.884 0.945 Random Forest 0.914 [0.858–0.960] 0.889 0.869 0.929 SVM 0.895 [0.834–0.952] 0.933 0.837 0.950 
+
+Age note: CBV group 69 .0±10 .3 yr vs. Normal 46 .8±16 .5 yr ( p< 0.001 ); age included as covariate. See Table IV for age sensitivity analysis. PPG segments = 2.1 s; HRV (RMSSD/SDNN) not computable at this duration. 
+
+Fig. 8. PPG morphology validation on the PPG-BP dataset (Liang et al. 2018, n=219 ). (A) ROC curves: Strategy A, CI vs. normal ( n=88 ). (B) ROC curves: Strategy B, any cerebrovascular vs. normal ( n=113 ). (C) AUC with bootstrap 95% CI error bars. (D) Random Forest feature importance; red bars denote PPG morphology features; blue bars denote clinical covariates and spectral features. (E) Perfusion index (PI = AC/DC) by group; no significant group difference (p=0 .247 –0.587 ), consistent with the 2.1-second recording window being insufficient to resolve PI differences. (F) Summary table. Age confound note: 
+
+cerebrovascular groups are significantly older than controls; all models include age as a covariate. 
+
+typical of population-level screening instruments and would benefit from recalibration on a prospective cohort to reduce false alarm burden, which is incorporated into the planned pilot study (Section VI). 
+
+B. Phase Coherence: Honest Assessment 
+
+The bilateral phase coherence modality did not reach sta-tistical significance in CVES ( p=0 .829 , n=69 , power ≈15% ). We attribute this to three compounding factors: 60% data missingness, underpowering at the observed effect size, and genuine clinical heterogeneity in post-stroke bilateral flow HOA ET AL. : DETECTING NEUROVASCULAR INSTABILITY VIA WEARABLE-COMPATIBLE EDGE AI 9         
+
+> TABLE VI VALIDATION SCORECARD : S TATUS OF PRIMARY MELAGUARD NVI C LAIMS . S IGNIFICANCE :∗p< 0.05 ,∗∗ p< 0.01 ,∗∗∗ p< 0.001 . CVES n=172 ; BIDMC
+> n=53 ; PPG-BP n=219 .
+
+Claim / Component CVES (ECG+TCD) BIDMC (PPG+ECG) PPG-BP (PPG) Status 
+
+HRV discriminates stroke SDNN p=0 .011 ∗∗ ;RMSSD p=0 .038 ∗
+
+PRV–HRV 
+
+r=0 .690 ∗∗∗ 
+
+— Validated Transformer-lite fusion AUC = 0.755 [0.630– 0.778] — — Validated PPG pulse extraction — PR r=0 .748 ∗∗∗ ; B-A bias +1 .5 bpm — Validated Perfusion index (AC/DC) partial (ECG surrogate) PI = 0 .278 ±0.086 PI reported per group Validated PPG morphology (CBV) — — AUC 0.923 [0.869– 0.968]; age-adj. 0.914 Validated †
+
+Phase coherence trend, p=0 .829 (ns) — — Partial SpO 2 (dual-λ PPG) not available reference only not available Future Melanin biosensing — — — Future AeroKernel WCET — — — Theoretical ‡† Age-sensitivity analysis: age-only AUC 0.872; full model +0.051 increment; age-excluded model 0.923; subset ≥60 yr AUC 0.933 (Table IV).    
+
+> ‡WCET estimate: ≤4 ms on Cortex-M4 @ 168 MHz; ≤1 ms on Cortex-M7 @ 480 MHz; theoretical calculation, hardware benchmark pending.
+
+dysregulation. We explicitly downgrade the phase coherence claim from “validated” to “proposed proxy pending empirical validation.” 
+
+C. Melanin Biosensing: Scope and Limitations 
+
+The PHBV:eumelanin biosensing mechanism is validated computationally. The transition from COMSOL simulation to fabricated device involves film uniformity, encapsulation stability, optical calibration across skin tones, and long-term conductivity drift. The computational validation establishes theoretical feasibility and motivates empirical effort; it does not constitute proof of in-vivo sensor performance. 
+
+D. Comparison with Prior Work 
+
+Existing PPG-based stroke risk screening systems have re-ported AUC values of 0.70–0.82 for HRV-only atrial fibrillation detection [5], [12]. Melaguard is, to our knowledge, the first framework to: (i) integrate bilateral phase coherence as an NVI modality in a wearable form factor; (ii) address skin-tone equity through melanin biosensing; and (iii) provide a privacy-by-design microkernel execution environment for clinical wearable AI [16]. 
+
+Implication for clinical paradigm. The discriminative HRV and perfusion signals validated here are continuously present in resting physiological state—not only at the time of acute stroke. This supports a reorientation of cerebrovascular risk management from episodic, imaging-based diagnosis toward 
+
+continuous, wearable physiological monitoring , reframing early stroke risk detection as a signal processing and engineering problem rather than exclusively a clinical one. If validated prospectively, such a system could enable population-scale screening without the cost or access barriers of neuroimag-ing [2], [3]. VI. L IMITATIONS AND FUTURE WORK 
+
+Several limitations require explicit acknowledgement. First ,CVES lacks SpO 2 pulse oximetry; the expired O 2 fraction channel serves as a metabolic proxy only. Second , phase coherence data were available for 69 /172 subjects, providing insufficient power. Third , the Transformer-lite operates on tabular features in CVES validation, not raw waveforms as in the intended deployment. Fourth , both datasets represent populations differing from the intended deployment context (community-based, multiethnic, Fitzpatrick IV–VI). Fifth , Aero-Kernel WCET benchmarking has not been performed on target hardware. Sixth , CVES sample size ( n=172 ) yields relatively wide AUC confidence intervals [0.630–0.778]. Planned future work addresses each limitation: 1) Fabrication and characterisation of 5–10 PHBV:eumelanin prototype patches (conductivity, optical transmittance at 660/810/940 nm, ex-vivo PPG quality across Fitzpatrick IV–VI phantom skin tones). 2) Prospective pilot study at Hanoi Heart Hospital (target 
+
+n=60 : 20 acute stroke, 20 TIA, 20 healthy controls). 3) AeroKernel WCET benchmarking on STM32H7 (Cortex-M7). 4) External validation on MIMIC-III ( n> 500 ) for AUC confidence interval narrowing. VII. C ONCLUSION 
+
+We have proposed and computationally validated Mela-guard, a responsible edge-AI framework design for neurovas-cular functional instability screening integrating hydration-activated melanin biosensing, Transformer-lite multimodal fusion, and AeroKernel privacy-by-design execution. Three-stage validation—synthetic simulation (AUC = 0 .88 ), clinical cohort (CVES AUC = 0 .755 , HRV p=0 .011 ), and independent pipeline validation (BIDMC PRV r=0 .690 )—demonstrates 10 IEEE JOURNAL OF BIOMEDICAL AND HEALTH INFORMATICS 
+
+computational feasibility and biological validity of the core HRV and perfusion components. The framework explicitly delineates validated claims from planned future work, providing a transparent and reproducible foundation for prospective clinical validation. Melaguard represents a convergence of equitable biosensing, responsible AI architecture, and clinically grounded neurovascular physiology that may meaningfully advance community-based stroke prevention. More broadly, this work contributes to a conceptual shift: from detecting stroke to detecting instability before stroke —reframing early cerebrovascular risk stratification as a continuous physiolog-ical monitoring problem amenable to wearable engineering solutions, with substantial implications for population-level prevention. AUTHOR CONTRIBUTIONS 
+
+This manuscript extends the conference paper accepted at RAIDS 2026 (original authors: T.Q.H. and H.D.C.). T.Q.H. 
+
+conceived the Melaguard NVI framework and AeroKernel architecture; designed and implemented the PHBV:eumelanin biosensing mechanism; led theoretical development of the NVI score formulation; wrote Sections I–III; coordinated empirical validation; drafted and revised the full manuscript. 
+
+H.D.C. (Department of Cardiology, Hanoi Heart Hospital): co-designed the multimodal fusion architecture and Transformer-lite classifier; implemented the synthetic data generation pipeline; contributed to Sections III–IV; performed statistical analysis; revised and approved the final manuscript. T.X.K. 
+
+reviewed and critically appraised the manuscript; collected and curated the real-world validation datasets (PhysioNet CVES and BIDMC); conducted empirical validation experiments jointly with T.Q.H., including GPU training, statistical analysis, and figure generation; contributed to the drafting of Sections IV and VI; and participated in co-drafting the final revised manuscript. All authors have read and approved the final version. FUNDING 
+
+This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors. All computational experiments were conducted using self-funded resources (Google Colab Pro, personal hardware). CONFLICT OF INTEREST 
+
+T.Q.H. is the first named inventor of the Melaguard biosensing technology (USPTO PPA 63/814,537, Non-Invasive Melanin-Based Patch System for Early Detection of Silent Stroke and Microvascular Cerebral Risk , filed 30 May 2025) and holds equity in Clevix LLC. T.X.K. is the first named inventor of the AeroKernel operating system framework (USPTO PPA 63/838,707, AeroKernel™: A Modular Bio-Adaptive Microkernel and Operating System Framework. . . ,filed 04 July 2025) and holds equity in Clevix LLC. H.D.C. declares no competing financial or professional interests. Patent and equity interests do not affect the scientific content, data integrity, or conclusions of this work. The corresponding author (T.Q.H.) takes full responsibility for the integrity of the data and the accuracy of the data analysis. DATA AND CODE AVAILABILITY 
+
+All code, feature extraction scripts, statistical analysis notebooks, and figure generation scripts are publicly available at: https://github.com/ClevixLab/Melaguard All reported results can be reproduced by running the provided notebooks on Google Colab with a T4 GPU runtime (estimated total compute: ≈45 minutes). PhysioNet CVES [19] and BIDMC [22] datasets are available at https://physionet.org under their respective open-access licenses. USE OF AI W RITING ASSISTANCE 
+
+The authors used AI-based language tools (Anthropic Claude) for English language editing, grammar checking, and manuscript formatting assistance. All scientific content was produced entirely by the authors. The authors take full responsibility for the accuracy, integrity, and originality of all scientific claims. ACKNOWLEDGEMENTS 
+
+The CVES dataset was provided by V. Novak and colleagues via PhysioNet (DOI: 10.13026/C2DW96). The BIDMC PPG and Respiration dataset was provided by M.A.F. Pimentel and colleagues via PhysioNet (DOI: 10.13026/C2208R). The authors thank the PhysioNet team for maintaining open-access physiological data resources. REFERENCES [1] GBD 2019 Stroke Collaborators, “Global, regional, and national burden of stroke and its risk factors, 1990–2019: a systematic analysis for the global burden of disease study 2019,” Lancet Neurology , vol. 20, no. 10, pp. 795–820, 2021. [2] V. L. Feigin et al. , “World stroke organization (WSO): Global stroke fact sheet 2022,” International Journal of Stroke , vol. 17, no. 1, pp. 18–29, 2022. [3] W. N. Kernan et al. , “Guidelines for the prevention of stroke in patients with stroke and transient ischemic attack,” Stroke , vol. 45, no. 7, pp. 2160–2236, 2014. [4] V. Novak, K. Hu, M. Vyas, and L. Lipsitz, “Ultralow-frequency oscillations in blood pressure and cerebral blood flow velocity in older adults: their relationship to hrv,” Journal of Neuroscience , vol. 26, pp. 9440–9448, 2006, used for: NVI precedes overt stroke – cerebrovascular autoregulation dysfunctions hours to years prior. [5] J. Allen, “Photoplethysmography and its application in clinical physi-ological measurement,” Physiological Measurement , vol. 28, no. 3, pp. R1–R39, 2007. [6] European Parliament, “Regulation (EU) 2016/679 on the protection of natural persons with regard to the processing of personal data (GDPR),” Official Journal of the European Union, Tech. Rep., 2016, l 119/1–88. [7] M. W. Sjoding, R. P. Dickson, T. J. Iwashyna, S. E. Gay, and T. S. Valley, “Racial bias in pulse oximetry measurement,” New England Journal of Medicine , vol. 383, pp. 2477–2478, 2020. [8] S. Shi, T. Garnier, M. Berthelot et al. , “Impact of skin pigmentation on pulse oximetry blood oxygenation and wearable pulse rate accuracy: systematic review and meta-analysis,” Journal of Medical Internet Research , vol. 26, p. e62769, 2024. [9] L. Migliaccio, C. Manini, D. Altamura, G. Pennesi, and P. Greco, “Evidence of electronic and ionic conductivity contributions in hydrated melanin,” Frontiers in Chemistry , vol. 7, p. 162, 2019. [10] M. Sheliakina, A. B. Mostert, and P. Meredith, “Decoupling ionic and electronic currents in melanin,” Advanced Functional Materials , vol. 28, p. 1805514, 2018, confirms hydration-dependent protonic/ionic conductivity in eumelanin thin films. HOA ET AL. : DETECTING NEUROVASCULAR INSTABILITY VIA WEARABLE-COMPATIBLE EDGE AI 11 
+
+[11] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, L. Kaiser, and I. Polosukhin, “Attention is all you need,” in Advances in Neural Information Processing Systems (NeurIPS) , 2017, pp. 5998–6008. [12] C. Fan, C. Liu, and C. Li, “Transformer for time series: A survey,” IEEE Transactions on Pattern Analysis and Machine Intelligence , vol. 45, no. 11, pp. 14 013–14 037, 2023. [13] T. J. Littler, “Microkernel operating systems in safety-critical applications,” in Proceedings of the IEEE International Symposium on High-Assurance Systems Engineering , 2007, pp. 3–12. [14] U. R. Acharya et al. , “Heart rate variability: A review,” Medical and Biological Engineering and Computing , vol. 44, no. 12, pp. 1031–1051, 2006. [15] Task Force of the European Society of Cardiology, “Heart rate variability: Standards of measurement, physiological interpretation, and clinical use,” 
+
+Circulation , vol. 93, no. 5, pp. 1043–1065, 1996. [16] T. Elul, “Explainable AI in medicine: Designing interfaces for clinician trust,” npj Digital Medicine , vol. 4, p. 77, 2021. [17] J. Taelman, S. Vandeput, A. Spaepen, and S. Van Huffel, “Influence of mental stress on heart rate and heart rate variability,” in Proceedings of the 4th European Conference of the International Federation for Medical and Biological Engineering , 2009, pp. 1366–1369. [18] D. P. Kingma and J. Ba, “Adam: A method for stochastic optimization,” 
+
+arXiv preprint arXiv:1412.6980 , 2014. [19] V. Novak et al. , “Cerebral vasoregulation in elderly with stroke (CVES),” 2010, accessed via PhysioNet restricted health data license. [Online]. Available: https://physionet.org/content/cves/1.0.0/ [20] A. L. Goldberger et al. , “PhysioBank, PhysioToolkit, and PhysioNet: Components of a new research resource for complex physiologic signals,” 
+
+Circulation , vol. 101, no. 23, pp. e215–e220, 2000. [21] Y. Liang, Z. Chen, G. Liu, and M. Elgendi, “A new, short-recorded photoplethysmogram dataset for blood pressure monitoring in China,” Scientific Data , vol. 5, p. 180020, 2018, dataset: Figshare DOI 10.6084/m9.figshare.5459299.v5. [22] M. A. F. Pimentel, A. E. W. Johnson, P. H. Charlton, D. A. Clifton, L. Tarassenko, and P. J. Watkinson, “Toward a robust estimation of respiratory rate from pulse oximeters,” IEEE Transactions on Biomed-ical Engineering , vol. 64, no. 8, pp. 1914–1923, 2017, dataset DOI: 10.13026/C2208R. [23] J. M. Bland and D. G. Altman, “Statistical methods for assessing agreement between two methods of clinical measurement,” The Lancet ,vol. 327, no. 8476, pp. 307–310, 1986. [24] D. K. Arnett et al. , “2019 ACC/AHA guideline on the primary prevention of cardiovascular disease,” Circulation , vol. 140, no. 11, pp. e596–e646, 2019.
