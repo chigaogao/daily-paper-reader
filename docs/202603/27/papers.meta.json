@@ -1,0 +1,93 @@
+{
+  "label": "2026-03-27",
+  "date": "2026-03-27",
+  "generated_at": "2026-03-27T20:10:45",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202603/27/2603.20452v1-sde-driven-spatio-temporal-hypergraph-neural-networks-for-irregular-longitudinal-fmri-connectome-modeling-in-alzheimers-disease",
+      "section": "quick",
+      "title_en": "SDE-Driven Spatio-Temporal Hypergraph Neural Networks for Irregular Longitudinal fMRI Connectome Modeling in Alzheimer's Disease",
+      "authors": "Ruiying Chen, Yutong Wang, Houliang Zhou, Wei Liang, Yong Chen, Lifang He",
+      "date": "2026-03-20",
+      "pdf": "https://arxiv.org/pdf/2603.20452v1",
+      "score": "7.0",
+      "evidence": "SDE驱动的脑连接组建模",
+      "tldr": "针对阿尔茨海默病（AD）纵向神经影像数据中采样不规则和访视缺失的挑战，本文提出了一种基于随机微分方程（SDE）驱动的时空超图神经网络（SDE-HGNN）。该模型利用SDE重建连续潜在轨迹，并通过动态超图捕捉脑区的高阶交互，同时结合SDE控制的循环动力学来适应不同扫描间隔。实验证明，该方法在AD进展预测任务中显著优于现有基准，并能识别关键脑区。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Longitudinal neuroimaging is essential for modeling disease progression in Alzheimer's disease (AD), yet irregular sampling and missing visits pose substantial challenges for learning reliable temporal representations. To address this challenge, we propose SDE-HGNN, a stochastic differential equation (SDE)-driven spatio-temporal hypergraph neural network for irregular longitudinal fMRI connectome modeling. The framework first employs an SDE-based reconstruction module to recover continuous latent trajectories from irregular observations. Based on these reconstructed representations, dynamic hypergraphs are constructed to capture higher-order interactions among brain regions over time. To further model temporal evolution, hypergraph convolution parameters evolve through SDE-controlled recurrent dynamics conditioned on inter-scan intervals, enabling disease-stage-adaptive connectivity modeling. We also incorporate a sparsity-based importance learning mechanism to identify salient brain regions and discriminative connectivity patterns. Extensive experiments on the OASIS-3 and ADNI cohorts demonstrate consistent improvements over state-of-the-art graph and hypergraph baselines in AD progression prediction. The source code is available at https://anonymous.4open.science/r/SDE-HGNN-017F.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/27/2603.23358v1-a-synchronous-eeg-fnirs-bci-a-proof-of-concept-for-multimodal-avalanche-analysis-of-motor-cognition-in-older-adults",
+      "section": "quick",
+      "title_en": "A Synchronous EEG-fNIRS BCI: A Proof-of-Concept for Multimodal Avalanche Analysis of Motor Cognition in Older Adults",
+      "authors": "Eva Guttmann-Flury, Yun-Hsuan Chen, Qiaoyuan Xiang, Hao Zhang, Mohamad Sawan",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.23358v1",
+      "score": "7.0",
+      "evidence": "用于运动认知分析的多模态脑电-近红外脑机接口框架",
+      "tldr": "本研究提出了一种结合同步EEG-fNIRS模态与神经雪崩分析的新型多模态框架，旨在识别阿尔茨海默病早期的网络功能障碍。通过在交互式任务环境中分析老年人在运动执行和想象过程中的运动网络动态，初步验证了该技术的可行性。研究发现轻度认知障碍（MCI）患者在不同任务间的神经对比度降低且变异性增加，为开发基于脑机接口的早期诊断工具提供了技术支持。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "This proof-of-concept study introduces a novel multimodal framework combining synchronized EEG-fNIRS modalities with neuronal avalanche analysis to identify early network dysfunction in Alzheimer's disease. The approach leverages complementary neural signals to examine motor network dynamics during execution and imagery tasks within an interactive task environment. Preliminary analysis of a small pilot cohort (N=4 subjects, including one with Mild Cognitive Impairment) validated the technical feasibility of the multimodal framework and revealed observable condition-dependent patterns in network organization. Two primary observations emerged: a reduced neural contrast between motor execution and imagery states, and increased trial-to-trial variability in network organization in the MCI participant. These initial results successfully validate the technical pipeline and provide hypothesis-generating observations for future statistically powered studies. The convergence of findings across modalities suggests that multimodal assessment of network flexibility may help detect functional changes in early Alzheimer's continuum, supporting the future development of this BCI-inspired framework into an engaging diagnostic tool.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/27/2603.23491v1-foveated-diffusion-efficient-spatially-adaptive-image-and-video-generation",
+      "section": "quick",
+      "title_en": "Foveated Diffusion: Efficient Spatially Adaptive Image and Video Generation",
+      "authors": "Brian Chao, Lior Yariv, Howard Xiao, Gordon Wetzstein",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.23491v1",
+      "score": "6.0",
+      "evidence": "利用注视点感知的扩散模型进行高效图像和视频生成",
+      "tldr": "该研究针对扩散模型在高分辨率图像和视频生成中计算开销巨大的问题，提出了一种受人类视觉特性启发的“注视点扩散”（Foveated Diffusion）方法。通过利用人眼对注视中心敏感而对外围区域模糊的特性，该方法在注视区域分配高密度标记，在边缘区域分配低密度标记。这种混合分辨率生成方式在保持感知质量的同时，显著降低了计算量和生成时间，并支持从现有模型进行后训练。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion and flow matching models have unlocked unprecedented capabilities for creative content creation, such as interactive image and streaming video generation. The growing demand for higher resolutions, frame rates, and context lengths, however, makes efficient generation increasingly challenging, as computational complexity grows quadratically with the number of generated tokens. Our work seeks to optimize the efficiency of the generation process in settings where the user's gaze location is known or can be estimated, for example, by using eye tracking. In these settings, we leverage the eccentricity-dependent acuity of human vision: while a user perceives very high-resolution visual information in a small region around their gaze location (the foveal region), the ability to resolve detail quickly degrades in the periphery of the visual field. Our approach starts with a mask modeling the foveated resolution to allocate tokens non-uniformly, assigning higher token density to foveal regions and lower density to peripheral regions. An image or video is generated in a mixed-resolution token setting, yielding results perceptually indistinguishable from full-resolution generation, while drastically reducing the token count and generation time. To this end, we develop a principled mechanism for constructing mixed-resolution tokens directly from high-resolution data, allowing a foveated diffusion model to be post-trained from an existing base model while maintaining content consistency across resolutions. We validate our approach through extensive analysis and a carefully designed user study, demonstrating the efficacy of foveation as a practical and scalable axis for efficient generation.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/27/2603.24800v1-calibri-enhancing-diffusion-transformers-via-parameter-efficient-calibration",
+      "section": "quick",
+      "title_en": "Calibri: Enhancing Diffusion Transformers via Parameter-Efficient Calibration",
+      "authors": "Danil Tokhchukov, Aysel Mirzoeva, Andrey Kuznetsov, Konstantin Sobolev",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24800v1",
+      "score": "6.0",
+      "evidence": "扩散Transformer的参数高效校准",
+      "tldr": "本研究揭示了 Diffusion Transformers (DiTs) 的潜在优化空间，发现仅通过引入单个学习缩放参数即可显著提升性能。为此，作者提出了 Calibri，一种参数高效的校准方法。该方法将 DiT 组件校准建模为黑盒奖励优化问题，并利用进化算法仅优化约 100 个参数。实验表明，Calibri 在提升多种文生图模型生成质量的同时，还减少了推理步数，实现了高效且高质量的图像生成。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "In this paper, we uncover the hidden potential of Diffusion Transformers (DiTs) to significantly enhance generative tasks. Through an in-depth analysis of the denoising process, we demonstrate that introducing a single learned scaling parameter can significantly improve the performance of DiT blocks. Building on this insight, we propose Calibri, a parameter-efficient approach that optimally calibrates DiT components to elevate generative quality. Calibri frames DiT calibration as a black-box reward optimization problem, which is efficiently solved using an evolutionary algorithm and modifies just ~100 parameters. Experimental results reveal that despite its lightweight design, Calibri consistently improves performance across various text-to-image models. Notably, Calibri also reduces the inference steps required for image generation, all while maintaining high-quality outputs.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/27/2603.25181v1-voldit-controllable-volumetric-medical-image-synthesis-with-diffusion-transformers",
+      "section": "quick",
+      "title_en": "VolDiT: Controllable Volumetric Medical Image Synthesis with Diffusion Transformers",
+      "authors": "Marvin Seyfarth, Salman Ul Hassan Dar, Yannik Frisch, Philipp Wild, Norbert Frey, Florian André, Sandy Engelhardt",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25181v1",
+      "score": "6.0",
+      "evidence": "用于体积医学数据合成的扩散Transformer",
+      "tldr": "本研究针对现有3D医疗图像合成中卷积U-Net架构存在的局部偏差和感受野受限问题，提出了VolDiT，这是首个纯基于Transformer的3D扩散模型。该模型通过体积补丁嵌入和全局自注意力机制直接处理3D数据，并引入时间步门控控制适配器，利用分割掩码实现精确的空间引导。实验证明，VolDiT在生成保真度、全局连贯性及可控性上均优于主流的U-Net架构模型，为医疗影像合成提供了更具扩展性的新方案。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion models have become a leading approach for high-fidelity medical image synthesis. However, most existing methods for 3D medical image generation rely on convolutional U-Net backbones within latent diffusion frameworks. While effective, these architectures impose strong locality biases and limited receptive fields, which may constrain scalability, global context integration, and flexible conditioning. In this work, we introduce VolDiT, the first purely transformer-based 3D Diffusion Transformer for volumetric medical image synthesis. Our approach extends diffusion transformers to native 3D data through volumetric patch embeddings and global self-attention operating directly over 3D tokens. To enable structured control, we propose a timestep-gated control adapter that maps segmentation masks into learnable control tokens that modulate transformer layers during denoising. This token-level conditioning mechanism allows precise spatial guidance while preserving the modeling advantages of transformer architectures. We evaluate our model on high-resolution 3D medical image synthesis tasks and compare it to state-of-the-art 3D latent diffusion models based on U-Nets. Results demonstrate improved global coherence, superior generative fidelity, and enhanced controllability. Our findings suggest that fully transformerbased diffusion models provide a flexible foundation for volumetric medical image synthesis. The code and models trained on public data are available at https://github.com/Cardio-AI/voldit.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/27/2603.25194v1-cardiodit-latent-diffusion-transformers-for-4d-cardiac-mri-synthesis",
+      "section": "quick",
+      "title_en": "CardioDiT: Latent Diffusion Transformers for 4D Cardiac MRI Synthesis",
+      "authors": "Marvin Seyfarth, Sarah Kaye Müller, Arman Ghanaat, Isabelle Ayx, Fabian Fastenrath, Philipp Wild, Alexander Hertel, Theano Papavassiliu, Salman Ul Hassan Dar, Sandy Engelhardt",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25194v1",
+      "score": "6.0",
+      "evidence": "用于医学图像合成的潜在扩散模型",
+      "tldr": "针对电影心脏磁共振成像（cine CMR）的4D合成挑战，本文提出CardioDiT框架。该方法摒弃了传统的时空分解策略，采用基于扩散Transformer（DiT）的统一4D潜扩散模型。通过时空VQ-VAE将2D+t切片编码为潜变量，并利用DiT进行联合建模，实现了高度一致的3D+t体积生成。实验证明，该方法在切片间一致性、运动连贯性及生理功能分布上均优于现有基线，为4D医学图像合成提供了新范式。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Latent diffusion models (LDMs) have recently achieved strong performance in 3D medical image synthesis. However, modalities like cine cardiac MRI (CMR), representing a temporally synchronized 3D volume across the cardiac cycle, add an additional dimension that most generative approaches do not model directly. Instead, they factorize space and time or enforce temporal consistency through auxiliary mechanisms such as anatomical masks. Such strategies introduce structural biases that may limit global context integration and lead to subtle spatiotemporal discontinuities or physiologically inconsistent cardiac dynamics. We investigate whether a unified 4D generative model can learn continuous cardiac dynamics without architectural factorization. We propose CardioDiT, a fully 4D latent diffusion framework for short-axis cine CMR synthesis based on diffusion transformers. A spatiotemporal VQ-VAE encodes 2D+t slices into compact latents, which a diffusion transformer then models jointly as complete 3D+t volumes, coupling space and time throughout the generative process. We evaluate CardioDiT on public CMR datasets and a larger private cohort, comparing it to baselines with progressively stronger spatiotemporal coupling. Results show improved inter-slice consistency, temporally coherent motion, and realistic cardiac function distributions, suggesting that explicit 4D modeling with a diffusion transformer provides a principled foundation for spatiotemporal cardiac image synthesis. Code and models trained on public data are available at https://github.com/Cardio-AI/cardiodit.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
