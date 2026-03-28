@@ -6,39 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-27
-- 运行时间：2026-03-27 20:10:32 UTC
+- 最新运行日期：2026-03-28
+- 运行时间：2026-03-28 19:18:03 UTC
 - 运行状态：成功
-- 本次总论文数：6
+- 本次总论文数：4
 - 精读区：0
-- 速读区：6
+- 速读区：4
 
 ### 今日简报（AI）
-今日速读 6 篇前沿论文，聚焦阿尔茨海默症建模、双模态脑机接口及高效生成
-- 详情：[/202603/27/README](/202603/27/README)
+今日聚焦 AI 跨领域应用，深入探讨了睡眠障碍诊断的泛化难题与 3D 神经元分割的最新突破。
+重点关注 DINOv3 视觉先验在 3D 细分领域的迁移潜力，以及 Vision Hopfield 记忆网络对视觉处理的优化。
+建议医疗与视觉算法开发者关注自监督模型在复杂生物数据中的泛化表现。
+- 详情：[/202603/28/README](/202603/28/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [SDE-Driven Spatio-Temporal Hypergraph Neural Networks for Irregular Longitudinal fMRI Connectome Modeling in Alzheimer's Disease](/202603/27/2603.20452v1-sde-driven-spatio-temporal-hypergraph-neural-networks-for-irregular-longitudinal-fmri-connectome-modeling-in-alzheimers-disease)  
+1. [AI Generalisation Gap In Comorbid Sleep Disorder Staging](/202603/28/2603.23582v1-ai-generalisation-gap-in-comorbid-sleep-disorder-staging)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：SDE驱动的脑连接组建模
-2. [A Synchronous EEG-fNIRS BCI: A Proof-of-Concept for Multimodal Avalanche Analysis of Motor Cognition in Older Adults](/202603/27/2603.23358v1-a-synchronous-eeg-fnirs-bci-a-proof-of-concept-for-multimodal-avalanche-analysis-of-motor-cognition-in-older-adults)  
+   evidence：基于深度学习的脑电睡眠分期
+2. [Vision Hopfield Memory Networks](/202603/28/2603.25157v1-vision-hopfield-memory-networks)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：用于运动认知分析的多模态脑电-近红外脑机接口框架
-3. [Foveated Diffusion: Efficient Spatially Adaptive Image and Video Generation](/202603/27/2603.23491v1-foveated-diffusion-efficient-spatially-adaptive-image-and-video-generation)  
+   evidence：受大脑启发的用于多模态建模的基础骨干网络
+3. [NeuroSeg Meets DINOv3: Transferring 2D Self-Supervised Visual Priors to 3D Neuron Segmentation via DINOv3 Initialization](/202603/28/2603.23104v1-neuroseg-meets-dinov3-transferring-2d-self-supervised-visual-priors-to-3d-neuron-segmentation-via-dinov3-initialization)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：利用注视点感知的扩散模型进行高效图像和视频生成
-4. [Calibri: Enhancing Diffusion Transformers via Parameter-Efficient Calibration](/202603/27/2603.24800v1-calibri-enhancing-diffusion-transformers-via-parameter-efficient-calibration)  
+   evidence：将自监督视觉基础模型迁移到神经影像学
+4. [CDMT-EHR: A Continuous-Time Diffusion Framework for Generating Mixed-Type Time-Series Electronic Health Records](/202603/28/2603.23719v1-cdmt-ehr-a-continuous-time-diffusion-framework-for-generating-mixed-type-time-series-electronic-health-records)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：扩散Transformer的参数高效校准
-5. [VolDiT: Controllable Volumetric Medical Image Synthesis with Diffusion Transformers](/202603/27/2603.25181v1-voldit-controllable-volumetric-medical-image-synthesis-with-diffusion-transformers)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：用于体积医学数据合成的扩散Transformer
-6. [CardioDiT: Latent Diffusion Transformers for 4D Cardiac MRI Synthesis](/202603/27/2603.25194v1-cardiodit-latent-diffusion-transformers-for-4d-cardiac-mri-synthesis)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：用于医学图像合成的潜在扩散模型
+   evidence：用于时间序列数据生成的连续时间扩散框架
 
 
 <div class="dpr-home-promo-card">

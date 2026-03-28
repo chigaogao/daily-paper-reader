@@ -1,0 +1,65 @@
+{
+  "label": "2026-03-28",
+  "date": "2026-03-28",
+  "generated_at": "2026-03-28T19:18:13",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202603/28/2603.23582v1-ai-generalisation-gap-in-comorbid-sleep-disorder-staging",
+      "section": "quick",
+      "title_en": "AI Generalisation Gap In Comorbid Sleep Disorder Staging",
+      "authors": "Saswata Bose, Suvadeep Maiti, Shivam Kumar Sharma, Mythirayee S, Tapabrata Chakraborti, Srijitesh Rajendran, Raju S. Bapi",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.23582v1",
+      "score": "7.0",
+      "evidence": "基于深度学习的脑电睡眠分期",
+      "tldr": "本研究探讨了深度学习在共病睡眠障碍分期中的泛化差距。针对中风患者睡眠分期难的问题，研究者引入了新的缺血性中风数据集 iSLEEPS，并评估了 SE-ResNet 与双向 LSTM 模型。通过 Grad-CAM 可解释性分析发现，在健康人群上训练的模型在处理患者数据时会关注无关区域。研究强调了健康与患病群体间睡眠结构的显著差异，指出在临床部署前需开发针对特定疾病的睡眠分期模型。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Accurate sleep staging is essential for diagnosing OSA and hypopnea in stroke patients. Although PSG is reliable, it is costly, labor-intensive, and manually scored. While deep learning enables automated EEG-based sleep staging in healthy subjects, our analysis shows poor generalization to clinical populations with disrupted sleep. Using Grad-CAM interpretations, we systematically demonstrate this limitation. We introduce iSLEEPS, a newly clinically annotated ischemic stroke dataset (to be publicly released), and evaluate a SE-ResNet plus bidirectional LSTM model for single-channel EEG sleep staging. As expected, cross-domain performance between healthy and diseased subjects is poor. Attention visualizations, supported by clinical expert feedback, show the model focuses on physiologically uninformative EEG regions in patient data. Statistical and computational analyses further confirm significant sleep architecture differences between healthy and ischemic stroke cohorts, highlighting the need for subject-aware or disease-specific models with clinical validation before deployment. A summary of the paper and the code is available at https://himalayansaswatabose.github.io/iSLEEPS_Explainability.github.io/",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/28/2603.25157v1-vision-hopfield-memory-networks",
+      "section": "quick",
+      "title_en": "Vision Hopfield Memory Networks",
+      "authors": "Jianfeng Wang, Amine M'Charrak, Luk Koska, Xiangtao Wang, Daniel Petriceanu, Mykyta Smyrnov, Ruizhi Wang, Michael Bumbar, Luca Pinchetti, Thomas Lukasiewicz",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25157v1",
+      "score": "7.0",
+      "evidence": "受大脑启发的用于多模态建模的基础骨干网络",
+      "tldr": "针对现有视觉模型（如Transformer和Mamba）在计算原理上偏离人脑、数据需求大且可解释性差的问题，本文提出了视觉霍普菲尔德记忆网络（V-HMN）。该模型结合了分层记忆机制与迭代优化更新，通过局部和全局Hopfield模块实现关联记忆与上下文调制，并引入预测编码进行误差修正。实验证明，V-HMN在保持竞争力的同时，显著提升了模型的可解释性、数据效率和生物合理性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Recent vision and multimodal foundation backbones, such as Transformer families and state-space models like Mamba, have achieved remarkable progress, enabling unified modeling across images, text, and beyond. Despite their empirical success, these architectures remain far from the computational principles of the human brain, often demanding enormous amounts of training data while offering limited interpretability. In this work, we propose the Vision Hopfield Memory Network (V-HMN), a brain-inspired foundation backbone that integrates hierarchical memory mechanisms with iterative refinement updates. Specifically, V-HMN incorporates local Hopfield modules that provide associative memory dynamics at the image patch level, global Hopfield modules that function as episodic memory for contextual modulation, and a predictive-coding-inspired refinement rule for iterative error correction. By organizing these memory-based modules hierarchically, V-HMN captures both local and global dynamics in a unified framework. Memory retrieval exposes the relationship between inputs and stored patterns, making decisions more interpretable, while the reuse of stored patterns improves data efficiency. This brain-inspired design therefore enhances interpretability and data efficiency beyond existing self-attention- or state-space-based approaches. We conducted extensive experiments on public computer vision benchmarks, and V-HMN achieved competitive results against widely adopted backbone architectures, while offering better interpretability, higher data efficiency, and stronger biological plausibility. These findings highlight the potential of V-HMN to serve as a next-generation vision foundation model, while also providing a generalizable blueprint for multimodal backbones in domains such as text and audio, thereby bridging brain-inspired computation with large-scale machine learning.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/28/2603.23104v1-neuroseg-meets-dinov3-transferring-2d-self-supervised-visual-priors-to-3d-neuron-segmentation-via-dinov3-initialization",
+      "section": "quick",
+      "title_en": "NeuroSeg Meets DINOv3: Transferring 2D Self-Supervised Visual Priors to 3D Neuron Segmentation via DINOv3 Initialization",
+      "authors": "Yik San Cheng, Runkai Zhao, Weidong Cai",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.23104v1",
+      "score": "6.0",
+      "evidence": "将自监督视觉基础模型迁移到神经影像学",
+      "tldr": "本研究针对3D神经元分割领域缺乏基础模型的问题，提出将2D自监督视觉大模型DINOv3的先验知识迁移至3D任务。通过膨胀策略将2D滤波器转化为3D算子，并引入拓扑感知骨架损失以增强结构保真度。在BigNeuron等四个数据集上的实验表明，该方法显著提升了神经元重建的准确性，为缺乏大规模标注的3D生物医学影像处理提供了高效的新方案。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "2D visual foundation models, such as DINOv3, a self-supervised model trained on large-scale natural images, have demonstrated strong zero-shot generalization, capturing both rich global context and fine-grained structural cues. However, an analogous 3D foundation model for downstream volumetric neuroimaging remains lacking, largely due to the challenges of 3D image acquisition and the scarcity of high-quality annotations. To address this gap, we propose to adapt the 2D visual representations learned by DINOv3 to a 3D biomedical segmentation model, enabling more data-efficient and morphologically faithful neuronal reconstruction. Specifically, we design an inflation-based adaptation strategy that inflates 2D filters into 3D operators, preserving semantic priors from DINOv3 while adapting to 3D neuronal volume patches. In addition, we introduce a topology-aware skeleton loss to explicitly enforce structural fidelity of graph-based neuronal arbor reconstruction. Extensive experiments on four neuronal imaging datasets, including two from BigNeuron and two public datasets, NeuroFly and CWMBS, demonstrate consistent improvements in reconstruction accuracy over SoTA methods, with average gains of 2.9% in Entire Structure Average, 2.8% in Different Structure Average, and 3.8% in Percentage of Different Structure. Code: https://github.com/yy0007/NeurINO.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/28/2603.23719v1-cdmt-ehr-a-continuous-time-diffusion-framework-for-generating-mixed-type-time-series-electronic-health-records",
+      "section": "quick",
+      "title_en": "CDMT-EHR: A Continuous-Time Diffusion Framework for Generating Mixed-Type Time-Series Electronic Health Records",
+      "authors": "Shaonan Liu, Yuichiro Iwashita, Soichiro Nakako, Masakazu Iwamura, Koichi Kise",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.23719v1",
+      "score": "6.0",
+      "evidence": "用于时间序列数据生成的连续时间扩散框架",
+      "tldr": "针对电子健康记录（EHR）共享中的隐私与数据复杂性问题，本文提出CDMT-EHR框架。该框架采用连续时间扩散模型，结合双向GRU捕捉时间依赖，并通过可学习嵌入将类别变量统一至高斯扩散过程。此外，引入因子化噪声调度以适应不同特征的学习难度。实验证明，该方法在保持高保真度的同时显著提升了采样效率，并支持条件化生成。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Electronic health records (EHRs) are invaluable for clinical research, yet privacy concerns severely restrict data sharing. Synthetic data generation offers a promising solution, but EHRs present unique challenges: they contain both numerical and categorical features that evolve over time. While diffusion models have demonstrated strong performance in EHR synthesis, existing approaches predominantly rely on discrete-time formulations, which suffer from finite-step approximation errors and coupled training-sampling step counts. We propose a continuous-time diffusion framework for generating mixed-type time-series EHRs with three contributions: (1) continuous-time diffusion with a bidirectional gated recurrent unit backbone for capturing temporal dependencies, (2) unified Gaussian diffusion via learnable continuous embeddings for categorical variables, enabling joint cross-feature modeling, and (3) a factorized learnable noise schedule that adapts to per-feature-per-timestep learning difficulties. Experiments on two large-scale intensive care unit datasets demonstrate that our method outperforms existing approaches in downstream task performance, distribution fidelity, and discriminability, while requiring only 50 sampling steps compared to 1,000 for baseline methods. Classifier-free guidance further enables effective conditional generation for class-imbalanced clinical scenarios.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
