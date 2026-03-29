@@ -6,35 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-28
-- 运行时间：2026-03-28 19:18:03 UTC
+- 最新运行日期：2026-03-29
+- 运行时间：2026-03-29 19:26:47 UTC
 - 运行状态：成功
-- 本次总论文数：4
+- 本次总论文数：3
 - 精读区：0
-- 速读区：4
+- 速读区：3
 
 ### 今日简报（AI）
-今日聚焦 AI 跨领域应用，深入探讨了睡眠障碍诊断的泛化难题与 3D 神经元分割的最新突破。
-重点关注 DINOv3 视觉先验在 3D 细分领域的迁移潜力，以及 Vision Hopfield 记忆网络对视觉处理的优化。
-建议医疗与视觉算法开发者关注自监督模型在复杂生物数据中的泛化表现。
-- 详情：[/202603/28/README](/202603/28/README)
+今日聚焦扩散模型在视频注视生成与流形估计中的前沿应用，并探讨了多模态学习的容错机制。
+重点推荐利用自回归扩散实现无限长度视频注视生成的技术，以及通过 Lipschitz 调制提升复杂环境下的表征稳定性。
+建议关注生成式视频在交互领域的长效表现，并探索提升多模态系统鲁棒性的新路径。
+- 详情：[/202603/29/README](/202603/29/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [AI Generalisation Gap In Comorbid Sleep Disorder Staging](/202603/28/2603.23582v1-ai-generalisation-gap-in-comorbid-sleep-disorder-staging)  
+1. [Infinite Gaze Generation for Videos with Autoregressive Diffusion](/202603/29/2603.24938v1-infinite-gaze-generation-for-videos-with-autoregressive-diffusion)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：基于深度学习的脑电睡眠分期
-2. [Vision Hopfield Memory Networks](/202603/28/2603.25157v1-vision-hopfield-memory-networks)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：受大脑启发的用于多模态建模的基础骨干网络
-3. [NeuroSeg Meets DINOv3: Transferring 2D Self-Supervised Visual Priors to 3D Neuron Segmentation via DINOv3 Initialization](/202603/28/2603.23104v1-neuroseg-meets-dinov3-transferring-2d-self-supervised-visual-priors-to-3d-neuron-segmentation-via-dinov3-initialization)  
+   evidence：用于生成人类注视轨迹的自回归扩散模型
+2. [Functional Estimation of Manifold-Valued Diffusion Processes](/202603/29/2603.20945v1-functional-estimation-of-manifold-valued-diffusion-processes)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：将自监督视觉基础模型迁移到神经影像学
-4. [CDMT-EHR: A Continuous-Time Diffusion Framework for Generating Mixed-Type Time-Series Electronic Health Records](/202603/28/2603.23719v1-cdmt-ehr-a-continuous-time-diffusion-framework-for-generating-mixed-type-time-series-electronic-health-records)  
+   evidence：提出了用于流形上高维生物医学时间序列建模的扩散过程
+3. [Layer-Specific Lipschitz Modulation for Fault-Tolerant Multimodal Representation Learning](/202603/29/2603.25103v1-layer-specific-lipschitz-modulation-for-fault-tolerant-multimodal-representation-learning)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：用于时间序列数据生成的连续时间扩散框架
+   evidence：多模态表示学习的自监督预训练
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,51 @@
+{
+  "label": "2026-03-29",
+  "date": "2026-03-29",
+  "generated_at": "2026-03-29T19:26:55",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202603/29/2603.24938v1-infinite-gaze-generation-for-videos-with-autoregressive-diffusion",
+      "section": "quick",
+      "title_en": "Infinite Gaze Generation for Videos with Autoregressive Diffusion",
+      "authors": "Jenna Kang, Colin Groth, Tong Wu, Finley Torrens, Patsorn Sangkloy, Gordon Wetzstein, Qi Sun",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.24938v1",
+      "score": "7.0",
+      "evidence": "用于生成人类注视轨迹的自回归扩散模型",
+      "tldr": "针对视频中人类注视点预测存在的细粒度动态缺失及短期预测限制等问题，本文提出了一种基于自回归扩散模型的无限时长原始注视点生成框架。该方法利用显著性感知视觉潜空间，能够合成具有连续空间坐标和高分辨率时间戳的长程注视轨迹。实验证明，该模型在长程时空准确性和轨迹真实感方面显著优于现有方法，为场景理解和多模态交互提供了有力支持。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Predicting human gaze in video is fundamental to advancing scene understanding and multimodal interaction. While traditional saliency maps provide spatial probability distributions and scanpaths offer ordered fixations, both abstractions often collapse the fine-grained temporal dynamics of raw gaze. Furthermore, existing models are typically constrained to short-term windows ($\\approx$ 3-5s), failing to capture the long-range behavioral dependencies inherent in real-world content. We present a generative framework for infinite-horizon raw gaze prediction in videos of arbitrary length. By leveraging an autoregressive diffusion model, we synthesize gaze trajectories characterized by continuous spatial coordinates and high-resolution timestamps. Our model is conditioned on a saliency-aware visual latent space. Quantitative and qualitative evaluations demonstrate that our approach significantly outperforms existing approaches in long-range spatio-temporal accuracy and trajectory realism.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/29/2603.20945v1-functional-estimation-of-manifold-valued-diffusion-processes",
+      "section": "quick",
+      "title_en": "Functional Estimation of Manifold-Valued Diffusion Processes",
+      "authors": "Jacob McErlean, Hau-Tieng Wu",
+      "date": "2026-03-21",
+      "pdf": "https://arxiv.org/pdf/2603.20945v1",
+      "score": "6.0",
+      "evidence": "提出了用于流形上高维生物医学时间序列建模的扩散过程",
+      "tldr": "针对生物医学等领域中具有低维流形结构的非平稳高维时间序列，本文研究了流形值Itô扩散过程的函数估计问题。作者提出了基于单条轨迹的漂移向量场和扩散矩阵的Nadaraya-Watson型非参数估计方法。在流形具有递归性的假设下，证明了估计量的渐近一致性和正态性，并开发了切空间估计器。该研究为流形约束下的随机动力系统建模提供了理论支撑和算法指导。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Nonstationary high-dimensional time series are increasingly encountered in biomedical research as measurement technologies advance. Owing to the homeostatic nature of physiological systems, such datasets are often located on, or can be well approximated by, a low-dimensional manifold. Modeling such datasets by manifold-valued Itô diffusion processes has been shown to provide valuable insights and to guide the design of algorithms for clinical applications. In this paper, we propose Nadaraya-Watson type nonparametric estimators for the drift vector field and diffusion matrix of the process from one trajectory. Assuming a time-homogeneous stochastic differential equation on a smooth complete manifold without boundary, we show that as the sampling interval and kernel bandwidth vanish with increasing trajectory length, recurrence of the process yields asymptotic consistency and normality of the drift and diffusion estimators, as well as the associated occupation density. Analysis of the diffusion estimator further produces a tangent space estimator for dependent data, which has its own interest and is essential for drift estimation. Numerical experiments across a range of manifold configurations support the theoretical results.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/29/2603.25103v1-layer-specific-lipschitz-modulation-for-fault-tolerant-multimodal-representation-learning",
+      "section": "quick",
+      "title_en": "Layer-Specific Lipschitz Modulation for Fault-Tolerant Multimodal Representation Learning",
+      "authors": "Diyar Altinses, Andreas Schwung",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25103v1",
+      "score": "6.0",
+      "evidence": "多模态表示学习的自监督预训练",
+      "tldr": "针对工业和安全关键环境下多模态系统易受传感器故障影响的问题，本文提出了一种基于数学理论的容错表示学习框架。该框架结合 Lipschitz 和 Jacobian 准则分析扰动传播，通过两阶段自监督训练（预训练卷积自编码器与扩展校正模块）以及层特定 Lipschitz 调制，实现了异常检测与错误校正的统一，显著提升了系统在信号退化下的鲁棒性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Modern multimodal systems deployed in industrial and safety-critical environments must remain reliable under partial sensor failures, signal degradation, or cross-modal inconsistencies. This work introduces a mathematically grounded framework for fault-tolerant multimodal representation learning that unifies self-supervised anomaly detection and error correction within a single architecture. Building upon a theoretical analysis of perturbation propagation, we derive Lipschitz- and Jacobian-based criteria that determine whether a neural operator amplifies or attenuates localized faults. Guided by this theory, we propose a two-stage self-supervised training scheme: pre-training a multimodal convolutional autoencoder on clean data to preserve localized anomaly signals in the latent space, and expanding it with a learnable compute block composed of dense layers for correction and contrastive objectives for anomaly identification. Furthermore, we introduce layer-specific Lipschitz modulation and gradient clipping as principled mechanisms to control sensitivity across detection and correction modules. Experimental results on multimodal fault datasets demonstrate that the proposed approach improves both anomaly detection accuracy and reconstruction under sensor corruption. Overall, this framework bridges the gap between analytical robustness guarantees and practical fault-tolerant multimodal learning.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
