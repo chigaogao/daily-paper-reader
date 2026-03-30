@@ -1,0 +1,398 @@
+Title: CA-TCN: A Causal-Anticausal Temporal Convolutional Network for Direct Auditory Attention Decoding
+
+URL Source: https://arxiv.org/pdf/2603.26394v1
+
+Published Time: Mon, 30 Mar 2026 01:11:35 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# CA-TCN: A Causal-Anticausal Temporal Convolutional Network for Direct Auditory Attention Decoding 
+
+## Iñigo García-Ugarte a,b ,∗, Rubén Eguinoa a, Ricardo San Martin a, Daniel Paternain c,∗∗ and Carmen Vidaurre b,d,e ,∗∗ 
+
+> a
+
+Department of Sciences, Universidad Pública de Navarra (UPNA), Pamplona, 31006, Navarre, Spain 
+
+> b
+
+BCBL, Basque Center on Cognition Brain and Language, San Sebastián, 20009, Spain 
+
+> c
+
+Department of Statistics, Computer Sciences and Mathematics, Universidad Pública de Navarra (UPNA), Pamplona, 31006, Navarre, Spain 
+
+> d
+
+Ikerbasque, Basque Foundation for Science, Bilbao, 48009, Spain 
+
+> e
+
+Machine Learning Group, Technische Universität Berlin, Berlin, 10587, Germany 
+
+A R T I C L E I N F O 
+
+Keywords :Auditory Attention Decoding (AAD) Electroencephalography (EEG) Temporal Convolutional Network (TCN) Causality Receptive Field (RF) 
+
+A B S T R A C T 
+
+A promising approach for steering auditory attention in complex listening environments relies on Auditory Attention Decoding (AAD), which aim to identify the attended speech stream in a multiple speaker scenario from neural recordings. Entrainment-based AAD approaches, typically assume access to clean speech sources and electroencephalography (EEG) signals to exploit low-frequency correlations between the neural response and the attended stimulus. In this study, we propose CA-TCN, a Causal–Anticausal Temporal Convolutional Network that directly classifies the attended speaker. The proposed architecture integrates several best practices from convolutional neural networks in sequence processing tasks, including residual connections, depthwise convolutions, and dilated filters. Importantly, it explicitly aligns auditory stimuli and neural responses by employing separate causal and anticausal convolutions respectively, with distinct receptive fields operating in opposite temporal directions. Experimental results, obtained through comparisons with three baseline AAD models, demonstrated that CA-TCN consistently improved decoding accuracy across datasets and decision windows, with gains ranging from 0.5% to 3.2% for subject-independent models and from 0.8% to 2.9% for subject-specific models compared with the next best-performing model, AADNet. Moreover, these improvements were statistically significant in four of the six evaluated settings when comparing Minimum Expected Switch Duration distributions. Beyond accuracy, the model demonstrated spatial robustness across different conditions, as the EEG spatial filters exhibited stable patterns across datasets. Overall, this work introduces an accurate and unified AAD model that outperforms existing methods while considering practical benefits for online processing scenarios. These findings contribute to advancing the state of AAD and its applicability in real-world systems. 
+
+## 1. Introduction 
+
+In complex auditory environments, such as the well-known Cocktail Party scenario [1], multiple sound sources compete simultaneously for perceptual dominance. In these situations, the human auditory system is able to selectively attend to a target source while suppressing irrelevant acous-tic information. For individuals with hearing impairment, however, this selective filtering mechanism is often severely compromised, leading to significant difficulties in everyday listening conditions. Conventional hearing aids frequently fail to provide effective assistance in such scenarios, which is reflected in their limited adoption, with only 10–20% of hearing-impaired individuals using them on a regular basis [2]. Recent advances in deep learning–based sound source separation algorithms [3, 4] offer the potential to extract clean speech signals from complex acoustic mix-tures. Nevertheless, a key challenge remains: identifying and 
+
+> ∗
+
+Corresponding Author 
+
+> ∗∗
+
+Senior Author  
+
+> inigo.garciaugarte@unavarra.es
+
+(I. García-Ugarte);  
+
+> daniel.paternain@unavarra.es
+
+(D. Paternain); cvidaurre@bcbl.eu (C. Vidaurre) 
+
+> ORCID
+
+(s): 0009-0008-7252-802X (I. García-Ugarte);  
+
+> 0000-0001-6950-9583
+
+(R. Eguinoa); 0000-0001-7268-5553 (R.S. Martin);  
+
+> 0000-0002-5845-887X
+
+(D. Paternain); 0000-0003-3740-049X (C. Vidaurre) 
+
+selecting the attended source in a seamless and user-driven manner [5]. In this context, auditory attention decoding (AAD) aims to detect attended source directly from neural activity, emerging as a promising cognitively driven solution that could enhance hearing aids performance [6]. Numerous studies have demonstrated the feasibility of decoding auditory attention including electroencephalog-raphy (EEG) [7, 8], magnetoencephalography (MEG) [9] and electrocorticography (ECoG) [10, 11] measures. Among these, EEG is widely regarded as the most suitable for real-world applications due to its scalability, wearability, and relatively low cost. Many cognitive processes associated with attention are reflected in neural oscillations [12], several of which have been leveraged to identify the attended source. In this study, we considered the so-called entrainment prop-erty, where a sequence of acoustic cues drives the cycles of a given neural oscillation into a phase aligned rhythmic sequence [13]. This low-level neural mechanism is elicited on EEG signals at low-frequency bands, typically Delta (1-4 Hz) and Theta (4–8 Hz) [14], where a phase-locking phenomenon occurs between the envelope of the speech and neural oscillations. AAD studies typically consider the identification of the attended source in a two-speaker competing scenario, in which two main modeling paradigms can be distinguished. 
+
+: Preprint submitted to Elsevier Page 1 of 12 
+
+> arXiv:2603.26394v1 [cs.SD] 27 Mar 2026
+
+Forward models aim to predict the evoked EEG responses from the acoustic stimuli, whereas backward models recon-struct stimulus representations directly from the EEG signals [15]. In practice, backward approaches are more commonly adopted, as they provide better performance [6]. Backward models can be further categorized into linear and non-linear approaches. Linear backward models attempt to reconstruct the attended speech envelope by applying a set of linear filters to time-lagged EEG signals [8, 15]. Then reconstructed envelope is correlated with ground-truth speech envelopes and the stimulus yielding the highest Pear-son’s correlation coefficient is identified as the attended one. Alternatively, in [16], a hybrid linear approach combining forward and backward models through Canonical Correla-tion Analysis (CCA) was proposed. More recently, due to the progress achieved across data processing fields using deep learning techniques, several non-linear models have been proposed to replace linear backward regression algorithms for AAD. For instance in [17], two deep learning backward models, one based on a Fully Connected Neural Network (FCNN) and another one based on a Convolutional Neural Network (CNN) were designed to reconstruct the attended envelope. All previous mentioned entrainment-based AAD algo-rithms perform attended speech selection in a two-step pro-cess. First, the AAD model is applied to the EEG signal (or both EEG and stimulus in the case of CCA), and then the resulting predicted envelope or temporal sequence is correlated for classification. The Auditory Attention Decod-ing Network (AADNet) [18] proposes a deep-learning based architecture that unifies these two steps to directly identify the attended stimulus. As a result, the whole network is opti-mized based on the final classification accuracy. Importantly, the results were obtained under a clear validation scheme using publicly available data, which prevent the evaluation setting from being biased by some common overfitting is-sues in AAD [19, 20]. Specially for the subject-independent validation scheme, where no user specific data is used during training, AADNet demonstrated a substantial improvement in accuracy when compared with the other established AAD models. The architecture of AADNet is inspired by the Inception network paradigm [21], which relies on multiple parallel convolutional branches applying kernels of different sizes to capture diverse characteristics of the input signals. While effective, this design requires the careful specification of a large number of branch-specific hyper-parameters, thereby constraining each branch to model a predefined temporal or spatial feature. From our perspective, several established design choices in modern convolutional network design [22], i.e., residual connections [23] and dilated convolutions for temporal sequence modeling [24, 25], offer the opportunity to simplify the architecture while promoting a more unified and robust modeling strategy for AAD. Motivated by these considerations, this work intro-duces CA-TCN, a Causal–Anticausal Temporal Convolu-tional Network designed to directly classify the attended speaker in a two-speaker competing scenario. The pro-posed architecture builds upon a Temporal Convolutional Network (TCN) framework to jointly project and align the signal representations differentiating the processing of the two types of signals. In fact, stimuli is processed by causal convolutions considering a near one-second long past receptive field whereas EEG signals are processed in an anticausal fashion including a tighter receptive field. An ablation study was performed to further discuss and study the incorporation of these design choices as well as the contribution of each processing stage in the overall accuracy. When compared with other three established AAD models, CA-TCN outperformed them consistently across the three datasets and the two validations schemes considered in the study. Moreover, the clustering performed on the spatial filters of the EEG branch, highlighted the stability of the spatial processing across different sets. We argue that CA-TCN represents an important step toward a viable AAD real-world system, as it provides an accurate and efficient approach for entrainment-based AAD. 
+
+## 2. Materials and Methods 
+
+2.1. Baseline Auditory Attention Decoding models 
+
+2.1.1. Linear backward models (Ridge regression) 
+
+Linear backward models [8] aim to reconstruct the at-tended envelope ( ̂𝑠 𝑎 ) by applying a set of linear filters ( 𝑑 ∈
+
+ℝ1× 𝐿𝐶 ) to a lagged version of the recorded EEG signal (𝐗 ∈ ℝ𝑇 ×𝐿𝐶 ): ̂𝑠 𝑎 (𝑡 ) = 
+
+> 𝐶
+
+∑
+
+> 𝑐 =1
+> 𝐿 −1
+
+∑
+
+> 𝑙 =0
+
+𝑑 𝑐 (𝑙 )𝑥 𝑐 (𝑡 + 𝑙 ) (1) Where 𝐶 denotes the number of EEG channels and 𝐿 the total number of time-lags. The matrix 𝐗 is formed by con-catenating 𝐿 lagged versions of the EEG signal. This lagged representation of the signal aims to align the delayed neural response to the stimuli. To ensure this delay is properly cap-tured, 𝐿 is set to 26, covering post-stimulus delays ranging from 0 to 400ms. The decoder matrix is obtained by minimizing the mean squared error (MSE) between the estimated and true at-tended envelopes, leading to the following closed-form so-lution: 
+
+𝑑 = ( 𝐗 𝐓 𝐗 + 𝜆 𝐈 )−1 𝐗 𝐓 𝑠 𝑎 (2) where an L2 regularization, controlled by the parameter 𝜆 ,is included to reduce overfitting [15]. The optimal value of 
+
+𝜆 is selected from a set of logarithmically spaced values ranging from 10 −7 to 10 7. The envelope that yields the higher correlation coefficient is identified as the attended stimulus. 
+
+2.1.2. Canonical Correlation Analysis (CCA) 
+
+The Canonical Correlation Analysis (CCA) method is designed to maximize the correlation between two multivari-ate domains. When applied to AAD [16], a set of decoder   
+
+> :Preprint submitted to Elsevier Page 2 of 12
+
+filters 𝑤 𝑥 is applied to the lagged EEG signal 𝐗 ∈ ℝ𝑇 ×𝐿 𝑥 𝐶 ,while set of encoder filters 𝑤 𝑠 is applied to the lagged stim-ulus envelope 𝐘 ∈ ℝ𝑇 ×𝐿 𝑠 , so that the resulting projections are maximally correlated: 
+
+max  
+
+> 𝐰 𝐱 ,𝐰 𝐬
+
+𝜌 (𝐗 𝑤 𝑥 , 𝐘 𝑤 𝑦 ) (3) The goal of CCA is to maximize the correlation between EEG and stimulus representations and to minimize corre-lation between components in the latent space where both signals are jointly projected. In this setup, the audio and neural signals are shifted in opposite temporal directions applying a set of time lags. The total number of lags follows the configuration of the original study [16], with 𝐿 𝑥 = 16 
+
+lags applied to the EEG signal with right zero-padding and 
+
+𝐿 𝑠 = 80 lags applied with left zero-padding to the stimulus envelope. To obtain the canonical coefficients 𝑤 𝑥 and 𝑤 𝑠 the CCA matrix 𝐌 is first computed as: 
+
+𝐌 = 𝐂 − 𝟏 𝟐  
+
+> 𝐱𝐱
+
+𝐂 𝐱𝐬 𝐂 − 𝟏 𝟐  
+
+> 𝐬𝐬
+
+(4) where 𝐂 𝐱𝐱 and 𝐂 𝐬𝐬 denote the EEG and attended stim-ulus covariance matrices, respectively, and 𝐂 𝐱𝐬 denotes the cross covariance matrix. The canonical coefficients are then extracted by perform-ing Singular Value Decomposition (SVD) on 𝐌 and select-ing the first 𝐽 vectors from the resulting singular matrices 𝐔 
+
+and 𝐕 . Afterwards, the whitening matrices, 𝐂 − 𝟏 𝟐  
+
+> 𝐱𝐱
+
+and 𝐂 − 𝟏 𝟐  
+
+> 𝐬𝐬
+
+,are applied to the vectors, yielding the canonical coefficients 
+
+𝑤 (𝑗 ) 
+
+> 𝑥
+
+∈ ℝ𝐿 𝑥 𝐶 and 𝑤 (𝑗 ) 
+
+> 𝑠
+
+∈ ℝ𝐿 𝑠 .As a result, both EEG and stimuli signals are projected into a 𝐽 dimensional space. Thus, a multivariate classifi-cation method is then required to determine the attended stimulus. Following similar studies [16, 6, 18], a Linear Discriminant Analysis (LDA) is employed to classify the resulting correlation factors. The optimal 𝐽 number of com-ponents is selected from a range of possible 𝐽 values that extends up to 𝑚𝑖𝑛 (𝐿 𝑥 , 𝐿 𝑠 ).
+
+2.1.3. Auditory Attention Decoding Network (AADNet) 
+
+AADNet proposes deep learning based network that directly identifies the attended stimulus [18]. Unlike other conventional AAD methods, AADNet does not perform a two-step procedure in which the correlation is first opti-mized, followed by classification. Instead, the network takes as input the two isolated audio envelopes present in the auditory scene, together with the corresponding EEG sig-nal, and directly outputs the classification results indicat-ing which envelope was the attended one. Similar to the CCA pipeline [16], the signals are projected into a set of temporal sequences, and their correlations are computed to perform classification. Nonetheless, AADNet optimizes the whole network based on the final decoding accuracy using the cross-entropy loss and also considers the unattended source during training. Its network design was inspired by the Inception Network [21] and was adapted to the one-dimensional characteristics of AAD data. The procedure for extracting the attended speaker from the EEG signal and stimulus envelopes is described as follows. First, the preprocessed signals are independently projected into a set of temporal sequences employing a set of parallel convolutional branches. These branches con-sist of one or two convolutional layers with specific hy-perparameters, which depending on their functionality, are classified into three groups (i.e., Transform, Feature, and Pooling branches). After processing the input signals with each branch, all output sequences are concatenated along the channel dimension. These concatenated temporal sequences, derived separately from the EEG signal and audio envelopes, are then cross-correlated to obtain the Pearson correlation coefficients. Finally, these coefficients are classified using a fully connected layer to estimate the attended stimulus. The official Github repository [26] was employed to define the AADNet model code in this study, ensuring consistency with the author’s implementation and training configuration. 
+
+2.2. Causal-Anticausal Temporal Convolutional Network 
+
+Aiming to advance the state of entrainment-based AAD models, we introduce CA-TCN, a Causal–Anticausal Tem-poral Convolutional Network designed to identify the at-tended speech source in a two-speaker competing scenario. Following the AADNet pipeline, the model processes EEG signals and stimuli separately, resulting in a two-branch architecture: one branch dedicated to EEG and the other to audio, with their outputs finally fused through correlation. The overall architecture can be decomposed into three main stages (see Fig. 1(a)): (i) a Spatial Projection layer as the stem block, (ii) a Temporal Convolutional Network (TCN) module, (iii) a final classification module. 
+
+2.2.1. Temporal Convolutional Network (TCN) 
+
+The core processing component of the proposed ar-chitecture is based on a Temporal Convolutional Network (TCN). This convolutional architecture has demonstrated strong effectiveness in both audio and EEG processing tasks, including speech separation [3], polyphonic music modeling [24], and EEG classification [27]. It relies on stacks of convolutional layers with exponentially increasing dilation factors ( 𝑑 = 2𝑁 −1 ), which allow the network to capture long-range temporal dependencies [24]. Notably, the receptive field (RF) of a TCN determines the temporal extent over which the network bases its predic-tions. In our case, its value specifically depends on the kernel size ( 𝐾 ) and on the number of stacked layers ( 𝑁 ). This configuration provides a flexible and controllable temporal memory, which can be analytically computed as: 
+
+𝑅𝐹 = 1 + ( 𝐾 − 1)(2 𝑁 − 1) (5) For example, a TCN with 𝐾 = 3 and 𝑁 = 4 yields a RF of 31 samples, corresponding to 484 ms ( 𝑓 𝑠 = 64     
+
+> :Preprint submitted to Elsevier Page 3 of 12 EEG Spk 1 Spk 2 Spatial Projection
+> (64, T)
+> 1x1 Conv
+> (Cx, T)
+> (1, T)
+> 1x1 Conv  (Cs, T)
+> x Nx
+> ...
+> (Cs, T)
+> Pairwise cross-correlation
+> (1,)
+> TCN
+> 1D Conv
+> d=1
+> 1D Conv
+> d=2
+> 1D Conv
+> d=2 (Nx-1)
+> (Cx, T)
+> x Ns
+> ...
+> 1D Conv
+> d=1
+> 1D Conv
+> d=2
+> 1D Conv
+> d=2 (Ns-1)
+> Classification
+> Linear Layer
+> (1, T) (Cs, T) (Cs, T)
+> 1x1 Conv
+> Dilated Conv (K, d, g=C)
+> 1x1 Conv
+> Batch Normalization
+> ELU
+
+a) CA-TCN block diagram  b) TCN 1D Conv block design 
+
+> (C, T)
+> (C, T)
+> Depthwise separable
+
+Figure 1: (a) CA-TCN block diagram consisting of a Spatial Projection layer, a Temporal Convolutional Network (TCN) module, and a Classification module. EEG and audio signals are processed separately through two independent branches until classification module. (b) Design of the one-dimensional convolutional block within TCN. a) Anticausal convolution diagram for the EEG branch  b) Causal convolution diagram for the audio branch Stimulus Input Zero pad  
+
+> n=3, d=4
+> n=2, d=2
+> n=1, d=1 EEG Input Zero pad
+> n=3, d=4
+> n=2, d=2
+> n=1, d=1
+
+Figure 2: Illustration of dilated convolutions in a three-layer TCN ( 𝑁 = 3 ) with exponential dilation factors 𝑑 = [1 , 2, 4] . The yellow sample (decision point) depends on the blue samples conforming its receptive field. Convolutions are applied causally for the stimulus (b) and anticausally for the EEG (a), with zero-padding on the left or right, respectively. 
+
+Hz). Importantly, in our AAD context, the RF determines the temporal extent of the EEG and audio processed signals accessible to the model. The TCN module is composed of multiple stacked con-volutional blocks. Each block comprises an initial spatial convolution followed by a depthwise separable convolution, as illustrated in Fig. 1(b). The depthwise separable convolu-tion operates separately on the temporal (Dilated conv.) and channel ( 1 × 1 conv.) domains, yielding a computationally efficient solution [28]. Within each block, Batch Normal-ization and an ELU activation function are applied prior to the residual addition with the block input, forming a residual connection that stabilizes the training of deep architectures [23]. Causality, which defines the temporal direction convolu-tions are applied, is implemented within the dilated temporal convolutional operation as depicted in Fig. 2. From our view, it enables a more accurate temporal alignment between stim-ulus and neural representations accounting for the delay be-tween them. Accordingly, the audio branch employs causal convolutions, ensuring that only past stimulus samples con-tribute to the representation, and the EEG branch employs anticausal convolutions, incorporating future neural samples relative to the decision point. Similarly to how we differentiated between causal and anticausal convolutions, the independence between the EEG and audio branch allows us to assign different RFs to each branch. For instance, assuming causality and 𝐾 = 3 , five convolutional layers for the EEG branch ( 𝑁 𝑥 = 5) and three stacked layers for the stimulus branch ( 𝑁 𝑠 = 3 ) would yield an asymmetric RF of approximately 984 ms over past stimulus samples and 234 ms over future EEG samples according to 5. 
+
+2.2.2. Correlation and Classification 
+
+Finally, the resulting temporal sequences extracted by the TCN module are cross-correlated and classified to pre-dict the attended envelope. Specifically, the temporal se-quences derived from the EEG branch are cross-correlated with each temporal sequence obtained from the two stim-ulus candidates. The resulting correlation coefficients are concatenated and fed into a linear classification layer, which outputs a single logit indicating the attended speaker. The overall binary classification task can be interpreted as pre-dicting the attended stimulus index at the network input. 
+
+: Preprint submitted to Elsevier Page 4 of 12 2.3. Data 
+
+Three different datasets were considered in this study. The Jaulab Dataset, collected by us, was used for the CA-TCN hyperparameter tuning. KULeuven [29] and DTU[30] datasets are two well-known sets in the AAD literature. Together with the Jaulab Dataset, they were considered for evaluating and comparing the different AAD models. 
+
+2.3.1. Jaulab dataset 
+
+The Jaulab dataset, collected in the Public University of Navarre, comprises EEG recordings from 20 healthy participants while they attended to various news excerpts. The experimental procedure complied with the Declaration of Helsinki and all relevant local regulations. Approval of experimental procedures and protocols was granted by the Ethics, Animal Experimentation and Biosafety Committee of the Public University of Navarra with number PI-029-20_CV. EEG signals were recorded using a 64 channel Brain Vision system with a sample frequency of 1000 Hz. The Unified Optimized Layout (UOL) was employed, in which three channels were used to record external signals that were ultimately not included in the analyses. The analysis included a total of 92 trials for each subject. Each trial lasted 26 seconds, and the corresponding audio was presented in different positions via a 24-loudspeaker array arranged in a 2.9-meter-diameter circle within a semi-anechoic cham-ber. Audio stimuli consists of 192 ChatGPT-generated [31] news items, each narrated by one of eight AI-generated voices (four male and four female) produced with Microsoft Azure’s Text-to-Speech tool [32]. Furthermore, this stimuli were reproduced both from static positions and as moving sources, organized into six distinct presentation blocks that were randomly displayed. In each trial, two news items, narrated with a male and a female voice, were presented simultaneously. Participants were instructed to attend to one audio stream while ignoring the other. 
+
+2.3.2. DTU dataset 
+
+The dataset collected by Fulsang et al. at the Technical University of Denmark referred to as the DTU dataset [30], comprises electroencephalography (EEG) recordings from 18 normal-hearing participants who listened to two simul-taneous speech streams under varying acoustic conditions. Each trial consisted of 50 seconds of continuous speech presented in acoustic environments with different levels of reverberation. Participants were instructed to selectively attend to one of two spatially separated talkers, one male and one female, while ignoring the other. Trials with a single speaker were excluded in this study, resulting in a total of 60 trials per subject. EEG data was recorded using a 64-channel BioSemi ActiveTwo system, sampled at 512 Hz. 
+
+2.3.3. KULeuven dataset 
+
+This dataset was collected by Das et al. at KU Leu-ven [29]. It contains electroencephalography (EEG) record-ings from 16 normal-hearing subjects, obtained in a sound-proof, electromagnetically shielded room using a 64-channel BioSemi ActiveTwo system with a sampling rate of 8196 Hz. Audio stimuli consists of four Dutch short stories narrated by different male speakers and were presented binaurally via insert earphones. During each presentation, subjects were instructed to attend to one ear while ignoring the other. After each presentation, subjects answered multiple-choice questions about the attended story to ensure engagement. In total, each subject completed 20 trials, where the first 8 trials lasted around 6 minutes each and the last 12 around are 2 minutes length, corresponding to approximately 72 minutes of EEG data. Due to differences in the durations of the audio and EEG signals, all trials were trimmed to a uniform length. The available EEG data, already included high-pass filtering, down-sampling to 128 Hz, and artifact removal processing. 
+
+2.4. Preprocessing 
+
+Data preprocessing followed the same procedure as in [18] to ensure comparable results. EEG signals were first average-referenced and then band-pass filtered between 0.5 Hz and 32 Hz using a zero-phase finite impulse response (FIR) filter. Subsequently, the data were downsampled to 64 Hz and standardized (z-scored) across all samples and channels within each trial. For audio envelope extraction, a Gammatone filterbank was employed. The filterbank was designed following an equivalent rectangular bandwidth (ERB) scale, with center frequencies ranging from 150 Hz to 4 kHz. The resulting sub-band envelopes were compressed using a power-law ex-ponent of 0.6, and then summed to obtain a single broadband envelope. This envelope was subsequently band-pass filtered (0.5–32 Hz), downsampled to 64 Hz, and z-scored. All filtering and resampling operations were imple-mented using MNE-Python library [33]. SciPy package [34] was used for Gammatone filterbank implementation and standardization. 
+
+2.5. Evaluation metrics 
+
+2.5.1. Classification accuracy 
+
+The main goal of the model is to achieve the highest possible accuracy in determining which speaker is being attended. Six different window lengths were considered for evaluating the models as accuracy varies depending on the number of samples used for the decision, : 1, 2, 5, 10, 25, and 50 seconds. A high accuracy over short decision windows is desirable, as it enables rapid adaptation to shifts in the listener’s attentional focus. 
+
+2.5.2. MESD 
+
+The Minimum Expected Switch Duration (MESD) [35] is a single, interpretable performance metric for AAD that accounts for all obtained accuracies across different decision windows. This metric estimates the time required to perform a gain switch in a hypothetical device following an atten-tional shift of the user. It is measured in seconds. Lower MESD values indicate a faster switch and better perfor-mance. This metric was specifically designed for AAD–gain systems and serves as a unified measure for comparing models, providing a single performance value. The MESD-Python toolbox [36] was used to compute the metric.                         
+
+> :Preprint submitted to Elsevier Page 5 of 12 Table 1
+> Brief information about the data employed in the study
+> Dataset No. of Subjects No. of Trials Trial Length No. of Electrodes Experimental Conditions
+> Jaulab 20 92 26 s 61 Loudspeakers, 360 ◦
+> Fixed and moving auditory scenarios DTU 18 60 50 s 64 Insert earphones, ±60 ◦
+> 3 different acoustic conditions KULeuven 16 20 6 min. first 8 trials 2 min. last 12 trials 64 Insert earphones, ±90 ◦
+> Head-Related Transfer Function and Dichotic audio
+
+2.5.3. Practical considerations 
+
+Beyond accuracy, some practical considerations were taken into account to ensure an efficient implementation of the CA-TCN model. The model size and computational efficiency were assessed by counting the number of param-eters and the Multiply-Accumulate operations of the model (MACs). We also considered real-time constraints in online processing, which may depend not only on the decision window length but also on the number of samples that constitute the anticausal RF. In fact, this anticausal RF would introduce direct delay on the latency for online operation. Therefore, the larger the anticausal RF, the more constrained would be the model in real-time scenarios. On the other hand, the inference time of the model may be negligible compared to the decision window length. 
+
+2.6. Validation procedure 
+
+For validating our models, we followed the validation procedure implemented in [18]. This procedure follows a cross-trial scheme to ensure there is no within-trial infor-mation leakage between sets, preventing the model from learning trial-specific fingerprints [20, 19]. Accordingly, an 8-fold trial-based validation scheme was implemented, dividing the dataset into eight independent trial sets for both subject-specific (SS) and subject-independent (SI) models. SS models consider data from the evaluated subject during training. In a real use case, SS training would require a data collection process from the specific user. Conversely, SI models implement a leave-one-subject-out (LOSO) vali-dation, in which no information from the evaluated subject is included during training. This approach reproduce a ready-to-use device scenario, capturing all its associated benefits. However, under the SI validation scheme, different trials may contain identical auditory stimuli, potentially leading to audio leakage between the training and test sets. To avoid it, a trial-level inspection was performed, where any training trials sharing the same attended audio track with trials in the test set were excluded from the training data. For linear models, the same 8-fold trial-based validation scheme described above is followed. As discussed in Section 2.1, linear approaches require the selection of specific hy-perparameters, i.e., 𝜆 in Ridge regression and 𝐽 in CCA. To this end, a 5-fold inner trial-based validation was performed to determine the optimal values of these hyperparameters. 
+
+2.7. Training procedure 
+
+Training deep learning models typically requires large amounts of data, as a substantially higher number of param-eters must be optimized in comparison to simpler linear ap-proaches. For this reason, both AADNet and CA-TCN were first pre-trained using SI data and subsequently fine-tuned using SS data to ensure stable and consistent performance under the SS validation setting. Models were trained for 200 epochs using binary cross-entropy loss, with early stopping applied if validation loss did not improve after five consecutive epochs. Five-second decision windows with an overlap of 75% were used for training. Adam optimizer was employed with a weight decay of 1 × 10 −4 . The learning rate was set to 5 × 10 −5 for the SI models and reduced by half during fine-tuning for the SS models. Data consisted of neural signals, two candidate envelopes, and a label indicating which of the two envelopes was attended. To prevent bias due to the order of stimulus presentation, the dataset was duplicated and the labels and envelope positions were inverted. For AADNet, the model was directly obtained from the official Github repository[26] and trained following its orig-inal configuration. Non-linear models were implemented us-ing the PyTorch framework [37]. Conversely, linear models, including Ridge and CCA, were implemented from scratch in NumPy [38] to enable a more suited implementation. In fact, covariance or correlation matrices for each subject and fold were precomputed and used within the respective algorithm. 
+
+2.8. Stability of spatial filters across datasets 
+
+To analyze the stability of the spatial filters learned by the initial spatial projection layer across different dataset, a clustering procedure was employed to group these filters across subjects and folds. We followed the clustering proce-dure proposed in [39]. First, the spatial filters of each subject were grouped independently into four clusters with k-means. Subsequently, a cross-subject hierarchical clustering was performed on the resulting subject-specific clusters, yielding three global                                                               
+
+> :Preprint submitted to Elsevier Page 6 of 12 Table 2
+> Ablation study results obtained by progressively incorporating architectural components, starting from acorrelation-and-classification-only baseline and culminating in the final optimized CA-TCN model. The accuracy corresponds with the validation accuracy obtained using a five second decision window for the subject-independent setting on the Jaulab dataset.
+> Model State Cx Cs Nx Ns KParameters MACs Accuracy (5s)
+> Raw Input ✕✕✕✕✕0.1K 0.1K 53.9% + Spatial Projection 32 32 ✕✕✕4.1K 2.1M 55.4% + TCN 32 32 55327.1K 37.6M 71.8% + Causality 32 32 44322.5K 30.5M 72.0% + Asymmetric RF (CA-TCN) 32 32 35322.5K 32.9M 72.1%
+
+clusters. The cosine angle was used as the similarity metric for cluster linkage. Only the first cross-subject cluster of each dataset was considered as it contained the most informative and numerous spatial distribution. To assess the stability of the spatial weighting distribu-tions across different conditions, the cosine similarity was employed to compare the first cluster of each dataset. For the comparison between the Jaulab dataset (61 electrodes) and the other two datasets (64 electrodes), the three missing channels were interpolated using the interpolate_bads() 
+
+function from the mne library [33]. 
+
+## 3. Results 
+
+3.1. CA-TCN Ablation Study 
+
+As introduced in Section 2.2, the CA-TCN architecture is composed of several modules incorporating distinct de-sign choices. An ablation study was conducted to evaluate the contribution of each stage and architectural compo-nent to the overall decoding performance. Starting from a classifier-only baseline, network components were progres-sively incorporated until reaching the final optimized CA-TCN model. This analysis was performed by monitoring the validation loss and decoding accuracy under the SI setting on the Jaulab dataset, using a 5 s decision window. The results reported in Table 2 summarize the marginal contribution of each architectural component. The first row corresponds to a classifier-only configuration, in which the raw input signals are fed directly into the correlation and classification module. As expected, this baseline operates close to chance level. When the spatial projection layer is included in isolation, performance remains near chance, although a slight improvement of approximately 1.5 percent-age points in decoding accuracy is observed. Consistent with our expectations, the largest contribu-tion to the model’s performance corresponded with the inclusion of the TCN module, which yielded a improvement of 16.4% in decoding accuracy. With the incorporation of causal convolutions and the use of an asymmetric RF for the EEG and stimulus branches, modest performance gains are observed, with increases of 0.2% and 0.1% respectively. However, with the incorporation of causality, the model size was reduced by 4.6K parameters, and the number of MACs decreased by 7.1M, corresponding to approximately 17% and 19%, respectively. Moreover, the asymmetry between RFs reduced the number of samples considered by the an-ticausal EEG branch from 31 to 15, corresponding to 484 ms and 234 ms respectively. 
+
+3.2. AAD model performance comparison 
+
+In this section, CA-TCN is evaluated together with the other AAD methods presented in Section 2.1 across the three datasets described in 2.3. 
+
+3.2.1. Subject-Independent (SI) models 
+
+Table 3 summarizes the SI results obtained for each AAD model. Across all evaluated decision window lengths and datasets, CA-TCN consistently achieved the highest decoding accuracy among all models. For instance, on the Jaulab dataset, accuracy increased from 58.0% with a 1 s decision window to 88.5% with a 50 s window. Similar trends were observed for the KULeuven dataset, where accuracy ranged from 56.8% to 87.3%, and for the DTU dataset, where performance improved from 58.3% to 92.5%. Moreover, the relative performance gains of CA-TCN over the next best-performing model, AADNet, became more pronounced as the decision window length increased. For example, on the KULeuven dataset, CA-TCN provided a modest improvement of 0.8% for 1 s windows, whereas this gain increased to 3.2% for 50 s windows. The right column of Table 3 reports the mean MESD values across folds and subjects. CA-TCN achieved the low-est mean MESD on the Jaulab and KULeuven datasets, with marginal reductions of 1.8 s and 6.8 s, respectively, com-pared to AADNet. Despite outperforming AADNet across all decision window lengths, CA-TCN did not yield a lower mean MESD on the DTU dataset; instead, AADNet achieved a value that was 2.5 s lower. This behavior may be attributed to the higher inter-subject variability observed on the DTU dataset when using CA-TCN. On the othe hand, linear models consistently exhibited poorer performance than deep learning approaches, high-lighting the inherent limitations of linear decoding methods for cross-subject AAD. Fig. 3 further illustrates the subject distribution of the MESD values for each dataset by averaging across folds.                                                                                                                                                                                                                                                                                
+
+> :Preprint submitted to Elsevier Page 7 of 12 Figure 3: Subject-independent (SI) distribution of MESD across the three datasets considered in this study. Each point corresponds to the MESD value obtained for a given subject, and median values are highlighted in the distributions. The number of subjects whose MESD exceeds 80 s are indicated at the top of the distributions in parentheses. Statistical analysis: ***: 𝑝 < 0.001 , **:
+> 0.001 ≤𝑝 < 0.01 , *: 0.01 ≤𝑝 < 0.05 , None: 𝑝 ≥0.05 .
+> Table 3
+> Model performance comparison for Subject-Independent validation across three datasets Dataset Model Accuracy (%) MESD (s) 1s 2s 5s 10s 25s 50s Jaulab Ridge 54.2 ±1.9 56.0 ±2.7 59.6 ±3.9 63.5 ±5.4 69.1 ±7.4 74.6 ±9.8 >100
+> CCA 55.1 ±1.9 58.3 ±3.2 63.3 ±5.0 68.3 ±7.1 75.4 ±9.6 81.4 ±11.5 >100
+> AADNet 57.5 ±2.6 61.6 ±3.6 68.6 ±5.1 74.5 ±6.5 82.3 ±7.7 86.4 ±8.6 26.9 ±16.7 CA-TCN 58.0 ±2.4 62.5 ±4.0 69.6 ±5.6 75.4 ±7.1 84.0 ±8.8 88.5 ±7.7 25.1 ±20.8 DTU Ridge 56.0 ±2.8 60.1 ±4.2 65.6 ±6.4 70.2 ±7.9 78.1 ±10.1 83.6 ±11.2 82.4 ±129.8 CCA 56.5 ±2.6 60.6 ±4.4 67.0 ±6.4 72.6 ±7.7 80.7 ±9.6 87.7 ±10.5 53.4 ±73.9 AADNet 57.5 ±2.4 62.1 ±4.0 69.4 ±5.9 75.8 ±7.2 84.3 ±8.2 90.9 ±8.6 32.2 ±45.9 CA-TCN 58.3 ±2.8 63.4 ±4.4 70.3 ±6.9 76.7 ±7.7 85.8 ±8.3 92.5 ±8.0 34.7 ±68.4 KULeuven Ridge 54.4 ±1.7 57.0 ±2.5 61.5 ±3.8 65.3 ±5.4 71.3 ±8.0 76.4 ±10.5 >100
+> CCA 55.2 ±1.5 58.3 ±2.4 63.7 ±3.4 68.6 ±4.9 75.1 ±7.2 81.3 ±8.5 >100
+> AADNet 56.0 ±2.0 60.2 ±3.0 66.3 ±4.2 71.5 ±5.7 79.0 ±8.4 84.1 ±8.2 34.3 ±22.1 CA-TCN 56.8 ±2.1 61.1 ±3.0 67.9 ±4.2 73.4 ±5.5 81.9 ±6.7 87.3 ±6.9 27.5 ±16.1
+
+Paired Wilcoxon tests were performed to assess significant differences between MESD values when comparing CA-TCN with other models. To account for multiple compar-isons, a Bonferroni correction was applied to adjust the resulting p-values. Statistical comparisons between the dis-tributions of CA-TCN and AADNet revealed a significant difference only for the KULeuven dataset ( 𝑝 = 0.002 ), whereas no significant differences were observed for the Jaulab and DTU datasets. 
+
+3.2.2. Subject-Specific (SS) models 
+
+Table 4 summarizes the SS results obtained across all datasets considered in the study. As for the SI validation scheme, CA-TCN achieved the highest decoding accuracies across all the evaluated settings. On the Jaulab dataset, CA-TCN accuracy increased from 60.4% for a 1 s window to 91.6% for a 50 s window. Similar performance trends were observed for the DTU dataset, with accuracy ranging from 60.5% to 96.6%, and for the KULeuven dataset, where performance improved from 59.1% to 91.8%. Beyond accuracy, the mean MESD values reported in Table 4 further highlight the benefits of CA-TCN in the SS setting. Relative to AADNet, CA-TCN achieved consistent reductions in MESD across all evaluated datasets, with improvements of 2.4 s on KULeuven, 0.7 s on DTU, and 4.7 s on Jaulab. Under this validation scheme, linear models attained performance levels comparable to those of deep learning approaches on the KULeuven and DTU datasets; however, their performance on the Jaulab dataset remained substantially inferior. Figure 4 illustrates the distribution of MESD values across subjects for each dataset under the SS evaluation.    
+
+> :Preprint submitted to Elsevier Page 8 of 12 Figure 4: Subject-Specific (SS) distribution of MESD across the three datasets considered in this study. Each point corresponds to the average MESD obtained for a given subject, and median values are highlighted in the distributions.
+> Table 4
+> Model performance comparison for Subject-Specific validation across three datasets
+
+Dataset Model Accuracy (%) MESD (s) 1s 2s 5s 10s 25s 50s Jaulab Ridge 56.7 ± 2.7 60.7 ± 4.0 67.2 ± 6.0 73.5 ± 7.5 82.2 ± 8.4 89.0 ± 8.6 58.7 ± 109.4 CCA 57.5 ± 2.9 62.1 ± 4.7 69.2 ± 6.9 75.5 ± 8.2 85.1 ± 8.9 92.3 ± 7.9 78.1 ± 205.1 AADNet 59.4 ± 2.9 64.8 ± 4.8 73.0 ± 6.7 79.1 ± 8.1 86.3 ± 8.0 89.7 ± 7.1 20.1 ± 17.2 CA-TCN 60.4 ± 3.1 66.1 ± 4.5 74.3 ± 6.3 81.3 ± 7.0 89.2 ± 6.2 91.6 ± 4.5 15.4 ± 10.4 DTU Ridge 58.8 ± 2.1 65.4 ± 3.2 73.3 ± 4.7 79.8 ± 5.4 87.9 ± 5.2 94.0 ± 4.3 16.6 ± 7.6 CCA 58.9 ± 2.2 64.8 ± 3.3 72.8 ± 4.8 79.0 ± 5.5 87.9 ± 5.7 93.8 ± 4.3 18.6 ± 8.7 AADNet 59.6 ± 2.3 65.8 ± 3.3 74.3 ± 4.9 81.2 ± 5.9 90.2 ± 5.9 95.8 ± 4.1 13.9 ± 4.5 CA-TCN 60.5 ± 2.8 67.3 ± 4.6 76.6 ± 6.2 83.4 ± 5.8 92.4 ± 4.7 96.6 ± 3.3 13.2 ± 6.4 KULeuven Ridge 57.8 ± 2.8 61.9 ± 4.2 67.9 ± 6.1 73.8 ± 7.3 82.0 ± 8.0 87.4 ± 8.5 41.9 ± 49.6 CCA 58.3 ± 2.5 63.0 ± 4.0 70.3 ± 5.4 76.8 ± 6.4 85.2 ± 7.1 91.5 ± 6.9 26.3 ± 21.0 AADNet 58.1 ± 2.6 63.4 ± 4.1 71.1 ± 5.2 77.2 ± 6.8 86.5 ± 7.3 91.0 ± 8.1 21.7 ± 16.3 CA-TCN 59.1 ± 3.0 64.4 ± 4.1 72.3 ± 5.4 78.9 ± 6.4 87.5 ± 7.5 91.8 ± 7.1 19.3 ± 16.8 
+
+Statistical comparisons between CA-TCN and AADNet re-vealed significant differences across all datasets when SS data were used during training. The weakest statistical ev-idence was observed for the DTU dataset ( 𝑝 = 0.047 ), followed by KULeuven ( 𝑝 = 0.006 ), while the strongest evidence was found for the Jaulab dataset ( 𝑝 = 8 × 10 −5 ). 
+
+3.3. Spatial filters 
+
+The first clusters obtained for the finetuned SS CA-TCN models across datasets, as described in Section 2.8, are illustrated in Fig. 5 as topographic maps. These spa-tial centroids exhibited a highly consistent pattern across datasets, characterized by a predominant contribution from left-lateralized central regions, peaking at electrode C5. Consistency across datasets was further supported by the high inter-dataset cosine similarities: 0.70 for Jaulab–DTU, 
+
+0.81 for Jaulab–KULeuven, and 0.85 for DTU–KULeuven. 
+
+## 4. Discussion 
+
+4.1. Unified Temporal Modeling 
+
+CA-TCN consistently improved accuracy compared with the next best-performing model, AADNet. For SI models, the improvement ranged from 0.5% to 3.2%, whereas for SS models it ranged from 0.8% to 2.9%. These results highlight the benefits of the proposed CA-TCN architecture and its unified temporal processing through a TCN design, in contrast to the multi-branch paradigm adopted by AADNet. In fact, despite incorporating several established de-sign principles in modern convolutional neural networks, including dilated convolutions, residual connections [23], and depthwise separable convolutions [28], a defining char-acteristic of the proposed CA-TCN architecture is its overall structural simplicity. The network is defined by a compact set of global hyperparameters and relies on the progressive    
+
+> :Preprint submitted to Elsevier Page 9 of 12 Figure 5: Topographic maps of the first cluster obtained by grouping the Spatial Projection filters from finetuned subject-specific CA-TCN across the Jaulab (a), DTU (b), and KULeuven (c) datasets. Values below the topographic maps indicate the cosine similarity between each pair of clusters.
+
+increase of the dilation factor across layers to effectively model temporal dependencies at multiple scales. In contrast, AADNet [18] adopts a more heterogeneous architectural design based on multiple parallel branches, each explicitly tailored to capture specific temporal charac-teristics through predefined kernel sizes, channel configura-tions, or pointwise convolutions. We hypothesize that this architectural fragmentation may limit the model’s ability to jointly exploit temporal information across scales, which could partly explain the lower accuracies observed. More-over, the unified design of CA-TCN relies on a compact and smaller set of hyperparameters, which simplifies the exploration of different network configurations. 
+
+4.2. Improving efficiency and minimizing latency 
+
+The incorporation of causality within convolutions, as described in Section 2.2, not only yielded a slight im-provement in decoding performance but also substantially reduced the model complexity. As shown in Table 2, a model composed of four stacked causal convolutional layers (𝑁 = 4 ) outperformed the deeper version with an additional layer ( 𝑁 = 5 ) that did not enforce causality. These results revealed the effectiveness of integrating causality, showing the benefits of designing a task-aligned model to account for the delay between stimuli and the neural response. Moreover, the inclusion of asymmetric RFs led to a shorter RF for the EEG branch (234 ms) and a broader past-oriented RF for the stimulus branch (-984 ms). Therefore, compared with its previous version ( 𝑁 𝑥 = 4 and 𝑁 𝑠 =4), the model reduced its reliance on EEG samples while leveraging an extended audio-envelope context. This config-uration is particularly advantageous for real-time attention monitoring, where a reduction in the anticausal RF directly reduces its associated delay. We remark that the final an-ticausal RF would introduce an extra delay of 234 ms on the latency for online processing, which may end up being very short relative to the decision window used. Indeed, even when compared with the shortest window in the study (1 s), this delay represents less than a quarter of its duration. 
+
+4.3. Spatial stability across different conditions 
+
+The spatial distributions revealing the first cluster across datasets highlight a consistent pattern, with particular em-phasis on electrode C5. Notably, the high cosine similarities demonstrate stable spatial filters across datasets, indicating that the learned representations are robust to variations in recording setups and acoustic environments. This spatial distribution also aligns with previous AAD studies. For instance, electrodes FC5 and C3 (C5 was not included in that study) were found to be the most effec-tive when added to ear-EEG systems [40]. Similarly, when a leave-one-channel-out validation was performed in the AADNet study, electrode C5 was found to be the most consistently informative one [18]. Although this information about the spatial filters cannot be unambiguously interpreted in terms of the underlying neurophysiological mechanisms of auditory attention [41], this left-lateralized fronto-central dependence, with a peak at electrode C5, lies close to the auditory cortex and the left superior temporal gyrus. These regions are associated with speech-envelope tracking [42] and with the coupling to the attended stimulus in a Cocktail Party scenario [43]. 
+
+4.4. Limitations and future work 
+
+The current results are inherently constrained to con-trolled, non-realistic AAD conditions, as analyses were con-ducted post hoc using clean speech envelopes and experi-mentally controlled stimuli. Within these conditions, CA-TCN consistently outperforms previously proposed models, demonstrating the advantages of the non-linear architec-ture. However, the model’s performance in more realis-tic scenarios—incorporating speech separation algorithms   
+
+> :Preprint submitted to Elsevier Page 10 of 12
+
+[3, 44], real-time processing [5], naturalistic acoustic en-vironments [45], or miniaturized EEG acquisition devices [40]—remains to be evaluated. Since most real-world AAD studies rely on linear decoding models, both objective and subjective evaluations of integrating a non-linear architec-ture such as CA-TCN into these pipelines represent a valu-able direction for future research. In particular, it would be of special interest to evaluate the model in a real-world SI paradigm, where CA-TCN has demonstrated a substantial performance gap compared to linear models. Determining whether the observed performance gains persist under real-istic conditions would be a critical step toward the practical deployment of neuro-steered hearing devices. 
+
+## 5. Conclusion 
+
+This work proposes CA-TCN, a TCN-based deep neural network designed to directly classify the attended speaker in a two-speaker competing scenario. The core component of the network is based on a TCN, which relies on a stack of convolutional layers with an exponentially increasing dilation factor. Importantly, the network differs in the way it processes EEG and audio signals. Neural signals are pro-cessed anticausally, basing its predictions on future samples within a limited RF, whereas stimulus signals are processed causally, relying only on past samples within an extended RF. The ablation study revealed the importance of the TCN module and also considered the incorporation of causality and asymmetry between RFs. These design choices helped improve the efficiency and aimed to minimize the online pro-cessing latency. Across all the considered settings, CA-TCN consistently outperformed other established AAD methods and significantly improved the MESD distributions in four of the six evaluated settings compared to the next best-performing model. Furthermore, the spatial filters from the initial EEG convolutional layer revealed stable distributions across datasets, highlighting the model’s spatial robustness to different experimental conditions. Nevertheless, this study still relied on controlled experimental data, and further anal-ysis involving more realistic scenarios is needed to reveal the true potential of the model design. 
+
+## Declaration of Generative AI and AI-assisted technologies in the manuscript process 
+
+During the preparation of this work, the author(s) used ChatGPT, an AI language model developed by OpenAI, in order to revise and improve the clarity and fluency of some parts of the English text. After using this tool, the author(s) reviewed and edited the content as needed and take (s) full responsibility for the content of the publication. 
+
+## CRediT authorship contribution statement 
+
+Iñigo García-Ugarte: Writing – review & editing, Writ-ing - original draft, Visualization, Software, Methodology, Data curation, Formal analysis, Conceptualization. Rubén Eguinoa: Writing – review & editing, Data curation, Re-sources. Ricardo San Martin: Writing – review & edit-ing, Validation, Resources, Supervision. Daniel Paternain: 
+
+Writing – review & editing, Conceptualization, Methodol-ogy, Validation. Carmen Vidaurre: Writing – review & editing, Conceptualization, Methodology, Validation, Su-pervision. 
+
+## Declaration of competing interest 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. 
+
+## Data and Code Availability 
+
+The data supporting the findings of this study from the Jaulab dataset are available upon reasonable request. The code developed for this work will be made publicly available in a GitHub repository upon publication to ensure reproducibility. 
+
+## Acknowledgements 
+
+Grant PID2020-118829RB-I00 supported IGU, CV, RE and RSM, grant PID2024-161502OB-I00 supported IGU, CV, RE and RSM, grant PREP2024-003050 supported IGU, grant PRE2021-099863 supported RE, BERC 2022-2025 program of the Basque Government, BCBL Severo Ochoa excellence accreditation CEX2020-001010/AEI/10.13039/ 501100011033 and IKERBASQUE supported CV. 
+
+## References                        
+
+> [1] E. C. Cherry, Some Experiments on the Recognition of Speech, with One and with Two Ears, The Journal of the Acoustical Society of America 25 (1953) 975–979. [2] N. A. Lesica, Why Do Hearing Aids Fail to Restore Normal Auditory Perception?, Trends in Neurosciences 41 (2018) 174–185. [3] Y. Luo, N. Mesgarani, Conv-TasNet: Surpassing Ideal Time-Frequency Magnitude Masking for Speech Separation, IEEE/ACM Trans. Audio Speech Lang. Process. 27 (2019) 1256–1266. [4] D. Wang, Deep learning reinvents the hearing aid, IEEE Spectrum 54 (2017) 32–37. [5] J. Hjortkjær, D. D. E. Wong, A. Catania, J. Märcher-Rørsted, E. Ce-olini, S. A. Fuglsang, I. Kiselev, G. Di Liberto, S.-C. Liu, T. Dau, M. Slaney, A. de Cheveigné, Real-time control of a hearing instrument with EEG-based attention decoding, J. Neural Eng. 22 (2025). [6] S. Geirnaert, S. Vandecappelle, E. Alickovic, A. de Cheveigne, E. Lalor, B. T. Meyer, S. Miran, T. Francart, A. Bertrand, Electroencephalography-Based Auditory Attention Decoding: To-ward Neurosteered Hearing Devices, IEEE Signal Processing Maga-zine 38 (2021) 89–102. [7] S. J. Aiken, T. W. Picton, Human Cortical Responses to the Speech Envelope, Ear & Hearing 29 (2008) 139–157. [8] J. A. O’Sullivan, A. J. Power, N. Mesgarani, S. Rajaram, J. J. Foxe, B. G. Shinn-Cunningham, M. Slaney, S. A. Shamma, E. C. Lalor, At-tentional Selection in a Cocktail Party Environment Can Be Decoded from Single-Trial EEG, Cerebral Cortex 25 (2015) 1697–1706. [9] S. Akram, A. Presacco, J. Z. Simon, S. A. Shamma, B. Babadi, Robust decoding of selective auditory attention from MEG in a competing-speaker environment via state-space modeling, NeuroImage 124 (2016) 906–917.
+
+: Preprint submitted to Elsevier Page 11 of 12 [10] K. Dijkstra, P. Brunner, A. Gunduz, W. Coon, A. Ritaccio, J. Farquhar, G. Schalk, Identifying the attended speaker using electrocortico-graphic (ECoG) signals, Brain-Computer Interfaces 2 (2015) 161– 173. [11] V. S. Raghavan, J. O’Sullivan, J. Herrero, S. Bickel, A. D. Mehta, N. Mesgarani, Improving auditory attention decoding by classifying intracranial responses to glimpsed and masked acoustic events, Imag-ing Neurosci (Camb) 2 (2024). [12] L. Meyer, The neural oscillations of speech processing and language comprehension: State of the art and emerging mechanisms, European Journal of Neuroscience 48 (2018) 2609–2621. [13] L. Meyer, Y. Sun, A. E. Martin, Synchronous, but not entrained: Exogenous and endogenous cortical rhythms of speech and language processing, Language, Cognition and Neuroscience 35 (2020) 1089– 1099. [14] V. Viswanathan, H. M. Bharadwaj, B. G. Shinn-Cunningham, Elec-troencephalographic Signatures of the Neural Representation of Speech during Selective Attention, eNeuro 6 (2019). [15] D. D. E. Wong, S. A. Fuglsang, J. Hjortkjær, E. Ceolini, M. Slaney, A. De Cheveigné, A Comparison of Regularization Methods in Forward and Backward Models for Auditory Attention Decoding, Front. Neurosci. 12 (2018) 531. [16] A. de Cheveigné, D. D. E. Wong, G. M. Di Liberto, J. Hjortkjær, M. Slaney, E. Lalor, Decoding the auditory brain with canonical component analysis, NeuroImage 172 (2018) 206–216. [17] M. Thornton, D. Mandic, T. Reichenbach, Robust decoding of the speech envelope from EEG recordings through deep neural networks, J. Neural Eng. 19 (2022). [18] N. D. T. Nguyen, H. Phan, S. Geirnaert, K. Mikkelsen, P. Kid-mose, AADNet: An End-to-End Deep Learning Model for Auditory Attention Decoding, IEEE Transactions on Neural Systems and Rehabilitation Engineering 33 (2025) 2695–2706. [19] I. Rotaru, S. Geirnaert, N. Heintz, I. Van de Ryck, A. Bertrand, T. Francart, What are wereallydecoding? Unveiling biases in EEG-based decoding of the spatial focus of auditory attention, J Neural Eng 21 (2024). [20] C. Puffay, B. Accou, L. Bollens, M. J. Monesi, J. Vanthornhout, H. Van hamme, T. Francart, Relating EEG to continuous speech using deep neural networks: A review, J. Neural Eng. 20 (2023). [21] C. Szegedy, W. Liu, Y. Jia, P. Sermanet, S. Reed, D. Anguelov, D. Er-han, V. Vanhoucke, A. Rabinovich, Going Deeper With Convolutions, in: Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 2015, pp. 1–9. [22] A. Zhang, Z. C. Lipton, M. Li, A. J. Smola, Modern Convolutional Neural Networks, in: Dive into Deep Learning, Cambridge University Press, 2021, pp. 275–334. [23] K. He, X. Zhang, S. Ren, J. Sun, Deep Residual Learning for Image Recognition, in: Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 2016, pp. 770–778. [24] S. Bai, J. Z. Kolter, V. Koltun, An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling, 2018. 
+
+> arXiv:1803.01271
+
+.[25] C. Lea, M. D. Flynn, R. Vidal, A. Reiter, G. D. Hager, Temporal Convolutional Networks for Action Segmentation and Detection, in: Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 2017, pp. 156–165. [26] A. Babibo, et al., Aadnet: Auditory attention decoding neural net-work, Github, 2025. [Online]. Available: https://github.com/exporl/ mesd-toolbox .[27] T. M. Ingolfsson, M. Hersche, X. Wang, N. Kobayashi, L. Cavigelli, L. Benini, EEG-TCNet: An Accurate Temporal Convolutional Net-work for Embedded Motor-Imagery Brain–Machine Interfaces, in: 2020 IEEE International Conference on Systems, Man, and Cybernet-ics (SMC), 2020, pp. 2958–2965. doi: 10.1109/SMC42975.2020.9283028 .[28] F. Chollet, Xception: Deep Learning with Depthwise Separable Con-volutions, 2017. arXiv:1610.02357 .[29] N. Das, T. Francart, A. Bertrand, Auditory Attention Detection Dataset KULeuven, 2019. doi: 10.5281/zenodo.4004271 .[30] S. A. Fuglsang, D. D. Wong, J. Hjortkjær, EEG and audio dataset for auditory attention decoding, 2018. doi: 10.5281/zenodo.1199011 .[31] OpenAI, Chatgpt (gpt-3), OpenAI, 2023. [Online]. Available: https: //chat.openai.com .[32] Microsoft Corporation, Microsoft azure text-to-speech service, Cloud platform / API, 2023. [Online]. Available: https://azure.microsoft. com/en-us/services/cognitive-services/text-to-speech/ .[33] A. Gramfort, M. Luessi, E. Larson, D. A. Engemann, D. Strohmeier, C. Brodbeck, R. Goj, M. Jas, T. Brooks, L. Parkkonen, M. Hämäläi-nen, MEG and EEG data analysis with MNE-Python, Front Neurosci 7 (2013) 267. [34] P. Virtanen, R. Gommers, T. E. Oliphant, M. Haberland, T. Reddy, D. Cournapeau, E. Burovski, P. Peterson, W. Weckesser, J. Bright, S. J. van der Walt, M. Brett, J. Wilson, K. J. Millman, N. Mayorov, A. R. J. Nelson, E. Jones, R. Kern, E. Larson, C. J. Carey, İ. Polat, Y. Feng, E. W. Moore, J. VanderPlas, D. Laxalde, J. Perktold, R. Cimrman, I. Henriksen, E. A. Quintero, C. R. Harris, A. M. Archibald, A. H. Ribeiro, F. Pedregosa, P. van Mulbregt, SciPy 1.0: Fundamental algorithms for scientific computing in Python, Nat Methods 17 (2020) 261–272. [35] S. Geirnaert, T. Francart, A. Bertrand, An Interpretable Performance Metric for Auditory Attention Decoding Algorithms in a Context of Neuro-Steered Gain Control, IEEE Transactions on Neural Systems and Rehabilitation Engineering 28 (2020) 307–317. [36] E. R. Group, Mesd toolbox: Minimal expected switch duration for au-ditory attention decoding, Github, 2023. [Online]. Available: https: //github.com/babibo180918/AADNet .[37] A. Paszke, S. Gross, F. Massa, A. Lerer, J. Bradbury, G. Chanan, T. Killeen, Z. Lin, N. Gimelshein, L. Antiga, A. Desmaison, A. Köpf, E. Yang, Z. DeVito, M. Raison, A. Tejani, S. Chilamkurthy, B. Steiner, L. Fang, J. Bai, S. Chintala, PyTorch: An imperative style, high-performance deep learning library, in: Proceedings of the 33rd International Conference on Neural Information Processing Systems, 721, Curran Associates Inc., Red Hook, NY, USA, 2019, pp. 8026– 8037. [38] C. R. Harris, K. J. Millman, S. J. van der Walt, R. Gommers, P. Virtanen, D. Cournapeau, E. Wieser, J. Taylor, S. Berg, N. J. Smith, R. Kern, M. Picus, S. Hoyer, M. H. van Kerkwijk, M. Brett, A. Haldane, J. F. del Río, M. Wiebe, P. Peterson, P. Gérard-Marchant, K. Sheppard, T. Reddy, W. Weckesser, H. Abbasi, C. Gohlke, T. E. Oliphant, Array programming with NumPy, Nature 585 (2020) 357– 362. [39] K. Mahjoory, A. Bahmer, M. J. Henry, Convolutional neural networks can identify brain interactions involved in decoding spatial auditory attention, PLOS Computational Biology 20 (2024). [40] S. Geirnaert, S. L. Kappel, P. Kidmose, A Direct Comparison of Simultaneously Recorded Scalp, Around-Ear, and In-Ear EEG for Neural Selective Auditory Attention Decoding to Speech, 2025. doi: 10.48550/arXiv.2505.14478 . arXiv:2505.14478 .[41] S. Haufe, F. Meinecke, K. Görgen, S. Dähne, J.-D. Haynes, B. Blankertz, F. Bießmann, On the interpretation of weight vectors of linear models in multivariate neuroimaging, NeuroImage 87 (2014) 96–110. [42] J. Kubanek, P. Brunner, A. Gunduz, D. Poeppel, G. Schalk, The Tracking of Speech Envelope in the Human Cortex, PLOS ONE 8 (2013) e53398. [43] M. Vander Ghinst, M. Bourguignon, M. Op de Beeck, V. Wens, B. Marty, S. Hassid, G. Choufani, V. Jousmäki, R. Hari, P. Van Bo-gaert, S. Goldman, X. De Tiège, Left Superior Temporal Gyrus Is Coupled to Attended Speech in a Cocktail-Party Auditory Scene, J Neurosci 36 (2016) 1596–1606. [44] M. A. Tanveer, M. A. Skoglund, B. Bernhardsson, E. Alickovic, Deep learning-based auditory attention decoding in listeners with hearing impairment*, J. Neural Eng. 21 (2024). [45] L. Straetmans, K. Adiloglu, S. Debener, Neural speech tracking and auditory attention decoding in everyday life, Front. Hum. Neurosci. 18 (2024). 
+
+: Preprint submitted to Elsevier Page 12 of 12

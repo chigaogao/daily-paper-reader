@@ -1,0 +1,79 @@
+{
+  "label": "2026-03-30",
+  "date": "2026-03-30",
+  "generated_at": "2026-03-30T19:55:39",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202603/30/2603.25968v1-neuro-cognitive-reward-modeling-for-human-centered-autonomous-vehicle-control",
+      "section": "deep",
+      "title_en": "Neuro-Cognitive Reward Modeling for Human-Centered Autonomous Vehicle Control",
+      "authors": "Zhuoli Zhuang, Yu-Cheng Chang, Yu-Kai Wang, Thomas Do, Chin-Teng Lin",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25968v1",
+      "score": "8.0",
+      "evidence": "以人为本AI的脑电引导决策",
+      "tldr": "针对自动驾驶中机器决策与人类预期对齐的挑战，本文提出了一种基于脑电图（EEG）引导的神经认知奖励建模框架。该方法通过收集并分析人类在驾驶模拟器中的ERP信号，利用神经网络预测认知反馈并将其转化为强化学习的奖励信号。相比传统RLHF，该框架无需人工干预即可实时融入人类认知洞察，显著提升了车辆的避障性能，为实现以人为中心的自动驾驶提供了新路径。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Recent advancements in computer vision have accelerated the development of autonomous driving. Despite these advancements, training machines to drive in a way that aligns with human expectations remains a significant challenge. Human factors are still essential, as humans possess a sophisticated cognitive system capable of rapidly interpreting scene information and making accurate decisions. Aligning machine with human intent has been explored with Reinforcement Learning with Human Feedback (RLHF). Conventional RLHF methods rely on collecting human preference data by manually ranking generated outputs, which is time-consuming and indirect. In this work, we propose an electroencephalography (EEG)-guided decision-making framework to incorporate human cognitive insights without behaviour response interruption into reinforcement learning (RL) for autonomous driving. We collected EEG signals from 20 participants in a realistic driving simulator and analyzed event-related potentials (ERP) in response to sudden environmental changes. Our proposed framework employs a neural network to predict the strength of ERP based on the cognitive information from visual scene information. Moreover, we explore the integration of such cognitive information into the reward signal of the RL algorithm. Experimental results show that our framework can improve the collision avoidance ability of the RL algorithm, highlighting the potential of neuro-cognitive feedback in enhancing autonomous driving systems. Our project page is: https://alex95gogo.github.io/Cognitive-Reward/.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.26394v1-ca-tcn-a-causal-anticausal-temporal-convolutional-network-for-direct-auditory-attention-decoding",
+      "section": "quick",
+      "title_en": "CA-TCN: A Causal-Anticausal Temporal Convolutional Network for Direct Auditory Attention Decoding",
+      "authors": "Iñigo García-Ugarte, Rubén Eguinoa, Ricardo San Martín, Daniel Paternain, Carmen Vidaurre",
+      "date": "2026-03-27",
+      "pdf": "https://arxiv.org/pdf/2603.26394v1",
+      "score": "7.0",
+      "evidence": "使用时间卷积网络从 EEG 信号中直接进行听觉注意力解码",
+      "tldr": "本研究针对复杂听觉环境下的听觉注意力解码（AAD）问题，提出了一种名为CA-TCN的因果-反因果时间卷积网络。该模型通过引入具有不同感受野方向的因果与反因果卷积，实现了听觉刺激与脑电（EEG）信号的显式对齐，从而直接分类受试者的关注对象。实验表明，CA-TCN在多项指标上优于现有模型，具有更高的解码准确率和空间鲁棒性，为实时AAD系统的应用提供了有力支持。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "A promising approach for steering auditory attention in complex listening environments relies on Auditory Attention Decoding (AAD), which aim to identify the attended speech stream in a multiple speaker scenario from neural recordings. Entrainment-based AAD approaches, typically assume access to clean speech sources and electroencephalography (EEG) signals to exploit low-frequency correlations between the neural response and the attended stimulus. In this study, we propose CA-TCN, a Causal-Anticausal Temporal Convolutional Network that directly classifies the attended speaker. The proposed architecture integrates several best practices from convolutional neural networks in sequence processing tasks. Importantly, it explicitly aligns auditory stimuli and neural responses by employing separate causal and anticausal convolutions respectively, with distinct receptive fields operating in opposite temporal directions. Experimental results, obtained through comparisons with three baseline AAD models, demonstrated that CA-TCN consistently improved decoding accuracy across datasets and decision windows, with gains ranging from 0.5% to 3.2% for subject-independent models and from 0.8% to 2.9% for subject-specific models compared with the next best-performing model, AADNet. Moreover, these improvements were statistically significant in four of the six evaluated settings when comparing Minimum Expected Switch Duration distributions. Beyond accuracy, the model demonstrated spatial robustness across different conditions, as the EEG spatial filters exhibited stable patterns across datasets. Overall, this work introduces an accurate and unified AAD model that outperforms existing methods while considering practical benefits for online processing scenarios. These findings contribute to advancing the state of AAD and its applicability in real-world systems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.20970v1-graphformer-a-multimodal-graph-persistent-homology-transformer-for-the-analysis-of-neuroscience-morphologies",
+      "section": "quick",
+      "title_en": "GraPHFormer: A Multimodal Graph Persistent Homology Transformer for the Analysis of Neuroscience Morphologies",
+      "authors": "Uzair Shah, Marco Agus, Mahmoud Gamal, Mahmood Alzubaidi, Corrado Cali, Pierre J. Magistretti, Abdesselam Bouzerdoum, Mowafa Househ",
+      "date": "2026-03-21",
+      "pdf": "https://arxiv.org/pdf/2603.20970v1",
+      "score": "6.0",
+      "evidence": "神经科学形态学的多模态对比学习",
+      "tldr": "神经元形态对理解大脑功能至关重要，但现有方法往往孤立分析拓扑或图结构。本文提出 GraPHFormer，一种结合对比学习的多模态架构。它通过视觉分支处理持久同调图像，图分支处理骨架图，在共享嵌入空间中融合拓扑与几何特征。在六个基准测试中，该模型在五个上达到 SOTA，能有效识别神经胶质形态差异及发育/退行性病变特征。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Neuronal morphology encodes critical information about circuit function, development, and disease, yet current methods analyze topology or graph structure in isolation. We introduce GraPHFormer, a multimodal architecture that unifies these complementary views through CLIP-style contrastive learning.   Our vision branch processes a novel three-channel persistence image encoding unweighted, persistence-weighted, and radius-weighted topological densities via DINOv2-ViT-S. In parallel, a TreeLSTM encoder captures geometric and radial attributes from skeleton graphs. Both project to a shared embedding space trained with symmetric InfoNCE loss, augmented by persistence-space transformations that preserve topological semantics.   Evaluated on six benchmarks (BIL-6, ACT-4, JML-4, N7, M1-Cell, M1-REG) spanning self-supervised and supervised settings, GraPHFormer achieves state-of-the-art performance on five benchmarks, significantly outperforming topology-only, graph-only, and morphometrics baselines. We demonstrate practical utility by discriminating glial morphologies across cortical regions and species, and detecting signatures of developmental and degenerative processes.   Code: https://github.com/Uzshah/GraPHFormer",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.25758v1-a-select-automatic-timestep-selection-for-diffusion-transformer-representation-learning",
+      "section": "quick",
+      "title_en": "A-SelecT: Automatic Timestep Selection for Diffusion Transformer Representation Learning",
+      "authors": "Changyu Liu, James Chenhao Liang, Wenhao Yang, Yiming Cui, Jinghao Yang, Tianyang Wang, Qifan Wang, Dongfang Liu, Cheng Han",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.25758v1",
+      "score": "6.0",
+      "evidence": "通过生成式预训练进行判别性表示学习的扩散 Transformer (DiT)",
+      "tldr": "本研究针对扩散变换器（DiT）在判别性表示学习中的效率和能力瓶颈，提出了 A-SelecT 自动时间步选择方法。该方法通过在单次运行中动态定位 DiT 特征中最具信息量的时间步，解决了传统方法中计算密集的穷举搜索和次优特征选择问题。实验证明，A-SelecT 显著提升了 DiT 在分类和分割任务中的表现，超越了以往基于扩散模型的表征学习方法，实现了高效且强大的判别性特征提取。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion models have significantly reshaped the field of generative artificial intelligence and are now increasingly explored for their capacity in discriminative representation learning. Diffusion Transformer (DiT) has recently gained attention as a promising alternative to conventional U-Net-based diffusion models, demonstrating a promising avenue for downstream discriminative tasks via generative pre-training. However, its current training efficiency and representational capacity remain largely constrained due to the inadequate timestep searching and insufficient exploitation of DiT-specific feature representations. In light of this view, we introduce Automatically Selected Timestep (A-SelecT) that dynamically pinpoints DiT's most information-rich timestep from the selected transformer feature in a single run, eliminating the need for both computationally intensive exhaustive timestep searching and suboptimal discriminative feature selection. Extensive experiments on classification and segmentation benchmarks demonstrate that DiT, empowered by A-SelecT, surpasses all prior diffusion-based attempts efficiently and effectively.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.26475v1-foundation-model-for-cardiac-time-series-via-masked-latent-attention",
+      "section": "quick",
+      "title_en": "Foundation Model for Cardiac Time Series via Masked Latent Attention",
+      "authors": "Moritz Vandenhirtz, Samuel Ruipérez-Campillo, Simon Böhi, Sonia Laguna, Irene Cannistraci, Andrea Agostini, Ece Ozkan, Thomas M. Sutter, Julia E. Vogt",
+      "date": "2026-03-27",
+      "pdf": "https://arxiv.org/pdf/2603.26475v1",
+      "score": "6.0",
+      "evidence": "临床时间序列的自监督预训练",
+      "tldr": "本研究针对心电图（ECG）基础模型中忽略导联间结构冗余的问题，提出了潜注意力掩码自编码器（LAMAE）。该模型通过潜注意力机制在自监督预训练中直接学习跨导联的连接机制，实现了导联表示的置换不变聚合与自适应加权。在Mimic-IV-ECG数据集上的实验证明，这种利用跨导联结构监督的方法显著提升了表示质量，在ICD-10疾病分类任务中表现优于现有独立导联建模和对齐基准。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Electrocardiograms (ECGs) are among the most widely available clinical signals and play a central role in cardiovascular diagnosis. While recent foundation models (FMs) have shown promise for learning transferable ECG representations, most existing pretraining approaches treat leads as independent channels and fail to explicitly leverage their strong structural redundancy. We introduce the latent attention masked autoencoder (LAMAE) FM that directly exploits this structure by learning cross-lead connection mechanisms during self-supervised pretraining. Our approach models higher-order interactions across leads through latent attention, enabling permutation-invariant aggregation and adaptive weighting of lead-specific representations. We provide empirical evidence on the Mimic-IV-ECG database that leveraging the cross-lead connection constitutes an effective form of structural supervision, improving representation quality and transferability. Our method shows strong performance in predicting ICD-10 codes, outperforming independent-lead masked modeling and alignment-based baselines.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

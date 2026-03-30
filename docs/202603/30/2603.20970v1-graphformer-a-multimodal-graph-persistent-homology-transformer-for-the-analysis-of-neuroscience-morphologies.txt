@@ -1,0 +1,584 @@
+Title: GraPHFormer: A Multimodal Graph Persistent Homology Transformer for the Analysis of Neuroscience Morphologies
+
+URL Source: https://arxiv.org/pdf/2603.20970v1
+
+Published Time: Tue, 24 Mar 2026 01:10:55 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# GraPHFormer: A Multimodal Graph Persistent Homology Transformer for the Analysis of Neuroscience Morphologies 
+
+## Uzair Shah 1∗, Marco Agus 1*, Mahmoud Gamal 1, Mahmood Alzubaidi 1, Corrado Cal´ ı2,5,6,Pierre J. Magistretti 3, Abdesselam Bouzerdoum 1,4, Mowafa Househ 11Hamad Bin Khalifa University, Qatar, 2University of Turin, Italy 3BESE, King Abdullah University of Science and Technology, Saudi Arabia, 4University of Wollongong, Australia, 
+
+> 5
+
+## Neuroscience Institute Cavalieri Ottolenghi, Italy, 6Universit´ e Grenoble-Alpes, France 
+
+## Abstract 
+
+Neuronal morphology encodes critical information about circuit function, development, and disease, yet current methods analyze topology or graph structure in isola-tion. We introduce GraPHFormer, a multimodal architec-ture that unifies these complementary views through CLIP-style contrastive learning. Our vision branch processes a novel three-channel persistence image encoding un-weighted, persistence-weighted, and radius-weighted topo-logical densities via DINOv2-ViT-S. In parallel, a TreeL-STM encoder captures geometric and radial attributes from skeleton graphs. Both project to a shared embedding space trained with symmetric InfoNCE loss, augmented by persistence-space transformations that preserve topologi-cal semantics. Evaluated on six benchmarks (BIL-6, ACT-4, JML-4, N7, M1-Cell, M1-REG) spanning self-supervised and supervised settings, GraPHFormer achieves state-of-the-art performance on five benchmarks, significantly out-performing topology-only, graph-only, and morphometrics baselines. We demonstrate practical utility by discriminat-ing glial morphologies across cortical regions and species, and detecting signatures of developmental and degenerative processes. Code: https://github.com/Uzshah/ GraPHFormer 
+
+## 1. Introduction 
+
+Neural cell morphology encodes fundamental constraints on information processing, circuit formation, and pathol-ogy. Skeletonized reconstructions of neurons and glia en-able systematic study of branching patterns, path lengths, tapering, and spatial organization, with direct implications for understanding neurodevelopment, synaptic integration, and neurodegenerative disease. Large public repositories 
+
+> *Equal contribution. Corresponding author: magus@hbku.edu.qa
+
+like NeuroMorpho.Org provide tens of thousands of dig-ital reconstructions, enabling reproducible benchmarks at scale and driving the need for robust, data-driven represen-tations that capture both topological structure and geometric properties. Recent advances in learning on graph-structured 
+
+Figure 1. Representative examples showing tree graphs overlaid on their persistence images across different morphological classes. 
+
+morphologies have progressed from graph convolutional networks to graph Transformers with global self-attention and flexible positional encodings [5, 29, 32]. In parallel, topological data analysis (TDA) via persistent homology offers provably stable shape summaries. The Topologi-cal Morphology Descriptor (TMD) tracks birth and death of branches along filtrations, yielding persistence diagrams vectorizable as images for classification [15]. However, ex-isting methods treat these views in isolation: graph-based approaches encode branching patterns but miss global ge-ometric invariants, while topology-based methods capture spatial arrangements but lose fine-grained structural infor-mation. This fundamental limitation motivates a multi-modal approach that exploits complementary strengths. We propose GraPHFormer , a multimodal architecture that unifies (i) a vision stream operating on multi-channel persistence images derived from the skeleton and (ii) a 
+
+graph stream processing the original morphological tree with geometric and radial attributes. We adapt the CLIP framework [26] to neuronal morphology, training dual en-coders—a vision Transformer (DinoV2) for persistence images and a graph encoder (TreeLSTM) for tree struc-tures—to project into a shared embedding space using sym-
+
+> arXiv:2603.20970v1 [cs.CV] 21 Mar 2026
+
+metric InfoNCE loss. This joint learning leverages topology for global branching motifs and graphs for local spatial de-tail. In summary, we provide the following contributions: • Multi-channel persistence images. We introduce a three-channel RGB persistence image encoding comple-mentary morphological aspects: (R) unweighted TMD-style density preserving spatial structure, (G) persistence-weighted density emphasizing topologically salient fea-tures, and (B) radius-weighted density capturing radial characteristics ( Sec. 3.2). • Persistence space augmentation. We propose augmen-tation strategies applied directly in topological feature space before image generation—including birth-death jittering, persistence scaling and radius perturbation ( Sec. 3.2). • Multimodal contrastive learning. We adapt CLIP to neuron representation learning, to our knowledge the first such application, training dual encoders to align tree graphs and persistence images in a shared embedding space. This enables joint learning of complementary structural and topological features (Sec. 3). GraPHFormer consistently and significantly outper-forms state-of-the-art topology-only, graph-only, and mor-phometrics baselines. In self-supervised learning, we achieve substantial improvements: 86.2% on BIL-6 (+4.9 over SGTMorph), 72.7% on JML-4 (+6.1), and 83.8% on N7 (+4.0), with remarkably low variance (±0.6-4%). Un-der supervised learning, we establish new state-of-the-art results on five of six benchmarks, reaching 93.51% on BIL-6 and 92.3% on N7. Beyond accuracy metrics, our framework demonstrates practical relevance for discrimi-nating neuronal and glial morphologies across cortical ar-eas, species, developmental trajectories, and degenerative conditions, providing neuroscientists with robust tools for quantitative morphology analysis. 
+
+## 2. Related work 
+
+Our work deals with deep learning methods for graph-based neuroscience morphologies, topology-based descriptors for branched morphologies, and multi-modal graph transform-ers. We do not aim to provide here an extensive overview of the literature corpus in the field: we refer interested readers to the recent surveys related to graph learning [20, 35] and to the usage of topology data analysis in learning [40] and graph neural networks [25]. In the following, we discuss the methods most closely related to our work. 
+
+Deep learning for graph-based neuroscience morphol-ogy. Learning on irregular neuronal and glial skeletons has progressed from early image– and sequence–based en-codings to point– and graph–native architectures. Image projections of 3D trees with stacked convolutional autoen-coders provided the first learning–based neural morpho-metrics, trading geometric fidelity for CNN compatibil-ity [36]. Sequence-aware models such as TRNN inte-grated ordered node information with image features to bet-ter capture spatiotemporal dependencies along arbors [9]. Point-cloud approaches (e.g., MorphoGNN) leveraged dy-namic graph construction to learn low-dimensional but dis-criminative latent spaces while preserving local geome-try [31, 39]. Hybrid designs fused PointNet-style mor-phological descriptors with circuit connectivity in GNNs to jointly represent shape and network context [36]. Because gold-standard labels are scarce and heterogeneous across labs and species, self-/contrastive learning became central: MorphVAE learned branch-level latent codes via variational sequence models but only weakly captured inter-branch structure [22]; MACGNN applied graph contrastive objec-tives to neuronal trees [37]; and graph-level self-distillation and momentum-contrast variants further improved label ef-ficiency on morphology classification [21, 27]. Our method applies contrastive learning on a multimodal graph trans-former exploiting state of the art GNNs [5, 32], enriched with persistent homology image representations. 
+
+Graph Transformers and multimodal graph learn-ing. Transformer models for graphs combine global self-attention with structural priors to overcome the locality lim-its of message passing. Spectral positional encodings based on Laplacian eigenvectors and full-spectrum variants inject global structure into token embeddings [21, 34]; attention-bias formulations incorporate distances, higher-order walk information, and edge attributes to inform pairwise atten-tion [27, 33]. These advances enable long-range depen-dency modeling across complex arbors and are increasingly adopted in neuroscience morphology pipelines [9, 36]. Be-yond single-modality graphs, multimodal graph Transform-ers align graph tokens with auxiliary modalities (e.g., im-ages, sequences, curated descriptors) via cross-attention or token grafting, improving robustness when labels are scarce or distributions shift [30, 33]. SGTMorph [29] exemplifies this hybrid direction for neuronal trees: it couples the lo-cal topological modeling strengths of GNNs with the global 
+
+relational reasoning capacity of Transformers to explicitly encode neuronal structure; uses a random-walk positional encoding to facilitate information propagation over com-plex arbors; and introduces a spatially invariant encoding 
+
+to improve adaptability across diverse morphologies. Our approach follows this line by pairing a graph Transformer on the original skeleton with a vision Transformer operat-ing on topology-derived images, enabling complementary inductive biases—global branching motifs in an image can-vas and fine-grained connectivity/radii on the graph—to be learned jointly. We adapt CLIP [26] for this and to our knowledge, this is the first application of CLIP-style con-trastive learning to neuron representation learning. 
+
+Topological data analysis (TDA) for morphology. TDA provides stable, scale-aware summaries of shape and con-nectivity via persistent homology, which tracks the birth and death of features across filtrations and yields bar-codes/diagrams vectorizable as persistence images or learn-able embeddings [1, 4, 8]. For neuronal trees, the Topo-logical Morphology Descriptor (TMD) encodes branch-ing organization using soma-centric filtrations (radial or geodesic), producing characteristic distributions linked to development, region, and species [15–18]. Topological summaries have proven competitive for cell-type classifi-cation and population comparisons when paired with clas-sical ML or shallow CNNs over persistence images [2, 7, 40]. Our work builds on these insights in two ways: (i) we propose a multi-channel persistence image for mor-phological trees that augments an unweighted TMD-style density with branch-length (persistence) and mean-radius channels, and (ii) we fuse this topological view with a graph Transformer over the original skeleton within a mul-timodal architecture. This design exploits complemen-tary strengths—translation/rotation-agnostic global branch-ing patterns from TDA and locality–aware geometric rea-soning from graphs—to robustly advance morphology anal-ysis across datasets and supervision regimes. 
+
+## 3. Methodology 
+
+3.1. Overview 
+
+We propose a multimodal contrastive learning framework that addresses a key limitation in neuron morphology anal-ysis: existing methods rely on single modalities captur-ing incomplete structural aspects. Graph-based approaches like TreeMoCo [5] and GraphDINO [32] encode branching patterns but miss geometric variations, while image-based methods capture spatial arrangements but lose topological information. Our key insight is leveraging complementary strengths of both representations through multimodal align-ment. We adapt CLIP [26] to neuron morphology using: (1) tree graphs encoding hierarchical branching structure, and (2) persistence images capturing topological invariants via TDA. Our dual-encoder architecture uses a tree encoder (TreeLSTM or GraphDINO) for directed graphs and an im-age encoder (DINOv2 [23] or ResNet-18 [13]) for multi-channel persistence images. Both project to a shared n-dimensional space via MLP heads. We maximize agree-ment between corresponding tree-image pairs while mini-mizing non-corresponding pairs using symmetric InfoNCE loss, creating a unified embedding space where morpholog-ically similar neurons cluster together. For evaluation, fol-lowing TreeMoCo’s protocol, we combine learned embed-dings through concatenation or addition, then apply a frozen k-NN classifier. 
+
+3.2. Persistence Image Generation 
+
+To capture the topological signatures of neuronal structures, we convert each neuron graph into a multi-channel persis-tence image representation using Topological Morphology Descriptor (TMD) analysis [15]. This process transforms the discrete tree structure into a continuous topological rep-resentation that encodes branching patterns and morpholog-ical complexity. Intuitively, TMD sweeps a distance thresh-old outward from the soma and records where branches be-gin and end , capturing the tree’s shape in a compact descrip-tor. 
+
+Neuron Tree Preprocessing: Neuron reconstructions stored in SWC format are parsed to extract seven key at-tributes for each node: node ID, node type ( t), 3D co-ordinates (x, y, z ), radius ( r), and parent ID. Let V =
+
+{v1, v 2, . . . , v n} denote the set of nodes and E denote the parent-child edges. The tree structure T = ( V, E) is con-structed by building a parent-child relationship map: V → 
+
+2|V| , where the root node vs (soma) is identified by parent ID = −1.
+
+Radial Distance Filtration: We employ radial distance from the soma as the filtration function , a scalar value as-signed to each node that orders the tree structure for topo-logical analysis, for persistent homology computation.. For each node vi ∈ V with coordinates (xi, y i, z i), we compute the Euclidean distance to the soma at (xs, y s, z s):
+
+draw (vi) = p(xi − xs)2 + ( yi − ys)2 + ( zi − zs)2 (1) To ensure monotonicity along root-to-leaf paths—a re-quirement for meaningful persistence computation—we en-force a cumulative maximum constraint via breadth-first traversal from the root: 
+
+f (vi) = 
+
+(
+
+0 if vi = vs
+
+max {f (parent (vi)) , d raw (vi)} otherwise  (2) This ensures that the filtration function f : V → R+ is non-decreasing along any path from the soma to dendritic terminals, satisfying the requirement that f (vi) ≤ f (vj )
+
+whenever vi is an ancestor of vj .
+
+Persistence Pair Computation: Persistence pairs are com-puted using the TMD elder-rule algorithm [15], which iden-tifies topological features (branches) as (bi, d i) pairs, where 
+
+bi (birth) is the distance at which a branch tip appears and di (death) is the distance at which it merges into a larger branch.. The algorithm processes nodes in post-order traversal and maintains a champion for each sub-tree—defined as the leaf node with maximum filtration value. For each internal node v with children {c1, c 2, . . . , c k},let (ℓj∗ , f (ℓj∗ )) denote the champion (leaf node, filtration value) of the subtree rooted at cj . The champion of v is defined as: 
+
+χ(v) = ( ℓj∗ , f (ℓj∗ )) , where j∗ = arg max 
+
+> j∈{ 1,...,k }
+
+f (ℓj ) (3) For all non-champion children cj where j̸ = j∗, a per-sistence pair is created: 
+
+τj = ( bj , d j , ℓ j , v ), bj = f (ℓj ), dj = f (v) (4) where bj is the birth value (filtration value at the leaf), 
+
+dj is the death value (filtration value at the bifurcation), 
+
+ℓj is the leaf node identifier, and v is the death node iden-tifier. The set of all persistence pairs is denoted as P =
+
+{(bi, d i, ℓ i, v i)}mi=1 .
+
+Feature Enrichment: For each persistence pair 
+
+(bi, d i, ℓ i, v i) ∈ P, we compute additional geometric features by tracing the path πi = path (ℓi, v i) from the leaf node to the bifurcation node: 
+
+δi = bi − di, ¯ri = 1
+
+|πi|
+
+X
+
+> v∈πi
+
+r(v) (5) where r(v) denotes the radius attribute of node v. These features provide complementary information about branch geometry beyond pure topological persistence. Each pair is thus represented as a feature vector: 
+
+ρi = ( bi, d i, δ i, ¯ri) (6) 
+
+Persistence Image Construction: We construct a three-channel RGB persistence image I ∈ RH×W ×3 (wherever not indicated we consider H = W = 112 ), each channel encodes different aspects of neuronal morphology through weighted density estimation in the 2D (b, p ) space, analo-gous to a scatter plot of branch features, where b is the birth distance and p = b − d is the branch lifetime (persistence). 
+
+Multi-Channel Density Estimation: For each channel 
+
+c ∈ { R, G, B }, we compute a weighted density map us-ing Gaussian kernels. Let w(c) 
+
+> i
+
+denote the channel-specific weight for pair i, and let (x, y ) represent the 2D coordinate grid of the persistence diagram, where the axes correspond to birth time and persistence values, respectively. The chan-nel c is computed as: 
+
+w(R) 
+
+> i
+
+= 1 , w(G) 
+
+> i
+
+= δi, w(B) 
+
+> i
+
+= ¯ ri
+
+I(c)(x, y ) = 
+
+> m
+
+X
+
+> i=1
+
+w(c) 
+
+> i
+
+· 12πσ 2 exp 
+
+
+
+− (x − bi)2 + ( y − pi)2
+
+2σ2
+
+
+
+(7) Tree Encoder      
+
+> Image Encoder
+> Projection Head
+> Class A Class B
+> Class C
+> Class D
+> Class E R128
+> Shared Embedding
+> space
+> 384
+> 256 128
+> 128
+> Tree embed
+> Image embed
+> InfoNCE Loss
+> Multi-Channel density
+> Estimation
+> Persistence Barcode Persistence Diagram
+> Persistence Image,
+> overlaying Graph
+> Input Graph
+> Graph
+> (A)
+> (B)
+> Input Image
+
+Figure 2. Overview of the proposed dual-modality framework. 
+
+(A) Neuronal morphologies are converted into multi-channel RGB persistence images via radial distance filtration, TMD-based per-sistence pair extraction, feature enrichment, and Gaussian ker-nel density estimation. (B) A self-supervised architecture jointly trains a tree encoder and an image encoder, projecting both modal-ities into a shared embedding space. Alignment between graph and image features is optimized via contrastive (InfoNCE) loss follow-ing the CLIP paradigm. 
+
+where σ pixels controls the kernel bandwidth (wherever not indicated we use σ = 16 ). bi and pi denote the birth time and persistence value of the i-th topological feature (persistence pair), respectively, which serve as the 2D coor-dinates in the persistence diagram space. 
+
+Persistence Space Augmentation: Standard image-space augmentations (e.g., rotation, scaling, color jittering) are in-effective for persistence images because they violate the se-mantic correspondence between pixel positions and topo-logical features. For instance, rotating a persistence image arbitrarily reassigns the meaning of the birth-persistence axes, corrupting the topological information. Similarly, photometric augmentations disrupt the carefully calibrated density weights that encode geometric properties. To address this limitation, we propose persistence space augmentation , which applies transformations directly to the feature vectors {pi} before image generation, preserving the semantic structure of the topological representation. 
+
+Augmentation Operations: During training, we stochas-tically apply the following transformations to each feature vector ρi = ( bi, d i, δ i, ¯ri):1. Birth-Death Jittering: Add Gaussian noise to birth and death values: 
+
+b′ 
+
+> i
+
+= bi + N (0 , σ 2 
+
+> b
+
+), d′ 
+
+> i
+
+= di + N (0 , σ 2
+
+> d
+
+) (8) where σb, σ d ∈ [0 .01 , 0.05] × (bmax − bmin ) are sampled uniformly. 2. Persistence Scaling: Scale persistence values to simu-late variations in branch extent: 
+
+δ′ 
+
+> i
+
+= δi · α, α ∼ U (0 .9, 1.1)  (9) 3. Radius Perturbation: Perturb mean radius to model re-construction uncertainty: 
+
+¯r′ 
+
+> i
+
+= ¯ ri · β, β ∼ U (0 .85 , 1.15)  (10) After augmentation, the modified feature vectors {p′
+
+> i
+
+}
+
+are used to generate the persistence image, ensuring that augmentations respect the topological semantics. 
+
+3.3. Encoder Architecture 
+
+TreeEncoder Neuron morphology in SWC format de-fines each node by (id, type, x, y, z, r, parent ). We con-struct directed tree T = ( V, E) where vertices represent nodes and edges encode parent-child relationships. Each node v has feature vector xv ∈ R5 containing spatial coor-dinates (x, y, z ), radius r, and path length from soma. Fea-tures are z-score normalized. We employ TreeLSTM [5] for hierarchical aggregation. Given node v with children C(v):
+
+hv = TreeLSTM (xv , {hc}c∈C(v))
+
+where hv ∈ RD is the hidden state. Child states are aggre-gated via sum pooling. Bottom-up traversal from leaves to root yields root embedding hroot as the tree representation. 
+
+Image Encoder Each neuron converts to 2D persistence image I ∈ RH×W ×3 through TDA (detailed in Section 3.2). Three RGB channels encode: (R) unweighted feature density, (G) persistence-weighted density, (B) mean-radius-weighted density. This multi-scale encoding captures both local branch complexity and global patterns. We employ DINOv2-ViT-S/14 [23] as image encoder. The architec-ture has patch embedding (14×14 patches), 12 transformer blocks with 6 attention heads, and hidden dimension 384. We fine-tune the entire backbone to adapt pre-trained natu-ral image representations to the topological domain. 
+
+Projection Heads Following SimCLR [6], we employ 2-layer MLP projection heads for both encoders to map their outputs to a shared D-dimensional embedding space where contrastive learning occurs. The projection heads are de-fined as: 
+
+gtree : R256 Linear 
+
+−−−→ R256 Linear 
+
+−−−→ R128 
+
+gimage : R384 Linear 
+
+−−−→ R256 Linear 
+
+−−−→ R128 
+
+During training, embeddings are ℓ2-normalized before com-puting similarities. 
+
+3.4. Self-Supervised Learning Strategy 
+
+The vast majority of morphological datasets lack annota-tions, as manual labeling demands significant expertise, making it economically unfeasible at scale. Self-supervised learning addresses this by extracting meaningful represen-tations from unlabeled data without expensive annotation. Consider a collection of N neurons, where each neuron 
+
+ni is characterized through two distinct but complementary representations: a tree graph Ti that captures the hierar-chical organization of neuronal branches, and a persistence image Ii that encodes topological properties. We aim to train encoders ftree and fimage that project these disparate modalities into a unified embedding space, where represen-tations of the same neuron align across modalities, facilitat-ing cross-modal matching and enabling various downstream applications without requiring labels. We adopt the symmetric InfoNCE formulation from CLIP [26], which enables mutual supervision between modalities. Within each training batch of N neurons, we compute ℓ2-normalized embeddings zti = gtree (ftree (Ti)) 
+
+and zvi = gimage (fimage (Ii)) where gtree and gimage are modality-specific projection heads that map encoder out-puts into the shared embedding space.. Pairwise similar-ity is measured as sij = ⟨zti, zvj ⟩/τ , where the learnable temperature τ modulates the sharpness of the similarity dis-tribution. The training objective combines two symmetric cross-entropy terms: 
+
+L = − 12N
+
+> N
+
+X
+
+> i=1
+
+"
+
+log exp( sii )
+
+PNj=1 exp( sij ) + log exp( sii )
+
+PNj=1 exp( sji )
+
+#
+
+(11) This formulation enforces bidirectional consistency by en-couraging high similarity between matched tree-image pairs (positives) while suppressing similarity with unmatched pairs (negatives). Compared to approaches requiring ex-plicit negative mining [12] or momentum-based memory queues [14], our method requires no additional memory structures or sampling heuristics, as within-batch negatives scale as O(N ) with batch size, compared to O(K) mem-ory overhead for queue-based approaches [6] and O(N 2)
+
+pairwise computations for explicit mining. 
+
+3.5. Supervised Learning Strategy 
+
+For downstream tasks, we remove the projection heads from both pretrained encoders, fuse their outputs via concatena-tion, and attach a classification head. Fine-tuning follows a two-stage approach: linear probing of the classification head alone, followed by end-to-end fine-tuning of the com-plete model. 
+
+## 4. Experiments 
+
+4.1. Dataset and Experimental Settings. 
+
+We follow the data-splitting strategy of TreeMoCo [5] with a 70%–30% train–test split, consistent with GraphDINO [32] and SGTMorph [29], for fair com-parison. Table 1. Performance comparison of GraPHFormer against state-of-the-art methods across six neuronal morphology datasets (classifi-cation accuracy in %). SL : Supervised Learning with full labels. SS : Self-Supervised Learning with frozen kNN evaluation following TreeMoCo [5]. Bold: best performance; underline: second-best. SS methods show mean ± std over five seeds. Missing entries (-) indicate unreported results. Datasets: BIL-6, ACT-4, JML-4 (4 cell types), Neuron7 (N7), M1-Cell (cell types), M1-REG (regions). Baselines from MorphRep [9] (M1-*) and SGTMorph [29] (others). TreeMoCo* denotes our fine-tuned tree encoder. 
+
+Method BIL-6 ACT-4 JML-4 N7 M1-Cell M1-REG SL MorphVAE 66.80 41.05 40.00 73.73 60 64 TRNN 76.56 46.32 51.43 - - -Morphometrics 81.27 52.08 52.58 82.45 - -MorphoGNN 76.57 54.16 65.83 85.58 - -TreeMoCo 85.55 62.11 64.29 - - -MorphRep 88.0 77.0 - - 72.0 76.0 SGTMorph 88.9 79.3 72.4 89.0 - -
+
+TreeMoco* 88.3 53.5 63.7 82.5 74.7 71.6 
+
+PI 80.5 54.1 69.1 84.7 73.5 74.1 
+
+GraPHFormer 93.51 65.5 76.5 92.3 76.5 79.1 
+
+SS GraphCL 66.3 53.9 59.7 - - -TreeMoCo 76.5 56.8 62.7 71.8 - -MACGNN 69.5 45.9 61.4 71.1 - -MorphRep 81.0 66 .0 - - 73.0 75.0 GraphDINO 79 ± 1 54 ± 5 63 ± 6 68.3 68 71 SGTMorph 81 .3 ± 1 63.2 ±3 66 .6 ± 5 79.8 ±0.8 - -
+
+GraPHFormer 86 .2 ± 1 59.1 ±4 72 .7 ± 3 83 .8 ± 0.6 75 .5 ± 1.7 76 .5 ± 1
+
+Datasets. We evaluate our framework on five neuronal mor-phology datasets: • N7 (Neuro7) [3, 38]: Seven representative mouse neu-ron types from NeuroMorpho.Org. • ACT (Allen Cell Types) [11]: Fully reconstructed neu-rons from the mouse visual cortex. • BIL (BICCN fMOST) [24]: Rat neurons from cortex, claustrum, striatum, and thalamus. • JML (Janelia MouseLight) [10]: Long-range projec-tion neurons across thalamus, hippocampus, cortex, and hypothalamus. • M1-EXC [9, 28]: Neurons with dual annotations for cell type and projection pattern, enabling multi-task analysis. In the supplementary material we showcase some examples of potential applications for glia discriminations on mor-phologies extracted from NeuroMorph.org. 
+
+Experimental Settings. GraPHFormer was implemented in PyTorch and trained on an NVIDIA RTX 4090. It fea-tures a dual-encoder design—TreeLSTM for tree structures and DinoV2-small for persistence images—with dropout (p = 0 .1) applied after each transformer layer. Optimiza-tion used AdamW ( β1=0 .9, β2=0 .999 , λ=0 .05 ), a learning rate of 5 × 10 −4, 20-epoch warmup, and cosine annealing over 300 epochs (batch size 128). For downstream evalu-ation, we adopted the TreeMoCo protocol using a frozen 
+
+k-NN classifier ( k=20 , except k=5 for JML), reporting the best results averaged over five random seeds. 
+
+4.2. Results 
+
+Table 1 presents performance comparisons across six neu-ronal morphology benchmarks under supervised (SL) and self-supervised (SS) learning. For SL, we finetune from self-supervised pretrained weights. For SS, we use frozen kNN evaluation ( k = 20 , except k = 5 for JML-4 ) follow-ing TreeMoCo [5]. All SS results show mean ± std over five seeds. 
+
+Self-Supervised Learning GraPHFormer achieves state-of-the-art on five of six benchmarks. On BIL-6 , we reach 
+
+86.2 ± 1% , surpassing SGTMorph (81.3%) and MorphRep (81.0%) by 5 points despite using only benchmark data ver-sus MorphRep’s large-scale pretraining. On N7 , we achieve 
+
+83.8 ± 0.6% with isolated training, outperforming SGT-Morph (79.8%) by 4.0 points with exceptionally low vari-ance. Suprisingly, ACT-4 proves challenging at 59.1 ± 4%, trailing MorphRep (66.0%) and SGTMorph (63.2%). We hypothesize cortical layer classification requires contextual features beyond single-cell morphology, and that competing baselines used additional training data covering the same re-gion. 
+
+Supervised Learning To validate our multimodal fusion, we include PI (DinoV2s)—an image-only baseline using persistence images alone. PIachieves moderate perfor-mance (80.5% on BIL-6, 69.1% on JML-4 ), consistently underperforming GraPHFormer by 13.0 and 7.4 points re-spectively. This demonstrates that persistence images alone are insufficient and that graph-based structural features are essential for discriminative morphology representations. Our full GraPHFormer with multimodal fusion reaches 
+
+93.51% on BIL-6, surpassing SGTMorph (88.9%) by 4.6 points, and 76.5% on JML-4 , exceeding SGTMorph (72.4%) by 4.1 points. The substantial gap between Di-noV2s and GraPHFormer validates the complementarity of topological and graph representations. 
+
+ACT-4 remains problematic at 65.5%, trailing SGT-Morph (79.3%) and MorphRep (77.0%) by 13.8 and 11.5 points. ACT-4 neuron classes depend critically on ab-solute cortical depth and laminar position—discriminative cues our translation-invariant TMD and graph encoders do not capture. In contrast, SGTMorph retains geomet-ric and coordinate-dependent features, while MorphRep’s large-scale pretraining implicitly encodes regional anatom-ical patterns. Notably, PIachieves only 54.1%, indicating persistence images particularly struggle with layer classifi-cation. The persistent gap even under full supervision con-firms that layer classification requires features beyond our topology-structure fusion—specifically spatial coordinates, regional context, or circuit-level connectivity that our archi-tecture deliberately abstracts away. Overall, GraPHFormer achieves state-of-the-art or competitive performance on five of six benchmarks, with the image-only baseline validating the necessity of multimodal fusion. 
+
+Cross-dataset evaluation To assess the generalizability of our method, we trained GraPHFormer on one dataset us-ing self-supervised learning for 100 epochs and evaluated its performance on other datasets. Results are presented in Table 11. We examined four scenarios: (1) training on Joint (ACT, BIL, and JML) and evaluating on Neuron7, M1-EXC-Cell, and M1-EXC-Region; (2) training on Neuron7 and evaluating on other datasets; (3) training on M1-EXC and evaluating on other datasets; and (4) training on all five datasets combined. Models trained on the All-dataset configuration achieved the highest performance across most evaluation datasets, reaching 85.71% on BIL-6 and 84.45% on N7. The Neuron7-trained model demonstrated notable cross-dataset transferability, achieving 84.42% on BIL-6 and 74.07% on M1-Reg. However, transfer to ACT-4 re-mained challenging, with accuracies around 50-55% across all training configurations. 
+
+Cross-Domain Generalizability. To assess whether GraPHFormer generalizes beyond neurons, we conduct cross-domain transfer experiments with glial morphologies from NeuroMorpho.Org [3] (11,925 samples across four species). Training on neurons and testing on glia yields 78.87% species classification accuracy, while the reverse transfer, glia-trained model evaluated on neuronal bench-                            
+
+> Table 2. Cross-dataset generalizability evaluation. Models trained on datasets shown in columns (top row) are evaluated on datasets shown in rows (first column). Joint combines ACT, BIL, and JML; All-dataset includes all five datasets. All models trained for 100 epochs.
+> Dataset Joint Neuron7 M1-EXC All-dataset
+> BIL-6 -84.42 76.62 85.71 JML-4 -72.57 56.64 76.99 ACT-4 -52.08 50.00 54.86 N7 80.86 -72.01 84.45 M1-Cell 71.08 69.88 -73.49 M1-Reg 62.96 74.07 -75.31
+
+marks, achieves competitive performance on N7 (82.78%) and BIL-4 (81.82%), approaching within-domain results. This suggests that GraPHFormer captures morphological signatures shared across cell types, with full details in sup-plementary material. 
+
+4.3. Complementarity Analysis 
+
+We extracted learned embeddings from the tree en-coder (TreeLSTM-Double, 256-dim) and image encoder (DINOv2-ViT-S/14, 384-dim) of trained supervised models and evaluated complementarity using k-nearest neighbors (k=20) classification. We quantified complementarity through multiple met-rics: (1) Pearson correlation measures feature-wise linear correlation after dimension alignment via PCA, with val-ues near zero indicating different encoded information; (2) 
+
+Distance correlation (RSA) uses Spearman’s on pairwise distance matrices to assess geometric structure similarity; (3) Complementarity score is the percentage of samples where exactly one modality is correct while the other fails; (4) Fusion rescue rate measures the percentage of hard cases (both modalities wrong) where fusion succeeds, in-dicating synergistic benefits. Analysis on Neuron7 (418 test samples, 7 classes) and JML-4 (113 test samples, 4 classes) revealed low cross-modal correlation (Pearson = 0.040 and 0.083 , RSA =0.080 and 0.060 , both p < 0.001 ), indicating tree and image modalities capture different aspects of neuronal morphol-ogy (Table 3). Both datasets benefited from fusion: Neu-ron7 improved from 81.8% to 83.5% (+1.7%), while JML-4 improved from 64.6% to 66.4% (+1.8% with weighted fu-sion). Despite similar fusion gains, JML-4 showed higher complementarity score (52.2% vs 38.0%) and better rescue rate (21.1% vs 17.3%), suggesting the modalities capture more distinct discriminative features in the JML-4 dataset. 
+
+Limitations While our complementarity analysis reveals that tree and image modalities capture distinct aspects of Table 3. Complementarity analysis comparing Neuron7 and JML-4 datasets on test sets.                             
+
+> Category Metric Neuron7 JML-4
+> Dataset Info Samples 418 113 Classes 74Correlation Pearson 0.040 0.083 RSA 0.080 *** 0.060 ***
+> Acc (%) Tree 81.8 64.6 Image 55.3 49.6 Fused 83.5 66.4 †
+> Gain +1.7 +1.8 Complement Score (%) 38.0 52.2 F-Rescues 9/52 4/19
+> *** p < 0.001 ;†Weighted addition for JM, concatenation for Neuron7
+
+neuronal morphology (Pearson < 0.09 , complementar-ity scores 38-52%), simple fusion strategies show modest gains (+1.7-1.8%). K-nearest neighbor evaluation in high-dimensional concatenated spaces suffers from the curse of dimensionality, where distance metrics become less dis-criminative. Additionally, uniform fusion strategies can-not adaptively weight modalities based on per-sample reli-ability, leading to cases where correct predictions from one modality are overridden by the weaker modality. The tree modality’s superior performance (65-82% vs 50-55% for images) creates an imbalance where simple fusion strug-gles to selectively leverage the stronger modality. Detailed comparison of fusion strategies (concatenation, addition, weighted addition, PCA-based) and analysis of fusion res-cue versus damage patterns are provided in the supplemen-tary materials. 
+
+## 5. Ablation Studies 
+
+We conduct comprehensive ablation experiments to validate our design choices. We present key ablation studies here, with additional experiments provided in the supplementary material. 
+
+Multi-channel encoding. We evaluate the contribution of each channel in our persistence image representation (Ta-ble 4). Single-channel configurations show that R (un-weighted density) and G (persistence-weighted) achieve 60.7% and 60.5% respectively, outperforming B (radius-weighted) at 58.4%. Two-channel combinations provide modest improvements, with RB reaching 61.7%. The full RGB configuration substantially outperforms all partial combinations at 63.3% average accuracy—a 2.6 percentage point gain over the best single channel. 
+
+Augmentation strategies. Table 5 reports ablation re-sults on ACT-4 using DinoV2-small. The best accuracy (49.31%) is achieved by combining all three persistence-                                 
+
+> Table 4. Ablation study on multi-channel persistence image en-coding. R encodes unweighted density, G encodes persistence-weighted density, and B encodes radius-weighted density.
+> Channel ACT-4 BIL-6 JML-4 AVG
+> B only 39.4 73.2 62.5 58.4 G only 45.6 73.6 62.2 60.5 R only 46.1 72.3 63.7 60.7 GB 44.7 74.5 62.5 60.6 RB 45.4 74.5 65.2 61.7 RG 46.1 71.9 62.5 60.2 RGB 47.9 75.3 66.7 63.3
+
+based augmentations (Birth Death jitter, Persistence Scal-ing, Radius Perturbation), surpassing the no-augmentation baseline (40.97%) by +8.34 points. Among individ-ual methods, Radius Perturbation yields the highest gain (46.53%), and the strongest two-augmentation variant is Persistence Scaling + Radius Perturbation (47.92%).                  
+
+> Table 5. Augmentation Methods and Their Accuracy
+> No Aug BD jitter P-Scale R-Pert ACT-4 (Acc %)
+> ✓40.97
+> ✓45.14
+> ✓42.36
+> ✓46.53
+> ✓✓41.67
+> ✓✓43.06
+> ✓✓47.92
+> ✓✓✓49.31
+
+## 6. Conclusion 
+
+We presented GraPHFormer , a multimodal framework that unifies graph and topological representations of neu-ronal morphology via CLIP-style contrastive learning. By aligning a TreeLSTM-based graph encoder with a DINOv2-based persistence image encoder, the method captures com-plementary geometric and topological cues, achieving state-of-the-art results on most benchmarks. Our multi-channel persistence encoding and persistence-space augmentation proved key to robust cross-dataset generalization and self-supervised performance. We plan to extend GraPHFormer with cross-modal attention fusion and adaptive modality weighting to enhance per-sample reliability. Finally, incor-porating 3D volumetric and EM-derived modalities and re-leasing an open multimodal benchmark will further advance reproducible computational connectomics [18]. 7. Acknowledgments 
+
+This publication was funded by the PPM7th Cycle grant (PPM 07-0409-240041, AMAL-For-Qatar) from the Qatar Research Development and Innovation Council (QRDI), a member of the Qatar Foundation. The findings herein re-flect the work and are solely the responsibility, of the au-thors. 
+
+## References 
+
+[1] Henry Adams, Tegan Emerson, Michael Kirby, Rachel Neville, Chris Peterson, Patrick Shipman, Sofya Chepush-tanova, Eric Hanson, Francis Motta, and Lori Ziegelmeier. Persistence images: A stable vector representation of persis-tent homology. In Journal of Machine Learning Research ,pages 1–35, 2017. 3 [2] Mehmet E Aktas, Esra Akbas, and Ahmed El Fatmaoui. Per-sistence homology of networks: methods and applications. 
+
+Applied Network Science , 4(1):1–28, 2019. 3 [3] Giorgio A Ascoli, Duncan E Donohue, and Maryam Halavi. Neuromorpho. org: a central resource for neuronal mor-phologies. Journal of Neuroscience , 27(35):9247–9251, 2007. 6, 7, 3 [4] Mathieu Carriere and Andrew Blumberg. Multiparam-eter persistence image for topological machine learning. 
+
+Advances in Neural Information Processing Systems , 33: 22432–22444, 2020. 3 [5] Hanbo Chen, Jiawei Yang, Daniel Iascone, Lijuan Liu, Lei He, Hanchuan Peng, and Jianhua Yao. Treemoco: Con-trastive neuron morphology representation learning. In Ad-vances in Neural Information Processing Systems , pages 25060–25073. Curran Associates, Inc., 2022. 1, 2, 3, 5, 6, 4 [6] Ting Chen, Simon Kornblith, Mohammad Norouzi, and Ge-offrey Hinton. A simple framework for contrastive learning of visual representations. In International conference on ma-chine learning , pages 1597–1607. PmLR, 2020. 5 [7] Carina Curto and Nicole Sanderson. Topological neuro-science: Linking circuits to function. Annual Review of Neu-roscience , 48, 2025. 3 [8] Herbert Edelsbrunner and John L Harer. Computational topology: an introduction . American Mathematical Society, 2010. 3 [9] Yimin Fan, Yaxuan Li, Yunhua Zhong, Liang Hong, Lei Li, and Yu Li. Learning meaningful representation of single-neuron morphology via large-scale pre-training. Bioinfor-matics , 40(Supplement 2):ii128–ii136, 2024. 2, 6 [10] Le Gao, Sang Liu, Yanzhi Wang, Qiwen Wu, Lingfeng Gou, and Jun Yan. Single-neuron analysis of dendrites and axons reveals the network organization in mouse prefrontal cortex. 
+
+Nature Neuroscience , 26(6):1111–1126, 2023. 6 [11] Nathan W Gouwens, Staci A Sorensen, Jim Berg, Changkyu Lee, Tim Jarsky, Jonathan Ting, Susan M Sunkin, David Feng, Costas A Anastassiou, Eliza Barkan, et al. Classi-fication of electrophysiological and morphological neuron types in the mouse visual cortex. Nature neuroscience , 22 (7):1182–1195, 2019. 6 [12] Zhezheng Hao, Haonan Xin, Long Wei, Liaoyuan Tang, Rong Wang, and Feiping Nie. Towards expansive and adap-tive hard negative mining: Graph contrastive learning via subspace preserving. In Proceedings of the ACM Web Con-ference 2024 , pages 322–333, 2024. 5 [13] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep residual learning for image recognition. In Proceed-ings of the IEEE conference on computer vision and pattern recognition , pages 770–778, 2016. 3 [14] Sheng Jin, Shuisheng Zhou, Dezheng Kong, and Banghe Han. Multi-contrast image clustering via multi-resolution augmentation and momentum-output queues. Neurocomput-ing , 614:128738, 2025. 5 [15] Lida Kanari, Paweł Dłotko, Martina Scolamiero, Ran Levi, Julian Shillcock, Kathryn Hess, and Henry Markram. Atopological representation of branching neuronal morpholo-gies. Neuroinformatics , 16(1):3–13, 2018. 1, 3 [16] Lida Kanari, Srikanth Ramaswamy, Ying Shi, Sebastien Morand, Julie Meystre, Rodrigo Perin, Marwan Abdellah, Yun Wang, Kathryn Hess, and Henry Markram. Objective morphological classification of neocortical pyramidal cells. 
+
+Cerebral Cortex , 29(4):1719–1735, 2019. [17] Lida Kanari, Srikanth Ramaswamy, Ying Shi, Sebastien Morand, Julie Meystre, Rodrigo Perin, Marwan Abdellah, Yun Wang, Kathryn Hess, and Henry Markram. Objective morphological classification of neocortical pyramidal cells. 
+
+Cerebral Cortex , 29(4):1719–1735, 2019. [18] Lida Kanari, Ying Shi, Alexis Arnaudon, Natal´ ı Barros-Zulaica, Ruth Benavides-Piccione, Jay S Coggan, Javier De-Felipe, Kathryn Hess, Huib D Mansvelder, Eline J Mertens, et al. Of mice and men: Dendritic architecture differenti-ates human from mouse neuronal networks. Iscience , 28(7), 2025. 3, 8 [19] Naseem Khan, Tuan Nguyen, Amine Bermak, and Issa Khalil. CAMME: Adaptive deepfake image detection with multi-modal cross-attention, 2025. To appear in Proceedings of the 7th ACM International Conference on Multimedia in Asia (ACM MMAsia 2025). 4 [20] Shima Khoshraftar and Aijun An. A survey on graph repre-sentation learning methods. ACM Trans. Intell. Syst. Tech-nol. , 15(1), 2024. 2 [21] Devin Kreuzer, Dominique Beaini, Will Hamilton, Vincent L´ etourneau, and Prudencio Tossou. Rethinking graph trans-formers with spectral attention. Advances in Neural Infor-mation Processing Systems , 34:21618–21629, 2021. 2 [22] Sophie C Laturnus and Philipp Berens. Morphvae: Gen-erating neural morphologies from 3d-walks using a varia-tional autoencoder with spherical latent space. In Interna-tional Conference on Machine Learning , pages 6021–6031. PMLR, 2021. 2 [23] Maxime Oquab, Timoth´ ee Darcet, Th´ eo Moutakanni, Huy Vo, Marc Szafraniec, Vasil Khalidov, Pierre Fernandez, Daniel Haziza, Francisco Massa, Alaaeldin El-Nouby, et al. Dinov2: Learning robust visual features without supervision. 
+
+arXiv preprint arXiv:2304.07193 , 2023. 3, 5 [24] Hanchuan Peng, Peng Xie, Lijuan Liu, Xiuli Kuang, Yimin Wang, Lei Qu, Hui Gong, Shengdian Jiang, Anan Li, Zong-cai Ruan, et al. Morphological diversity of single neurons in molecularly defined cell types. Nature , 598(7879):174–181, 2021. 6 [25] Phu Pham, Quang-Thinh Bui, Ngoc Thanh Nguyen, Robert Kozma, Philip S. Yu, and Bay Vo. Topological data analysis in graph neural networks: Surveys and perspectives. IEEE Transactions on Neural Networks and Learning Systems , 36 (6):9758–9776, 2025. 2 [26] Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, and Ilya Sutskever. Learning transferable visual models from natural language supervision. In Proceedings of the 38th International Conference on Machine Learning ,pages 8748–8763. PMLR, 2021. 1, 2, 3, 5 [27] Yu Rong, Yatao Bian, Tingyang Xu, Weiyang Xie, Ying Wei, Wenbing Huang, and Junzhou Huang. Self-supervised graph transformer on large-scale molecular data. Advances in neu-ral information processing systems , 33:12559–12571, 2020. 2[28] Federico Scala, Dmitry Kobak, Matteo Bernabucci, Yves Bernaerts, Cathryn Ren´ e Cadwell, Jesus Ramon Castro, Leonard Hartmanis, Xiaolong Jiang, Sophie Laturnus, Ela-nine Miranda, et al. Phenotypic variation of transcriptomic cell types in mouse motor cortex. Nature , 598(7879):144– 150, 2021. 6 [29] Pengpeng Sheng, Gangming Zhao, Tingting Han, and Lei Qu. Self-supervised neuron morphology representation with graph transformer. IEEE Transactions on Medical Imaging ,pages 1–1, 2025. 1, 2, 5, 6 [30] Wenzhuo Tang, Hongzhi Wen, Renming Liu, Jiayuan Ding, Wei Jin, Yuying Xie, Hui Liu, and Jiliang Tang. Single-cell multimodal prediction via transformers. In Proceedings of the 32nd ACM International Conference on Information and Knowledge Management , page 2422–2431, New York, NY, USA, 2023. Association for Computing Machinery. 2 [31] Jakob Troidl, Johannes Knittel, Wanhua Li, Fangneng Zhan, Hanspeter Pfister, and Srinivas Turaga. Global neuron shape reasoning with point affinity transformers. bioRxiv: the preprint server for biology , pages 2024–11, 2025. 2 [32] Marissa A Weis, Laura Pede, Timo L¨ uddecke, and Alexan-der S Ecker. Self-supervised graph representation learning for neuronal morphologies. Trans. Mach. Learn. Res. , 2023. 1, 2, 3, 5 [33] Qitian Wu, Wentao Zhao, Zenan Li, David P Wipf, and Junchi Yan. Nodeformer: A scalable graph structure learn-ing transformer for node classification. Advances in Neural Information Processing Systems , 35:27387–27401, 2022. 2 [34] Zhanghao Wu, Paras Jain, Matthew Wright, Azalia Mirho-seini, Joseph E Gonzalez, and Ion Stoica. Representing long-range context for graph neural networks with global atten-tion. Advances in neural information processing systems ,34:13266–13279, 2021. 2 [35] Zhenyu Yang, Ge Zhang, Jia Wu, Jian Yang, Quan Z. Sheng, Shan Xue, Chuan Zhou, Charu Aggarwal, Hao Peng, Wenbin Hu, Edwin Hancock, and Pietro Li` o. State of the art and potentialities of graph-level learning. ACM Comput. Surv. ,57(2), 2024. 2 [36] Tielin Zhang, Yi Zeng, Yue Zhang, Xinhe Zhang, Mengting Shi, Likai Tang, Duzhen Zhang, and Bo Xu. Neuron type classification in rat brain based on integrative convolutional and tree-based recurrent neural networks. Scientific reports ,11(1):7291, 2021. 2 [37] Jie Zhao, Xuejin Chen, Zhiwei Xiong, Zheng-Jun Zha, and Feng Wu. Graph representation learning for large-scale neu-ronal morphological analysis. IEEE Transactions on Neural Networks and Learning Systems , 35(4):5461–5472, 2024. 2 [38] Tianfang Zhu, Gang Yao, Dongli Hu, Chuangchuang Xie, Pengcheng Li, Xiaoquan Yang, Hui Gong, Qingming Luo, and Anan Li. Data-driven morphological feature perception of single neuron with graph neural network. IEEE Transac-tions on Medical Imaging , 42(10):3069–3079, 2023. 6 [39] Tianfang Zhu, Gang Yao, Dongli Hu, Chuangchuang Xie, Pengcheng Li, Xiaoquan Yang, Hui Gong, Qingming Luo, and Anan Li. Data-driven morphological feature perception of single neuron with graph neural network. IEEE Transac-tions on Medical Imaging , 42(10):3069–3079, 2023. 2 [40] Ali Zia, Abdelwahed Khamis, James Nichols, Usman Bashir Tayab, Zeeshan Hayder, Vivien Rolland, Eric Stone, and Lars Petersson. Topological deep learning: a review of an emerging paradigm. Artificial Intelligence Review , 57(4):77, 2024. 2, 3 GraPHFormer: A Multimodal Graph Persistent Homology Transformer for the Analysis of Neuroscience Morphologies 
+
+# Supplementary Material 
+
+## Abstract 
+
+Quantitative analysis of neural morphology is central to un-derstanding circuit development, computation, and pathol-ogy. Current methods often analyze topology or graph structure in isolation. We introduce GraPHFormer, a mul-timodal architecture that combines topological and graph representations through contrastive learning. The vi-sion branch processes a three-channel persistence image encoding unweighted, persistence-weighted, and radius-weighted densities via DINOv2-ViT-S. In parallel, a TreeL-STM encoder captures geometric and radial attributes from skeleton graphs. Both project to a shared embedding space trained with symmetric InfoNCE loss. We evalu-ate GraPHFormer on six benchmarks (BIL-6, ACT-4, JML-4 , N7, M1-Cell, M1-REG) under self-supervised and su-pervised settings, demonstrating consistent improvements over topology-only, graph-only, and morphometrics base-lines. We further demonstrate practical utility through cross-domain transfer between neuronal and glial mor-phologies and embedding space analysis. 
+
+## 8. Overview 
+
+This supplementary document provides additional experi-mental details, ablation studies, and analyses that comple-ment the main paper. Specifically, we present: • Additional ablation studies (Section 9): We evaluate im-age encoder architectures, analyze the statistical indepen-dence of RGB channels through correlation analysis, and visualize individual channel contributions. • Cross-domain generalizability (Section 10): We assess transfer learning between neuronal and glial morpholo-gies across species, demonstrating that the learned repre-sentations capture organizational principles that general-ize across cell classes. • Embedding space visualization (Section 11): We present t-SNE projections of learned embeddings across multiple datasets, revealing clustering patterns that reflect morphological organization. • Cross-modal retrieval analysis (Section 12): We evalu-ate bidirectional retrieval between tree graphs and persis-tence images, characterizing the alignment and informa-tion asymmetry between modalities. • Alternative training strategies (Section 13): We explore MoCo-style training with various fusion mechanisms, comparing attention-based and simple fusion strategies. • Visual correspondence (Section 14): We provide quali-tative examples illustrating the relationship between tree structures and their persistence image representations. These analyses provide deeper insights into architectural choices, learned representations, and cross-domain applica-bility. 
+
+## 9. Additional Ablation Studies 
+
+9.1. Image Encoder Architecture 
+
+Table 6 compares six image encoder architectures for neu-ron morphology representation learning, using TreeLSTM as the tree encoder across all experiments. We evaluate DinoV2-S, ResNet18, ResNet50, SmallViT, and two hy-brid variants (R18-ViT and R50-ViT) that replace the last two ResNet layers with vision transformer blocks. Mod-els are trained for 50 epochs with self-supervised learning and evaluated every 5 epochs using frozen k-NN classifica-tion. Results are averaged over 5 random seeds. DinoV2-S achieves the best average performance (70.6%), excelling on BIL (87.0%) and JML-4 (74.3%), while ResNet18 per-forms best on ACT (54.2%).                                
+
+> Table 6. Ablation study for image encoder selection across dif-ferent architectures. Models are trained for 50 epochs using self-supervised learning and evaluated every 5 epochs with frozen k-NN classification on three benchmark datasets. Hybrid variants (R18-ViT, R50-ViT) replace the last two ResNet layers with ViT blocks. Results are averaged over 5 random seeds with best per-formance in bold .
+> Model ACT-4 BIL-6 JML-4 Average
+> R18-ViT 49.7 ± 1.4 85.7 ± 0.0 72.6 ± 4.0 69.3 ± 1.8 R50-ViT 51.0 ± 1.4 84.9 ± 0.7 71.5 ± 0.7 69.1 ± 0.9 ResNet50 52.9 ± 3.3 84.5 ± 1.8 71.5 ± 2.1 69.7 ± 2.4 SmallViT 49.6 ± 1.5 86.0 ± 1.1 70.3 ± 2.5 68.6 ± 1.7 ResNet18 54.2 ± 1.0 84.9 ± 1.2 71.7 ± 1.7 70.3 ± 1.3 DinoV2-S 50.6 ± 0.9 87.0 ± 2.1 74.3 ± 1.9 70.6 ± 1.6
+
+9.2. RGB Channel Independence Analysis 
+
+We validate our multi-channel encoding by extracting fea-tures from single-channel persistence images and comput-ing pairwise Spearman correlations on BIL-6. Table 7 shows moderate correlations (0.35–0.45, average 0.41). The G–B pair (persistence versus radius) exhibits lowest correlation (0.354), demonstrating that branch length and thickness encode complementary geometry. While not per-fectly orthogonal ( ρ < 0.2), moderate correlations are ex-pected since all channels derive from the same underlying morphology. The ablation results presented in the main paper show that RGB (63.3%) substantially outperforms single ( ≤60.7%) or dual ( ≤61.7%) channel configurations, confirming that all three channels contribute unique infor-mation despite moderate correlation.            
+
+> Table 7. Pairwise correlation between RGB channel features (BIL-6 dataset). Moderate correlations indicate related but distinct mor-phological aspects. The G–B pair (0.354) is most orthogonal, showing that persistence and radius capture complementary infor-mation.
+> Channel Pair Correlation Interpretation
+> R – G 0.433 Moderate R – B 0.447 Moderate G – B 0.354 Lower (more orthogonal)
+> Average 0.411 Moderate independence
+
+Figure 3 visualizes the individual and combined RGB channel encodings. Each channel encodes distinct topolog-ical features: the R channel shows high intensity in regions corresponding to dense branching near the soma, while the G channel emphasizes persistent branches in intermediate regions. Channel combinations (RG, RB, GB) demonstrate how different pairings capture complementary information, with the full RGB representation providing comprehensive encoding of topological features. 
+
+> Figure 3. Visualization of RGB persistence image encoding and channel ablations. Each channel encodes distinct topological fea-tures. The R channel exhibits high intensity in the upper region while the G channel shows high intensity in the middle area. Chan-nel combinations (RG, RB, GB) demonstrate how different pair-ings capture complementary information, with the full RGB rep-resentation providing comprehensive encoding of topological fea-tures.
+
+9.3. Image resolution and Gaussian kernels. 
+
+We evaluated the impact of image resolution and Gaussian kernel size σ on model performance using supervised learn-
+
+> Figure 4. Ablation study on Image size (left) and Gaussian Kernel (right) using Image Encoder Only.
+
+ing on the Neuron7 and JML datasets. Image resolutions ranged from 28 to 336 pixels (in multiples of 14 to accom-modate the DinoV2 encoder), while kernel values σ ranged from 4 to 20. Results are presented in Figure 4. Perfor-mance peaked at resolution 112 for both datasets, achieving 71.53% on Neuron7 and 57.52% on JML-4, then declined at higher resolutions. For Gaussian kernels, optimal perfor-mance occurred at σ = 16 with 70.1% on Neuron7. Based on these results, we use an image resolution of 112 ×112 ×3
+
+and σ = 16 for all subsequent experiments. 
+
+9.4. Embedding, Batch size and Projection Head 
+
+Embedding Size. We ablate the projection embedding di-mension across {32 , 64 , 128 , 256 }, trained jointly on BIL-6, ACT-4, and JML-4 for 50 epochs under the self-supervised scheme. EM-128 achieves the best overall performance, with consistent gains over smaller dimensions, while EM-256 slightly degrades on ACT-4, suggesting that overly large embedding spaces may hurt generalization on smaller datasets. 
+
+> Table 8. Ablation on embedding size during self-supervised train-ing.
+
+Data EM-32 EM-64 EM-128 EM-256 ACT-4 53.47 56.25 56.25 51.39 BIL-6 84.42 85.71 86.20 85.71 JML-4 65.49 65.49 67.26 69.03 Batch Size. We evaluate batch sizes {64 , 128 , 256 } under the same joint training protocol. BS-128 yields the best results across all three datasets, as larger batches provide more within-batch negatives for contrastive learning, while BS-256 shows slight degradation, likely due to reduced gra-dient diversity at our dataset scale. 
+
+> Table 9. Ablation on batch size during self-supervised training.
+
+Data BS-64 BS-128 BS-256 ACT-4 53.47 56.25 54.17 BIL-6 83.12 86.20 83.12 JML-4 64.60 67.26 68.33 Projection Head. We compare an MLP projection head against a single linear layer. The MLP consistently outper-forms the linear layer across all datasets, with the most no-table gap on ACT-4 (56.25% vs. 52.08%), confirming that non-linear projections better capture the complex morpho-logical feature interactions needed for effective contrastive representation learning. 
+
+> Table 10. Ablation on projection head architecture: MLP vs. sin-gle linear layer.
+
+Data MLP One Layer ACT-4 56.25 52.08 BIL-6 86.20 84.42 JML-4 67.26 63.72 
+
+## 10. Cross-Domain Generalizability: Neuron-to-Glia Transfer 
+
+To assess whether GraPHFormer learns representations that generalize across cell classes, we conducted cross-domain transfer experiments between neuronal and glial morpholo-gies. We obtained glia reconstructions from NeuroMor-pho.Org [3] spanning four species: mouse (7,000 samples), rat (2,149), semipalmated sandpiper (1,784), and semipal-mated plover (992). Our evaluation protocol consisted of two transfer scenarios: (1) training on neuronal morpholo-gies and testing on glia for species classification, and (2) training on glia and evaluating across six established neu-ronal benchmarks (BIL-4, JML-4 , ACT-4, N7, M1-Cell, M1-REG). All models were trained for 50 epochs using self-supervised learning and evaluated with frozen k-NN classification following the TreeMoCo protocol.                    
+
+> Table 11. Cross-domain transfer performance between neuronal and glial morphologies. Left column : Model trained on neuron data, tested on glia (species classification). Right columns : Model trained on glia, tested on neuron datasets (cell-type classification). Results demonstrate transfer capability despite morphological dif-ferences between cell classes.
+> Test Dataset Train: Neuron Train: Glia
+> Glia (species) 78.87 86.94 BIL-4 -81.82 JML-4 -68.14 ACT-4 -46.52 N7 -82.78 M1-REG -71.08 M1-Cell -72.84
+
+Table 11 reveals cross-domain transfer despite morpho-logical differences between neurons and glia. When trained exclusively on neuronal data, GraPHFormer achieves 78.87% accuracy on glia species classification—8 percent-age points below the glia-trained model (86.94%). This demonstrates that multimodal topological-structural fea-tures transfer across different cell classes. The reverse transfer—glia-to-neuron—yields competi-tive performance across several neuronal benchmarks. On N7 (82.78%) and BIL-4 (81.82%), the glia-trained model approaches within-domain performance, suggesting that branching topology and radial geometry encode organiza-tional principles that are shared across cell classes. Perfor-mance on JML-4 (68.14%) and cortical datasets (M1-REG: 71.08%, M1-Cell: 72.84%) remains competitive, though the lower ACT-4 result (46.52%) suggests that cortical layer discrimination may benefit more from neuron-specific fea-tures. These findings indicate two properties of GraPH-Former’s learned representations: (1) the multimodal fusion of persistence images and graph structure captures mor-phological signatures that generalize across cell types, and (2) self-supervised contrastive learning discovers features that maintain utility across domain shifts. The ability to transfer between neurons and glia—morphologically dis-tinct yet topologically related—suggests potential for few-shot learning scenarios and cross-species comparative stud-ies where labeled data is limited. 
+
+## 11. Embedding Space Visualization 
+
+To qualitatively assess the learned representations, we vi-sualized the GraPHFormer embedding space using t-SNE dimensionality reduction. Figure 5 displays the concate-nated multimodal embeddings (tree + image encoders) for four representative datasets: ACT-4 (cortical layers), JML-4 (cortical layers and thalamic neurons), Neuron7 (diverse cell types), and Glia (cross-species). The visualizations re-veal clustering patterns that reflect the morphological orga-nization captured by our framework. For the ACT-4 dataset (cortical layer classification), neurons from layers 2/3, 4, 5, and 6 form partially overlap-ping clusters with some intermixing, particularly between layers 5 and 6. This overlap aligns with the challeng-ing nature of layer-based classification (59.1% accuracy in self-supervised setting) and reflects gradual morphological changes across adjacent cortical layers rather than discrete boundaries. The JML-4 dataset exhibits clearer separation, with VPM (ventral posteromedial thalamic) neurons forming a distinct cluster on the left, while cortical neurons (lay-ers 2/3, 5, 6) show moderate overlap in the center and right regions. This separation pattern is consistent with the higher classification accuracy (72.7%) and demonstrates that GraPHFormer distinguishes between thalamic and cor-tical projection patterns, which exhibit more pronounced morphological differences than intra-cortical variations. 
+
+Neuron7 shows well-organized clustering, with seven cell types forming separated, cohesive groups. Bipolar and amacrine cells (left), basket cells (center), and pyrami-dal/spiny neurons (right) occupy distinct regions of the em-bedding space. This organization (83.8% accuracy, ±0.6% variance) indicates that multimodal fusion captures mor-phological signatures that distinguish functionally diverse neuronal classes. The Glia dataset (species classification) presents sub-stantial overlap among mouse, rat, and two bird species (semipalmated sandpiper and plover). Despite this overlap—reflecting conserved glial morphologies across species—GraPHFormer achieves 86.94% accuracy, indicat-ing that the learned representations capture species-specific variations in glial process organization that are not immedi-ately apparent in the 2D projection. These visualizations demonstrate that GraPHFormer learns embedding spaces where morphologically similar cells cluster together, with separation quality correlating with both biological distinctiveness and quantitative clas-sification performance.                                                           
+
+> Table 12. Ablation study of fusion strategies within the TreeMoCo framework for neuron morphological analysis. All variants em-ploy ResNet-18 as the image encoder and TreeLSTM as the tree-structured encoder, jointly trained on the ACT-4, JML-4, and BIL-6 datasets using contrastive learning. Performance is evaluated on held-out test sets via frozen k-NN classification. We report aver-age classification accuracy (in %) ± standard deviation across three independent random seeds for each fusion method.
+> Fusion Strategy ACT-4 BIL-6 JML-4
+> Bi-Attention 54.39 ±3.6 87.04 ±0.7 73.59 ±4.5 Addition 57.54 ±4.2 84.5 ±1.1 72.73 ±1.3 CAMME [19] 52.28 ±1.6 84.57 ±2.1 71.86 ±1.9 Concatenation 57.89 ±1.1 83.33 ±1.8 71.86 ±1.9 Gated 58.25 ±4.26 85.19 ±0.7 72.30 ±1.9 MHCA 58.90 ±1.82 84.57 ±1.07 67.10 ±0.7
+
+## 12. Cross-Modal Retrieval Analysis 
+
+To evaluate the alignment between tree and image represen-tations, we performed bidirectional cross-modal retrieval experiments. For each query from one modality, we retrieve the top-5 nearest neighbors from the other modality using cosine similarity in the learned embedding space. Figure 6 shows retrieval results for ACT, BIL, and JML-4 datasets in both directions. 
+
+Asymmetric similarity scores. Image-to-tree retrieval consistently achieves higher cosine similarities (0.80-0.90 across datasets) compared to tree-to-image retrieval (BIL: 0.12-0.73, JM: 0.00-0.46, ACT: 0.13-0.39). This asym-metry stems from differences in information content: tree graphs preserve detailed geometric information (coordi-nates, radii, exact connectivity), while persistence images compress morphology into topological summaries through filtration and Gaussian smoothing. 
+
+Information bottleneck. When querying with a tree, the detailed geometric specification may not find exact matches in the compressed persistence image space, resulting in lower similarities. Conversely, when querying with a per-sistence image, multiple geometrically distinct trees shar-ing similar topological features can match the query pattern, yielding higher similarities. 
+
+Semantic alignment preserved. Despite lower absolute scores in tree-to-image retrieval, retrieved neighbors gener-ally belong to the correct morphological class, as evidenced by consistent patterns in persistence images and similar tree structures. This indicates successful alignment through con-trastive learning, even with modalities of different informa-tion density. These results demonstrate that both modalities con-tribute complementary information—graphs provide ge-ometric precision while images offer topological invari-ance—supporting the effectiveness of our multimodal fu-sion approach. 
+
+## 13. MoCo-Style Training 
+
+We adopted the TreeMoCo framework [5] to evaluate MoCo-style training of our multimodal approach. We inte-grated the tree encoder and image encoder through various fusion strategies, including multi-headed cross-attention (MHCA), bi-directional cross-attention, addition, concate-nation, gated fusion, and CAMME [19]. Our experimental setup and loss function closely follow TreeMoCo, where the objective is to maximize similarity between positive pairs while minimizing similarity between negative pairs. We employed ResNet-18 as the image encoder and TreeLSTM as the tree encoder. Following TreeMoCo, we jointly trained the models on the BIL-6, ACT-4, and JML-4 datasets in a self-supervised learning scheme. Model per-formance was evaluated using frozen k-NN classification, with k = 20 for BIL-6 and ACT-4, and k = 5 for JML-4, consistent with the TreeLSTM evaluation protocol [5]. All models were trained for 50 epochs using SGD with an initial learning rate of 0.06 and batch size 128. Table 12 presents the fusion strategy ablation results. Performance varies across datasets, with no single strategy dominating universally. On BIL-6, bi-directional attention achieves 87.04% (±0.7), while MHCA performs best on ACT-4 (58.90% ±1.82). Bi-directional attention performs well on JML-4 (73.59% ±4.5), though with notably higher variance. Simple strategies like addition and gated fusion provide competitive results across all datasets, with addi-20 10 0 10 20 30               
+
+> t-SNE 1
+> 15
+> 10
+> 5
+> 0
+> 5
+> 10
+> 15
+> 20
+> t-SNE 2
+> ACT - True Labels (4 classes)
+> concat
+> Class
+> Isocortex_layer23
+> Isocortex_layer4
+> Isocortex_layer5
+> Isocortex_layer6 30 20 10 010 20
+> t-SNE 1
+> 15
+> 10
+> 5
+> 0
+> 5
+> 10
+> 15
+> t-SNE 2
+> JM - True Labels (4 classes)
+> concat
+> Class
+> Isocortex_layer23
+> Isocortex_layer5
+> Isocortex_layer6
+> VPM 60 40 20 020 40
+> t-SNE 1
+> 30
+> 20
+> 10
+> 0
+> 10
+> 20
+> 30
+> t-SNE 2
+> neuron7 - True Labels (7 classes)
+> concat
+> Class
+> amacrine
+> aspiny
+> basket
+> bipolar
+> pyramidal
+> spiny
+> stellate 100 50 050 100
+> t-SNE 1
+> 100
+> 75
+> 50
+> 25
+> 0
+> 25
+> 50
+> 75
+> 100
+> t-SNE 2
+> swc_glia_filtered_1000 - True Labels (4 classes)
+> concat
+> Class
+> mouse
+> rat
+> semipalmated-sandpiper
+> semipalmated-plover
+
+Figure 5. t-SNE visualization of GraPHFormer embedding spaces across four datasets. Top left : ACT-4 (cortical layers 2/3, 4, 5, 6) shows partial overlap reflecting morphological gradients between adjacent layers. Top right : JML-4 displays separation between thalamic VPM neurons (left cluster) and cortical projection neurons (center-right). Bottom left : Neuron7 exhibits distinct clusters for seven morpho-logically diverse cell types (bipolar, amacrine, basket, pyramidal, spiny, stellate), demonstrating discrimination of fundamental neuronal classes. Bottom right : Glia species classification (mouse, rat, semipalmated sandpiper/plover) shows overlapping distributions reflecting conserved morphological features across species. Embeddings are obtained by concatenating tree encoder and image encoder outputs after self-supervised contrastive pretraining. Clustering quality correlates with biological distinctiveness and classification accuracy. 
+
+tion achieving 57.54% on ACT-4 and gated fusion reaching 58.25%. These results indicate that fusion strategy selec-tion depends on specific task characteristics, with attention-based mechanisms generally showing competitive perfor-mance but with dataset-dependent effectiveness. 
+
+## 14. Visual Correspondence Between Modali-ties 
+
+To illustrate the relationship between tree graphs and their persistence image representations, Figure 7 shows represen-tative examples from ACT, JML, and Glia datasets with tree structures overlaid on their corresponding persistence im-ages. Each row displays samples from a different morpho-logical class, with the tree graph (green) superimposed on the multi-channel persistence image encoding. The visualizations reveal how morphological features manifest in both representations. For ACT cortical neu-rons, layer-specific differences in dendritic complexity and branching patterns produce characteristic persistence sig-natures with varying radial extent (red channel intensity) and branch persistence (green channel). JML-4 samples demonstrate contrast between cortical projection neurons with complex dendritic arbors and thalamic VPM neurons with simpler, more compact morphologies. Glia morpholo-gies demonstrate species-specific variations in process or-ganization, reflected in the spatial distribution and intensity patterns across persistence channels. The correspondence between tree complexity and persis-tence image structure confirms that our multi-channel en-coding compresses topological information while preserv-ing class-discriminative features. Within-class consistency (similar patterns across rows) and between-class variation Figure 6. Bidirectional cross-modal retrieval demonstrating alignment between tree graphs and persistence images. Top row : Tree-to-image retrieval for ACT, BIL, and JML-4 datasets showing query tree graphs (left) and top-5 retrieved persistence images with cosine similarity scores. Bottom row : Image-to-tree retrieval showing query persistence images (left) and top-5 retrieved tree graphs. Note the asymmetry in similarity scores: image-to-tree retrieval achieves higher similarities (0.80-0.87) compared to tree-to-image retrieval (0.10-0.46), reflecting differences in information density between the graph and compressed topological representations. 
+
+Figure 7. Representative examples showing tree graphs overlaid on their persistence images across different morphological classes. Left :ACT dataset (4 cortical layers). Center : JML-4 dataset (cortical layers and thalamic VPM neurons). Right : Glia dataset (4 species). Each row represents a distinct class, with 4 samples per class. The green tree structures illustrate how branching topology and spatial extent map onto the RGB persistence image encoding, where red captures unweighted density, green encodes persistence-weighted features, and blue represents radius-weighted information. 
+
+(distinct signatures across rows) validate that both modal-ities capture biologically meaningful morphological differ-ences used by GraPHFormer for classification.
