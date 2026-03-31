@@ -6,37 +6,37 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-30
-- 运行时间：2026-03-30 19:55:28 UTC
+- 最新运行日期：2026-03-31
+- 运行时间：2026-03-31 20:01:24 UTC
 - 运行状态：成功
 - 本次总论文数：5
-- 精读区：1
-- 速读区：4
+- 精读区：3
+- 速读区：2
 
 ### 今日简报（AI）
-今日聚焦神经认知与AI的深度融合，涵盖自动驾驶、听觉解码及神经形态分析等前沿领域。
-重点推荐通过神经认知奖励模型实现以人为本的自动驾驶控制，以及利用因果-反因果网络精准解码听觉注意力。
-建议读者关注生物信号与深度学习的交叉应用，探索提升机器感知与决策人性化的新路径。
-- 详情：[/202603/30/README](/202603/30/README)
+今日聚焦脑机接口与量子计算前沿，深度解析了 Transformer 癫痫预测及量子架构搜索在 EEG 领域的突破性进展。
+重点关注患者自适应模型带来的精准医疗提升，以及量子迁移学习为脑电信号处理提供的全新高效范式。
+建议关注 AI 在复杂共病诊断中的泛化挑战，探索前沿算法如何解决医疗数据中的个体差异难题。
+- 详情：[/202603/31/README](/202603/31/README)
 
 ### 精读区论文标签
-1. [Neuro-Cognitive Reward Modeling for Human-Centered Autonomous Vehicle Control](/202603/30/2603.25968v1-neuro-cognitive-reward-modeling-for-human-centered-autonomous-vehicle-control)  
+1. [Epileptic Seizure Prediction Using Patient-Adaptive Transformer Networks](/202603/31/2603.26821v1-epileptic-seizure-prediction-using-patient-adaptive-transformer-networks)  
+   标签：评分：9.0/10、query:eeg-ai
+   evidence：使用Transformer进行EEG时间表征的自监督预训练
+2. [Q-DIVER: Integrated Quantum Transfer Learning and Differentiable Quantum Architecture Search with EEG Data](/202603/31/2603.28122v1-q-diver-integrated-quantum-transfer-learning-and-differentiable-quantum-architecture-search-with-eeg-data)  
+   标签：评分：9.0/10、query:eeg-ai
+   evidence：大规模预训练EEG编码器 (DIVER-1)
+3. [Copilot-Assisted Second-Thought Framework for Brain-to-Robot Hand Motion Decoding](/202603/31/2603.27492v1-copilot-assisted-second-thought-framework-for-brain-to-robot-hand-motion-decoding)  
    标签：评分：8.0/10、query:eeg-ai
-   evidence：以人为本AI的脑电引导决策
+   evidence：基于 Transformer 的脑电手部运动学解码模型
 
 ### 速读区论文标签
-1. [CA-TCN: A Causal-Anticausal Temporal Convolutional Network for Direct Auditory Attention Decoding](/202603/30/2603.26394v1-ca-tcn-a-causal-anticausal-temporal-convolutional-network-for-direct-auditory-attention-decoding)  
+1. [AI Generalisation Gap In Comorbid Sleep Disorder Staging](/202603/31/2603.23582v2-ai-generalisation-gap-in-comorbid-sleep-disorder-staging)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：使用时间卷积网络从 EEG 信号中直接进行听觉注意力解码
-2. [GraPHFormer: A Multimodal Graph Persistent Homology Transformer for the Analysis of Neuroscience Morphologies](/202603/30/2603.20970v1-graphformer-a-multimodal-graph-persistent-homology-transformer-for-the-analysis-of-neuroscience-morphologies)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：神经科学形态学的多模态对比学习
-3. [A-SelecT: Automatic Timestep Selection for Diffusion Transformer Representation Learning](/202603/30/2603.25758v1-a-select-automatic-timestep-selection-for-diffusion-transformer-representation-learning)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：通过生成式预训练进行判别性表示学习的扩散 Transformer (DiT)
-4. [Foundation Model for Cardiac Time Series via Masked Latent Attention](/202603/30/2603.26475v1-foundation-model-for-cardiac-time-series-via-masked-latent-attention)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：临床时间序列的自监督预训练
+   evidence：基于深度学习的自动化脑电睡眠分期
+2. [Attention Frequency Modulation: Training-Free Spectral Modulation of Diffusion Cross-Attention](/202603/31/2603.28114v1-attention-frequency-modulation-training-free-spectral-modulation-of-diffusion-cross-attention)  
+   标签：评分：7.0/10、query:eeg-ai
+   evidence：潜扩散交叉注意力的频谱调制
 
 
 <div class="dpr-home-promo-card">

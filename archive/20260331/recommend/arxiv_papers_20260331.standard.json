@@ -1,0 +1,202 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-31T20:00:26.729961+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2603.26821v1",
+      "title": "Epileptic Seizure Prediction Using Patient-Adaptive Transformer Networks",
+      "abstract": "Epileptic seizure prediction from electroencephalographic (EEG) recordings remains challenging due to strong inter-patient variability and the complex temporal structure of neural signals. This paper presents a patient-adaptive transformer framework for short-horizon seizure forecasting. The proposed approach employs a two-stage training strategy: self-supervised pretraining is first used to learn general EEG temporal representations through autoregressive sequence modeling, followed by patient-specific fine-tuning for binary prediction of seizure onset within a 30-second horizon. To enable transformer-based sequence learning, multichannel EEG signals are processed using noise-aware preprocessing and discretized into tokenized temporal sequences. Experiments conducted on subjects from the TUH EEG dataset demonstrate that the proposed method achieves validation accuracies above 90% and F1 scores exceeding 0.80 across evaluated patients, supporting the effectiveness of combining self-supervised representation learning with patient-specific adaptation for individualized seizure prediction.",
+      "authors": [
+        "Mohamed Mahdi",
+        "Asma Baghdadi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-03-26T23:48:10+00:00",
+      "link": "https://arxiv.org/pdf/2603.26821v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Self-supervised pretraining for EEG temporal representations using transformers",
+      "llm_evidence_cn": "使用Transformer进行EEG时间表征的自监督预训练",
+      "llm_evidence": "使用Transformer进行EEG时间表征的自监督预训练",
+      "canonical_evidence": "使用Transformer进行EEG时间表征的自监督预训练",
+      "llm_tldr_en": "A patient-adaptive transformer using self-supervised pretraining for EEG-based seizure prediction.",
+      "llm_tldr_cn": "一种采用自监督预训练进行EEG癫痫预测的患者自适应Transformer框架。",
+      "llm_tldr": "一种采用自监督预训练进行EEG癫痫预测的患者自适应Transformer框架。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.28122v1",
+      "title": "Q-DIVER: Integrated Quantum Transfer Learning and Differentiable Quantum Architecture Search with EEG Data",
+      "abstract": "Integrating quantum circuits into deep learning pipelines remains challenging due to heuristic design limitations. We propose Q-DIVER, a hybrid framework combining a large-scale pretrained EEG encoder (DIVER-1) with a differentiable quantum classifier. Unlike fixed-ansatz approaches, we employ Differentiable Quantum Architecture Search to autonomously discover task-optimal circuit topologies during end-to-end fine-tuning. On the PhysioNet Motor Imagery dataset, our quantum classifier achieves predictive performance comparable to classical multi-layer perceptrons (Test F1: 63.49\\%) while using approximately \\textbf{50$\\times$ fewer task-specific head parameters} (2.10M vs. 105.02M). These results validate quantum transfer learning as a parameter-efficient strategy for high-dimensional biological signal processing.",
+      "authors": [
+        "Junghoon Justin Park",
+        "Yeonghyeon Park",
+        "Jiook Cha"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "cs.AI"
+      ],
+      "published": "2026-03-30T07:37:53+00:00",
+      "link": "https://arxiv.org/pdf/2603.28122v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "large-scale pretrained EEG encoder (DIVER-1)",
+      "llm_evidence_cn": "大规模预训练EEG编码器 (DIVER-1)",
+      "llm_evidence": "大规模预训练EEG编码器 (DIVER-1)",
+      "canonical_evidence": "大规模预训练EEG编码器 (DIVER-1)",
+      "llm_tldr_en": "Proposes Q-DIVER, a hybrid framework using a pretrained EEG encoder and quantum architecture search for motor imagery.",
+      "llm_tldr_cn": "提出Q-DIVER框架，结合预训练EEG编码器与量子架构搜索，用于运动想象分类。",
+      "llm_tldr": "提出Q-DIVER框架，结合预训练EEG编码器与量子架构搜索，用于运动想象分类。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.27492v1",
+      "title": "Copilot-Assisted Second-Thought Framework for Brain-to-Robot Hand Motion Decoding",
+      "abstract": "Motor kinematics prediction (MKP) from electroencephalography (EEG) is an important research area for developing movement-related brain-computer interfaces (BCIs). While traditional methods often rely on convolutional neural networks (CNNs) or recurrent neural networks (RNNs), Transformer-based models have shown strong ability in modeling long sequential EEG data. In this study, we propose a CNN-attention hybrid model for decoding hand kinematics from EEG during grasp-and-lift tasks, achieving strong performance in within-subject experiments. We further extend this approach to EEG-EMG multimodal decoding, which yields substantially improved results. Within-subject tests achieve PCC values of 0.9854, 0.9946, and 0.9065 for the X, Y, and Z axes, respectively, computed on the midpoint trajectory between the thumb and index finger, while cross-subject tests result in 0.9643, 0.9795, and 0.5852. The decoded trajectories from both modalities are then used to control a Franka Panda robotic arm in a MuJoCo simulation. To enhance trajectory fidelity, we introduce a copilot framework that filters low-confidence decoded points using a motion-state-aware critic within a finite-state machine. This post-processing step improves the overall within-subject PCC of EEG-only decoding to 0.93 while excluding fewer than 20% of the data points.",
+      "authors": [
+        "Yizhe Li",
+        "Shixiao Wang",
+        "Jian K. Liu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-03-29T03:12:08+00:00",
+      "link": "https://arxiv.org/pdf/2603.27492v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Transformer-based model for decoding hand kinematics from EEG",
+      "llm_evidence_cn": "基于 Transformer 的脑电手部运动学解码模型",
+      "llm_evidence": "基于 Transformer 的脑电手部运动学解码模型",
+      "canonical_evidence": "基于 Transformer 的脑电手部运动学解码模型",
+      "llm_tldr_en": "Uses a CNN-attention hybrid model for high-accuracy EEG-to-motion decoding in BCI applications.",
+      "llm_tldr_cn": "在 BCI 应用中使用 CNN-注意力混合模型实现高精度的脑电到运动解码。",
+      "llm_tldr": "在 BCI 应用中使用 CNN-注意力混合模型实现高精度的脑电到运动解码。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "State of the art large foundation models for EEG decoding and generation",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.23582v2",
+      "title": "AI Generalisation Gap In Comorbid Sleep Disorder Staging",
+      "abstract": "Accurate sleep staging is essential for diagnosing OSA and hypopnea in stroke patients. Although PSG is reliable, it is costly, labor-intensive, and manually scored. While deep learning enables automated EEG-based sleep staging in healthy subjects, our analysis shows poor generalization to clinical populations with disrupted sleep. Using Grad-CAM interpretations, we systematically demonstrate this limitation. We introduce iSLEEPS, a newly clinically annotated ischemic stroke dataset (to be publicly released), and evaluate a SE-ResNet plus bidirectional LSTM model for single-channel EEG sleep staging. As expected, cross-domain performance between healthy and diseased subjects is poor. Attention visualizations, supported by clinical expert feedback, show the model focuses on physiologically uninformative EEG regions in patient data. Statistical and computational analyses further confirm significant sleep architecture differences between healthy and ischemic stroke cohorts, highlighting the need for subject-aware or disease-specific models with clinical validation before deployment. A summary of the paper and the code is available at https://himalayansaswatabose.github.io/iSLEEPS_Explainability.github.io/",
+      "authors": [
+        "Saswata Bose",
+        "Suvadeep Maiti",
+        "Shivam Kumar Sharma",
+        "Mythirayee S",
+        "Tapabrata Chakraborti",
+        "Srijitesh Rajendran",
+        "Raju S. Bapi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-03-24T15:02:35+00:00",
+      "link": "https://arxiv.org/pdf/2603.23582v2",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "automated EEG-based sleep staging using deep learning",
+      "llm_evidence_cn": "基于深度学习的自动化脑电睡眠分期",
+      "llm_evidence": "基于深度学习的自动化脑电睡眠分期",
+      "canonical_evidence": "基于深度学习的自动化脑电睡眠分期",
+      "llm_tldr_en": "Evaluates deep learning models for EEG-based sleep staging and identifies generalization gaps in clinical data.",
+      "llm_tldr_cn": "评估了基于脑电图的睡眠分期深度学习模型，并指出了临床数据中的泛化差距。",
+      "llm_tldr": "评估了基于脑电图的睡眠分期深度学习模型，并指出了临床数据中的泛化差距。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.28114v1",
+      "title": "Attention Frequency Modulation: Training-Free Spectral Modulation of Diffusion Cross-Attention",
+      "abstract": "Cross-attention is the primary interface through which text conditions latent diffusion models, yet its step-wise multi-resolution dynamics remain under-characterized, limiting principled training-free control. We cast diffusion cross-attention as a spatiotemporal signal on the latent grid by summarizing token-softmax weights into token-agnostic concentration maps and tracking their radially binned Fourier power over denoising. Across prompts and seeds, encoder cross-attention exhibits a consistent coarse-to-fine spectral progression, yielding a stable time-frequency fingerprint of token competition. Building on this structure, we introduce Attention Frequency Modulation (AFM), a plug-and-play inference-time intervention that edits token-wise pre-softmax cross-attention logits in the Fourier domain: low- and high-frequency bands are reweighted with a progress-aligned schedule and can be adaptively gated by token-allocation entropy, before the token softmax. AFM provides a continuous handle to bias the spatial scale of token-competition patterns without retraining, prompt editing, or parameter updates. Experiments on Stable Diffusion show that AFM reliably redistributes attention spectra and produces substantial visual edits while largely preserving semantic alignment. Finally, we find that entropy mainly acts as an adaptive gain on the same frequency-based edit rather than an independent control axis.",
+      "authors": [
+        "Seunghun Oh",
+        "Unsang Park"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-03-30T07:24:41+00:00",
+      "link": "https://arxiv.org/pdf/2603.28114v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Spectral modulation of latent diffusion cross-attention",
+      "llm_evidence_cn": "潜扩散交叉注意力的频谱调制",
+      "llm_evidence": "潜扩散交叉注意力的频谱调制",
+      "canonical_evidence": "潜扩散交叉注意力的频谱调制",
+      "llm_tldr_en": "Introduces a training-free method to control latent diffusion models via cross-attention frequency modulation.",
+      "llm_tldr_cn": "引入了一种通过交叉注意力频率调制来控制潜扩散模型的免训练方法。",
+      "llm_tldr": "引入了一种通过交叉注意力频率调制来控制潜扩散模型的免训练方法。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
