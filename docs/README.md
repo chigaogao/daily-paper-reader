@@ -6,37 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-31
-- 运行时间：2026-03-31 20:01:24 UTC
+- 最新运行日期：2026-04-01
+- 运行时间：2026-04-01 19:56:45 UTC
 - 运行状态：成功
 - 本次总论文数：5
-- 精读区：3
-- 速读区：2
+- 精读区：2
+- 速读区：3
 
 ### 今日简报（AI）
-今日聚焦脑机接口与量子计算前沿，深度解析了 Transformer 癫痫预测及量子架构搜索在 EEG 领域的突破性进展。
-重点关注患者自适应模型带来的精准医疗提升，以及量子迁移学习为脑电信号处理提供的全新高效范式。
-建议关注 AI 在复杂共病诊断中的泛化挑战，探索前沿算法如何解决医疗数据中的个体差异难题。
-- 详情：[/202603/31/README](/202603/31/README)
+今日聚焦高分辨率脑动态建模与帕金森病个性化解码，深度剖析 5 篇神经工程与生物医学前
+- 详情：[/202604/01/README](/202604/01/README)
 
 ### 精读区论文标签
-1. [Epileptic Seizure Prediction Using Patient-Adaptive Transformer Networks](/202603/31/2603.26821v1-epileptic-seizure-prediction-using-patient-adaptive-transformer-networks)  
+1. [Modeling Spatiotemporal Neural Frames for High Resolution Brain Dynamic](/202604/01/2603.24176v2-modeling-spatiotemporal-neural-frames-for-high-resolution-brain-dynamic)  
    标签：评分：9.0/10、query:eeg-ai
-   evidence：使用Transformer进行EEG时间表征的自监督预训练
-2. [Q-DIVER: Integrated Quantum Transfer Learning and Differentiable Quantum Architecture Search with EEG Data](/202603/31/2603.28122v1-q-diver-integrated-quantum-transfer-learning-and-differentiable-quantum-architecture-search-with-eeg-data)  
-   标签：评分：9.0/10、query:eeg-ai
-   evidence：大规模预训练EEG编码器 (DIVER-1)
-3. [Copilot-Assisted Second-Thought Framework for Brain-to-Robot Hand Motion Decoding](/202603/31/2603.27492v1-copilot-assisted-second-thought-framework-for-brain-to-robot-hand-motion-decoding)  
+   evidence：基于EEG条件的动态fMRI序列重建框架
+2. [Invasive and Non-Invasive Neural Decoding of Motor Performance in Parkinson's Disease for Personalized Deep Brain Stimulation](/202604/01/2603.27750v1-invasive-and-non-invasive-neural-decoding-of-motor-performance-in-parkinsons-disease-for-personalized-deep-brain-stimulation)  
    标签：评分：8.0/10、query:eeg-ai
-   evidence：基于 Transformer 的脑电手部运动学解码模型
+   evidence：基于EEG信号的运动表现神经解码
 
 ### 速读区论文标签
-1. [AI Generalisation Gap In Comorbid Sleep Disorder Staging](/202603/31/2603.23582v2-ai-generalisation-gap-in-comorbid-sleep-disorder-staging)  
+1. [BiMoE: Brain-Inspired Experts for EEG-Dominant Affective State Recognition](/202604/01/2603.29205v1-bimoe-brain-inspired-experts-for-eeg-dominant-affective-state-recognition)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：基于深度学习的自动化脑电睡眠分期
-2. [Attention Frequency Modulation: Training-Free Spectral Modulation of Diffusion Cross-Attention](/202603/31/2603.28114v1-attention-frequency-modulation-training-free-spectral-modulation-of-diffusion-cross-attention)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：潜扩散交叉注意力的频谱调制
+   evidence：使用类脑专家混合模型进行脑电信号情感状态识别
+2. [Preventing Data Leakage in EEG-Based Survival Prediction: A Two-Stage Embedding and Transformer Framework](/202604/01/2603.25923v1-preventing-data-leakage-in-eeg-based-survival-prediction-a-two-stage-embedding-and-transformer-framework)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：用于脑电表示与结果预测的Transformer框架
+3. [From Foundation ECG Models to NISQ Learners: Distilling ECGFounder into a VQC Student](/202604/01/2603.27269v1-from-foundation-ecg-models-to-nisq-learners-distilling-ecgfounder-into-a-vqc-student)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：生理信号表征学习的基础模型
 
 
 <div class="dpr-home-promo-card">

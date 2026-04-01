@@ -1,0 +1,811 @@
+Title: Invasive and Non-Invasive Neural Decoding of Motor Performance in Parkinson's Disease for Personalized Deep Brain Stimulation
+
+URL Source: https://arxiv.org/pdf/2603.27750v1
+
+Published Time: Tue, 31 Mar 2026 01:34:22 GMT
+
+Number of Pages: 37
+
+Markdown Content:
+# INVASIVE AND NON -I NVASIVE NEURAL DECODING OF MOTOR 
+
+# PERFORMANCE IN PARKINSON ’S DISEASE FOR PERSONALIZED 
+
+# DEEP BRAIN STIMULATION 
+
+A P REPRINT 
+
+Matthias Dold *1,2,3 , Volker A. Coenen 3, 4, 5 , Bastian Sajonz 3, Peter Reinacher 3, Thomas Prokop 3,
+
+Marco Reisert 3, 6 , Sophia Gimple 2, Yasin Temel 7, 8 , Marcus L.F. Janssen 2, Michael Tangermann 1, and 
+
+Joana Pereira *3, 5, 1 1Data-Driven Neurotechnology Lab, Donders Institute for Brain, Cognition and Behaviour, Radboud University, Nijmegen, The Netherlands 
+
+> 2
+
+Department of Clinical Neurophysiology, Maastricht University Medical Center, The Netherlands; Mental Health and Neuroscience Research Institute, Maastricht University, The Netherlands 
+
+> 3
+
+Department of Stereotactic and Functional Neurosurgery, University of Freiburg - Medical Center, Breisacher StraSSe 64, 79106, Freiburg, Germany 
+
+> 4
+
+Medical Faculty of the University of Freiburg, Breisacher Str. 153, 79110 Freiburg im Breisgau, Germany 
+
+> 5
+
+Brain-Links Brain-Tools, Intelligent Machine-Brain Interfacing Technology (IMBIT), University of Freiburg, Georges-Köhler-Allee 201, 79110, Freiburg, Germany 
+
+> 6
+
+Department of Diagnostic and Interventional Radiology, University of Freiburg - Medical Center, Killianstrasse 5a, 79106, Freiburg, Germany 
+
+> 7
+
+Department of Neurosurgery, Maastricht University Medical Center, The Netherlands; Mental Health and Neuroscience Research Institute, Faculty Health, Medicine and Life Sciences, Maastricht University, The Netherlands 
+
+> 8
+
+Istanbul Atlas University, Faculty of Medicine, Istanbul, Turkiye March 31, 2026 
+
+## ABSTRACT 
+
+Decoding motor performance from brain signals offers promising avenues for adaptive deep brain stimulation (aDBS) for Parkinson’s disease (PD). In a two-center cohort of 19 PD patients executing a drawing task, we decoded motor performance from electroencephalography (n=15) and, critically for clinical translation, electrocorticography (n=4). Within each session, patients performed the task under DBS on and DBS off. A total of 35 sessions were recorded. Instead of relying on single frequency bands, we derived patient-specific biomarkers using a filterbank-based machine-learning approach. DBS modulated kinematics significantly in 23 sessions. Significant neural decoding of kinematics was possible in 28 of the 35 sessions (average Pearson’s r = 0 .37 ). Our results further demonstrate modulation of speed-accuracy trade-offs, with increased drawing speed but reduced accuracy under DBS. Joint evaluation of behavioral and neural decoding outcomes revealed six prototypical scenarios, for which we provide guidance for future aDBS strategies. 
+
+Keywords DBS · aDBS · EEG · ECoG · neural markers 
+
+Teaser : Decoding movement from invasive and non-invasive brain signals reveals strategies for adaptive deep brain stimulation. 
+
+> ∗
+
+matthias.dold@donders.ru.nl 
+
+> ∗
+
+joana.pereira@uniklinik-freiburg.de 
+
+> arXiv:2603.27750v1 [cs.HC] 29 Mar 2026
+
+CopyDraw scrutinized A P REPRINT 
+
+## 1 Introduction 
+
+Parkinsons disease (PD) is a neurodegenerative disorder [1] characterized by bradykinesia, accompanied by rigidity, tremor, and/or impaired balance [2], alongside a wide range of non-motor symptoms. Given the heterogeneity of the clinical phenotype and disease progression [3], therapeutic management remains challenging. Currently, treatment is offered by dopamine replacement therapies [4] and/or deep brain stimulation (DBS) [5–7]. For DBS, the subthalamic nucleus (STN) or globus pallidus interna (GPi) [8–10] are considered the most effective subcortical targets. Most patients undergoing DBS have their systems configured to deliver electrical pulses with fixed parameters, which are applied continiously. Since DBS parameters are typically adjusted by clinical experts during infrequent patient visits (every few weeks or months) [11, 12], short-term fluctuations in stimulation needs are not captured. Given the inherent variability of symptoms, it is reasonable to assume that a more personalized, dynamically adjustable DBS mode would provide optimized therapy. Based on this rationale, adaptive DBS (aDBS) systems have been proposed [13, 14], which use patient-specific biomarkers to regulate stimulation in real time, thereby improving symptom control while reducing side effects [15]. Various aDBS systems have been implemented in research settings for PD patients [16]. These systems modulate DBS amplitude, frequency, or pulse width according to a control strategy, typically based on biomarkers derived from local field potentials (LFPs) recorded at the stimulation site [17–19]. Commercial-grade systems for aDBS have recently become available by Medtronic (Percept, Medtronic, Minneapolis, MN, USA) with a (dual-)threshold approach [20] and by Newronika (AlphaDBS, Newronika SpA, Milan, Italy) with a proportional aDBS strategy [17], establishing aDBS as a new treatment option [21]. The above-mentioned approaches use a neurophysiological signal (neural marker) that correlates with the severity of symptoms. The most prominent marker is the beta band power of LFP signals from the STN [22], which was shown to correlate with motor symptom severity [23] at the group level. However, a recent multi-center study [24] demonstrated that at the individual level this correlation is unreliable or might even change direction compared to the group level. This underpins the need for a subject-specific evaluation of aDBS strategies. Clinically, PD symptoms are often assessed with the MDS-UPDRS [25], but even the motor subscale (part III) requires several minutes of expert evaluation and cannot capture rapid symptom fluctuations. Its ordinal scoring and subjectivity further limit precision [26]. To address these issues, recent studies investigate behavioral metrics such as direct hand motor performance, including grip-force [27, 28] and finger tapping [29–31], or reaching tasks [32, 33]. A more complex and ecologically relevant movement, similar to micrographia [34], is studied by the CopyDraw task [35]. Neural markers have been derived for the CopyDraw task from electroencephalography (EEG) signals using a machine learning (ML) decoding approach [36] in a small cohort of PD patients. Using the same task, we have recently reported on patient-specific electrocorticography (ECoG) neural markers in a single patient, which were used for a first proof-of-concept aDBS experiment [37]. These previous studies demonstrated the feasibility of using the CopyDraw task to derive neural markers for aDBS. Here, we extend this work to a larger data set of 19 participants and 35 sessions, to: (1) quantify the success rate of the approach with respect to the hand-motor behavior modulation by DBS, and the neural decoding performance on this larger population, (2) demonstrate the transferability of the approach to epidural ECoG (n=4, 8 sessions total), as systems for chronic use would need to be fully implanted, (3) extend the analysis on hand-motor behavior and neural decoding to a new hand-motor performance measure describing the trade-off between speed and accuracy made by pa-tients, and how this trade-off is modulated by DBS, and (4) derive several scenarios and implications/recommendations for suitable aDBS control strategies based on the joint behavioral and neural decoding outcomes. 2CopyDraw scrutinized A P REPRINT 
+
+## 2 Results 
+
+To investigate the electrophysiological correlates of DBS and its effect on hand-motor performance, we analyzed 35 recording sessions from 19 PD patients. During these sessions, patients performed a kinematic tracking paradigm (the CopyDraw task [35]) while concurrent neural activity was recorded using either EEG (n=15) or ECoG (n=4). We first characterize the behavioral modulation of hand-motor performance induced by DBS. Building on this, we subsequently identify session-specific neural markers within the EEG and ECoG signals that are predictive of these hand-motor outcomes. 
+
+2.1 DBS modulates behavior during the CopyDraw task 
+
+To determine behavioral differences induced by DBS, we evaluated the prediction of the DBS condition (ON vs. OFF) from a set of behavioral features of the CopyDraw task, including speed, acceleration and jitter. The DBS condition was classifiable from these behavioral features in 23 out of 35 sessions (Figure 1 A), manifesting in a significant area under the receiver operating characteristic curve (CopyDraw ROC AUC). The CopyDraw ROC AUC was calculated as mean across a chronological cross-validation. At the group level, the mean (standard deviation) CopyDraw ROC AUC was 0.68 ( ± 0.13 STD). The mean chance level, based on permutation tests, was ROC AUC chance = 0 .61 ( ± 0.03 STD). When only considering sessions with a significant CopyDraw ROC AUC, the mean CopyDraw ROC AUC was 0.76 ( ± 0.09 STD). We analyzed the Shapley additive explanation (SHAP) [38] feature importance values to understand how the hand-motor features were modulated by DBS. The analysis revealed an interesting pattern for sessions with a higher Copy-Draw ROC AUC (Figure 1 B): DBS increased the speed features while acceleration-related features were decreased in magnitude and in the horizontal (x-)direction of the screen. Acceleration in the y-direction was mostly reduced by DBS, but was also increased in a few cases (see S2 2 and S6 c in Figure 1 B). No clear patterns pointing towards rele-vance of jitter features for the behavioral decoding were found. To validate the interpretation of the feature importance values, Figures 1 C-E shows z-scored feature values for selected example sessions. All examples show significant dif-ferences (Mann-Whitney U test, P < 10 −6) between DBS ON and OFF trials. No significant differences in CopyDraw ROC AUC were observed between chronic vs. acute and EEG vs. ECoG sessions (see Figure S4). We introduced the task performance as a metric for quantifying how well a participant performed the instructed task of copying a target template as fast and as accurately as possible. The task performance is therefore defined as speed, expressed as the fraction of the template that was copied within the given time window, divided by accuracy, expressed by the average distance of the drawn trace and the template. An example in Figure 2 A illustrates how the task performance is derived by matching points from the target template (blue dots) with points from the drawn trace (orange dots). Gray dots indicate the part of the template that could not be matched by dynamic time warping (DTW) [39], as the drawn trace was too short. This effect was typically observed, when patients ran into the time-out criterion during the drawing. By matching the drawn trace with the template, we observed the following: For 17 out of 35 sessions, DBS significantly modulated task performance (Mann-Whitney U test, P < 0.05 , two-sided), see Figure 2 D. We found 7 sessions with a significant increase in task performance and 10 sessions with a significant decrease due to DBS. Looking at the means across all sessions with task performance increases and decreases separately for the two DBS conditions (Figure 2 B) we gained insights into the different effect directions. Sessions with a decreased task performance were faster on average, to the detriment of accuracy, while sessions with an increased task performance were both on average, faster and more accurate. To understand how the task performance related to the CopyDraw score, we compared the effect size of the task performance (DBS ON vs. OFF, x-axis) with the CopyDraw ROC AUC (y-axis) in Figure 2 C. Sessions with significant task performance modulation through DBS are indicated by markers with a bold outline. For the CopyDraw ROC AUC, the group average chance-level was at 0.61, as indicated with a gray background. Two separate OLS models were fitted, one for sessions that showed a positive effect of DBS (r = 0 .55 , P < 0.015 , R2 = 0 .30 ), and one for a negative effect (r = 0 .50 , P < 0.049 , R2 = 0 .25 ). Next, we analyzed how informative the task performance was with respect to the DBS condition. An LDA with the task performance as single feature input was used to predict the DBS condition (task performance ROC AUC), and was compared to the CopyDraw ROC AUC. The scatter plot in Figure 2 C shows that there are five sessions (S4 3, S5 3,S7 c, S12 4, S16 4) for which the DBS condition is easier to decode from the task performance than from the CopyDraw features of speed, acceleration, and jitter. 3CopyDraw scrutinized A P REPRINT 
+
+2.2 Decoding from neural signals 2.2.1 CopyDraw scores can be predicted from neural signals 
+
+After quantifying the behavioral effects of DBS, the next step is to understand whether the hand-motor behavior can be predicted from neural data. If we can predict the behavior from neural signatures, we can consider them as relevant neural markers. We report a significant prediction of the CopyDraw score from neural data in 28 (out of 35) sessions (Figure 3 A). At the group level, the mean neural correlation is r = 0 .37 ( ± 0.23 STD ) with mean chance-level at r chance = 0 .20 ( ± 0.06 STD ). Note that a significant decoding of motor behavior was achieved in six sessions (S5 3, S6 1, S7 c, S11 c, S12 2, S12 4) for which the hand-motor behavior was not significantly modulated by DBS (CopyDraw ROC AUC not significant). The opposite scenario (significant CopyDraw ROC AUC and no significant neural decoding) is found for one session only (S8 c). To investigate which features were relevant for the neural decoding, we analyzed our pipelines, which used a filter bank version of the source-power comodulation (SPoC) [40] spatial filtering. For this purpose, we counted the number of spatial features per frequency band as selected by the minimum redundancy maximum relevance (MRMR) [41] algorithm. These counts reveal a roughly even distribution across the frequency bands (Figure 3 B), with N = 58 
+
+for ϑ (4–8) Hz, N = 54 for α (8–12) Hz, N = 53 for β (12–30) Hz, N = 60 for γ (30–45) Hz, and N = 55 for 
+
+γhigh (55–90) Hz. Individual sessions show high variability, with, e.g., strong focus on beta for S7 3 and S6 2, while S14 4 or S1 2 are not selecting any feature from the beta frequency range. Selected stereotypical features for sessions with successful neural decoding of the CopyDraw score are provided in Figure 4. All features for the pipelines of the selected sessions can be found in the appendix (Figures S6, S7, S8, S9). 
+
+2.2.2 DBS condition is predictable from neural signals 
+
+A biomarker, i.e., in our case, the output of our neural regression pipelines, needs to be modulated by DBS to be suit-able for informing an aDBS system. We used the features found by the regression pipelines—frequency and spatially filtered band powers—as input to a classifier predicting the DBS condition. If DBS is modulating the features, we should be able to decode the DBS condition from them. The results are presented in Figure 3 C. Significant decoding was achieved for 26 (out of 35) sessions, with group-level mean (regression features) ROC AUC = 0.71 ( ± 0.15 STD )
+
+and mean permutation chance-level at 0.65 ( ± 0.06 STD ). Five sessions (S1 3, S11 c, S12 4, S13 c, S14 4) achieved a significant neural correlation with the CopyDraw score, but the extracted features could not be used to classify the DBS condition. 
+
+2.2.3 Decoding task performance from neural signals 
+
+When using the neural regression pipeline to predict the task performance instead of the CopyDraw score, the mean neural correlation is significantly (Welch’s t-test, P < 0.01 ) lower, see Figure 3 D. However, both decoding perfor-mances show a clear linear relation (r = 0 .509 , P < 0.001 , R2 = 0 .35 , see Figure 3 E). In all but seven sessions (S2 c,S3 c, S4 2, S7 2, S8 c, S11 c, S16 4), neural data correlate more with the CopyDraw score than with the task performance. 
+
+2.3 Prototypical outcome types 
+
+First, the CopyDraw score was derived from a decoding pipeline using behavioral data with the DBS condition as labels. Next, the CopyDraw score was used as a label in a decoding pipeline using neural signals to identify neural markers. To understand the dependency between the decoding performances of these two decoding pipelines, we compared the neural decoding correlation (Pearson’s r for predicting the CopyDraw score, x-axis) and CopyDraw ROC AUC (y-axis) in Figure 5 A. Each session is represented as a scatter marker, and colored according to the ICC of the CopyDraw score to highlight a potential bimodal distribution. On the group level, and as expected, CopyDraw ROC AUC and neural decoding correlation show a linear relation with r = 0 .63 , P < 0.001 , R2 = 0 .40 , see Figure 5 A. When considering the CopyDraw score and predictions from the neural decoding model, six different outcomes types were found. Sessions selected as stereotypical examples (text labels in Figure 5 A) are provided in Figure 5 B-G with their true (y-axis) and predicted (x-axis) CopyDraw scores per trial: S 10 c (Figure 5 B), a session with a strong separation in both the CopyDraw score and the neural prediction with bimodal marginal distributions; S1c (Figure 5 C), a session with good CopyDraw score separation and neural prediction, but without bimodal marginals; S52 (Figure 5 D), a session with CopyDraw scores showing separation in DBS ON and OFF but with failed neural prediction; S12 2
+
+(Figure 5 E), a session with a significant neural prediction of the CopyDraw score, but without significant DBS effect on the CopyDraw score; S3c (Figure 5 F), a session with strong DBS effect on the CopyDraw score (bimodal marginals), 4CopyDraw scrutinized A P REPRINT 
+
+Figure 1: Decoding DBS condition from behavior - CopyDraw ROC AUC. A: Behavioral decoding performance per subject and session (x-axis, session in subscript, numeric values correspond to days after surgery, subscript “c” stands for chronic sessions), sorted according to the CopyDraw ROC AUC (mean across LDA predictions in chronological cross-validation). Markers are colored by significance according to N=1000 bootstrap permutations. 95 % chance percentiles are shown with hollow markers. Session codes surrounded by a frame indicate sessions with invasive ECoG data. B: Signed SHAP values (feature importance) for LDA models trained on all data of the according sessions, sorted according to A. Positive SHAP values indicate larger features under DBS ON. C - E : Visualization of selected features and sessions to help with the interpretation of SHAP values. Features are presented as they are used within the LDA (clipped to three standard deviations per DBS condition and z-scored). All differences are significant (Mann-Whitney U test, P < 0.01 , two-sided). Abbreviations: ROC AUC, area under the receiver operating characteristic curve; SHAP Shapley, additive explanation; LDA, linear discriminant analysis; SEM, standard error of mean; STD, standard deviation. 
+
+but without significant neural prediction; S15 2 (Figure 5 G), a session with neither DBS effect, nor significant neural prediction. 5CopyDraw scrutinized A P REPRINT 
+
+Figure 2: Task performance evaluation. A: Example template and trace visualizing components relevant for the task performance calculation. The target template (what should be drawn) is shown in blue for the parts that where matched by dynamic time warping (DTW) to the participants actual drawing (orange), and unmatched parts are shown in gray. Small gray lines visualize how trace samples are matched to template samples. B: Mean fraction of template covered (x-axis, the ratio of blue points to total template points in A), and mean average distance between trace and template. The means are calculated for each DBS condition and across all sessions which increased or decreased in task performance due to DBS separately. Gray lines indicate the ± one standard error of mean (SEM) range. C: Scatter plot comparing the DBS effect size on task performance (x-axis) with the CopyDraw ROC AUC (y-axis). Sessions with a significant effect size (Mann-Whitney U test, two sided) are shown with a black outline and text labels. Ordinary least-squares (OLS) fit lines are added for all sessions with positive effect size (increase under DBS) and all sessions with negative effect size (decrease under DBS) separately. Both sides show a significant correlation with r = 0 .55 (P = 0 .014 ) with R 2 = 0 .30 for positive effect size and r = −0.5 (P = 0 .049 ) with R 2 = 0 .25 for negative effect size. D: Session counts separated in positive (increase) and negative (decrease) effect size, separately for acute and chronic sessions. Sessions with no significant effect are shown with reduced opacity. E: Scatter plot comparing behavioral decoding of the DBS condition from CopyDraw score (x-axis) and from the same pipeline receiving only the task performance as a feature (y-axis). The dashed line shows x=y. Text labels are provided for session in which the task performance feature is more informative than the CopyDraw behavioral features for decoding of the DBS condition. Abbreviations: ROC AUC, area under the receiver operating characteristic curve; 
+
+6CopyDraw scrutinized A P REPRINT 
+
+Figure 3: Neural decoding. A: Neural decoding of the CopyDraw score (diamond markers, y-axis) per subject and session (x-axis, session in subscript, numeric values correspond to days after surgery, subscript “c” stands for chronic sessions). Markers are colored by significance according to N=1000 bootstrap permutations. 95 % chance percentiles are shown with hollow markers. Sessions are sorted according to CopyDraw ROC AUC (see Figure 1). Tick labels with a frame correspond to sessions with invasive ECoG data. B: Counts of selected relevant features per frequency band. Features were selected using the Minimum Redundancy Maximum Relevance (MRMR) feature selection algorithm. Sessions are sorted according to A. C: Performance of using the features (frequency and spatial filters) found in the regression pipeline (used in A) for the classification of the DBS condition (regression feature ROC AUC). Sessions are sorted as in A, with markers colored by significance according to N=1000 bootstrap permutations. 95 % chance percentiles are shown with hollow markers. D: Box plots for Pearson’s correlation using the regression pipeline to predict the CopyDraw score vs. using the regression pipeline to predict the task performance. Both pipelines are evaluated using the chrono-CV with the according target variable (CopyDraw score or task performance). Decoding the CopyDraw score achieves significantly higher average correlation ( P < 0.01 ). E: Scatter plot for neural correlation with the CopyDraw score (x-axis) and with the task performance (y-axis). The dashed line shows x=y. Text labels are provided for session in which the task performance can be decoded with higher correlation than the CopyDraw score. An ordinary least squares (OLS) fit shows significant correlation with r = 0 .59 
+
+(P < 0.001 ), R 2 = 0 .35 , see OLS fit with 5 % confidence intervals (CI). Abbreviations: FBSPoC, filterbank source power comodulation; ROC AUC, area under the receiver operating characteristic curve; CV, cross-validation. 
+
+7CopyDraw scrutinized A P REPRINT 
+
+Figure 4: Selected features showcasing features used for predicting the CopyDraw score. The top row show spatial patterns (in arbitrary units - AU) for three sessions with EEG and the location of the four contact ECoG strip for S17 3 over the Freesurfer average (fsaverage) brain, with the precentral gyrus highlighted. For the acute session (S12 2), the interpolation of the heatmap is limited to not show surface are which had no EEG electrodes applied due to the wound surgical wound area. The second row shows broad band power spectral density (PSD) for the spatially filtered signal (filters associated with the patterns shown above). For the ECoG feature, data corresponds to channel 1. Data is show as mean across trials for DBS ON and DBS OFF, with colored background for the standard error of mean (SME) and dashed outlines for +/- one standard deviation (STD). Gray backgrounds highlight the frequency range, the spatial filters were fitted from. Cluster permutation tests were applied with significance at P < 0.01 shown by black horizontal lines. The third row showcases scaled band power of the spatially and frequency filtered signals as bars for each trial, colored according to DBS ON and OFF. These values are the input to the final linear regression layer in the decoding pipelines. 
+
+8CopyDraw scrutinized A P REPRINT 
+
+Figure 5: Correlation between behavioral and neural decoding and examples of different outcome types. A - Correlation scatter between CopyDraw ROC AUC (y-axis) and mean correlation from neural decoding (x-axis). Ordinary least-squares (OLS) fit shows a significant correlation with r = 0 .63 (P < 0.001 ) with R 2 = 0 .4 and is drawn as dark gray line with 5 % confidence intervals (CI, gray area). Scatter points are colored according to the intracluster correlation coefficient (ICC). Sessions marked with a text label are presented as stereotypical examples in B-G. B-G visualizes the neural decoding correlations as used in A. Each scatter plot shows the actual CopyDraw scores (y-axis) vs. the CopyDraw score predictions from neural data (x-axis). Each point refers to a single trial and is colored according to the DBS condition—red for DBS ON and blue for DBS OFF. Like in A, the fitted OLS regression models are drawn as black lines. Marginal distributions are plotted as normalized histograms to the corresponding axes, colored according to the DBS condition. B shows all trials of S 10 c—strong DBS effect on the CopyDraw score, which is also captured in the neural predictions. Both marginals show a clear bimodal distribution indicating a high ICC. C shows all trials of S 1c—an example of a continuous modulation of the CopyDraw score by DBS with good neural decoding performance. D shows all trials of S 52—an example for a DBS modulation of the CopyDraw score, which still contains a lot of variability beyond the DBS modulation. No significant neural decoding was possible for this session. E shows all trials of S 12 2—an example for a session in which no significant modulation of the CopyDraw score was possible, but in which the CopyDraw score could be predicted from neural signals. 
+
+F shows all trials of S 3c—an example of a session in which a strong DBS effect on the CopyDraw score was observed, but which could not be decoded from neural signals. G shows all trials of S 15 2—no effect of DBS on the CopyDraw score was observed and no neural decoding was possible. 
+
+9CopyDraw scrutinized A P REPRINT Low AUC high IC no po sible ICC AUC 
+
+> −2
+> −20022
+> CopyDraw score Predicted CopyDraw score
+
+AUC r
+
+> CopyDraw score Predicted CopyDraw score
+> −2
+> −20022
+
+AUC r
+
+Idealiz d dat scenarios 
+
+> CopyDraw score Predicted CopyDraw score
+> −2
+> −20022
+
+AUC r
+
+> CopyDraw score Predicted CopyDraw score
+> −2
+> −20022
+
+AUC r
+
+> CopyDraw score Predicted CopyDraw score
+> −2
+> −20022
+
+AUC r
+
+Figure 6: Possible outcomes of behavioral decoding (CopyDraw ROC AUC , and intracluster correlation coefficient ICC ) and neural decoding (Pearson’s r) of the CopyDraw score and derived consequences for the usability of markers for aDBS. 1 - 6 show hypothetical data for idealized scenarios, align to the real data scenarios provided in Figure 5 B-G. 1. High AUC, ICC and r make up sessions suitable for proportional control. 2. High AUC, low ICC and high r suit a threshold type control. 3.High AUC with low ICC and r suggest either a too subtile DBS effect, or suboptimal neural decoding, potentially due to data quality issues. 4. Low AUC and ICC with high r, suggest a missing DBS effect, either cause by suboptimal stimulation settings or ceiling effect on hand motor symptoms (nothing to improve/modulate). 5. High AUC and ICC with low r, i.e., failed neural decoding with strong behavioral effect, suggest potential data issues or a suboptimal decoding pipeline. 6. Low AUC, ICC and r, suggest to check DBS parameter or a potential ceiling effect of symptoms first, as a behavioral effect is usually necessary for neural decoding to be successful (see correlation in Figure 5). The derivation of the consequences is detailed in the discussion section 3.1.4. A combination of low AUC and high ICC is not possible, as a high ICC implies a clear linear separability. 
+
+10 CopyDraw scrutinized A P REPRINT 
+
+## 3 Discussion 
+
+The present study systematically evaluated the CopyDraw drawing task as a behavioral and neural decoding tool. First, we demonstrated DBS-induced behavioral modulation, as captured by two different scores. These are the CopyDraw score [35] and a new task performance metric, which offers a complementary perspective capturing patient-specific trade-offs between drawing speed and accuracy. Our findings on the task performance reveal that DBS did not gen-erally "improve" motor performance in the CopyDraw task, pointing to complex interactions between DBS, motor execution, and higher-order aspects of motor strategies typical of ecological settings. Second, neural decoding of be-havioral scores is possible using both EEG across acute and chronic recordings sessions, and we show transferability of the approach to epidural ECoG recordings, which is particularly important from a translational standpoint for future fully-implantable devices. Finally, the joint analysis of behavioral and neural decoding correlation revealed a struc-tured landscape of outcome types. For each of these outcomes, we provide actionable guidance for the implementation of aDBS control strategies. 
+
+3.1 Main findings 3.1.1 Decoding Deep Brain Stimulation condition from behavioral signals 
+
+Observing a significant DBS effect on the CopyDraw score in 23 out of 35 sessions (66 %, Figure 1 A), a canonical question is if this response rate is to be expected. With studies usually reporting on the group-level efficacy of DBS [32, 42, 43], it is difficult to find individual or session-specific response rates, especially for the acute phase. Partially this can be explained by the experimental design, which typically collects behavioral or clinical measurements only once under different DBS and/or medication conditions [43]. Significance would then need to be assessed using an a-priori defined threshold, e.g., 30 % improvement in MDS-UPDRS III [44], between the different conditions. To not have to impose such thresholds ex-post, we compare the success rate to more longitudinal studies. Recent literature on the twelve month follow-up reports response rates which are broadly in agreement with what we observe in our mixed cohort of acute and chronic measurements. Examples are significant changes in MDS-UPDRS severity levels with ≈80 % response rate for MDS-UPDRS parts III and IV [44], 74 % response rate for MDS-UPDRS II score improvement [45]. Our analysis of the SHAP feature importances (Figure 1 B) reveals that, in general, sessions with a strong DBS effect on the CopyDraw score show higher velocity and lower acceleration values during DBS ON. This suggests a smoother movement execution, which is consistent with observations of increased smoothness in a spiral drawing task linked to improvements in rigidity and bradykinesia [46]. Some sessions (most notably S2 2 and S6 c) show a deviation from this pattern, with a higher acceleration in the y-direction (a y) under DBS ON. A possible reason for the different impact of DBS on acceleration in the x- and y-directions could be explained by the characteristics of the pseudo-letter templates of CopyDraw. The templates require changes in the y-direction (11 turning points) more frequently than in the x-direction (8 turning points). 
+
+3.1.2 Task performance modulation under Deep brain Stimulation 
+
+Considering modulation of the task performance, we observed that DBS more often leads to a significant decrease 
+
+in task performance (10 sessions with decrease vs. 7 sessions with increase). This holds for both acute and chronic sessions, see inset in Figure 2 A. As the CopyDraw task requires making a trade-off between accuracy and speed, it not only captures hand-motor execution alone, but also higher-level motor planning and aspects of a patient’s mental strategy. A possible explanation for the decreased task performance under DBS ON could be a more carefree strategy which is less focused on precision. This would be in line with changes in impulsivity and risk-taking reported as side effects of DBS [47–49]. When looking separately at the accuracy and the amount of the template drawn (Figure 2 B and appendix Figure S5), we observe that sessions with a declining DBS effect mostly (8 out of 10 sessions) show a reduced accuracy under DBS ON. The opposite is observed for sessions with an improving DBS effect (5 out of 7 sessions show a higher accuracy under DBS ON). This finding links to a broader discussion of how DBS treatment achieves clinical efficacy. E.g., a recent study has characterized PD as a dysfunction of the somato-cognitive action network (SCAN) [50]. The authors show that effective DBS modulates SCAN, which is involved in motor planning and behavioral motivation. Such a modulation of motivation would explain cases like S6 c, S7 c, and S9 c, for which only the accuracy decreased under DBS, while the participant copied the whole trace on average in both DBS conditions. That motor-state dependent DBS is modulating brain-wide network activity [33], mainly through basal-ganglia and supplementary motor area, is further evidence for the complex nature of the DBS effect. Considering purely the motor capacity, a decline of the task performance could have one of two causes: (1) DBS is having a negative impact on capabilities, e.g., driving the patient into a hyperkinetic state, resulting in difficulties to perform the task. Or (2), DBS is modulating capabilities, e.g., allowing the participant to draw precisely at all. This new capability might then result 11 CopyDraw scrutinized A P REPRINT 
+
+in the participant focusing more on accuracy at the cost of speed. For participants who became more accurate under DBS ON at the cost of reduced speed (see appendix Figure S5, subjects S1 c, S12 4, S17 2, S17 3), we cannot unravel if this is a change in mental strategy or whether the new found ability to be accurate in the first place (due to DBS) leads to a stronger focus on accuracy. Furthermore, the same decision (being more accurate but slower) can lead to an increase in task performance (S17 2, S17 3) or a decrease (S1 c, S12 4), depending on where the participant is located in the task performance domain (appendix Figure S5 A) and how large the change is. As participants did not receive feedback about their task performance, optimization of the accuracy vs. speed trade-off is up to an uninformed personal choice. Such a freedom of choice is not idiosyncratic to our task, but typical for ecological tasks, as, e.g., within the finger tapping assessment of the MDS-UPDRS, and remains a challenge for assigning a performance metric. Comparing the task performance with the CopyDraw ROC AUC with observer a correlation in magnitude (Figure 2 A). The correlation coefficients have different signs for increasing (r = 0 .55 ) and decreasing (r = −0.50 ) task performance effects. This highlights that a high CopyDraw score cannot be interpreted directly as an accurate or fast replication of the template. The CopyDraw score was designed to capture a linear combination of hand-motor features, which is most clearly separated by DBS [35]. Together with the sign convention that, on average, CopyDraw scores are greater than zero under DBS ON, it is plausible that the correlation exists only in magnitude. Additionally, we would expect the DBS effect to be more clearly visible in the CopyDraw score—due to the classification model which is trained on this effect—compared to the task performance. This is confirmed for all but five sessions, see Figure 2 C. 
+
+3.1.3 Decoding CopyDraw scores from neural signals 
+
+Regarding the identification of neural markers for the CopyDraw score, we observed a good success rate of the pro-posed pipeline, with significant decoding in 28 out of 35 sessions (80 %, Figure 3 A). The average neural decoding correlation of 0.37, is on the same level as the results reported on the sub-set of sessions by Castaño-Candamil et al. [36], which required a pipeline with optimized narrow band filters with fine-tuning for each session. For 23 of these 28 sessions, the features of the pipelines could also be used for a significant decoding of the DBS condition (Figure 3 C), hence the corresponding markers, i.e., the predicted CopyDraw scores, are controllable by DBS. To better understand how these pipelines manage to decode the CopyDraw scores, Figure 4 illustrates four examples of features used in these pipelines. All four lead to a successful neural decoding, but for partially different underlying reasons. Session S1 c (Figure 4, first column) shows a left centro-parietal pattern, with a significantly increased spectral power in the alpha band, just below the selected frequency range (13–30 Hz), for DBS ON. This is an example in which a threshold-based aDBS system [13], which turns on stimulation when observing power values above the threshold, would be stuck in the DBS ON state. Assuming a therapeutic benefit under DBS ON, this would align with findings of reversed correlation between band power and symptom severity [24]. Thus, when interpreting the power values correctly for this individual patient, realizing an aDBS control with this feature seems feasible. Session S10 c (Figure 4, second column) shows a right-occipital spatial pattern. This component significantly attenu-ates in beta- and gamma band power under DBS ON. It is an example of the pipeline selecting a feature which shows strong discriminability under DBS, but which could be of muscular origin based on its edge-bound pattern. Session S10 c also shows a significant improvement of the task performance under DBS ON, indicating that DBS does improve hand-motor function. Given this improvement, closing the loop based on electromyography (EMG) [51, 52] could be a viable option for this session. Looking at the epoch-wise power values (last row) for S10 c, we observe a wash-out effect in the OFF trials following a DBS ON block (starting from the second DBS ON block). These dynamics of a few minutes, mean = 431 s (± 39 STD ), are in agreement with previously reported observations of an STN beta power rebound [53] and a reappearance of symptoms [54] after cessation of DBS. Session S12 2 (Figure 4, third column) is an example of a successful neural decoding, without a significant DBS effect on the CopyDraw score. The neural decoding was possible despite the limited cortical coverage (see white area of the topological plot), and even though the spectra do not modulate with DBS. This is an example of a non-controllable feature, which is therefore not suitable as a marker for aDBS. Session S17 3 (Figure 4, last column) is finally an example of a commonly expected beta band attenuation, here visible in the ECoG signals. The feature is both, informative and controllable, hence suitable for aDBS control. 
+
+3.1.4 Prototypical outcome types and their suitability for aDBS 
+
+Our approach for marker identification concatenates two decoding pipelines. As the first one provides the labels for the second one, it is interesting to analyze the linear dependency structure between the decoding performances of these two pipelines. The correlation (r = 0 .63 ) between behavioral decoding (CopyDraw ROC AUC) and neural decoding correlation is visualized in Figure 5 A. It confirms that a good neural decoding—as expressed by a high 12 CopyDraw scrutinized A P REPRINT 
+
+neural decoding correlation—is more easily achieved if the CopyDraw ROC AUC is high. Therefore, the behavioral decoding alone already allows preselecting sessions/participants for which a neural decoding will more likely succeed. We use an intra-cluster correlation coefficient (ICC) to discriminate correlations caused by more linearly distributed values, from correlations caused by bimodal distributions. Looking jointly at the CopyDraw scores and their neural predictions, we can distinguish six possible prototypical outcomes. Example sessions for each type are shown in Figure 5 B - G. The six types are discussed in the following with a schematic summary provided in Figure 6. Type 1: Behavior is dominantly modulated by DBS, and neural decoding is possible (high CopyDraw ROC AUC, high neural correlation, high ICC). Differences beyond the DBS effect are small, as seen by the large ICC. Since our experimental protocol used only a single DBS configuration (DBS ON vs. OFF), we cannot assess the impact of dif-ferent DBS parameters, for instance, with reduced amplitudes. We hypothesize that the behavior would be modulated monotonically with intermediate DBS amplitudes, as previous studies have demonstrated amplitude dependent modu-lation in MDS-UPDRS-III scores [55], behavioral tasks [56] and electrophysiology [57–59]. Based on this hypothesis, we consider such sessions suitable for investigating aDBS with a proportional modulation of the DBS amplitude [17], which would exploit the potential intermediate values. If the ICC is high, then DBS ON and OFF each result in a clear cluster, such that a single linear model may not be adequate to model the CopyDraw score. In this case, however, the (known) DBS label might already be predictive for the CopyDraw score. Type 2: Behavior is modulated non-dominantly by DBS and neural decoding is possible (high CopyDraw ROC AUC, high neural correlation, low ICC). Beyond the DBS induced difference in behavior, there are significant non-DBS related fluctuations in the CopyDraw score which are captured by the neural decoding pipeline, i.e., a neural marker was found. Such sessions would be suitable for a threshold type aDBS [20], since the limited ICC suggests that the non-DBS related fluctuations are already large compared to the DBS effect. Reduced DBS amplitudes would likely reduce the behavioral effect further. Type 3: Behavior is modulated non-dominantly with DBS and neural decoding is not possible (high CopyDraw ROC AUC, low neural correlation, low ICC). In this case, DBS has an effect on behavior, which is not captured by the neural decoding pipeline. The low neural decoding could be caused by data quality issues, insufficient samples, or a decoding pipeline which is not suitable to capture the behavioral modulation. As ICC is also low, it is also possible that the DBS modulation is too subtle to be detectable with the given recording modalities. Type 4: Only the neural decoding is significant. The participants hand-motor performance is not impacted by DBS, either because there are no deficits even under DBS OFF (ceiling effect, potentially due to micro-lesioning effect), or DBS with the particular configuration is not effective for addressing hand-motor deficits. In both cases, the neural marker is not suitable for aDBS with a focus on hand-motor symptoms. Type 5: Behavior is dominantly modulated by DBS and neural decoding is not possible (high CopyDraw ROC AUC, low neural correlation, high ICC). In this case, the decoding pipeline should be investigated, as inefficiencies in the data quality or decoding pipeline could lead to a failed neural decoding. Improvements of the recording quality, or additional samples could help to improve the neural decoding. We would expect a neural decoding of at least the DBS condition to be possible, as the behavior separates clearly (high ICC). Type 6: Behavior is not modulated by DBS and no neural decoding is possible. In this case, the DBS configuration should be reconsidered. If general changes in symptom severity can be evoked by DBS, e.g., comparing MDS-UPDRS under DBS ON vs. OFF, then hand-motor capabilities might be within a ceiling effect with no significant improvement possible. If there is no observable change in general symptoms, then DBS might be insufficient, or other factors, such as the micro-lesioning effect, make an investigation with the proposed approach infeasible for such a session. Given the three metrics used to delineate the types above, we note that cases with low CopyDraw ROC AUC and high ICC are not possible, hence there are six types and not eight. It would be of interest to see if the presented types also reflect the populations in other studies. However, we are not aware of a study reporting behavioral modulation and neural correlates in such a way yet. 
+
+3.2 Limitations and future work 
+
+The following limitations of the present study warrant consideration and lead to implications for future work. First, a key confounder in the acute sessions is the micro-lesioning effect (MLE [60]), which lasts up to around 30 days post surgery [61, 62] and appears with high prevalence (e.g., 89 %) [62]. The MLE could potentially explain why no significant behavioral DBS effect was detected for a subset of our acute sessions. Symptom improvement comparable to clinical DBS can be caused by the MLE alone [62]. Therefore, hand-motor deficits might have been alleviated by 13 CopyDraw scrutinized A P REPRINT 
+
+the MLE, leaving little room for an additional DBS-induced improvement (ceiling effect). A recent study by Lee et al. [29], disentangled the MLE and DBS effect on a finger tapping task by demonstrating that three weeks post surgery, DBS improves amplitude while an increased frequency is attributed to MLE. This shows that differences in motor behavior can still be induced by DBS despite the MLE, which could explain our observed successful hand-motor decoding, even for acute sessions. Second, all decoding pipelines were performed in a session-specific manner, and a prospective validation in which a marker identified in one session is used to drive or predict outcomes in a subsequent session was not performed. Addressing this topic will require a dedicated longitudinal study designs, both to assess the cross-session stability of the biomarkers and to validate their predictive utility for aDBS. Third, each session compared only a single fixed DBS ON parameters set against DBS OFF state. This binary contrast corresponds to an "extreme" case scenario, and future studies should assess how behavioral or neural markers respond to, e.g., intermediate stimulation amplitudes. Fourth, participants performed sessions under their standard medication regimen, and the timing of the dopaminer-gic medication was not systematically controlled. Given that levodopa independently modulates both motor perfor-mance [63] and neural signals [64], potentially acting on the same networks as DBS [65], this constitutes a potential confounder. Future studies should consider fixed medication schedules or explicit medication-off conditions to disen-tangle DBS and dopaminergic effects on the identified markers. Fifth, investigating the CopyDraw score, or the task performance, in relation to (long term) MDS-UPDRS III outcomes would allow comparing our outcomes to a broader range of studies. Despite being the most commonly used clinical outcome assessment [66], it should be noted, however, that due to various shortcomings, the usefulness of the MDS-UPDRS, in its current form, is a topic of debate [67–69]. Lastly, with prospective future work, we see a potential benefit in using the CopyDraw score or the task performance as proxies for the severity of symptoms, which can be used as optimization targets for automated programming of DBS parameters. Currently, automated DBS programming, promising a more efficient and comprehensive screening of parameters [70], is primarily focused on (beta) band power features [71] from electrophysiological signals. The advantage of considering band power features is the ability to read them out quickly. The disadvantage, on the other hand, is the indirect nature of the band power with respect to the severity of the symptoms, for which a correlation exists, but which might be different on group vs. individual level [24]. This is also reflected in the observation that even for aDBS, seven to eight programming sessions were necessary to find satisfactory aDBS settings [20]. The CopyDraw task could be an alternative with a slower read out, which however is closer to actual hand-motor symptoms. Regarding success rates, we note that the prevalence of finding a CopyDraw effect is broadly comparable to the prevalence of finding power spectral peaks reported in a recent large cohort (ADAPT-PD) [72]. Finally, the behavioral features of the CopyDraw task could allow at home optimization of the DBS parameters as it requires only common and inexpensive hardware (a notebook and a stylus), and would be feasible even without sensing enabled devices. 14 CopyDraw scrutinized A P REPRINT 
+
+## 4 Conclusion 
+
+The presented data demonstrated that the CopyDraw task yields a robust success rate for identifying patientspecific EEG and epidural ECoG neural markers that correlate with handmotor performance. Across six distinct outcome types, we formulate concrete recommendations for deploying these markers in the aDBS setting. The current results provide a quantitative framework and rationale for the design of future trials evaluating such markerbased aDBS strategies. 15 CopyDraw scrutinized A P REPRINT 
+
+## 5 Methods 
+
+5.1 Patient population 
+
+In total, 19 patients were included in two centers (17 at University of Freiburg Medical Center, Germany (UFMC) and 2 at Maastricht University Medical Center (MUMC), The Netherlands). See Table 1 for a demographics overview. Ethical approval was obtained by the local ethics boards (DRKS00028703 and NCT03079960, and NL84882.068.23). Participants provided their written consent prior to any study procedures after receiving appropriate information. 
+
+5.2 Recording and Stimulation settings 
+
+Multiple blocks of the CopyDraw task [35] were performed with DBS (ON) and without DBS (OFF). Participants used a stylus and a tablet to copy a target trace displayed on a screen (Figure 7 A). The participants were instructed to copy “as quickly and as accurately as possible”, within a fixed time window of 6-10.5 s (adjusted to the participants’ capabilities). Each block consisted of 12 trials, separated by self-paced breaks. Details on the total number of trials conducted and the trial lengths can be found in the appendix Figure S1. 
+
+Cortical recordings – Electrophysiological signals were recorded from the cortex, using non-invasive high-density EEG and/or a four-channel transient epidural ECoG strip (Ad-Tech Medical Instrument Corporation, Oak Creek, USA) over the left hemisphere. EcoG strip electrodes were positioned during the surgical procedure of DBS electrode positioning. The angle of approach was defined naturally by the position of the burr hole, which was planned in such a way, that it allowed for a safe trajectory to the STN, typically from the medial frontal gyrus. Placement was performed on the dominant hemisphere (left side) only (thus unilateral). Using the stereotactic frame and with help of the hand knob sign [73] the epidural path of the strip electrode was triangulated. The burr hole was epidurally extended like a trench for 1–2 cm in the direction of the primary motor cortex (M1). The dura was dissected away from the bone and the strip electrode inserted and advanced towards M1. The electrode positions are visualized in Figure S10. At UFMC, EEG was recorded using BrainAmp DC amplifiers (Brain Products GmbH, Gilching, Germany), while ECoG was recorded via the Neuro Omega ™. At MUMC, EEG was recorded using the Neuro Omega ™. Details about the recording modalities are provided in the appendix .2. 
+
+Stimulation settings – DBS was applied contralaterally (except for participant S8, see appendix S1) to the hemisphere associated with the dominant hand, which was used to execute the CopyDraw task. At the beginning of each session with externalized leads, clinicians set the bipolar DBS parameter configuration, taking into consideration side effects and therapeutic windows. This titration procedure defined the amplitude (mA), the stimulation channels, and the return channels. By default, symmetric stimulation pulses with an initial negative peak were applied at 130 Hz with a 60 μspulse width. Settings were kept constant within each block, with DBS ON and OFF states alternating consecutively. Therapeutic parameters were used for the chronic sessions. The full DBS parameters are provided in appendix .1. 
+
+5.3 Data analysis pipeline for behavioral decoding 5.3.1 Computing CopyDraw scores 
+
+The hand motor behavior of patients during the CopyDraw task was translated into continuous scalar labels, here referred to as CopyDraw scores (one score per trace/trial). To derive these scores, first, a feature vector v ∈ R9
+
+was extracted (Figure 7 B) for each trial, i.e., for each CopyDraw trace. The feature vectors served as input to a linear discriminant analysis (LDA) classifier using Ledoit-Wolf [74] regularization, which was trained to classify the DBS condition (ON vs. OFF). Per trial, the corresponding LDA decision function value determined the continuous 
+
+CopyDraw score . A CopyDraw score ≥ 0 was associated with DBS ON and a CopyDraw score < 0 was associated with DBS OFF. Please note, that the CopyDraw score describes a DBS-induced modulation , which can be either an 
+
+improvement or a deterioration of hand-motor capabilities. Shapley additive explanation (SHAP) values [38] were computed to attribute the importance of single behavioral features. The pipeline is a modification of the one proposed by Castaño-Candamil et al. [36], changing processing steps which would otherwise result in a leakage of data into the cross-validation scheme, which is introduced in section 5.5. Further details of the processing pipeline can be found in appendix .3 and in Figure S2. 
+
+5.3.2 Computing task performance 
+
+Because of the aforementioned DBS ON vs. OFF classification task, the CopyDraw score quantifies whether a drawn trace looks more like it was drawn under DBS ON or OFF. It does not necessarily reflect the overall accuracy of the copied trace with respect to the target template, or the speed of copying. For this purpose, we introduced another metric, the task performance . Using dynamic time warping (DTW) [39], samples of the drawn trace were matched 16 CopyDraw scrutinized A P REPRINT              
+
+> Table 1: Participant demographics -UPDRS on and UPDRS off refer to the MDS-UPDRS part III under medication on and off condition. All values are as of the regular inpatient visit closest, but prior to the experiment session. For participants with externalized leads (S1-S7, S12, S14-S19) all values correspond to pre-surgery tests. Three UPDRS scores were not available from the medical records and are markers as NA. Symptom side is the body hemisphere, at which the initial motor symptoms were observed. Abbreviations: f, female; m, male; l, left; r, right; LEDD , levodopa equivalent daily dose; UPDRS , Unified Parkinson’s Disease Rating Scale;
+
+Subject Age [years] LEDD Sex Disease Symptom UPDRS UPDRS Handedness duration [years] side on off S1 55 1240 m 5 l 25 NA lS2 54 885 f 15 r NA 18 rS3 56 1190 m 11 r 20 41 rS4 44 1775 m 4 r 15 23 rS5 69 2040 m 18 r 15 42 rS6 63 698 m 15 l 35 69 rS7 55 1240 m 7 l 13 34 rS8 63 830 m 15 l 17 22 rS9 61 210 m 1 r 13 27 rS10 51 1095 f 16 bilateral 15 26 rS11 60 493 m 8 l 20 14 rS12 64 1775 f 15 r 31 68 rS13 71 1084 m 13 l 38 53 rS14 64 1325 f 9 l 22 58 rS15 52 1669 f 16 l 28 44 rS16 58 1197 f 8 r 24 15 rS17 68 809 f 12 l 36 NA rS18 64 1525 f 5 r 14 54 rS19 61 1800 m 5 r 15 37 rto the template [35], with the mean of the euclidean distances ( ∥δ∥trace = 1
+
+> ntrace
+
+∑ntrace  
+
+> i
+
+δi→ji ) between each trace sample i ∈ { 1, 2, ..., n trace } and the matching template points j ∈ { 1, 2, ..., n c} quantifying the accuracy. Lower values indicate a higher accuracy. To quantify the extent of the template the participant was able to trace, the last matched point on the template ( nc) relative to the total number of template points ( ntotal ) was considered, defining the task performance as task performance = nc/n total 
+
+∥δ∥trace 
+
+. (1) This fraction reflects the trade-off between speed and accuracy in a non-linear relation, which would not be captured by a linear model such as LDA alone. Similarly to the LDA fit leading to the CopyDraw score, we trained an LDA using the task performance as a single feature for the classification of DBS ON and OFF. The area under the receiver operating characteristic curve (ROC AUC) of both classifiers was used to compare the information content about the DBS state in the CopyDraw features with the one in the task performance. 
+
+5.4 Data analysis pipeline for neural decoding 5.4.1 Predicting behavioral scores from neural signals 
+
+For both types of behavioral labels, provided by the task performance or by the CopyDraw scores, the same neural decoding pipelines were used. A supervised regression pipeline was used to predict the scores from neural signals obtained from EEG or ECoG (Fig-ure 7 C). For the EEG data, our pipeline was motivated by Castaño-Candamil et al. [36], but instead of using a single band source-power comodulation (SPoC) [40], we applied a filter bank SPoC (FBSPoC) [75] followed by a linear regression with quadratic regularization (ridge regression, α = 1 ). This change was applied to simplify the number of hyperparameters and to allow multiband feature combinations. For each of the frequency bands {θ=(4–8) Hz, α=(8– 12) Hz, β=(12–30) Hz, γ=(30–45) Hz, γhigh =(55–90) Hz }, eight SPoC filters were extracted. We limited the frequency ranges to up to 90 Hz to stay clear of the second harmonic of the line noise (50 Hz) as well as the DBS artifact at 130 Hz. Out of all 40 filters (5 freq. bands times 8 SPoC filters), eight were selected using a minimum redundancy maximum relevance (MRMR) [41] feature selection. A detailed overview of the differences in the decoding pipeline between Castaño-Candamil et al.[36] and ours is provided in Figure S3 in the appendix. For the ECoG data, band power features were extracted for each of the four ECoG channels using the same frequency bands as those used for EEG. MRMR selection was applied to reduce the input feature dimension to eight features used as input for a final 17 CopyDraw scrutinized A P REPRINT 
+
+linear regression (ridge regression, α = 1 ). The main purpose of this selection is to keep the EEG and ECoG pipelines as similar as possible. The output of this decoding step consists of a neural marker characterized by frequency and spatial filters. 
+
+5.4.2 Analyzing the controllability of decoded neural markers 
+
+A neural marker is only suitable for aDBS if it can be controlled by DBS. To evaluate the impact of DBS on an individual neural marker, we analyzed how well its features can predict the DBS condition (ON/OFF). For this purpose, we kept the frequency and spatial filters determined by the regression pipelines mentioned above fixed, but trained and evaluated an LDA classifier instead of the ridge regression in the final step. We considered features which can be used to predict the DBS condition as controllable by DBS. To visualize individual features, we explored patterns [76] of the spatial filters, the power spectral densities (PSD) of the spatially filtered signals, as well as the mean band power of the spatially and band filtered signal per trial. The PSDs are calculated using the multitaper [77] approach implemented in mne [78] (version 1.11.0) using default parameters. 
+
+5.5 Pipeline evaluation metrics and crossvalidation 
+
+Both the behavioral and the neural pipelines were evaluated using a chronological cross-validation (chrono-CV) scheme, which paired chronologically adjacent blocks of different DBS conditions. As a consequence, each test fold contained exactly one DBS ON block and one OFF block, while all other data were used for training. The chrono-CV approach is a trade-off between respecting the impact of slow non-stationarities and being data efficient with regards to the available data for training. For more details, see appendix .3.1. To evaluate the classification of the DBS condition based on behavioral features (behavioral pipeline, see section 5.3), the ROC AUC was computed for each test fold. The decoding performance is reported as the mean ROC AUC across all chrono-CV folds, for brevity referred to as CopyDraw ROC AUC .The neural decoding performances are measured by Pearson’s correlation between the predicted scores and the actual CopyDraw scores (or the task performance) for all trials i ∈ { 1, 2, ... } in the test fold. We report the mean correlation across chrono-CV as neural correlation . The neural classification of the DBS condition uses the same chrono-CV and is again reported using the ROC AUC metric. 
+
+5.6 Statistical analyses and data availability 
+
+Chance levels were estimated using the 95 % percentile of a permutation distribution [79] with n=1000 shuffles of the training labels. Significance was assessed against a Type-I error sensitivity of α = 0 .05 . Welch’s t-tests were used for their robustness in small samples [80, 81] whenever we had no indication of a violation of the normality assumption. Normality was tested using Shapiro-Wilk tests. Non-parameteric Mann-Whitney U-tests were used for distributions that violated the normality assumption. Linear regressions were fitted using the ordinary-least squares approach (OLS) and regression performance is reported as Pearson’s correlation (r), P values of the correlation, and explained variance (R 2). As the CopyDraw scores are labels from two distinct DBS conditions, the intracluster correlation coefficient (ICC), ICC := σ2 
+
+> b
+
+/(σ2 
+
+> b
+
++ σ2
+
+> w
+
+), was considered to quantify the bimodal nature of the CopyDraw score distributions. Here σb and σw are the between- and within-cluster standard deviations, respectively. For every multiple comparisons problem, cluster-based permutation tests were applied [82]. 
+
+5.7 Data availability 
+
+The analysis was performed using custom Python scripts utilizing algorithms from scipy [83], statsmodels [84] and mne [78]. The analysis code and the full dataset are publicly available via the Radboud Data Repository [85] at https://doi.org/10.34973/dxt6-qn46. 18 CopyDraw scrutinized A P REPRINT 
+
+Figure 7: The CopyDraw behavioral task and related analysis pipelines. A Participants use a stylus to control a drawing cursor on a screen. In each trial, the participant copies the target trace (blue) as accurately and quickly as possible. The inter-trial interval is self-paced. Twelve trials form a block. DBS stimulation is alternated between ON and OFF between blocks. B Behavioral pipeline: Behavioral features such as speed, acceleration, and jitter were extracted from the screen pixel coordinates (x, y) of the drawn trace. These features were used to train an LDA to classify DBS ON vs. OFF states. The decision function value of the classifier was defined as a continuous CopyDraw score (one score per trial/trace). C Neural pipeline: On a supervised regression task, the CopyDraw scores were predicted from ECoG/EEG features. The output of such a regression model, i.e., the predicted scores, can be used as a potential control variable for an aDBS system. Abbreviations: DBS, deep brain stimulation; ECoG, electrocorticogram; EEG, electroencephalogram; ML, Machine Learning; 
+
+19 CopyDraw scrutinized A P REPRINT 
+
+## References 
+
+[1] Bloem BR, Okun MS, Klein C. Parkinson’s disease. The Lancet. 2021 Jun;397(10291):2284-303. Available from: https://doi.org/10.1016/S0140-6736(21)00218-X .[2] Postuma RB, Berg D, Stern M, Poewe W, Olanow CW, Oertel W, et al. MDS clinical diagnostic criteria for Parkinson’s disease. Mov Disord. 2015 Oct;30(12):1591-601. [3] Horsager J, Borghammer P. Brain-first vs. body-first Parkinson’s disease: An update on recent evidence. Parkinsonism & Related Disorders. 2024;122:106101. Available from: https://www.sciencedirect.com/ science/article/pii/S1353802024001135 .[4] Fox SH, Katzenschlager R, Lim SY, Barton B, de Bie RMA, Seppi K, et al. International Parkinson and move-ment disorder society evidence-based medicine review: Update on treatments for the motor symptoms of Parkin-son’s disease. Movement Disorders. 2018;33(8):1248-66. Available from: https://movementdisorders. onlinelibrary.wiley.com/doi/abs/10.1002/mds.27372 .[5] Deuschl G, Schade-Brittinger C, Krack P, Volkmann J, Schäfer H, Bötzel K, et al. A Randomized Trial of Deep-Brain Stimulation for Parkinson’s Disease. New England Journal of Medicine. 2006;355(9):896-908. [6] Hartmann CJ, Fliegen S, Groiss SJ, Wojtecki L, Schnitzler A. An update on best practice of deep brain stimulation in Parkinson’s disease. Ther Adv Neurol Disord. 2019 Mar;12:1756286419838096. [7] Foote A, de Waal E, Caiado F, Samman A, Ukolov A. A comprehensive review of deep brain stimulation for Parkinson’s disease: The history, current state of the art and future possibilities. Medicine in Novel Technol-ogy and Devices. 2025;26:100362. Available from: https://www.sciencedirect.com/science/article/ pii/S259009352500013X .[8] Lachenmayer ML, Mürset M, Antih N, Debove I, Muellner J, Bompart M, et al. Subthalamic and pallidal deep brain stimulation for Parkinson’s disease—meta-analysis of outcomes. npj Parkinson’s Disease. 2021 Sep;7(1):77. Available from: https://doi.org/10.1038/s41531-021-00223-5 .[9] Au KLK, Wong JK, Tsuboi T, Eisinger RS, Moore K, Lemos Melo Lobo Jofili Lopes J, et al. Globus Pallidus Internus (GPi) Deep Brain Stimulation for Parkinson’s Disease: Expert Review and Commentary. Neurol Ther. 2020 Nov;10(1):7-30. [10] Odekerken VJ, van Laar T, Staal MJ, Mosch A, Hoffmann CF, Nijssen PC, et al. Subthalamic nucleus versus globus pallidus bilateral deep brain stimulation for advanced Parkinson’s disease (NSTAPS study): a randomised controlled trial. The Lancet Neurology. 2013 Jan;12(1):37-44. Available from: https://doi.org/10.1016/ S1474-4422(12)70264-8 .[11] Volkmann J, Moro E, Pahwa R. Basic algorithms for the programming of deep brain stimulation in Parkinson’s disease. Movement Disorders. 2006;21(S14):S284-9. Available from: http://dx.doi.org/10.1002/mds. 20961 .[12] Roediger J, Dembek TA, Achtzehn J, Busch JL, Krämer AP, Faust K, et al. Automated deep brain stimulation programming based on electrode location: a randomised, crossover trial using a data-driven algorithm. The Lancet Digital Health. 2023 Feb;5(2):e59-70. Available from: https://doi.org/10.1016/S2589-7500(22) 00214-X .[13] Little S, Pogosyan A, Neal S, Zavala B, Zrinzo L, Hariz M, et al. Adaptive deep brain stimulation in advanced Parkinson disease. Annals of Neurology. 2013;74(3):449-57. Available from: http://dx.doi.org/10.1002/ ana.23951 .[14] Neumann WJ, Gilron R, Little S, Tinkhauser G. Adaptive Deep Brain Stimulation: From Experimental Ev-idence Toward Practical Implementation. Movement Disorders. 2023;38(6):937-48. Available from: https: //movementdisorders.onlinelibrary.wiley.com/doi/abs/10.1002/mds.29415 .[15] Guidetti M, Bocci T, De Pedro Del Álamo M, Deuschl G, Fasano A, Martinez-Fernandez R, et al. Will adaptive deep brain stimulation for Parkinson’s disease become a real option soon? A Delphi consensus study. npj Parkin-son’s Disease. 2025 May;11(1):110. Available from: https://doi.org/10.1038/s41531-025-00974-5 .[16] de Neeling MGJ, Keulen BJ, Stam MJ, van Wijk BCM, Beudel M. Adaptive deep brain stimulation in Parkinson’s disease. The Lancet. 2026 2. Available from: https://doi.org/10.1016/S0140-6736(25)02274-3 .[17] Arlotti M, Colombo M, Bonfanti A, Mandat T, Lanotte MM, Pirola E, et al. A New Implantable Closed-Loop Clinical Neural Interface: First Application in Parkinson’s Disease. Front Neurosci. 2021 Dec;15:763235. Avail-able from: https://doi.org/10.3389/fnins.2021.763235 .20 CopyDraw scrutinized A P REPRINT 
+
+[18] Velisar A, Syrkin-Nikolau J, Blumenfeld Z, Trager MH, Afzal MF, Prabhakar V, et al. Dual threshold neural closed loop deep brain stimulation in Parkinson disease patients. Brain Stimulation. 2019;12(4):868-76. Avail-able from: https://www.sciencedirect.com/science/article/pii/S1935861X19300737 .[19] Piña-Fuentes D, van Dijk JMC, van Zijl JC, Moes HR, van Laar T, Oterdoom DLM, et al. Acute effects of adaptive Deep Brain Stimulation in Parkinsons disease. Brain Stimulation. 2020;13(6):1507-16. Available from: 
+
+https://www.sciencedirect.com/science/article/pii/S1935861X2030214X .[20] Busch JL, Kaplan J, Behnke JK, Witzig VS, Drescher L, Habets JGV, et al. Chronic adaptive deep brain stim-ulation for Parkinson’s disease: clinical outcomes and programming strategies. npj Parkinson’s Disease. 2025 Aug;11(1):264. Available from: https://doi.org/10.1038/s41531-025-01124-7 .[21] Bronte-Stewart HM, Beudel M, Ostrem JL, Little S, Almeida L, Ramirez-Zamora A, et al. Long-Term Personal-ized Adaptive Deep Brain Stimulation in Parkinson Disease: A Nonrandomized Clinical Trial. JAMA Neurology. 2025 11;82(11):1171-80. Available from: https://doi.org/10.1001/jamaneurol.2025.2781 .[22] van Wijk BCM, de Bie RMA, Beudel M. A systematic review of local field potential physiomarkers in Parkin-son’s disease: from clinical correlations to adaptive deep brain stimulation algorithms. Journal of Neurology. 2023 Feb;270(2):1162-77. Available from: https://doi.org/10.1007/s00415-022-11388-1 .[23] Kühn AA, Kempf F, Brücke C, Gaynor Doyle L, Martinez-Torres I, Pogosyan A, et al. High-Frequency Stim-ulation of the Subthalamic Nucleus Suppresses Oscillatory β Activity in Patients with Parkinson’s Disease in Parallel with Improvement in Motor Performance. The Journal of Neuroscience. 2008;28(24):6165-73. [24] Gerster M, Waterstraat G, Binns TS, Darcy N, Wiest C, Köhler RM, et al. Beyond beta rhythms: Aperiodic broadband power reflects Parkinson’s disease severity–a multicenter study. bioRxiv. 2025. Available from: 
+
+https://www.biorxiv.org/content/early/2025/04/15/2025.03.11.642600 .[25] Goetz CG, Tilley BC, Shaftman SR, Stebbins GT, Fahn S, Martinez-Martin P, et al. Movement Disorder Society-sponsored revision of the Unified Parkinson’s Disease Rating Scale (MDS-UPDRS): Scale presenta-tion and clinimetric testing results. Movement disorders: official journal of the Movement Disorder Society. 2008;23(15):2129-70. [26] Hendricks RM, Khasawneh MT. An Investigation into the Use and Meaning of Parkinson’s Disease Clinical Scale Scores. Parkinsons Dis. 2021 May;2021:1765220. [27] Herz DM, Bange M, Gonzalez-Escamilla G, Auer M, Muthuraman M, Glaser M, et al. Dynamic modulation of subthalamic nucleus activity facilitates adaptive behavior. PLOS Biology. 2023 06;21(6):1-32. Available from: 
+
+https://doi.org/10.1371/journal.pbio.3002140 .[28] Peterson V, Merk T, Bush A, Nikulin V, Kühn AA, Neumann WJ, et al. Movement decoding using spatio-spectral features of cortical and subcortical local field potentials. Experimental Neurology. 2023;359:114261. Available from: https://www.sciencedirect.com/science/article/pii/S0014488622002862 .[29] Lee GY, Kwon HY, Park K, Jo S, Lee J, Lee S, et al. Medication versus globus pallidus internus deep brain stimulation in Parkinson’s disease with deep learning video analysis of finger tapping. Scientific Reports. 2025 May;15(1):17557. Available from: https://doi.org/10.1038/s41598-025-02098-5 .[30] Gulberti A, Schneider TR, Galindo-Leon EE, Heise M, Pino A, Westphal M, et al. Premotor cortical beta synchronization and the network neuromodulation of externally paced finger tapping in Parkinson’s disease. Neurobiol Dis. 2024 May;197:106529. [31] Muehlberg C, Fricke C, Wegscheider M, Wawrzyniak M, Tzvi E, Winkler D, et al. Motor learning is inde-pendent of effects of subthalamic deep brain stimulation on motor execution. Brain Communications. 2023 03;5(2):fcad070. Available from: https://doi.org/10.1093/braincomms/fcad070 .[32] He S, Baig F, Merla A, Torrecillos F, Perera A, Wiest C, et al. Beta-triggered adaptive deep brain stimulation during reaching movement in Parkinsons disease. Brain. 2023 07;146(12):5015-30. Available from: https: //doi.org/10.1093/brain/awad233 .[33] Cavallo A, Köhler RM, Busch JL, Habets JGV, Merk T, Zvarova P, et al. Differential modulation of movement speed with state-dependent deep brain stimulation in Parkinsons disease. Science Advances. 2025;11(37):eadx6849. Available from: https://www.science.org/doi/abs/10.1126/sciadv.adx6849 .[34] Asci F, Saurio G, Pinola G, Falletti M, Zampogna A, Patera M, et al. Micrographia in Parkinson’s Disease: Auto-matic Recognition through Artificial Intelligence. Movement Disorders Clinical Practice. 2025;12(12):2187-96. Available from: https://movementdisorders.onlinelibrary.wiley.com/doi/full/10.1002/ mdc3.70208 .21 CopyDraw scrutinized A P REPRINT 
+
+[35] Castano-Candamil S, Piroth T, Reinacher P, Sajonz B, Coenen VA, Tangermann M. An Easy-to-Use and Fast As-sessment of Patient-Specific DBS-Induced Changes in Hand Motor Control in Parkinson’s Disease. IEEE Trans Neural Syst Rehabil Eng. 2019 Sep;27(10):2155-63. Available from: https://doi.org/10.1109/tnsre. 2019.2941453 .[36] Castaño-Candamil S, Piroth T, Reinacher P, Sajonz B, Coenen VA, Tangermann M. Identifying controllable cor-tical neural markers with machine learning for adaptive deep brain stimulation in Parkinsons disease. NeuroIm-age: Clinical. 2020;28:102376. Available from: https://www.sciencedirect.com/science/article/ pii/S2213158220302138 .[37] Dold M, Pereira J, Sajonz B, Coenen VA, Thielen J, Janssen MLF, et al. Dareplane: a modular open-source software platform for BCI research with application in closed-loop deep brain stimulation. J Neural Eng. 2025 Mar;22(2). [38] Lundberg SM, Lee SI. A Unified Approach to Interpreting Model Predictions. In: Guyon I, Luxburg UV, Bengio S, Wallach H, Fergus R, Vishwanathan S, et al., editors. Advances in Neural Information Processing Systems. vol. 30. Curran Associates, Inc.; 2017. Available from: https://proceedings.neurips.cc/paper_files/ paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf .[39] Giorgino T. Computing and Visualizing Dynamic Time Warping Alignments in R: The dtw Package. Journal of Statistical Software. 2009;31(7):124. Available from: https://www.jstatsoft.org/index.php/jss/ article/view/v031i07 .[40] Dähne S, Meinecke FC, Haufe S, Höhne J, Tangermann M, Müller KR, et al. SPoC: a novel framework for relat-ing the amplitude of neuronal oscillations to behaviorally relevant parameters. NeuroImage. 2014 Feb;86:111-22. [41] Peng H, Long F, Ding C. Feature selection based on mutual information criteria of max-dependency, max-relevance, and min-redundancy. IEEE Transactions on Pattern Analysis and Machine Intelligence. 2005;27(8):1226-38. [42] Starr PA, Shivacharan RS, Goldberg E, Tröster AI, House PA, Giroux ML, et al. Five-Year Outcomes from Deep Brain Stimulation of the Subthalamic Nucleus for Parkinson Disease. JAMA Neurology. 2025 11;82(11):1181-90. Available from: https://doi.org/10.1001/jamaneurol.2025.3373 .[43] Giannini G, D’Ascanio I, Baldelli L, Cani I, Conti A, Leogrande G, et al. Local field potentials and motor performances modulation in response to stimulation and levodopa: a study on Parkinson’s disease patients on chronic deep brain stimulation. Parkinsonism & Related Disorders. 2025;137:107942. Available from: https: //www.sciencedirect.com/science/article/pii/S1353802025006832 .[44] Castillo-Torres SA, Cruz I, Rossi M, Wilken M, Cerquetti D, Merello M. Analysis of DBS Outcome by MDS-UPDRS Severity Levels: Comparison with Changes on MDS-UPDRS III. Movement Disorders Clinical Practice. 2025 Dec;12(12):2324-9. [45] Morgante F, Artusi CA, Ricciardi L, Sarchioto M, Montanaro E, Edwards MJ, et al. Identifying Poor Respon-ders to STN DBS in Parkinson Disease: The Role of Rapid Disease Progression in the First Year in Optimal Responders to Levodopa. European Journal of Neurology. 2025 Sep;32(9):e70342. [46] Radmard S, Ortega RA, Ford B, Vanegas-Arroyave N, McKhann GM, Sheth SA, et al. Using computerized spiral analysis to evaluate deep brain stimulation outcomes in Parkinson disease. Clinical Neurology and Neu-rosurgery. 2021;208:106878. Available from: https://www.sciencedirect.com/science/article/pii/ S0303846721004078 .[47] Herz DM, Frank MJ, Tan H, Groppa S. Subthalamic control of impulsive actions: insights from deep brain stimulation in Parkinsons disease. Brain. 2024 06;147(11):3651-64. Available from: https://doi.org/10. 1093/brain/awae184 .[48] Scherrer S, Smith AH, Gowatsky J, Palmese CA, Jimenez-Shahed J, Kopell BH, et al. Impulsivity and Compulsivity After Subthalamic Deep Brain Stimulation for Parkinsons Disease. Frontiers in Behavioral Neuroscience. 2020;Volume 14 - 2020. Available from: https://www.frontiersin.org/journals/ behavioral-neuroscience/articles/10.3389/fnbeh.2020.00047 .[49] Paliwal S, Mosley PE, Breakspear M, Coyne T, Silburn P, Aponte E, et al. Subjective estimates of uncertainty during gambling and impulsivity after subthalamic deep brain stimulation for Parkinson’s disease. Scientific Reports. 2019 Oct;9(1):14795. Available from: https://doi.org/10.1038/s41598-019-51164-2 .[50] Ren J, Zhang W, Dahmani L, Gordon EM, Li S, Zhou Y, et al. Parkinson’s disease as a somato-cognitive action network disorder. Nature. 2026 Feb. Available from: https://doi.org/10.1038/s41586-025-10059-1 .[51] Fleming JE, Senneff S, Lowery MM. Multivariable closed-loop control of deep brain stimulation for Parkinson’s disease. J Neural Eng. 2023 Oct;20(5). 22 CopyDraw scrutinized A P REPRINT 
+
+[52] Wang S, Zhu G, Shi L, Zhang C, Wu B, Yang A, et al. Closed-Loop Adaptive Deep Brain Stimulation in Parkinson’s Disease: Procedures to Achieve It and Future Perspectives. J Parkinsons Dis. 2023;13(4):453-71. [53] Bronte-Stewart H, Barberini C, Koop MM, Hill BC, Henderson JM, Wingeier B. The STN beta-band profile in Parkinson’s disease is stationary and shows prolonged attenuation after deep brain stimulation. Experimen-tal Neurology. 2009;215(1):20-8. Available from: https://www.sciencedirect.com/science/article/ pii/S0014488608003592 .[54] Temperli P, Ghika J, Villemure JG, Burkhard PR, Bogousslavsky J, Vingerhoets FJG. How do parkinsonian signs return after discontinuation of subthalamic DBS? Neurology. 2003;60(1):78-81. [55] Conovaloff A, Krishnamurthi N, Mahant P, Samanta J, Abbas JJ. Effects of deep brain stimulation amplitude on motor performance in Parkinsons disease. Journal of Parkinsonism and Restless Legs Syndrome. 2012;2:73-83. [56] Munoz MJ, Goelz LC, Pal GD, Karl JA, Metman LV, Sani S, et al. Increased Subthalamic Nucleus Deep Brain Stimulation Amplitude Impairs Inhibitory Control of Eye Movements in Parkinson’s Disease. Neuromodulation. 2022 Jun;25(6):866-76. [57] Anderson RW, Kehnemouyi YM, Neuville RS, Wilkins KB, Anidi CM, Petrucci MN, et al. A novel method for calculating beta band burst durations in Parkinsons disease using a physiological baseline. Journal of Neuroscience Methods. 2020;343:108811. Available from: https://www.sciencedirect.com/science/ article/pii/S016502702030234X .[58] Sinclair NC, McDermott HJ, Fallon JB, Perera T, Brown P, Bulluss KJ, et al. Deep brain stimulation for Parkinson’s disease modulates high-frequency evoked and spontaneous neural activity. Neurobiol Dis. 2019 Jul;130:104522. [59] Whitmer D, de Solages C, Hill BC, Yu H, Henderson JM, Bronte-Stewart H. High frequency deep brain stimulation attenuates subthalamic and cortical rhythms in Parkinson’s disease. Frontiers in Hu-man Neuroscience. 2012;Volume 6 - 2012. Available from: https://www.frontiersin.org/journals/ human-neuroscience/articles/10.3389/fnhum.2012.00155 .[60] Jech R, Mueller K, Urgošík D, Sieger T, Holiga Š, R˚ užiˇ cka F, et al. The Subthalamic Microlesion Story in Parkin-son’s Disease: Electrode Insertion-Related Motor Improvement with Relative Cortico-Subcortical Hypoactiva-tion in fMRI. PLOS ONE. 2012 11;7(11):1-13. Available from: https://doi.org/10.1371/journal.pone. 0049056 .[61] de Neeling MGJ, Geraats S, Swinnen BEKS, Stam MJ, de Bie RMA, van Wijk BCM, et al. Temporal Dynamics of Beta Power Related to the Stun Effect in Parkinson’s Disease Patients after Deep Brain Stimulation Surgery. Mov Disord. 2025 Sep. [62] Wu B, Ling Y, Zhang C, Wang S, Guo Q, Xie B, et al. Microlesion and stimulation effects on motor symptom fluctuations in Parkinson&#x2019;s disease following subthalamic deep brain stimulation. Journal of Clinical Neuroscience. 2025 Sep;139. Available from: https://doi.org/10.1016/j.jocn.2025.111441 .[63] Alaei P, Wile DJ, Jakobi JM. Effects of dopaminergic medication on upper limb motor function, strength and hand dexterity in people with Parkinson’s disease. Clin Park Relat Disord. 2025 Oct;13:100400. [64] Priori A, Foffani G, Pesenti A, Tamma F, Bianchi AM, Pellegrini M, et al. Rhythm-specific pharmacological mod-ulation of subthalamic activity in Parkinson’s disease. Experimental Neurology. 2004;189(2):369-79. Available from: https://www.sciencedirect.com/science/article/pii/S0014488604002298 .[65] Binns TS, Köhler RM, Vanhoecke J, Chikermane M, Gerster M, Merk T, et al. Shared pathway-specific network mechanisms of dopamine and deep brain stimulation for the treatment of Parkinson’s disease. Nature Communi-cations. 2025 Apr;16(1):3587. Available from: https://doi.org/10.1038/s41467-025-58825-z .[66] Mestre TA, Stebbins GT, Stephenson D, Dexter D, Lee KK, Xiao Y, et al. Patient-centered development of clinical outcome assessments in early Parkinson disease: key priorities and advances. NPJ Parkinsons Dis. 2024 May;10(1):101. [67] Benesh A, Alcalay RN, Mirelman A, Shamir R. Optimizing Parkinson’s disease progression scales using compu-tational methods. npj Parkinson’s Disease. 2026 Jan;12(1):46. Available from: https://doi.org/10.1038/ s41531-026-01259-1 .[68] Janssen Daalen J, van der Heiden M, Meinders M, Post B. Motor Symptom Variability in Parkinson’s Disease: Implications for Personalized Trial Outcomes? Movement Disorders. 2025;40(5):975-9. Available from: https: //movementdisorders.onlinelibrary.wiley.com/doi/abs/10.1002/mds.30133 .[69] Evers LJW, Krijthe JH, Meinders MJ, Bloem BR, Heskes TM. Measuring Parkinson’s disease over time: The real-world within-subject reliability of the MDS-UPDRS. Mov Disord. 2019 Oct;34(10):1480-7. 23 CopyDraw scrutinized A P REPRINT 
+
+[70] Muller M, Scafa S, Hanafi I, Varescon C, Palmisano C, van der Gaag S, et al. Online prediction of optimal deep brain stimulation contacts from local field potentials in Parkinsons disease. npj Parkinson’s Disease. 2025 aug;11(1):234. Available from: https://doi.org/10.1038/s41531-025-01092-y .[71] Muller M, van Leeuwen MFC, Hoffmann CF, van der Gaag NA, Zutt R, van der Gaag S, et al. From subthala-mic local field potentials to the selection of chronic deep brain stimulation contacts in Parkinson’s disease - A systematic review. Brain Stimulation. 2025;18(5):1499-510. Available from: https://www.sciencedirect. com/science/article/pii/S1935861X25002980 .[72] Stanslaski S, Summers RLS, Tonder L, Tan Y, Case M, Raike RS, et al. Sensing data and methodology from the Adaptive DBS Algorithm for Personalized Therapy in Parkinson’s Disease (ADAPT-PD) clinical trial. npj Parkin-son’s Disease. 2024 Sep;10(1):174. Available from: https://doi.org/10.1038/s41531-024-00772-5 .[73] Yousry TA, Schmid UD, Alkadhi H, Schmidt D, Peraud A, Buettner A, et al. Localization of the motor hand area to a knob on the precentral gyrus. A new landmark. Brain. 1997 Jan;120 ( Pt 1):141-57. [74] Ledoit O, Wolf M. A well-conditioned estimator for large-dimensional covariance matrices. Journal of Multivari-ate Analysis. 2004;88(2):365-411. Available from: https://doi.org/10.1016/S0047-259X(03)00096-4 .[75] Castaño-Candamil S, Tangermann M. Subspace Decomposition in the Frequency Domain. In: Proceedings of the 7th Graz Brain-Computer Interface Conference 2017. Graz, Austria: Verlag der Technischen Universität Graz; 2017. . [76] Haufe S, Meinecke F, Görgen K, Dähne S, Haynes JD, Blankertz B, et al. On the interpretation of weight vectors of linear models in multivariate neuroimaging. NeuroImage. 2014;87:96-110. Available from: https: //www.sciencedirect.com/science/article/pii/S1053811913010914 .[77] Slepian D. Prolate spheroidal wave functions, fourier analysis, and uncertainty V: the discrete case. The Bell System Technical Journal. 1978;57(5):1371-430. [78] Gramfort A, Luessi M, Larson E, Engemann DA, Strohmeier D, Brodbeck C, et al. MEG and EEG data analysis with MNE-Python. Frontiers in Neuroscience. 2013;7:267. [79] Ojala M, Garriga GC. Permutation Tests for Studying Classifier Performance. Journal of Machine Learning Research. 2010;11:1833-63. [80] de Winter JCF. Using the Student’s t-test with extremely small sample sizes. Practical Assessment, Research, and Evaluation. 2013;18(10):1-12. [81] Delacre M, Lakens D, Leys C. Why psychologists should by default use Welchs t-test instead of Students t-test. International Review of Social Psychology. 2017;30(1):92-101. Available from: https://doi.org/10.5334/ irsp.82 .[82] Maris E, Oostenveld R. Nonparametric statistical testing of EEG- and MEG-data. Journal of Neuroscience Methods. 2007;164(1):177-90. [83] Virtanen P, Gommers R, Oliphant TE, Haberland M, Reddy T, Cournapeau D, et al. SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python. Nature Methods. 2020;17:261-72. [84] Seabold S, Perktold J. statsmodels: Econometric and statistical modeling with python. In: 9th Python in Science Conference; 2010. . [85] Pernet CR, Appelhoff S, Gorgolewski KJ, Flandin G, Phillips C, Delorme A, et al. EEG-BIDS, an extension to the brain imaging data structure for electroencephalography. Scientific Data. 2019 jun;6(1):103. Available from: 
+
+https://doi.org/10.1038/s41597-019-0104-8 .[86] Sakoe H, Chiba S. Dynamic programming algorithm optimization for spoken word recognition. IEEE Transac-tions on Acoustics, Speech, and Signal Processing. 1978 feb;26(1):43-9. [87] Ester M, Kriegel HP, Sander J, Xu X. A density-based algorithm for discovering clusters in large spatial databases with noise. In: Proceedings of the Second International Conference on Knowledge Discovery and Data Mining. AAAI Press; 1996. p. 226-31. Available from: https://dl.acm.org/doi/10.5555/3001460.3001507 .24 CopyDraw scrutinized A P REPRINT 
+
+## 6 Acknowledgments 
+
+MD receives funding from the Dareplane collaboration project, which is co-funded by PPP Allowance awarded by Health Holland, Top Sector Life Sciences & Health, to stimulate public-private partnerships as well as by a contribution from the Dutch Brain Foundation. The PD-Interaktiv I study is funded by the Bundesministerium für Bildung und Forschung (Grant 16SV8011). VAC receives a collaborative grant from BrainLab (Munich, Germany). He serves as an advisor for Aleva (Lausanne, Switzerland), Ceregate (Hamburg, Germany), Cortec (Freiburg, Germany) and Inbrain (Barcelona, Spain). He has an ongoing IIT with Boston Scientific (USA). He has received travel support and honoraria for lectures from Boston Scientific (USA), UNEEG Medical (Munich, Germany), and Precisis (Heidelberg, Germany). The authors thank the feedback and discussions on this work within the EuroDBS Alliance (EuroDBS.org). BS is funded by the Berta-Ottenstein-Programme for Advanced Clinician Scientists, Faculty of Medicine, University of Freiburg. He serves as an scientific advisor for Precisis (Heidelberg, Germany) and has received a research grant from Ceregate (Hamburg, Germany) and travel support from Boston Scientific (Marlborough, MA, USA) and honoraria as a speaker and travel support from Medtronic PLC (Dublin, Ireland) and Insightec (Tirat Carmel, Israel). PR has received research support from the Else Kröner Fresenius Foundation, Fraunhofer Foundation (ATTRACT), German Ministry for Economic Affairs and Energy, and Medical Faculty of the University of Freiburg. He has received personal honoraria for lectures or advice from Boston Scientific, Brainlab, Inomed, and Fraunhofer Foundation and is a consultant to Boston Scientific, Brainlab, and Inomed. JP is funded by the Deutsche Forschungsgemeinschaft (DFG) under the Walter Benjamin Program (Project number 510112977). The other authors declare not to have conflicting interests. 
+
+## 7 Author Contributions 
+
+All authors: Writing - Review and Editing. MD: Conceptualization, Methodology, Software, Validation, Formal Analysis, Investigation, Data Curation, Writing - Original Draft, Visualization, Project Administration. VAC: Concep-tualization, Methodology, Resources, Supervision, Project Administration, Funding Acquisition. BS: Investigation, Project Administration. PR: Investigation. TP: Investigation. MR: Visualization. SG: Investigation, Data Cura-tion. YT: Resources, Supervision, Funding Acquisition. MLFJ: Conceptualization, Investigation, Resources, Writing - Original Draft, Supervision, Project Administration, Funding Acquisition. MT: Conceptualization, Methodology, Investigation, Resources, Writing - Original Draft, Supervision, Project Administration, Funding Acquisition. JP: Conceptualization, Methodology, Software, Investigation, Writing - Original Draft, Supervision, Project Administra-tion, Funding Acquisition. 25 CopyDraw scrutinized A P REPRINT 
+
+.1 Stimulation parameters 
+
+Table S1: DBS parameters and neural recording modality. If not remarked otherwise, stimulations was provided with 130 Hz, 60 μs, initial negative pulses. Symmetric pulse shapes were used for all acute sessions (Session ̸ = c), and with implanted pulse generator defaults for the chronic sessions. 
+
+Subject Session Amp. [mA] Lat. Stimulation Return Electrode Remark Modality contacts contacts 
+
+S1 2 3.00 R 8 5,6,7 Boston Vercise EEG S1 3 3.00 R 5,6,7 8 Boston Vercise EEG S1 c 2.40 8 5,6,7 Boston Vercise bilateral EEG S2 2 6.00 L 8 5,6,7 Boston Vercise EEG S2 3 6.00 L 8 5,6,7 Boston Vercise EEG S2 c 4.50 L 8 5,6,7 Boston Vercise EEG S3 2 7.00 L 8 5,6,7 Boston Vercise EEG S3 3 7.00 L 8 5,6,7 Boston Vercise EEG S3 c 6.00 L 8 5,6,7 Boston Vercise EEG S4 2 5.00 L 8 5,6,7 Boston Vercise EEG S4 3 5.00 L 8 5,6,7 Boston Vercise EEG S4 c 3.50 L 8 5,6,7 Boston Vercise EEG S5 2 6.50 L 8 5,6,7 Boston Vercise EEG S5 3 6.50 L 8 5,6,7 Boston Vercise EEG S5 c 6.50 L 8 5,6,7 Boston Vercise EEG S6 1 3.50 L 8 5,6,7 Boston Vercise EEG S6 2 3.00 L 8 5,6,7 Boston Vercise EEG S6 c 3.50 L 8 5,6,7 Boston Vercise EEG S7 2 4.50 L 8 5,6,7 Boston Vercise EEG S7 3 5.00 L 8 5,6,7 Boston Vercise EEG S7 c 3.50 L 8 5,6,7 Boston Vercise EEG S8 c 5(Volt) 2 3 Medtronic 3389 bilateral, 30 μs EEG S9 c 2.60 L 8 5,6,7 Boston Vercise EEG S10 c 3.00 L 8 6 Boston Vercise asymmetric EEG S11 c 4.50 L 8 7 Boston Vercise asymmetric, 40 μs EEG S12 2 6.50 L 1 2,3,4 Boston Vercise EEG S12 4 6.50 L 1 2,3,4 Boston Vercise EEG S13 c 2.00 L 5,6,7 8 Boston Vercise EEG S14 2 6.00 L 2,3,4 5,6,7 Boston Vercise ECoG S14 4 5.00 L 2,3,4 5,6,7 Boston Vercise ECoG S15 2 5.00 L 2,3,4 5,6,7 Boston Vercise ECoG S15 4 5.00 L 2,3,4 5,6,7 Boston Vercise ECoG, EEG S16 2 3.50 L 2,3,4 5,6,7 Boston Vercise ECoG S16 4 4.50 L 2,3,4 5,6,7 Boston Vercise ECoG S17 2 4.00 L 5,6,7 2,3,4 Boston Vercise ECoG S17 3 4.00 L 5,6,7 2,3,4 Boston Vercise ECoG S18 3 3.00 L 8 5,6,7 Medtronic SenSight EEG S19 2 3.00 L 2,3,4 5,6,7 Medtronic SenSight EEG 
+
+.2 Recording modalities .2.1 Data recording modalities 
+
+At the UFMC, EEG was recorded using BrainAmp DC amplifiers (Brain Products GmbH, Gilching, Germany) at different sampling rates between 1-5 kHz (fixed for each session). The recordings were referenced to the nasion and grounded by the electrode over AFz. At the MUMC, EEG was recorded using the Neuro Omega ™ (Alpha Omega Engineering, Nof HaGalil, Israel) at a sampling rate of 22 kHz using hardware filters between 0.07 Hz and 10 kHz. At both centers, the Neuro Omega ™ was used to administer DBS and record LFPs and ECoG (if applicable) using the same hardware configurations (22 kHz, HW filter 0.07 Hz to 10 kHz). The ECoG strips were connected with a CABRIO connector (Ad-Tech Medical Instruments Corp., Wisconsin, USA). All three signal modalities (EEG, ECoG, LFP) were recorded in session S15 4, however, this session was only evaluated on its ECoG data. The left mastoid and left earlobe were used as a reference for the LFP and ECoG recordings at the FUMC. At MUMC, the signals were referenced against the electrode over FPz. All recorings used the right mastiod as ground. In patient-26 CopyDraw scrutinized A P REPRINT 
+
+specific cases, additional electromyography (EMG) was recorded from different positions based on reported symptom complications. Besides EMG, respiratory rate, galvanic skin response, and heart rate were recorded with the BrainAmp setup whenever the bandages and dressings on the participants allowed for it. This later data was not analyzed, but is published within the dataset. 
+
+.2.2 Data preprocessing 
+
+The preprocessing pipeline used mne [78] standard procedures for EEG and ECoG data. First, the data was resampled to 300 Hz, using the FFT-based method (mne.io.Raw.resample), which uses a truncation (brick-wall filter) at the new Nyquist frequency in the frequency domain to prevent aliasing. Inspection of the power spectral densities below 130 Hz showed aliasing stimulation artifacts for the MUMC EEG recordings (S18 and S19, EEG recording using the NeuroOmega ™). Data for these sessions had the stimulation artifact removed by linear interpolation of the signal from 
+
+−30 μs to 360 μs relative to the first negative peak of each stimulation pulse in the raw 22 kHz data, before resampling. No aliasing artifacts were visible after interpolation or for the other sessions. All intermediate data objects were persisted at 300 Hz as this still allows to validate the presence of the DBS stimulation artifact at 130 Hz. Raw data was plotted and bad channels were visually excluded. Next, for EEG data only, an independent component analysis (ICA) is used on data which was further down sampled to 200 Hz (for algorithmic efficiency) and frequency filtered to (1–30) Hz. Artifactual ICA components were excluded by visual inspections. Further processing within the filterbank SPoC/CSP pipelines was conducted in source (ICA) space for computational efficiency. Sessions with ECoG data used a common average re-referencing, while no referencing was applied to EEG. 
+
+.2.3 Titration of DBS parameters 
+
+During each session, the preferred stimulation parameters were titrated with a trained clinician. This was aimed at achieving best symptom suppression for hand-motor performance while the amplitude was adjusted to approx. 0.5 mA below the side effect threshold. Only stimulation and return contacts, and stimulation amplitude were titrated. 
+
+.3 CopyDraw task 
+
+The CopyDraw task [35] is a combination of hand-motor features and therefore serves as a proxi of disease symptom severity. A schematic overview of the task and the derivation of the CopyDraw score are provided in Figure 7 (panels A, B). During the task, participants use a stylus and tablet (One by Wacom®, Wacom, Kazo, Japan) to copy a target trace, controlling the cursor on a screen in a comfortable viewing distance ( ≈ 70 cm). The target traces are combinations of three trace atoms, i.e., characters, which on purpose avoid resemblance to common characters of the Latin alphabet. Participants are requested to copy-draw the template as quickly and as accurately as possible, within a given time window. The time window is adjusted to the participants capabilities and ranged from 6 to 10.5 s (see Figure S1 C), such that the participant would usually make it through more than 2/3 of the trace, but would be hastened to finish in time. Copy-drawing one trace is referred to as a trial. The inter-trial intervals are self-paced and the participant has to express readiness by moving the cursor over a cyan square in the left top of the screen before moving to the beginning of the trace. Only after moving the cursor to the start of a trace would drawing and time-out mechanism be started. The time left within the trial is indicated by a bar on the bottom of the screen. We combined 12 trials into a block and offered the possibility for breaks between each block. DBS was alternated for each of the blocks DBS (OFF, ON, OFF, ON, ...). The 35 sessions comprise 5292 CopyDraw trials in total with mean (standard deviation) trial counts per session of 73 ( ± 18 ) for DBS ON and 72 ( ± 18 ) for DBS OFF. A detailed overview of trial counts and exclusions due to the lab protocol or for technical reasons is provided in Figure S1 A and B. Knowing the DBS condition per trial allowed to label behavioral features derived from considering the x and y screen coordinates of the cursor and the target trace. For each trial, a feature vector v ∈ Rn was extracted. Following the work of Castaño-Candamil et al. [35], three different feature vectors were extracted: vstandard ∈ R9 containing speed, acceleration, and jitter, as totals and along the x- and y-axes of the screen separately; vextende ∈ R12 containing v and additional features from dynamic time-warping [86] of the drawn trace; vangular ∈ R36 containing the vstandard features partitioned into eight non-overlapping spatial bins, each covering a 45° angular extent. Based on either of the feature vectors (vstandard , vextended , vangular ), a linear discriminant analysis (LDA) classifier with Ledoit-Wolf [74] regularization was trained to classify traces according to DBS ON and OFF. The decision function value, i.e., the distance to the hyper plane defined by the LDA weights, defines the continuous CopyDraw score z ∈ R. The score is calibrated such that z ≥ 0 is associated with DBS ON and z < 0 with DBS OFF. The CopyDraw score is therefore to be interpreted as a behavioral readout that quantifies if a drawn trace looks more like it was drawn under DBS ON or OFF condition. It is not necessarily the same as rating the overall accuracy of the copied trace. 27 CopyDraw scrutinized A P REPRINT 2568 
+
+2507 
+
+40 
+
+52 
+
+125 
+
+0 500 1000 1500 2000 2500 
+
+used DBS on used DBS off Excluded: marker issue Excluded: lab protocol Excluded: fragmented 
+
+72 
+
+64 
+
+72 
+
+84 
+
+72 
+
+60 
+
+72 
+
+> 108
+
+48 
+
+72 
+
+96 
+
+84 
+
+70 
+
+84 
+
+70 72 
+
+58 
+
+72 
+
+24 
+
+84 
+
+60 
+
+69 
+
+96 
+
+83 84 
+
+96 
+
+72 
+
+56 
+
+66 
+
+80 
+
+> 108
+
+56 
+
+48 
+
+60 
+
+96 
+
+65 
+
+84 84 
+
+48 
+
+72 
+
+48 
+
+66 
+
+47 
+
+84 
+
+53 
+
+55 
+
+84 
+
+66 
+
+98 
+
+60 
+
+96 
+
+36 
+
+84 
+
+96 
+
+72 72 
+
+96 
+
+> 108
+
+43 
+
+72 
+
+60 
+
+84 84 
+
+84 
+
+48 
+
+59 
+
+71 
+
+96 
+
+60 
+
+72 
+
+> 6
+
+11 
+
+> 3
+> 1
+
+18 
+
+> 1
+> 4
+> 1
+> 2
+
+1
+
+1
+
+12 
+
+9
+
+21 
+
+> 1
+
+5
+
+> 8
+
+24 12 15 31 
+
+11 
+
+14 
+
+1
+
+4
+
+> S2 2
+> S10 c
+> S17 3
+> S3 c
+> S17 2
+> S14 4
+> S6 c
+> S5 c
+> S8 c
+> S1 c
+> S18 3
+> S9 c
+> S14 2
+> S6 2
+> S1 2
+> S4 c
+> S15 4
+> S13 c
+> S1 3
+> S7 3
+> S7 2
+> S16 2
+> S5 2
+> S2 c
+> S12 4
+> S12 2
+> S7 c
+> S16 4
+> S6 1
+> S4 2
+> S11 c
+> S5 3
+> S15 2
+> S19 2
+> S4 3
+
+050 100 150 200 
+
+9
+
+6
+
+9
+
+> 7.5
+> 8.1
+
+9 9
+
+6
+
+9
+
+6
+
+9
+
+> 7.5
+
+9
+
+> 10.5
+
+9 9
+
+6
+
+9
+
+> 8.6
+
+9
+
+6
+
+> 6.5
+
+99
+
+> 7.5
+> 7.5
+> 6.6
+
+6
+
+> 7.5
+
+99
+
+> 7.5
+
+9
+
+> 7.5
+
+9
+
+> S2 2
+> S10 c
+> S17 3
+> S3 c
+> S17 2
+> S14 4
+> S6 c
+> S5 c
+> S8 c
+> S1 c
+> S18 3
+> S9 c
+> S14 2
+> S6 2
+> S1 2
+> S4 c
+> S15 4
+> S13 c
+> S1 3
+> S7 3
+> S7 2
+> S16 2
+> S5 2
+> S2 c
+> S12 4
+> S12 2
+> S7 c
+> S16 4
+> S6 1
+> S4 2
+> S11 c
+> S5 3
+> S15 2
+> S19 2
+> S4 3
+
+0510 
+
+used DBS on used DBS off Excluded: marker issue 
+
+Excluded: lab protocol 
+
+Excluded: fragmented 
+
+Number of trials Subject and session Subject and session Number of trials Trial duration [s] 
+
+A: Trial counts per session 
+
+B: Total trial counts 
+
+C: Trial duration per session 
+
+Figure S1: Trial counts and duration. A shows total trial counts for each DBS conditions as well as for the three exclusion criteria: Excluded: marker issues - issues with synchronization, resulting in missing markers in the EEG or ECoG data. Excluded: lab protocol - any exclusion due to reasons mentioned in the lab protocol, e.g., participant not adhering to the task, or falling asleep. Excluded: fragmented - if the stylus lost connection during the execution of a trial. Note that the fragmentation was not tracked for trials of the study NCT03079960, hence no trials were removed for this reason from S1 to S13, see B. B shows the trial counts per session, again colored according to the DBS or exclusion criterion, using the same color codes as in A. The sessions are sorted according to the mean CopyDraw ROC AUC (see Figure 1 A). Tick labels with a frame correspond to sessions with invasive ECoG data. C shows the trial durations for each session in seconds. Sessions are sorted as in B. 
+
+28 CopyDraw scrutinized A P REPRINT Castano et al. 2020 Our pipeline  
+
+> Figure S2: Behavioral pipeline, Castaño-Candamil et al. 2020 [36] and ours. We replaced the linear de-trending and DBSCAN [87] outlier removal, which used the full data set, with a simple clipping of feature values to three standard deviations (STD) estimated from the training data within each cross-validation fold. The adjustment was made to generate a more robust estimation of the generalization performance due to the cross validation scheme.
+
+.3.1 Chronological Cross Validation 
+
+To evaluate the degree of discriminability of the behavioral feature vectors, LDA models are evaluated in a chronolog-ical block-grouped cross-validation (chrono-CV). The mean ROC AUC across all test folds is reported and referred to as the CopyDraw ROC AUC. The chrono-CV was chosen to mitigate the impact of non-stationarities caused, e.g., by medication intake, as was reported by Castaño-Candamil et al. [35, 36]. Chrono-CV pairs adjacent blocks with different DBS conditions as test blocks - one DBS ON and one DBS OFF block each. We are aware that this is confining the temporal structure but not fully removing overfitting of non-stationarities. However, given the very limited amount of data ( ≈ 12 blocks per session, with 144 trials total), we deem it a trade-off between dealing with non-stationarities while maintaining multiple folds for the cross-validation. 
+
+.3.2 Chance level estimation 
+
+Each CopyDraw block contains up to 12 valid trials. Single trials are discarded if, e.g., the stylus was losing contact with the tablet, or if the participant aborted the trial. Since the number of trials per block is not fixed, test sets within the chrono-CV might be imbalanced with respect to the labels. Chance levels are therefore computed using a permutation distribution [79]. The permutation distribution is created by repeating the chrono-CV N=1000 times with shuffled training labels. The chance level is then defined as the 95 % percentile of the resulting bootstrapped permutation distribution. The neural decoding pipeline is evaluated using the same chrono-CV and chance level estimation schema as the behavioral data. Note that two separate cross validations are conducted and that the CopyDraw score used as a label for the neural decoding is extracted from a behavioral LDA model that is fitted over the full behavioral data. This is necessary to create a behavioral label that is consistent for all blocks. Again, we are limited by data and use this as a compromise where a nested cross-validation would be more appropriate. The neural decoding capacity is measured using Pearson’s correlation between predicted and actual CopyDraw scores in the test fold. 
+
+.3.3 Pipelines and evaluation details 
+
+29 CopyDraw scrutinized A P REPRINT Neural decoding pipeline 
+
+Figure S3: Neural pipeline, Castaño-Candamil et al. 2020 [36] and ours. First, we removed the sub-epoching and subsequent removal based on peak-to-peak voltage changes of 80 μV , to simplify the pipeline. Next, we replaced the single band source power comodulation (SPoC) [40] with a filterbank SPoC (FBSPoC) approach with five fixed frequency bands ({ θ=(4–8) Hz, α=(8 - 12) Hz, β =(12–30) Hz, γ=(30 - 45) Hz, γhigh =(55 - 90) Hz}). A minimum redundancy maximum relevance (MRMR) [41] feature selection approach is used to select eight SPoC filters in total. For a proper cross-validation, the pipeline by Castaño-Candamil et al. would require an additional split of the training data to provide a validation fold for optimizing the frequency band parameters. With the FBSPoC approach, we circumvent this selection and have it as part of the pipeline fitting, while also allowing multiband features to be considered for the final regression. The behavioral labels used to fit our pipelines are different as well. Castaño-Candamil et al. 2020 used CopyDraw scores from the full 36 dimensional feature vectors ( angular feature set), while we use CopyDraw scores derived from the nine dimensional feature vectors ( standard feature set). We chose to report neural decoding using the standard feature set as no significant cross-session difference was observed for the behavioral decoding (Figure S4), hence the smaller feature set would be the more robust choice in light of our limited data ( ≈100–150 trials per session). The scores derived from the smaller dimensional features should lead to more robust results, less susceptible to overfit. 
+
+30 CopyDraw scrutinized A P REPRINT ns 
+
+ns 
+
+ns 
+
+standard extended angular 
+
+0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+
+ns 
+
+acute chronic 
+
+0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+
+ns 
+
+EEG ECOG 
+
+0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+
+ns 
+
+acute chronic 
+
+> 
+
+0.2 00.2 0.4 0.6 0.8 1
+
+ns 
+
+EEG ECOG 
+
+> 
+
+0.2 00.2 0.4 0.6 0.8 1
+
+Feature set Session type Signal modality Session type Signal modality CopyDraw ROC AUC CopyDraw ROC AUC CopyDraw ROC AUC Neural correlation Neural correlation 
+
+AB CD E
+
+Figure S4: CopyDraw ROC AUC and neural correlation of subsets. A shows the CopyDraw ROC AUC for different feature sets (standard ∈ R9, extended ∈ R12 ,and angular ∈ R36 , see section .3 for details). While the angular feature set has the highest mean and median ROC AUC, none of the differences are significant (Shapiro-Wilk: Pstandard > 0.42 , Pextended > 0.97 , Pangular > 0.36 , Welch’s t-tests Pstandard,extended > 0.80 , Pstandard,angular > 0.46 ,
+
+Pextended,angular > 0.69 ). B shows the CopyDraw ROC AUC for chronic and acute sessions. No significant difference (Shapiro-Wilk: Pchronic > 0.47 ,
+
+Pacute > 0.59 , Welch’s t-test P > 0.11 ). C shows the CopyDraw ROC AUC for sessions with EEG recording and sessions with ECoG recordings. No significant difference (Shapiro-Wilk: PEEG > 0.55 , PECOG > 0.73 , Welch’s t-test P > 0.48 ). D shows the neural correlation for chronic and acute sessions. No significant difference (Shapiro-Wilk: Pchronic > 0.95 , Pacute > 0.41 , Welch’s t-test P > 0.22 ). E shows the neural correlation for sessions with EEG recording and sessions with ECoG recordings. No significant difference (Shapiro-Wilk: PEEG > 0.33 , PECOG > 0.83 , Welch’s t-test P > 0.32 ). 
+
+.3.4 Additional analysis 
+
+31 CopyDraw scrutinized A P REPRINT S7_c S7_2                   
+
+> 00.2 0.4 0.6 0.8 1
+> 3456789
+> 10
+> 23456789
+> 100
+> 2
+> S14_2 S16_4 S1_2 S1_c S12_4 S2_2 S5_3
+> 00.2 0.4 0.6 0.8 1
+> 3456789
+> 10
+> 23456789
+> 100
+> 2
+> S19_2 S17_2 S17_3 S10_c S13_c S3_c
+> 00.2 0.4 0.6 0.8 1
+> 3456789
+> 10
+> 23456789
+> 100
+> 2
+
+DBS 
+
+> off
+> on
+> 00.05 0.1 0.15 0.2 0.25 0.3 0.35
+
+Task performance Fraction of template covered Fraction of template covered Fraction of template covered Average distance [pixel] Average distance [pixel] Average distance [pixel]          
+
+> A: Task performance domain
+> B: DBS reduces task performance
+> C: DBS improves task performance
+> A: Task performance domain
+> B: DBS reduces task performance
+> C: DBS improves task performance
+> A: Task performance domain
+> B: DBS reduces task performance
+> C: DBS improves task performance
+> S9_c S6_c
+
+Figure S5: Task performance as trade-off between speed and accuracy. A: Contour map of the task performance. The x-axis represents the amount of the template that has been matched by the drawn trace (matched using dynamic time warping). The y-axis represents the average distance between the drawn trace and the template on a log10 scale. The range of the y-axis is calibrated to contain all extreme values observed in trials from sessions with a significant DBS ON vs. OFF effect. B: Scatter plot of median values under DBS ON (red) and OFF (blue) for sessions with a significant decrease in task performance induced by DBS. X and y-axis same as in A. C:Same as B but for sessions with a significant increase in task performance. 
+
+32 CopyDraw scrutinized A P REPRINT 
+
+Figure S6: EEG marker for S12 2. This figure showcases the eight selected filter bank source power comodulation features which are found by fitting our neural decoding pipeline for prediction of the CopyDraw scores. For each feature, the topological pattern, power spectral density (PSD), and the total band power of the spatially filtered signal per trial are show. PSDs reflect the full spectrum of all trials grouped by DBS condition. A gray background highlights the frequency band the SPoC components (pattern) belong to. The log power per trial represents the frequency filtered (see gray background in PSD plot) and spatially filtered (SPoC filter) signal as is used as input for the final linear regression. Individual trials are colored according to their DBS condition. 
+
+33 CopyDraw scrutinized A P REPRINT Feature 4 Feature 3 Feature 1 Feature 2 Feature 8 Feature 7 Feature 5 Feature 6 
+
+Figure S7: EEG marker for S10 c. For details see caption of Figure S6. 
+
+34 CopyDraw scrutinized A P REPRINT 
+
+Figure S8: EEG marker for S1 c. For details see caption of Figure S6. 
+
+35 CopyDraw scrutinized A P REPRINT P<0.01 
+
+> DBS ON DBS OFF
+
+Figure S9: ECoG marker for S17 3. Details are as described in the caption of Figure S6, but with single ECoG channels and their weight pattern (linear model weights scaled by inverse covariance) shown instead of the SPoC patterns. The channels are shown over the fsaverage brain left hemisphere with the precentral gyrus highlighted in pink. 
+
+36 CopyDraw scrutinized A P REPRINT B - DBS leads (backside view) A - DBS leads (frontal right view) 
+
+C - ECoG positions over MNI 152 left hemisphere 
+
+Figure S10: DBS lead and ECoG positions. A and B: the frontal right and backside view of the left hemisphere DBS leads of the Freiburg cohort with acute session in comon MNI 152 coordinates. Subthalamic nucleus (STN) and substantia nigra are shown in red and green respectively. A humanoid figure in the lower right serves as a reference for anatomical orientation. C: Positions of the ECoG strips over the left hemisphere of the MNI 152 brain. Green ECoG positions (A) refer to S14, red ECoG positions (B) refer to S15, blue ECoG positions (C) refer to S16, and orange ECoG positions (D) refer to S17. The motor area of the precentral gyrus is highlighted in pink. 
+
+37

@@ -1,0 +1,211 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-01T19:55:41.671913+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2603.24176v2",
+      "title": "Modeling Spatiotemporal Neural Frames for High Resolution Brain Dynamic",
+      "abstract": "Capturing dynamic spatiotemporal neural activity is essential for understanding large-scale brain mechanisms. Functional magnetic resonance imaging (fMRI) provides high-resolution cortical representations that form a strong basis for characterizing fine-grained brain activity patterns. The high acquisition cost of fMRI limits large-scale applications, therefore making high-quality fMRI reconstruction a crucial task. Electroencephalography (EEG) offers millisecond-level temporal cues that complement fMRI. Leveraging this complementarity, we present an EEG-conditioned framework for reconstructing dynamic fMRI as continuous neural sequences with high spatial fidelity and strong temporal coherence at the cortical-vertex level. To address sampling irregularities common in real fMRI acquisitions, we incorporate a null-space intermediate-frame reconstruction, enabling measurement-consistent completion of arbitrary intermediate frames and improving sequence continuity and practical applicability. Experiments on the CineBrain dataset demonstrate superior voxel-wise reconstruction quality and robust temporal consistency across whole-brain and functionally specific regions. The reconstructed fMRI also preserves essential functional information, supporting downstream visual decoding tasks. This work provides a new pathway for estimating high-resolution fMRI dynamics from EEG and advances multimodal neuroimaging toward more dynamic brain activity modeling.",
+      "authors": [
+        "Wanying Qu",
+        "Jianxiong Gao",
+        "Wei Wang",
+        "Yanwei Fu"
+      ],
+      "primary_category": "eess.IV",
+      "categories": [
+        "eess.IV",
+        "cs.CV",
+        "q-bio.NC"
+      ],
+      "published": "2026-03-25T10:53:11+00:00",
+      "link": "https://arxiv.org/pdf/2603.24176v2",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "EEG-conditioned framework for reconstructing dynamic fMRI sequences",
+      "llm_evidence_cn": "基于EEG条件的动态fMRI序列重建框架",
+      "llm_evidence": "基于EEG条件的动态fMRI序列重建框架",
+      "canonical_evidence": "基于EEG条件的动态fMRI序列重建框架",
+      "llm_tldr_en": "Uses EEG temporal cues to reconstruct high-resolution dynamic fMRI for brain mechanism analysis.",
+      "llm_tldr_cn": "利用EEG时间线索重建高分辨率动态fMRI，用于脑机制分析。",
+      "llm_tldr": "利用EEG时间线索重建高分辨率动态fMRI，用于脑机制分析。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Cross modal generation from EEG signals using generative AI",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.27750v1",
+      "title": "Invasive and Non-Invasive Neural Decoding of Motor Performance in Parkinson's Disease for Personalized Deep Brain Stimulation",
+      "abstract": "Decoding motor performance from brain signals offers promising avenues for adaptive deep brain stimulation (aDBS) for Parkinson's disease (PD). In a two-center cohort of 19 PD patients executing a drawing task, we decoded motor performance from electroencephalography (n=15) and, critically for clinical translation, electrocorticography (n=4). Within each session, patients performed the task under DBS on and DBS off. A total of 35 sessions were recorded. Instead of relying on single frequency bands, we derived patient-specific biomarkers using a filterbank-based machine-learning approach. DBS modulated kinematics significantly in 23 sessions. Significant neural decoding of kinematics was possible in 28 of the 35 sessions (average Pearson's $\\text{r}= 0.37$). Our results further demonstrate modulation of speed-accuracy trade-offs, with increased drawing speed but reduced accuracy under DBS. Joint evaluation of behavioral and neural decoding outcomes revealed six prototypical scenarios, for which we provide guidance for future aDBS strategies.",
+      "authors": [
+        "Matthias Dold",
+        "Volker A. Coenen",
+        "Bastian Sajonz",
+        "Peter Reinacher",
+        "Peter Reinacher",
+        "Thomas Prokop",
+        "Marco Reisert",
+        "Sophia Gimple",
+        "Yasin Temel",
+        "Marcus L. F. Janssen",
+        "Michael Tangermann",
+        "Joana Pereira"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC"
+      ],
+      "published": "2026-03-29T16:07:18+00:00",
+      "link": "https://arxiv.org/pdf/2603.27750v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Neural decoding of motor performance from EEG signals",
+      "llm_evidence_cn": "基于EEG信号的运动表现神经解码",
+      "llm_evidence": "基于EEG信号的运动表现神经解码",
+      "canonical_evidence": "基于EEG信号的运动表现神经解码",
+      "llm_tldr_en": "Decodes motor performance from EEG and ECoG signals using machine learning for adaptive deep brain stimulation.",
+      "llm_tldr_cn": "利用机器学习从EEG和ECoG信号中解码运动表现，用于自适应深度脑刺激。",
+      "llm_tldr": "利用机器学习从EEG和ECoG信号中解码运动表现，用于自适应深度脑刺激。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "State of the art large foundation models for EEG decoding and generation",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.29205v1",
+      "title": "BiMoE: Brain-Inspired Experts for EEG-Dominant Affective State Recognition",
+      "abstract": "Multimodal Sentiment Analysis (MSA) that integrates Electroencephalogram (EEG) with peripheral physiological signals (PPS) is crucial for the development of brain-computer interface (BCI) systems. However, existing methods encounter three major challenges: (1) overlooking the region-specific characteristics of affective processing by treating EEG signals as homogeneous; (2) treating EEG as a black-box input, which lacks interpretability into neural representations;(3) ineffective fusion of EEG features with complementary PPS features. To overcome these issues, we propose BiMoE, a novel brain-inspired mixture of experts framework. BiMoE partitions EEG signals in a brain-topology-aware manner, with each expert utilizing a dual-stream encoder to extract local and global spatiotemporal features. A dedicated expert handles PPS using multi-scale large-kernel convolutions. All experts are dynamically fused through adaptive routing and a joint loss function. Evaluated under strict subject-independent settings, BiMoE consistently surpasses state-of-the-art baselines across various affective dimensions. On the DEAP and DREAMER datasets, it yields average accuracy improvements of 0.87% to 5.19% in multimodal sentiment classification. The code is available at: https://github.com/HongyuZhu-s/BiMo.",
+      "authors": [
+        "Hongyu Zhu",
+        "Lin Chen",
+        "Mingsheng Shang"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC"
+      ],
+      "published": "2026-03-31T03:17:45+00:00",
+      "link": "https://arxiv.org/pdf/2603.29205v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "EEG signal processing for affective state recognition using brain-inspired mixture of experts",
+      "llm_evidence_cn": "使用类脑专家混合模型进行脑电信号情感状态识别",
+      "llm_evidence": "使用类脑专家混合模型进行脑电信号情感状态识别",
+      "canonical_evidence": "使用类脑专家混合模型进行脑电信号情感状态识别",
+      "llm_tldr_en": "Proposes BiMoE, a brain-inspired framework for interpretable and effective EEG-based sentiment analysis.",
+      "llm_tldr_cn": "提出BiMoE框架，通过类脑专家混合模型提升脑电情感分析的可解释性与融合效果。",
+      "llm_tldr": "提出BiMoE框架，通过类脑专家混合模型提升脑电情感分析的可解释性与融合效果。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.25923v1",
+      "title": "Preventing Data Leakage in EEG-Based Survival Prediction: A Two-Stage Embedding and Transformer Framework",
+      "abstract": "Deep learning models have shown promise in EEG-based outcome prediction for comatose patients after cardiac arrest, but their reliability is often compromised by subtle forms of data leakage. In particular, when long EEG recordings are segmented into short windows and reused across multiple training stages, models may implicitly encode and propagate label information, leading to overly optimistic validation performance and poor generalization.   In this study, we identify a previously overlooked form of data leakage in multi-stage EEG modeling pipelines. We demonstrate that violating strict patient-level separation can significantly inflate validation metrics while causing substantial degradation on independent test data.   To address this issue, we propose a leakage-aware two-stage framework. In the first stage, short EEG segments are transformed into embedding representations using a convolutional neural network with an ArcFace objective. In the second stage, a Transformer-based model aggregates these embeddings to produce patient-level predictions, with strict isolation between training cohorts to eliminate leakage pathways.   Experiments on a large-scale EEG dataset of post-cardiac-arrest patients show that the proposed framework achieves stable and generalizable performance under clinically relevant constraints, particularly in maintaining high sensitivity at stringent specificity thresholds. These results highlight the importance of rigorous data partitioning and provide a practical solution for reliable EEG-based outcome prediction.",
+      "authors": [
+        "Yixin Zhou",
+        "Zhixiang Liu",
+        "Vladimir I. Zadorozhny",
+        "Jonathan Elmer"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-26T21:28:23+00:00",
+      "link": "https://arxiv.org/pdf/2603.25923v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Transformer framework for EEG representation and outcome prediction",
+      "llm_evidence_cn": "用于脑电表示与结果预测的Transformer框架",
+      "llm_evidence": "用于脑电表示与结果预测的Transformer框架",
+      "canonical_evidence": "用于脑电表示与结果预测的Transformer框架",
+      "llm_tldr_en": "Investigates data leakage in multi-stage Transformer pipelines for EEG-based clinical outcome prediction.",
+      "llm_tldr_cn": "研究了基于Transformer的脑电临床预测流水线中的数据泄漏问题，提升模型可靠性。",
+      "llm_tldr": "研究了基于Transformer的脑电临床预测流水线中的数据泄漏问题，提升模型可靠性。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.27269v1",
+      "title": "From Foundation ECG Models to NISQ Learners: Distilling ECGFounder into a VQC Student",
+      "abstract": "Foundation models have recently improved electrocardiogram (ECG) representation learning, but their deployment can be limited by computational cost and latency constraints. In this work, we fine-tune ECGFounder as a high-capacity teacher for binary ECG classification on PTB-XL and the MIT-BIH Arrhythmia Database, and investigate whether knowledge distillation can transfer its predictive behavior to compact students. We evaluate two classical 1D students (ResNet-1D and a lightweight CNN-1D) and a quantum-ready pipeline that combines a convolutional autoencoder, which compresses 256-sample ECG windows into a low-dimensional latent representation, with a 6-qubit variational quantum circuit implemented in Qiskit and executed in a simulated backend. Across both datasets, the teacher provides the strongest overall performance, while distillation yields competitive students under a considerable reduction in trainable parameters. We further analyze the sensitivity of student performance to distillation settings, highlighting consistent accuracy--efficiency trade-offs when compressing a foundation ECG model into classical and quantum-ready learners under a unified evaluation protocol.",
+      "authors": [
+        "Giovanni dos Santos Franco",
+        "Felipe Mahlow",
+        "Ellison Fernando Cardoso",
+        "Felipe Fanchini"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "cs.AI"
+      ],
+      "published": "2026-03-28T13:36:45+00:00",
+      "link": "https://arxiv.org/pdf/2603.27269v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "foundation models for physiological signal representation learning",
+      "llm_evidence_cn": "生理信号表征学习的基础模型",
+      "llm_evidence": "生理信号表征学习的基础模型",
+      "canonical_evidence": "生理信号表征学习的基础模型",
+      "llm_tldr_en": "Distilling knowledge from a foundation ECG model into a compact quantum-ready student model.",
+      "llm_tldr_cn": "将心电图基础模型的知识蒸馏到紧凑的量子就绪学生模型中。",
+      "llm_tldr": "将心电图基础模型的知识蒸馏到紧凑的量子就绪学生模型中。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

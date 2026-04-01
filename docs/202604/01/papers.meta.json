@@ -1,0 +1,79 @@
+{
+  "label": "2026-04-01",
+  "date": "2026-04-01",
+  "generated_at": "2026-04-01T19:56:59",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202604/01/2603.24176v2-modeling-spatiotemporal-neural-frames-for-high-resolution-brain-dynamic",
+      "section": "deep",
+      "title_en": "Modeling Spatiotemporal Neural Frames for High Resolution Brain Dynamic",
+      "authors": "Wanying Qu, Jianxiong Gao, Wei Wang, Yanwei Fu",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24176v2",
+      "score": "9.0",
+      "evidence": "基于EEG条件的动态fMRI序列重建框架",
+      "tldr": "本研究针对fMRI采集成本高及采样不规则的挑战，提出一种以EEG为条件的神经框架，旨在重建高空间保真度和强时间一致性的动态fMRI序列。该方法在皮层顶点水平建模，引入零空间中间帧重建技术以实现任意中间帧的测量一致性补全。实验证明，该框架在CineBrain数据集上表现优异，不仅提升了重建质量，还保留了关键功能信息，有效支持了下游视觉解码任务，为多模态脑动态建模提供了新路径。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Capturing dynamic spatiotemporal neural activity is essential for understanding large-scale brain mechanisms. Functional magnetic resonance imaging (fMRI) provides high-resolution cortical representations that form a strong basis for characterizing fine-grained brain activity patterns. The high acquisition cost of fMRI limits large-scale applications, therefore making high-quality fMRI reconstruction a crucial task. Electroencephalography (EEG) offers millisecond-level temporal cues that complement fMRI. Leveraging this complementarity, we present an EEG-conditioned framework for reconstructing dynamic fMRI as continuous neural sequences with high spatial fidelity and strong temporal coherence at the cortical-vertex level. To address sampling irregularities common in real fMRI acquisitions, we incorporate a null-space intermediate-frame reconstruction, enabling measurement-consistent completion of arbitrary intermediate frames and improving sequence continuity and practical applicability. Experiments on the CineBrain dataset demonstrate superior voxel-wise reconstruction quality and robust temporal consistency across whole-brain and functionally specific regions. The reconstructed fMRI also preserves essential functional information, supporting downstream visual decoding tasks. This work provides a new pathway for estimating high-resolution fMRI dynamics from EEG and advances multimodal neuroimaging toward more dynamic brain activity modeling.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/01/2603.27750v1-invasive-and-non-invasive-neural-decoding-of-motor-performance-in-parkinsons-disease-for-personalized-deep-brain-stimulation",
+      "section": "deep",
+      "title_en": "Invasive and Non-Invasive Neural Decoding of Motor Performance in Parkinson's Disease for Personalized Deep Brain Stimulation",
+      "authors": "Matthias Dold, Volker A. Coenen, Bastian Sajonz, Peter Reinacher, Peter Reinacher, Thomas Prokop, Marco Reisert, Sophia Gimple, Yasin Temel, Marcus L. F. Janssen, Michael Tangermann, Joana Pereira",
+      "date": "2026-03-29",
+      "pdf": "https://arxiv.org/pdf/2603.27750v1",
+      "score": "8.0",
+      "evidence": "基于EEG信号的运动表现神经解码",
+      "tldr": "本研究旨在通过解码脑电信号来优化帕金森病的自适应深部脑刺激（aDBS）。研究团队收集了19名患者在绘图任务中的EEG和ECoG数据，利用基于滤波器组的机器学习方法提取个性化生物标志物。结果显示，在大多数会话中能成功解码运动学指标，并发现DBS存在速度与准确性的权衡效应。该研究通过定义六种典型行为与神经解码场景，为未来开发个性化aDBS策略提供了重要指导。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Decoding motor performance from brain signals offers promising avenues for adaptive deep brain stimulation (aDBS) for Parkinson's disease (PD). In a two-center cohort of 19 PD patients executing a drawing task, we decoded motor performance from electroencephalography (n=15) and, critically for clinical translation, electrocorticography (n=4). Within each session, patients performed the task under DBS on and DBS off. A total of 35 sessions were recorded. Instead of relying on single frequency bands, we derived patient-specific biomarkers using a filterbank-based machine-learning approach. DBS modulated kinematics significantly in 23 sessions. Significant neural decoding of kinematics was possible in 28 of the 35 sessions (average Pearson's $\\text{r}= 0.37$). Our results further demonstrate modulation of speed-accuracy trade-offs, with increased drawing speed but reduced accuracy under DBS. Joint evaluation of behavioral and neural decoding outcomes revealed six prototypical scenarios, for which we provide guidance for future aDBS strategies.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/01/2603.29205v1-bimoe-brain-inspired-experts-for-eeg-dominant-affective-state-recognition",
+      "section": "quick",
+      "title_en": "BiMoE: Brain-Inspired Experts for EEG-Dominant Affective State Recognition",
+      "authors": "Hongyu Zhu, Lin Chen, Mingsheng Shang",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29205v1",
+      "score": "7.0",
+      "evidence": "使用类脑专家混合模型进行脑电信号情感状态识别",
+      "tldr": "本研究针对多模态情感分析中EEG信号区域特性被忽视、缺乏可解释性以及与外周生理信号（PPS）融合效果差的问题，提出了BiMoE框架。该框架受大脑启发，采用混合专家模型（MoE），通过脑拓扑感知的EEG分区和双流编码器提取时空特征，并结合多尺度大卷积核处理PPS。在DEAP和DREAMER数据集上的实验表明，BiMoE在跨被试情感识别任务中显著优于现有方法，提升了分类准确率。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Multimodal Sentiment Analysis (MSA) that integrates Electroencephalogram (EEG) with peripheral physiological signals (PPS) is crucial for the development of brain-computer interface (BCI) systems. However, existing methods encounter three major challenges: (1) overlooking the region-specific characteristics of affective processing by treating EEG signals as homogeneous; (2) treating EEG as a black-box input, which lacks interpretability into neural representations;(3) ineffective fusion of EEG features with complementary PPS features. To overcome these issues, we propose BiMoE, a novel brain-inspired mixture of experts framework. BiMoE partitions EEG signals in a brain-topology-aware manner, with each expert utilizing a dual-stream encoder to extract local and global spatiotemporal features. A dedicated expert handles PPS using multi-scale large-kernel convolutions. All experts are dynamically fused through adaptive routing and a joint loss function. Evaluated under strict subject-independent settings, BiMoE consistently surpasses state-of-the-art baselines across various affective dimensions. On the DEAP and DREAMER datasets, it yields average accuracy improvements of 0.87% to 5.19% in multimodal sentiment classification. The code is available at: https://github.com/HongyuZhu-s/BiMo.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/01/2603.25923v1-preventing-data-leakage-in-eeg-based-survival-prediction-a-two-stage-embedding-and-transformer-framework",
+      "section": "quick",
+      "title_en": "Preventing Data Leakage in EEG-Based Survival Prediction: A Two-Stage Embedding and Transformer Framework",
+      "authors": "Yixin Zhou, Zhixiang Liu, Vladimir I. Zadorozhny, Jonathan Elmer",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25923v1",
+      "score": "6.0",
+      "evidence": "用于脑电表示与结果预测的Transformer框架",
+      "tldr": "本研究针对心脏骤停后昏迷患者的EEG预后预测，揭示了多阶段深度学习模型中因数据分段导致的隐性数据泄露问题。为此，提出一种防泄露的两阶段框架：首先利用CNN和ArcFace提取EEG片段嵌入，随后通过Transformer聚合嵌入进行患者级预测，并严格执行患者级隔离。该方法有效消除了泄露路径，显著提升了模型在独立测试集上的泛化能力和临床可靠性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Deep learning models have shown promise in EEG-based outcome prediction for comatose patients after cardiac arrest, but their reliability is often compromised by subtle forms of data leakage. In particular, when long EEG recordings are segmented into short windows and reused across multiple training stages, models may implicitly encode and propagate label information, leading to overly optimistic validation performance and poor generalization.   In this study, we identify a previously overlooked form of data leakage in multi-stage EEG modeling pipelines. We demonstrate that violating strict patient-level separation can significantly inflate validation metrics while causing substantial degradation on independent test data.   To address this issue, we propose a leakage-aware two-stage framework. In the first stage, short EEG segments are transformed into embedding representations using a convolutional neural network with an ArcFace objective. In the second stage, a Transformer-based model aggregates these embeddings to produce patient-level predictions, with strict isolation between training cohorts to eliminate leakage pathways.   Experiments on a large-scale EEG dataset of post-cardiac-arrest patients show that the proposed framework achieves stable and generalizable performance under clinically relevant constraints, particularly in maintaining high sensitivity at stringent specificity thresholds. These results highlight the importance of rigorous data partitioning and provide a practical solution for reliable EEG-based outcome prediction.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/01/2603.27269v1-from-foundation-ecg-models-to-nisq-learners-distilling-ecgfounder-into-a-vqc-student",
+      "section": "quick",
+      "title_en": "From Foundation ECG Models to NISQ Learners: Distilling ECGFounder into a VQC Student",
+      "authors": "Giovanni dos Santos Franco, Felipe Mahlow, Ellison Fernando Cardoso, Felipe Fanchini",
+      "date": "2026-03-28",
+      "pdf": "https://arxiv.org/pdf/2603.27269v1",
+      "score": "6.0",
+      "evidence": "生理信号表征学习的基础模型",
+      "tldr": "本研究探讨了如何将大型心电图（ECG）基础模型ECGFounder的知识迁移到轻量化模型中。针对基础模型计算成本高、延迟大的问题，作者采用知识蒸馏技术，将微调后的ECGFounder作为教师模型，指导ResNet-1D、轻量级CNN以及结合了卷积自编码器与6比特变分量子电路（VQC）的量子学习器。实验在PTB-XL和MIT-BIH数据集上验证了该方法在大幅减少参数量的同时，仍能保持竞争力的分类性能，为心电图模型的轻量化和量子化部署提供了新思路。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Foundation models have recently improved electrocardiogram (ECG) representation learning, but their deployment can be limited by computational cost and latency constraints. In this work, we fine-tune ECGFounder as a high-capacity teacher for binary ECG classification on PTB-XL and the MIT-BIH Arrhythmia Database, and investigate whether knowledge distillation can transfer its predictive behavior to compact students. We evaluate two classical 1D students (ResNet-1D and a lightweight CNN-1D) and a quantum-ready pipeline that combines a convolutional autoencoder, which compresses 256-sample ECG windows into a low-dimensional latent representation, with a 6-qubit variational quantum circuit implemented in Qiskit and executed in a simulated backend. Across both datasets, the teacher provides the strongest overall performance, while distillation yields competitive students under a considerable reduction in trainable parameters. We further analyze the sensitivity of student performance to distillation settings, highlighting consistent accuracy--efficiency trade-offs when compressing a foundation ECG model into classical and quantum-ready learners under a unified evaluation protocol.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
