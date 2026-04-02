@@ -1,0 +1,93 @@
+{
+  "label": "2026-04-02",
+  "date": "2026-04-02",
+  "generated_at": "2026-04-02T19:47:17",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202604/02/2603.25968v2-neuro-cognitive-reward-modeling-for-human-centered-autonomous-vehicle-control",
+      "section": "quick",
+      "title_en": "Neuro-Cognitive Reward Modeling for Human-Centered Autonomous Vehicle Control",
+      "authors": "Zhuoli Zhuang, Yu-Cheng Chang, Yu-Kai Wang, Thomas Do, Chin-Teng Lin",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25968v2",
+      "score": "7.0",
+      "evidence": "用于自动驾驶控制的EEG引导决策框架",
+      "tldr": "本研究针对自动驾驶中机器决策与人类预期不一致的问题，提出了一种基于脑电图（EEG）引导的神经认知奖励建模框架。传统RLHF方法依赖耗时的人工排序，而本方法通过采集20名受试者在模拟驾驶中的EEG信号，分析应对突发环境变化的事件相关电位（ERP）。利用神经网络从视觉场景中预测认知反馈强度，并将其转化为强化学习的奖励信号。该方法在不中断驾驶行为的情况下，成功将人类认知洞察融入自动驾驶控制，显著提升了系统的避障性能。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Recent advancements in computer vision have accelerated the development of autonomous driving. Despite these advancements, training machines to drive in a way that aligns with human expectations remains a significant challenge. Human factors are still essential, as humans possess a sophisticated cognitive system capable of rapidly interpreting scene information and making accurate decisions. Aligning machine with human intent has been explored with Reinforcement Learning with Human Feedback (RLHF). Conventional RLHF methods rely on collecting human preference data by manually ranking generated outputs, which is time-consuming and indirect. In this work, we propose an electroencephalography (EEG)-guided decision-making framework to incorporate human cognitive insights without behaviour response interruption into reinforcement learning (RL) for autonomous driving. We collected EEG signals from 20 participants in a realistic driving simulator and analyzed event-related potentials (ERP) in response to sudden environmental changes. Our proposed framework employs a neural network to predict the strength of ERP based on the cognitive information from visual scene information. Moreover, we explore the integration of such cognitive information into the reward signal of the RL algorithm. Experimental results show that our framework can improve the collision avoidance ability of the RL algorithm, highlighting the potential of neuro-cognitive feedback in enhancing autonomous driving systems. Our project page is: https://alex95gogo.github.io/Cognitive-Reward/.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/02/2603.24358v1-a-neuro-symbolic-system-for-interpretable-multimodal-physiological-signals-integration-in-human-fatigue-detection",
+      "section": "quick",
+      "title_en": "A Neuro-Symbolic System for Interpretable Multimodal Physiological Signals Integration in Human Fatigue Detection",
+      "authors": "Mohammadreza Jamalifard, Yaxiong Lei, Parasto Azizinezhad, Javier Fumanal-Idocin, Javier Andreu-Perez",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24358v1",
+      "score": "6.0",
+      "evidence": "多模态生理信号集成与神经血流动力学",
+      "tldr": "本研究针对安全关键领域的疲劳检测，提出了一种神经符号架构，旨在解决传统深度学习模型缺乏可解释性的问题。该系统通过注意力编码器从眼动追踪和功能性近红外光谱（fNIRS）中学习眼动动力学、注视稳定性等四个可解释生理概念，并利用带权重的可微推理规则进行融合。主要贡献包括实现了可审计的内部推理逻辑，引入了受试者校准机制，并提出了“概念保真度”这一离线审计指标，为多模态生理信号集成提供了兼具性能与透明度的解决方案。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "We propose a neuro-symbolic architecture that learns four interpretable physiological concepts, oculomotor dynamics, gaze stability, prefrontal hemodynamics, and multimodal, from eye-tracking and neural hemodynamics, functional near-infrared spectroscopy, (fNIRS) windows using attention-based encoders, and combines them with differentiable approximate reasoning rules using learned weights and soft thresholds, to address both rigid hand-crafted rules and the lack of subject-level alignment diagnostics. We apply this system to fatigue classification from multimodal physiological signals, a domain that requires models that are accurate and interpretable, with internal reasoning that can be inspected for safety-critical use. In leave-one-subject-out evaluation on 18 participants (560 samples), the method achieves 72.1% +/- 12.3% accuracy, comparable to tuned baselines while exposing concept activations and rule firing strengths. Ablations indicate gains from participant-specific calibration (+5.2 pp), a modest drop without the fNIRS concept (-1.2 pp), and slightly better performance with Lukasiewicz operators than product (+0.9 pp). We also introduce concept fidelity, an offline per-subject audit metric from held-out labels, which correlates strongly with per-subject accuracy (r=0.843, p < 0.0001).",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/02/2603.26780v1-ratseizure-a-benchmark-and-saliency-context-transformer-for-rat-seizure-localization",
+      "section": "quick",
+      "title_en": "RatSeizure: A Benchmark and Saliency-Context Transformer for Rat Seizure Localization",
+      "authors": "Ting Yu Tsai, An Yu, Lucy Lee, Felix X. -F. Ye, Damian S. Shin, Tzu-Jen Kao, Xin Li, Ming-Ching Chang",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.26780v1",
+      "score": "6.0",
+      "evidence": "基于Transformer的大脑活动癫痫定位分析",
+      "tldr": "本研究针对癫痫研究中动物模型行为标注不精确、缺乏标准化评估的问题，推出了首个公开的大鼠癫痫行为分析基准数据集 RatSeizure，包含精细的动作单元和时间边界标注。同时，提出了一种名为 RaSeformer 的显著性上下文 Transformer 模型，通过增强行为相关上下文并抑制冗余信息，实现了高效的癫痫行为时间定位。该工作为该领域的自动化分析提供了标准化的评估协议和强力基准。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Animal models, particularly rats, play a critical role in seizure research for studying epileptogenesis and treatment response. However, progress is limited by the lack of datasets with precise temporal annotations and standardized evaluation protocols. Existing animal behavior datasets often have limited accessibility, coarse labeling, and insufficient temporal localization of clinically meaningful events. To address these limitations, we introduce RatSeizure, the first publicly benchmark for fine-grained seizure behavior analysis. The dataset consists of recorded clips annotated with seizure-related action units and temporal boundaries, enabling both behavior classification and temporal localization. We further propose RaSeformer, a saliency-context Transformer for temporal action localization that highlights behavior-relevant context while suppressing redundant cues. Experiments on RatSeizure show that RaSeformer achieves strong performance and provides a competitive reference model for this challenging task. We also establish standardized dataset splits and evaluation protocols to support reproducible benchmarking.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/02/2603.27644v1-energy-landscapes-of-emotion-quantifying-brain-network-stability-during-happy-and-sad-face-processing-using-eeg-based-hopfield-energy",
+      "section": "quick",
+      "title_en": "Energy Landscapes of Emotion: Quantifying Brain Network Stability During Happy and Sad Face Processing Using EEG-Based Hopfield Energy",
+      "authors": "Barry Djibrina, Jiajia Li",
+      "date": "2026-03-29",
+      "pdf": "https://arxiv.org/pdf/2603.27644v1",
+      "score": "6.0",
+      "evidence": "使用基于EEG的Hopfield能量量化大脑网络稳定性",
+      "tldr": "本研究引入Hopfield网络能量框架，利用高密度EEG数据量化大脑在处理快乐与悲伤情绪时的网络稳定性。通过分析功能连接的能量景观，发现悲伤情绪在多个频段（尤其是alpha频段）表现出更低的能量和更高的稳定性。该研究证明了情感效价对应于大脑功能景观中不同的吸引子盆地，为评估情感状态的动力学稳定性提供了量化工具。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Understanding how the human brain instantiates distinct emotional states is a key challenge in affective neuroscience. While network-based approaches have advanced emotion processing research,they remain largely descriptive,leaving the dynamical stability of emotional brain states unquantified.This study introduces a novel framework to quantify this stability by applying Hopfield network energy to empirically derived functional connectivity. High density EEG was recorded from 20 healthy adults during a happy versus sad facial expression discrimination task. Functional connectivity was estimated using the weighted Phase Lag Index to obtain artifact-robust,frequency-specific matrices, which served as coupling weights in a continuous Hopfield energy model to calculate a scalar energy value per trial. Statistical comparisons showed sad emotional processing was associated with significantly lower(more negative) energy in delta,theta,and alpha bands,with the strongest effect in the alpha band (Cohen's d =0.83). Energy correlated strongly negatively with global efficiency(r=-0.72),indicating hyperconnected,efficient networks correspond to more stable states.Additionally, alpha-band energy correlated positively with reaction time during sad trials(r=0.61),linking deeper network stability to increased cognitive effort. These findings demonstrate emotional valence corresponds to distinct attractor basins in the brain's functional landscape, with sadness occupying a deeper,more stable configuration than happiness.The Hopfield energy metric provides a principled, quantifiable measure of emotional brain state stability, opening new avenues for understanding affective dynamics in health and disease.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/02/2603.28183v1-pred-an-llm-based-foundation-multimodal-model-for-electromagnetic-perception-recognition-and-decision",
+      "section": "quick",
+      "title_en": "PReD: An LLM-based Foundation Multimodal Model for Electromagnetic Perception, Recognition, and Decision",
+      "authors": "Zehua Han, Jing Xiao, Yiqi Duan, Mengyu Xiang, Yuheng Ji, Xiaolong Zheng, Chenghanyu Zhang, Zhendong She, Junyu Shen, Dingwei Tan, Shichu Sun, Zhou Cong, Mingxuan Liu, Fengxiang Wang, Jinping Sun, Yangang Sun",
+      "date": "2026-03-30",
+      "pdf": "https://arxiv.org/pdf/2603.28183v1",
+      "score": "6.0",
+      "evidence": "针对时域波形和多模态感知的基座模型",
+      "tldr": "本研究针对电磁领域多模态大模型面临的数据稀缺和领域知识融合不足等挑战，提出了首个涵盖“感知、识别、决策”智能闭环的电磁领域基础模型PReD。通过构建包含130万条高质量多任务数据的PReD-1.3M数据集及评估基准PReD-Bench，PReD实现了从端到端信号理解到语言驱动推理决策的闭环优化。实验证明，该模型在信号检测、调制识别及抗干扰决策等核心任务上均达到了SOTA水平，展现了视觉对齐基础模型在电磁信号处理中的巨大潜力。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Multimodal Large Language Models have demonstrated powerful cross-modal understanding and reasoning capabilities in general domains. However, in the electromagnetic (EM) domain, they still face challenges such as data scarcity and insufficient integration of domain knowledge. This paper proposes PReD, the first foundation model for the EM domain that covers the intelligent closed-loop of \"perception, recognition, decision-making.\" We constructed a high-quality multitask EM dataset, PReD-1.3M, and an evaluation benchmark, PReD-Bench. The dataset encompasses multi-perspective representations such as raw time-domain waveform, frequency-domain spectrograms, and constellation diagrams, covering typical features of communication and radar signals. It supports a range of core tasks, including signal detection, modulation recognition, parameter estimation, protocol recognition, radio frequency fingerprint recognition, and anti-jamming decision-making. PReD adopts a multi-stage training strategy that unifies multiple tasks for EM signals. It achieves closed-loop optimization from end-to-end signal understanding to language-driven reasoning and decision-making, significantly enhancing EM domain expertise while maintaining general multimodal capabilities. Experimental results show that PReD achieves state-of-the-art performance on PReD-Bench constructed from both open-source and self-collected signal datasets. These results collectively validate the feasibility and potential of vision-aligned foundation models in advancing the understanding and reasoning of EM signals.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/02/2604.00754v1-stochastic-attention-connectome-inspired-randomized-routing-for-expressive-linear-time-attention",
+      "section": "quick",
+      "title_en": "Stochastic Attention: Connectome-Inspired Randomized Routing for Expressive Linear-Time Attention",
+      "authors": "Zehao Jin, Yanan Sui",
+      "date": "2026-04-01",
+      "pdf": "https://arxiv.org/pdf/2604.00754v1",
+      "score": "6.0",
+      "evidence": "受连接组学启发的注意力机制，用于高效全局通信",
+      "tldr": "受果蝇全脑连接组中随机捷径实现高效全局通信的启发，本文提出随机注意力（Stochastic Attention, SA）。该方法在滑动窗口注意力（SWA）基础上，通过在计算前对序列进行随机置换并在计算后恢复，将局部窗口转化为随机全局窗口。SA在保持线性复杂度的同时，使感受野随深度呈指数级增长。实验证明，SA在语言模型预训练和推理任务中均优于传统SWA，为提升高效注意力的表达能力提供了新思路。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "The whole-brain connectome of a fruit fly comprises over 130K neurons connected with a probability of merely 0.02%, yet achieves an average shortest path of only 4.4 hops. Despite being highly structured at the circuit level, the network's long-range connections are broadly distributed across brain regions, functioning as stochastic shortcuts that enable efficient global communication. Inspired by this observation, we propose Stochastic Attention (SA), a drop-in enhancement for sliding-window attention (SWA) that applies a random permutation to the token sequence before windowed attention and restores the original order afterward. This transforms the fixed local window into a stochastic global one within the same $O(nw)$ per-layer budget. Through depth, independently sampled permutations yield exponentially growing receptive fields, achieving full sequence coverage in $O(\\log_w n)$ layers versus $O(n/w)$ for SWA. We validate SA in two settings: pre-training language models from scratch, where a gated SA + SWA combination achieves the best average zero-shot accuracy, and training-free inference on Qwen3-8B and Qwen3-30B-A3B, where SA consistently outperforms SWA and matches or exceeds Mixture of Block Attention at comparable compute budgets. These results suggest that connectome-inspired stochastic routing is a practical primitive for improving the expressivity of efficient attention, complementary to existing linear and sparse approaches.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

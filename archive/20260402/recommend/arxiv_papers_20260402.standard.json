@@ -1,0 +1,255 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-02T19:46:30.975368+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.25968v2",
+      "title": "Neuro-Cognitive Reward Modeling for Human-Centered Autonomous Vehicle Control",
+      "abstract": "Recent advancements in computer vision have accelerated the development of autonomous driving. Despite these advancements, training machines to drive in a way that aligns with human expectations remains a significant challenge. Human factors are still essential, as humans possess a sophisticated cognitive system capable of rapidly interpreting scene information and making accurate decisions. Aligning machine with human intent has been explored with Reinforcement Learning with Human Feedback (RLHF). Conventional RLHF methods rely on collecting human preference data by manually ranking generated outputs, which is time-consuming and indirect. In this work, we propose an electroencephalography (EEG)-guided decision-making framework to incorporate human cognitive insights without behaviour response interruption into reinforcement learning (RL) for autonomous driving. We collected EEG signals from 20 participants in a realistic driving simulator and analyzed event-related potentials (ERP) in response to sudden environmental changes. Our proposed framework employs a neural network to predict the strength of ERP based on the cognitive information from visual scene information. Moreover, we explore the integration of such cognitive information into the reward signal of the RL algorithm. Experimental results show that our framework can improve the collision avoidance ability of the RL algorithm, highlighting the potential of neuro-cognitive feedback in enhancing autonomous driving systems. Our project page is: https://alex95gogo.github.io/Cognitive-Reward/.",
+      "authors": [
+        "Zhuoli Zhuang",
+        "Yu-Cheng Chang",
+        "Yu-Kai Wang",
+        "Thomas Do",
+        "Chin-Teng Lin"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-26T23:16:16+00:00",
+      "link": "https://arxiv.org/pdf/2603.25968v2",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "EEG-guided decision-making framework for autonomous vehicle control",
+      "llm_evidence_cn": "用于自动驾驶控制的EEG引导决策框架",
+      "llm_evidence": "用于自动驾驶控制的EEG引导决策框架",
+      "canonical_evidence": "用于自动驾驶控制的EEG引导决策框架",
+      "llm_tldr_en": "Proposes an EEG-guided framework to align autonomous vehicle control with human cognitive expectations.",
+      "llm_tldr_cn": "提出一种EEG引导的决策框架，使自动驾驶控制符合人类认知预期。",
+      "llm_tldr": "提出一种EEG引导的决策框架，使自动驾驶控制符合人类认知预期。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.24358v1",
+      "title": "A Neuro-Symbolic System for Interpretable Multimodal Physiological Signals Integration in Human Fatigue Detection",
+      "abstract": "We propose a neuro-symbolic architecture that learns four interpretable physiological concepts, oculomotor dynamics, gaze stability, prefrontal hemodynamics, and multimodal, from eye-tracking and neural hemodynamics, functional near-infrared spectroscopy, (fNIRS) windows using attention-based encoders, and combines them with differentiable approximate reasoning rules using learned weights and soft thresholds, to address both rigid hand-crafted rules and the lack of subject-level alignment diagnostics. We apply this system to fatigue classification from multimodal physiological signals, a domain that requires models that are accurate and interpretable, with internal reasoning that can be inspected for safety-critical use. In leave-one-subject-out evaluation on 18 participants (560 samples), the method achieves 72.1% +/- 12.3% accuracy, comparable to tuned baselines while exposing concept activations and rule firing strengths. Ablations indicate gains from participant-specific calibration (+5.2 pp), a modest drop without the fNIRS concept (-1.2 pp), and slightly better performance with Lukasiewicz operators than product (+0.9 pp). We also introduce concept fidelity, an offline per-subject audit metric from held-out labels, which correlates strongly with per-subject accuracy (r=0.843, p < 0.0001).",
+      "authors": [
+        "Mohammadreza Jamalifard",
+        "Yaxiong Lei",
+        "Parasto Azizinezhad",
+        "Javier Fumanal-Idocin",
+        "Javier Andreu-Perez"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC",
+        "cs.LG"
+      ],
+      "published": "2026-03-25T14:41:02+00:00",
+      "link": "https://arxiv.org/pdf/2603.24358v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multimodal physiological signal integration and neural hemodynamics",
+      "llm_evidence_cn": "多模态生理信号集成与神经血流动力学",
+      "llm_evidence": "多模态生理信号集成与神经血流动力学",
+      "canonical_evidence": "多模态生理信号集成与神经血流动力学",
+      "llm_tldr_en": "A neuro-symbolic system for fatigue detection using multimodal physiological signals like fNIRS and eye-tracking.",
+      "llm_tldr_cn": "一种利用fNIRS和眼动追踪等多模态生理信号进行疲劳检测的神经符号系统。",
+      "llm_tldr": "一种利用fNIRS和眼动追踪等多模态生理信号进行疲劳检测的神经符号系统。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.26780v1",
+      "title": "RatSeizure: A Benchmark and Saliency-Context Transformer for Rat Seizure Localization",
+      "abstract": "Animal models, particularly rats, play a critical role in seizure research for studying epileptogenesis and treatment response. However, progress is limited by the lack of datasets with precise temporal annotations and standardized evaluation protocols. Existing animal behavior datasets often have limited accessibility, coarse labeling, and insufficient temporal localization of clinically meaningful events. To address these limitations, we introduce RatSeizure, the first publicly benchmark for fine-grained seizure behavior analysis. The dataset consists of recorded clips annotated with seizure-related action units and temporal boundaries, enabling both behavior classification and temporal localization. We further propose RaSeformer, a saliency-context Transformer for temporal action localization that highlights behavior-relevant context while suppressing redundant cues. Experiments on RatSeizure show that RaSeformer achieves strong performance and provides a competitive reference model for this challenging task. We also establish standardized dataset splits and evaluation protocols to support reproducible benchmarking.",
+      "authors": [
+        "Ting Yu Tsai",
+        "An Yu",
+        "Lucy Lee",
+        "Felix X. -F. Ye",
+        "Damian S. Shin",
+        "Tzu-Jen Kao",
+        "Xin Li",
+        "Ming-Ching Chang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-25T01:17:30+00:00",
+      "link": "https://arxiv.org/pdf/2603.26780v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Transformer-based analysis for seizure localization in brain activity",
+      "llm_evidence_cn": "基于Transformer的大脑活动癫痫定位分析",
+      "llm_evidence": "基于Transformer的大脑活动癫痫定位分析",
+      "canonical_evidence": "基于Transformer的大脑活动癫痫定位分析",
+      "llm_tldr_en": "Presents a benchmark and a Transformer-based model for fine-grained seizure behavior analysis in animal models.",
+      "llm_tldr_cn": "提出了一个基准和基于Transformer的模型，用于动物模型中细粒度的癫痫行为分析。",
+      "llm_tldr": "提出了一个基准和基于Transformer的模型，用于动物模型中细粒度的癫痫行为分析。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.27644v1",
+      "title": "Energy Landscapes of Emotion: Quantifying Brain Network Stability During Happy and Sad Face Processing Using EEG-Based Hopfield Energy",
+      "abstract": "Understanding how the human brain instantiates distinct emotional states is a key challenge in affective neuroscience. While network-based approaches have advanced emotion processing research,they remain largely descriptive,leaving the dynamical stability of emotional brain states unquantified.This study introduces a novel framework to quantify this stability by applying Hopfield network energy to empirically derived functional connectivity. High density EEG was recorded from 20 healthy adults during a happy versus sad facial expression discrimination task. Functional connectivity was estimated using the weighted Phase Lag Index to obtain artifact-robust,frequency-specific matrices, which served as coupling weights in a continuous Hopfield energy model to calculate a scalar energy value per trial. Statistical comparisons showed sad emotional processing was associated with significantly lower(more negative) energy in delta,theta,and alpha bands,with the strongest effect in the alpha band (Cohen's d =0.83). Energy correlated strongly negatively with global efficiency(r=-0.72),indicating hyperconnected,efficient networks correspond to more stable states.Additionally, alpha-band energy correlated positively with reaction time during sad trials(r=0.61),linking deeper network stability to increased cognitive effort. These findings demonstrate emotional valence corresponds to distinct attractor basins in the brain's functional landscape, with sadness occupying a deeper,more stable configuration than happiness.The Hopfield energy metric provides a principled, quantifiable measure of emotional brain state stability, opening new avenues for understanding affective dynamics in health and disease.",
+      "authors": [
+        "Barry Djibrina",
+        "Jiajia Li"
+      ],
+      "primary_category": "q-bio.NC",
+      "categories": [
+        "q-bio.NC"
+      ],
+      "published": "2026-03-29T11:33:29+00:00",
+      "link": "https://arxiv.org/pdf/2603.27644v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Quantifying brain network stability using EEG-based Hopfield energy",
+      "llm_evidence_cn": "使用基于EEG的Hopfield能量量化大脑网络稳定性",
+      "llm_evidence": "使用基于EEG的Hopfield能量量化大脑网络稳定性",
+      "canonical_evidence": "使用基于EEG的Hopfield能量量化大脑网络稳定性",
+      "llm_tldr_en": "Applies Hopfield network energy to EEG data to quantify the stability of emotional brain states.",
+      "llm_tldr_cn": "将Hopfield网络能量应用于EEG数据，以量化情绪大脑状态的稳定性。",
+      "llm_tldr": "将Hopfield网络能量应用于EEG数据，以量化情绪大脑状态的稳定性。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.28183v1",
+      "title": "PReD: An LLM-based Foundation Multimodal Model for Electromagnetic Perception, Recognition, and Decision",
+      "abstract": "Multimodal Large Language Models have demonstrated powerful cross-modal understanding and reasoning capabilities in general domains. However, in the electromagnetic (EM) domain, they still face challenges such as data scarcity and insufficient integration of domain knowledge. This paper proposes PReD, the first foundation model for the EM domain that covers the intelligent closed-loop of \"perception, recognition, decision-making.\" We constructed a high-quality multitask EM dataset, PReD-1.3M, and an evaluation benchmark, PReD-Bench. The dataset encompasses multi-perspective representations such as raw time-domain waveform, frequency-domain spectrograms, and constellation diagrams, covering typical features of communication and radar signals. It supports a range of core tasks, including signal detection, modulation recognition, parameter estimation, protocol recognition, radio frequency fingerprint recognition, and anti-jamming decision-making. PReD adopts a multi-stage training strategy that unifies multiple tasks for EM signals. It achieves closed-loop optimization from end-to-end signal understanding to language-driven reasoning and decision-making, significantly enhancing EM domain expertise while maintaining general multimodal capabilities. Experimental results show that PReD achieves state-of-the-art performance on PReD-Bench constructed from both open-source and self-collected signal datasets. These results collectively validate the feasibility and potential of vision-aligned foundation models in advancing the understanding and reasoning of EM signals.",
+      "authors": [
+        "Zehua Han",
+        "Jing Xiao",
+        "Yiqi Duan",
+        "Mengyu Xiang",
+        "Yuheng Ji",
+        "Xiaolong Zheng",
+        "Chenghanyu Zhang",
+        "Zhendong She",
+        "Junyu Shen",
+        "Dingwei Tan",
+        "Shichu Sun",
+        "Zhou Cong",
+        "Mingxuan Liu",
+        "Fengxiang Wang",
+        "Jinping Sun",
+        "Yangang Sun"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-03-30T08:47:02+00:00",
+      "link": "https://arxiv.org/pdf/2603.28183v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Foundation model for time-domain waveforms and multimodal perception",
+      "llm_evidence_cn": "针对时域波形和多模态感知的基座模型",
+      "llm_evidence": "针对时域波形和多模态感知的基座模型",
+      "canonical_evidence": "针对时域波形和多模态感知的基座模型",
+      "llm_tldr_en": "Proposes a foundation model for electromagnetic signals using time-domain waveforms and multimodal learning.",
+      "llm_tldr_cn": "提出了一种针对电磁信号的基座模型，利用时域波形和多模态学习进行感知与决策。",
+      "llm_tldr": "提出了一种针对电磁信号的基座模型，利用时域波形和多模态学习进行感知与决策。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.00754v1",
+      "title": "Stochastic Attention: Connectome-Inspired Randomized Routing for Expressive Linear-Time Attention",
+      "abstract": "The whole-brain connectome of a fruit fly comprises over 130K neurons connected with a probability of merely 0.02%, yet achieves an average shortest path of only 4.4 hops. Despite being highly structured at the circuit level, the network's long-range connections are broadly distributed across brain regions, functioning as stochastic shortcuts that enable efficient global communication. Inspired by this observation, we propose Stochastic Attention (SA), a drop-in enhancement for sliding-window attention (SWA) that applies a random permutation to the token sequence before windowed attention and restores the original order afterward. This transforms the fixed local window into a stochastic global one within the same $O(nw)$ per-layer budget. Through depth, independently sampled permutations yield exponentially growing receptive fields, achieving full sequence coverage in $O(\\log_w n)$ layers versus $O(n/w)$ for SWA. We validate SA in two settings: pre-training language models from scratch, where a gated SA + SWA combination achieves the best average zero-shot accuracy, and training-free inference on Qwen3-8B and Qwen3-30B-A3B, where SA consistently outperforms SWA and matches or exceeds Mixture of Block Attention at comparable compute budgets. These results suggest that connectome-inspired stochastic routing is a practical primitive for improving the expressivity of efficient attention, complementary to existing linear and sparse approaches.",
+      "authors": [
+        "Zehao Jin",
+        "Yanan Sui"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-04-01T11:18:40+00:00",
+      "link": "https://arxiv.org/pdf/2604.00754v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Connectome-inspired attention mechanism for efficient global communication",
+      "llm_evidence_cn": "受连接组学启发的注意力机制，用于高效全局通信",
+      "llm_evidence": "受连接组学启发的注意力机制，用于高效全局通信",
+      "canonical_evidence": "受连接组学启发的注意力机制，用于高效全局通信",
+      "llm_tldr_en": "Proposes a connectome-inspired stochastic attention mechanism to improve efficiency in large-scale models.",
+      "llm_tldr_cn": "提出一种受脑连接组启发的随机注意力机制，以提高大规模模型的效率。",
+      "llm_tldr": "提出一种受脑连接组启发的随机注意力机制，以提高大规模模型的效率。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -6,35 +6,41 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-01
-- 运行时间：2026-04-01 19:56:45 UTC
+- 最新运行日期：2026-04-02
+- 运行时间：2026-04-02 19:47:09 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：2
-- 速读区：3
+- 本次总论文数：6
+- 精读区：0
+- 速读区：6
 
 ### 今日简报（AI）
-今日聚焦高分辨率脑动态建模与帕金森病个性化解码，深度剖析 5 篇神经工程与生物医学前
-- 详情：[/202604/01/README](/202604/01/README)
+今日聚焦神经认知与符号系统在自动驾驶及疲劳检测中的跨学科应用。
+重点推荐提升自动驾驶人机交互体验的奖励建模，以及基于多模态生理信号的可解释疲劳检测技术。
+建议关注神经符号系统如何将复杂生理数据转化为更具可解释性的智能监测方案。
+- 详情：[/202604/02/README](/202604/02/README)
 
 ### 精读区论文标签
-1. [Modeling Spatiotemporal Neural Frames for High Resolution Brain Dynamic](/202604/01/2603.24176v2-modeling-spatiotemporal-neural-frames-for-high-resolution-brain-dynamic)  
-   标签：评分：9.0/10、query:eeg-ai
-   evidence：基于EEG条件的动态fMRI序列重建框架
-2. [Invasive and Non-Invasive Neural Decoding of Motor Performance in Parkinson's Disease for Personalized Deep Brain Stimulation](/202604/01/2603.27750v1-invasive-and-non-invasive-neural-decoding-of-motor-performance-in-parkinsons-disease-for-personalized-deep-brain-stimulation)  
-   标签：评分：8.0/10、query:eeg-ai
-   evidence：基于EEG信号的运动表现神经解码
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [BiMoE: Brain-Inspired Experts for EEG-Dominant Affective State Recognition](/202604/01/2603.29205v1-bimoe-brain-inspired-experts-for-eeg-dominant-affective-state-recognition)  
+1. [Neuro-Cognitive Reward Modeling for Human-Centered Autonomous Vehicle Control](/202604/02/2603.25968v2-neuro-cognitive-reward-modeling-for-human-centered-autonomous-vehicle-control)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：使用类脑专家混合模型进行脑电信号情感状态识别
-2. [Preventing Data Leakage in EEG-Based Survival Prediction: A Two-Stage Embedding and Transformer Framework](/202604/01/2603.25923v1-preventing-data-leakage-in-eeg-based-survival-prediction-a-two-stage-embedding-and-transformer-framework)  
+   evidence：用于自动驾驶控制的EEG引导决策框架
+2. [A Neuro-Symbolic System for Interpretable Multimodal Physiological Signals Integration in Human Fatigue Detection](/202604/02/2603.24358v1-a-neuro-symbolic-system-for-interpretable-multimodal-physiological-signals-integration-in-human-fatigue-detection)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：用于脑电表示与结果预测的Transformer框架
-3. [From Foundation ECG Models to NISQ Learners: Distilling ECGFounder into a VQC Student](/202604/01/2603.27269v1-from-foundation-ecg-models-to-nisq-learners-distilling-ecgfounder-into-a-vqc-student)  
+   evidence：多模态生理信号集成与神经血流动力学
+3. [RatSeizure: A Benchmark and Saliency-Context Transformer for Rat Seizure Localization](/202604/02/2603.26780v1-ratseizure-a-benchmark-and-saliency-context-transformer-for-rat-seizure-localization)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：生理信号表征学习的基础模型
+   evidence：基于Transformer的大脑活动癫痫定位分析
+4. [Energy Landscapes of Emotion: Quantifying Brain Network Stability During Happy and Sad Face Processing Using EEG-Based Hopfield Energy](/202604/02/2603.27644v1-energy-landscapes-of-emotion-quantifying-brain-network-stability-during-happy-and-sad-face-processing-using-eeg-based-hopfield-energy)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：使用基于EEG的Hopfield能量量化大脑网络稳定性
+5. [PReD: An LLM-based Foundation Multimodal Model for Electromagnetic Perception, Recognition, and Decision](/202604/02/2603.28183v1-pred-an-llm-based-foundation-multimodal-model-for-electromagnetic-perception-recognition-and-decision)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：针对时域波形和多模态感知的基座模型
+6. [Stochastic Attention: Connectome-Inspired Randomized Routing for Expressive Linear-Time Attention](/202604/02/2604.00754v1-stochastic-attention-connectome-inspired-randomized-routing-for-expressive-linear-time-attention)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：受连接组学启发的注意力机制，用于高效全局通信
 
 
 <div class="dpr-home-promo-card">
