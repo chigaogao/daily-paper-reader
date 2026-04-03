@@ -1,0 +1,397 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-03T19:57:02.602325+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 7,
+    "quick_skim_target": 11,
+    "quick_selected": 7
+  },
+  "deep_dive": [
+    {
+      "id": "2604.01595v1",
+      "title": "Optimizing EEG Graph Structure for Seizure Detection: An Information Bottleneck and Self-Supervised Learning Approach",
+      "abstract": "Seizure detection from EEG signals is highly challenging due to complex spatiotemporal dynamics and extreme inter-patient variability. To model them, recent methods construct dynamic graphs via statistical correlations, predefined similarity measures, or implicit learning, yet rarely account for EEG's noisy nature. Consequently, these graphs usually contain redundant or task-irrelevant connections, undermining model performance even with state-of-the-art architectures. In this paper, we present a new perspective for EEG seizure detection: jointly learning denoised dynamic graph structures and informative spatial-temporal representations guided by the Information Bottleneck (IB). Unlike prior approaches, our graph constructor explicitly accounts for the noisy characteristics of EEG data, producing compact and reliable connectivity patterns that better support downstream seizure detection. To further enhance representation learning, we employ a self-supervised Graph Masked AutoEncoder that reconstructs masked EEG signals based on dynamic graph context, promoting structure-aware and compact representations aligned with the IB principle. Bringing things together, we introduce Information Bottleneck-guided EEG SeizuRE DetectioN via SElf-Supervised Learning (IRENE), which explicitly learns dynamic graph structures and interpretable spatial-temporal EEG representations. IRENE addresses three core challenges: (i) Identifying the most informative nodes and edges; (ii) Explaining seizure propagation in the brain network; and (iii) Enhancing robustness against label scarcity and inter-patient variability. Extensive experiments on benchmark EEG datasets demonstrate that our method outperforms state-of-the-art baselines in seizure detection and provides clinically meaningful insights into seizure dynamics. The source code is available at https://github.com/LabRAI/IRENE.",
+      "authors": [
+        "Lincan Li",
+        "Rikuto Kotoge",
+        "Xihao Piao",
+        "Zheng Chen",
+        "Yushun Dong"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-02T04:09:10+00:00",
+      "link": "https://arxiv.org/pdf/2604.01595v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Self-supervised learning for EEG representation learning",
+      "llm_evidence_cn": "用于脑电表征学习的自监督学习方法",
+      "llm_evidence": "用于脑电表征学习的自监督学习方法",
+      "canonical_evidence": "用于脑电表征学习的自监督学习方法",
+      "llm_tldr_en": "Uses self-supervised learning and Information Bottleneck to optimize EEG graph structures for seizure detection.",
+      "llm_tldr_cn": "利用自监督学习和信息瓶颈优化脑电图结构，以提高癫痫检测性能。",
+      "llm_tldr": "利用自监督学习和信息瓶颈优化脑电图结构，以提高癫痫检测性能。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.01653v1",
+      "title": "Cognitive Energy Modeling for Neuroadaptive Human-Machine Systems using EEG and WGAN-GP",
+      "abstract": "Electroencephalography (EEG) provides a non-invasive insight into the brain's cognitive and emotional dynamics. However, modeling how these states evolve in real time and quantifying the energy required for such transitions remains a major challenge. The Schrödinger Bridge Problem (SBP) offers a principled probabilistic framework to model the most efficient evolution between the brain states, interpreted as a measure of cognitive energy cost. While generative models such as GANs have been widely used to augment EEG data, it remains unclear whether synthetic EEG preserves the underlying dynamical structure required for transition-based analysis. In this work, we address this gap by using SBP-derived transport cost as a metric to evaluate whether GAN-generated EEG retains the distributional geometry necessary for energy-based modeling of cognitive state transitions. We compare transition energies derived from real and synthetic EEG collected during Stroop tasks and demonstrate strong agreement across group and participant-level analyses. These results indicate that synthetic EEG preserves the transition structure required for SBP-based modeling, enabling its use in data-efficient neuroadaptive systems. We further present a framework in which SBP-derived cognitive energy serves as a control signal for adaptive human-machine systems, supporting real-time adjustment of system behavior in response to user cognitive and affective state.",
+      "authors": [
+        "Sriram Sattiraju",
+        "Vaibhav Gollapalli",
+        "Aryan Shah",
+        "Timothy McMahan"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.HC"
+      ],
+      "published": "2026-04-02T05:51:52+00:00",
+      "link": "https://arxiv.org/pdf/2604.01653v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Generative models (WGAN-GP) for EEG data augmentation and state transition",
+      "llm_evidence_cn": "使用生成模型（WGAN-GP）进行脑电数据增强与状态转换",
+      "llm_evidence": "使用生成模型（WGAN-GP）进行脑电数据增强与状态转换",
+      "canonical_evidence": "使用生成模型（WGAN-GP）进行脑电数据增强与状态转换",
+      "llm_tldr_en": "Uses WGAN-GP and Schrödinger Bridge to model EEG state transitions and evaluate synthetic data.",
+      "llm_tldr_cn": "利用WGAN-GP和薛定谔桥框架建模脑电状态演化并评估合成数据的动力学特征。",
+      "llm_tldr": "利用WGAN-GP和薛定谔桥框架建模脑电状态演化并评估合成数据的动力学特征。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "AI generated content from brain activity and EEG",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.01889v1",
+      "title": "LI-DSN: A Layer-wise Interactive Dual-Stream Network for EEG Decoding",
+      "abstract": "Electroencephalography (EEG) provides a non-invasive window into brain activity, offering high temporal resolution crucial for understanding and interacting with neural processes through brain-computer interfaces (BCIs). Current dual-stream neural networks for EEG often process temporal and spatial features independently through parallel branches, delaying their integration until a final, late-stage fusion. This design inherently leads to an \"information silo\" problem, precluding intermediate cross-stream refinement and hindering spatial-temporal decompositions essential for full feature utilization. We propose LI-DSN, a layer-wise interactive dual-stream network that facilitates progressive, cross-stream communication at each layer, thereby overcoming the limitations of late-fusion paradigms. LI-DSN introduces a novel Temporal-Spatial Integration Attention (TSIA) mechanism, which constructs a Spatial Affinity Correlation Matrix (SACM) to capture inter-electrode spatial structural relationships and a Temporal Channel Aggregation Matrix (TCAM) to integrate cosine-gated temporal dynamics under spatial guidance. Furthermore, we employ an adaptive fusion strategy with learnable channel weights to optimize the integration of dual-stream features. Extensive experiments across eight diverse EEG datasets, encompassing motor imagery (MI) classification, emotion recognition, and steady-state visual evoked potentials (SSVEP), consistently demonstrate that LI-DSN significantly outperforms 13 state-of-the-art (SOTA) baseline models, showcasing its superior robustness and decoding performance. The code will be publicized after acceptance.",
+      "authors": [
+        "Chenghao Yue",
+        "Zhiyuan Ma",
+        "Zhongye Xia",
+        "Xinche Zhang",
+        "Yisi Zhang",
+        "Xinke Shen",
+        "Sen Song"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-02T10:52:04+00:00",
+      "link": "https://arxiv.org/pdf/2604.01889v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "dual-stream network for EEG decoding and BCI",
+      "llm_evidence_cn": "用于脑电解码和脑机接口的双流网络",
+      "llm_evidence": "用于脑电解码和脑机接口的双流网络",
+      "canonical_evidence": "用于脑电解码和脑机接口的双流网络",
+      "llm_tldr_en": "Introduces a layer-wise interactive dual-stream network to improve EEG feature utilization for BCI.",
+      "llm_tldr_cn": "引入层级交互双流网络，提高脑机接口中脑电特征的利用率。",
+      "llm_tldr": "引入层级交互双流网络，提高脑机接口中脑电特征的利用率。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.28251v1",
+      "title": "DiffAttn: Diffusion-Based Drivers' Visual Attention Prediction with LLM-Enhanced Semantic Reasoning",
+      "abstract": "Drivers' visual attention provides critical cues for anticipating latent hazards and directly shapes decision-making and control maneuvers, where its absence can compromise traffic safety. To emulate drivers' perception patterns and advance visual attention prediction for intelligent vehicles, we propose DiffAttn, a diffusion-based framework that formulates this task as a conditional diffusion-denoising process, enabling more accurate modeling of drivers' attention. To capture both local and global scene features, we adopt Swin Transformer as encoder and design a decoder that combines a Feature Fusion Pyramid for cross-layer interaction with dense, multi-scale conditional diffusion to jointly enhance denoising learning and model fine-grained local and global scene contexts. Additionally, a large language model (LLM) layer is incorporated to enhance top-down semantic reasoning and improve sensitivity to safety-critical cues. Extensive experiments on four public datasets demonstrate that DiffAttn achieves state-of-the-art (SoTA) performance, surpassing most video-based, top-down-feature-driven, and LLM-enhanced baselines. Our framework further supports interpretable driver-centric scene understanding and has the potential to improve in-cabin human-machine interaction, risk perception, and drivers' state measurement in intelligent vehicles.",
+      "authors": [
+        "Weimin Liu",
+        "Qingkun Li",
+        "Jiyuan Qiu",
+        "Wenjun Wang",
+        "Joshua H. Meng"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-03-30T10:24:20+00:00",
+      "link": "https://arxiv.org/pdf/2603.28251v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Diffusion-based framework for human attention prediction",
+      "llm_evidence_cn": "基于扩散的人类注意力预测框架",
+      "llm_evidence": "基于扩散的人类注意力预测框架",
+      "canonical_evidence": "基于扩散的人类注意力预测框架",
+      "llm_tldr_en": "Uses a diffusion-based framework and LLM reasoning to predict drivers' visual attention patterns.",
+      "llm_tldr_cn": "利用基于扩散的框架和大语言模型推理来预测驾驶员的视觉注意力模式。",
+      "llm_tldr": "利用基于扩散的框架和大语言模型推理来预测驾驶员的视觉注意力模式。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.27996v1",
+      "title": "From Independent to Correlated Diffusion: Generalized Generative Modeling with Probabilistic Computers",
+      "abstract": "Diffusion models have emerged as a powerful framework for generative tasks in deep learning. They decompose generative modeling into two computational primitives: deterministic neural-network evaluation and stochastic sampling. Current implementations usually place most computation in the neural network, but diffusion as a framework allows a broader range of choices for the stochastic transition kernel. Here, we generalize the stochastic sampling component by replacing independent noise injection with Markov chain Monte Carlo (MCMC) dynamics that incorporate known interaction structure. Standard independent diffusion is recovered as a special case when couplings are set to zero. By explicitly incorporating Ising couplings into the diffusion dynamics, the noising and denoising processes exploit spatial correlations representative of the target system. The resulting framework maps naturally onto probabilistic computers (p-computers) built from probabilistic bits (p-bits), which provide orders-of-magnitude advantages in sampling throughput and energy efficiency over GPUs. We demonstrate the approach on equilibrium states of the 2D ferromagnetic Ising model and the 3D Edwards-Anderson spin glass, showing that correlated diffusion produces samples in closer agreement with MCMC reference distributions than independent diffusion. More broadly, the framework shows that p-computers can enable new classes of diffusion algorithms that exploit structured probabilistic sampling for generative modeling.",
+      "authors": [
+        "Nihal Sanjay Singh",
+        "Mazdak Mohseni-Rajaee",
+        "Shaila Niazi",
+        "Kerem Y. Camsari"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.ET"
+      ],
+      "published": "2026-03-30T03:36:20+00:00",
+      "link": "https://arxiv.org/pdf/2603.27996v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Generalized generative modeling with diffusion models",
+      "llm_evidence_cn": "扩散模型的广义生成建模",
+      "llm_evidence": "扩散模型的广义生成建模",
+      "canonical_evidence": "扩散模型的广义生成建模",
+      "llm_tldr_en": "Generalizes diffusion models using MCMC dynamics for improved generative modeling.",
+      "llm_tldr_cn": "通过引入MCMC动力学改进扩散模型的随机采样，增强生成建模能力。",
+      "llm_tldr": "通过引入MCMC动力学改进扩散模型的随机采样，增强生成建模能力。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.01475v1",
+      "title": "Interpretable Electrophysiological Features of Resting-State EEG Capture Cortical Network Dynamics in Parkinsons Disease",
+      "abstract": "Parkinsons disease (PD) alters cortical neural dynamics, yet reliable non-invasive electrophysiological biomarkers remain elusive. This study examined whether interpretable EEG features capturing complementary aspects of neural dynamics can discriminate Parkinsonian neural states. A comprehensive set of interpretable features was extracted and grouped into Standard descriptors (spectral power, phase synchronization, time-domain statistics) and Dynamical descriptors (aperiodic activity, cross-frequency coupling, scale-free dynamics, neuronal avalanche statistics, and instantaneous frequency measures). A multi-head attention transformer classifier was trained using strict LOSO validation. Group-level comparisons were performed to identify electrophysiological differences associated with disease and medication state. Standard feature sets achieved strongest performance in discriminating medication states (PDoff vs PDon), whereas Dynamical performed competitively in contrasts between PD patients and healthy controls. Random feature ablation analyses indicated that Dynamical descriptors provide complementary information distributed across features while correlation analysis revealed low redundancy within both feature sets. Group-level comparisons revealed medication-sensitive reductions in delta power and voltage variance, modulation of neuronal avalanche statistics, persistent increases in theta phase synchronization in PD patients, and disease-related alterations in cross-frequency interactions. Traditional spectral and synchronization features primarily reflect medication-related neural modulation, whereas dynamical descriptors reveal broader alterations in cortical network organization associated with disease but also with medication. These findings support multivariate EEG representations as a promising framework for developing non-invasive biomarkers of PD.",
+      "authors": [
+        "Antonios G. Dougalis"
+      ],
+      "primary_category": "q-bio.NC",
+      "categories": [
+        "q-bio.NC",
+        "q-bio.QM"
+      ],
+      "published": "2026-04-01T23:31:38+00:00",
+      "link": "https://arxiv.org/pdf/2604.01475v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Transformer classifier for EEG features in Parkinson's disease",
+      "llm_evidence_cn": "用于帕金森病脑电特征的Transformer分类器",
+      "llm_evidence": "用于帕金森病脑电特征的Transformer分类器",
+      "canonical_evidence": "用于帕金森病脑电特征的Transformer分类器",
+      "llm_tldr_en": "Uses a multi-head attention transformer to classify interpretable EEG features for disease biomarker discovery.",
+      "llm_tldr_cn": "使用多头注意力Transformer对可解释的脑电特征进行分类，用于疾病生物标志物发现。",
+      "llm_tldr": "使用多头注意力Transformer对可解释的脑电特征进行分类，用于疾病生物标志物发现。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.28049v1",
+      "title": "Drift-AR: Single-Step Visual Autoregressive Generation via Anti-Symmetric Drifting",
+      "abstract": "Autoregressive (AR)-Diffusion hybrid paradigms combine AR's structured semantic modeling with diffusion's high-fidelity synthesis, yet suffer from a dual speed bottleneck: the sequential AR stage and the iterative multi-step denoising of the diffusion vision decode stage. Existing methods address each in isolation without a unified principle design. We observe that the per-position \\emph{prediction entropy} of continuous-space AR models naturally encodes spatially varying generation uncertainty, which simultaneously governing draft prediction quality in the AR stage and reflecting the corrective effort required by vision decoding stage, which is not fully explored before. Since entropy is inherently tied to both bottlenecks, it serves as a natural unifying signal for joint acceleration. In this work, we propose \\textbf{Drift-AR}, which leverages entropy signal to accelerate both stages: 1) for AR acceleration, we introduce Entropy-Informed Speculative Decoding that align draft--target entropy distributions via a causal-normalized entropy loss, resolving the entropy mismatch that causes excessive draft rejection; 2) for visual decoder acceleration, we reinterpret entropy as the \\emph{physical variance} of the initial state for an anti-symmetric drifting field -- high-entropy positions activate stronger drift toward the data manifold while low-entropy positions yield vanishing drift -- enabling single-step (1-NFE) decoding without iterative denoising or distillation. Moreover, both stages share the same entropy signal, which is computed once with no extra cost. Experiments on MAR, TransDiff, and NextStep-1 demonstrate 3.8--5.5$\\times$ speedup with genuine 1-NFE decoding, matching or surpassing original quality. Code will be available at https://github.com/aSleepyTree/Drift-AR.",
+      "authors": [
+        "Zhen Zou",
+        "Xiaoxiao Ma",
+        "Mingde Yao",
+        "Jie Huang",
+        "LinJiang Huang",
+        "Feng Zhao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-30T05:29:00+00:00",
+      "link": "https://arxiv.org/pdf/2603.28049v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Autoregressive-Diffusion hybrid paradigms for generation",
+      "llm_evidence_cn": "用于生成的自回归-扩散混合范式",
+      "llm_evidence": "用于生成的自回归-扩散混合范式",
+      "canonical_evidence": "用于生成的自回归-扩散混合范式",
+      "llm_tldr_en": "Develops a hybrid AR-Diffusion model for single-step visual generation using prediction entropy.",
+      "llm_tldr_cn": "开发了一种混合自回归扩散模型，利用预测熵实现单步视觉生成。",
+      "llm_tldr": "开发了一种混合自回归扩散模型，利用预测熵实现单步视觉生成。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.00070v1",
+      "title": "Brain MR Image Synthesis with Multi-contrast Self-attention GAN",
+      "abstract": "Accurate and complete multi-modal Magnetic Resonance Imaging (MRI) is essential for neuro-oncological assessment, as each contrast provides complementary anatomical and pathological information. However, acquiring all modalities (e.g., T1c, T1n, T2, T2f) for every patient is often impractical due to time, cost, and patient discomfort, potentially limiting comprehensive tumour evaluation. We propose 3D-MC-SAGAN (3D Multi-Contrast Self-Attention generative adversarial network), a unified 3D multi-contrast synthesis framework that generates high-fidelity missing modalities from a single T2 input while explicitly preserving tumour characteristics. The model employs a multi-scale 3D encoder-decoder generator with residual connections and a novel Memory-Bounded Hybrid Attention (MBHA) block to capture long-range dependencies efficiently, and is trained with a WGAN-GP critic and an auxiliary contrast-conditioning branch to produce T2f, T1n, and T1c volumes within a single unified network. A frozen 3D U-Net-based segmentation module introduces a segmentation-consistency constraint to preserve lesion morphology. The composite objective integrates adversarial, reconstruction, perceptual, structural similarity, contrast-classification, and segmentation-guided losses to align global realism with tumour-preserving structure. Extensive evaluation on 3D brain MRI datasets demonstrates that 3D-MC-SAGAN achieves state-of-the-art quantitative performance and generates visually coherent, anatomically plausible contrasts with improved distribution-level realism. Moreover, it maintains tumour segmentation accuracy comparable to fully acquired multi-modal inputs, highlighting its potential to reduce acquisition burden while preserving clinically meaningful information.",
+      "authors": [
+        "Zaid A. Abod",
+        "Furqan Aziz"
+      ],
+      "primary_category": "eess.IV",
+      "categories": [
+        "eess.IV",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-03-31T13:43:53+00:00",
+      "link": "https://arxiv.org/pdf/2604.00070v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Brain image synthesis using self-attention generative models",
+      "llm_evidence_cn": "使用自注意力生成模型进行脑图像合成",
+      "llm_evidence": "使用自注意力生成模型进行脑图像合成",
+      "canonical_evidence": "使用自注意力生成模型进行脑图像合成",
+      "llm_tldr_en": "A 3D multi-contrast self-attention GAN for synthesizing missing brain MRI modalities.",
+      "llm_tldr_cn": "一种用于合成缺失脑部 MRI 模态的 3D 多对比度自注意力生成对抗网络。",
+      "llm_tldr": "一种用于合成缺失脑部 MRI 模态的 3D 多对比度自注意力生成对抗网络。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.01122v1",
+      "title": "Region-Adaptive Generative Compression with Spatially Varying Diffusion Models",
+      "abstract": "Generative image codecs aim to optimize perceptual quality, producing realistic and detailed reconstructions. However, they often overlook a key property of human vision: our tendency to focus on particular aspects of a visual scene (e.g., salient objects) while giving less importance to other regions. An ideal perceptual codec should be able to exploit this property by allocating more representational capacity to perceptually important areas. To this end, we propose a region-adaptive diffusion-based image codec that supports non-uniform bit allocation within an image. We design a novel spatially varying diffusion model capable of denoising varying amounts of noise per pixel according to arbitrary importance maps. We further identify that these maps can serve as effective priors on the latent representation, and integrate them into our entropy model, improving rate-distortion performance. Built on these contributions, our spatially-adaptive diffusion-based codec outperforms state-of-the-art ROI-controllable baselines in both full-image and ROI-masked perceptual quality.",
+      "authors": [
+        "Lucas Relic",
+        "Roberto Azevedo",
+        "Yang Zhang",
+        "Stephan Mandt",
+        "Markus Gross",
+        "Christopher Schroers"
+      ],
+      "primary_category": "eess.IV",
+      "categories": [
+        "eess.IV"
+      ],
+      "published": "2026-04-01T16:46:08+00:00",
+      "link": "https://arxiv.org/pdf/2604.01122v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Spatially varying diffusion models for generative tasks",
+      "llm_evidence_cn": "用于生成任务的空间变化扩散模型",
+      "llm_evidence": "用于生成任务的空间变化扩散模型",
+      "canonical_evidence": "用于生成任务的空间变化扩散模型",
+      "llm_tldr_en": "A region-adaptive diffusion-based image codec that optimizes perceptual quality through non-uniform bit allocation.",
+      "llm_tldr_cn": "一种基于区域自适应扩散的图像编解码器，通过非均匀比特分配优化感知质量。",
+      "llm_tldr": "一种基于区域自适应扩散的图像编解码器，通过非均匀比特分配优化感知质量。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.01526v1",
+      "title": "Learning ECG Image Representations via Dual Physiological-Aware Alignments",
+      "abstract": "Electrocardiograms (ECGs) are among the most widely used diagnostic tools for cardiovascular diseases, and a large amount of ECG data worldwide appears only in image form. However, most existing automated ECG analysis methods rely on access to raw signal recordings, limiting their applicability in real-world and resource-constrained settings. In this paper, we present ECG-Scan, a self-supervised framework for learning clinically generalized representations from ECG images through dual physiological-aware alignments: 1) Our approach optimizes image representation learning using multimodal contrastive alignment between image and gold-standard signal-text modalities. 2) We further integrate domain knowledge via soft-lead constraints, regularizing the reconstruction process and improving signal lead inter-consistency. Extensive benchmarking across multiple datasets and downstream tasks demonstrates that our image-based model achieves superior performance compared to existing image baselines and notably narrows the gap between ECG image and signal analysis. These results highlight the potential of self-supervised image modeling to unlock large-scale legacy ECG data and broaden access to automated cardiovascular diagnostics.",
+      "authors": [
+        "Hung Manh Pham",
+        "Jialu Tang",
+        "Aaqib Saeed",
+        "Dong Ma",
+        "Bin Zhu",
+        "Pan Zhou"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-02T01:52:14+00:00",
+      "link": "https://arxiv.org/pdf/2604.01526v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Self-supervised framework for learning physiological representations",
+      "llm_evidence_cn": "学习生理表征的自监督框架",
+      "llm_evidence": "学习生理表征的自监督框架",
+      "canonical_evidence": "学习生理表征的自监督框架",
+      "llm_tldr_en": "Learns ECG representations via self-supervised multimodal alignment between images and signals.",
+      "llm_tldr_cn": "通过图像与信号的自监督多模态对齐学习心电图表征，方法可借鉴至脑电。",
+      "llm_tldr": "通过图像与信号的自监督多模态对齐学习心电图表征，方法可借鉴至脑电。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
