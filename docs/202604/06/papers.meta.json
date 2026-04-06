@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-06",
+  "date": "2026-04-06",
+  "generated_at": "2026-04-06T19:43:33",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/06/2604.02501v1-ecg-foundation-models-and-medical-llms-for-agentic-cardiovascular-intelligence-at-the-edge-a-review-and-outlook",
+      "section": "quick",
+      "title_en": "ECG Foundation Models and Medical LLMs for Agentic Cardiovascular Intelligence at the Edge: A Review and Outlook",
+      "authors": "Mudassir Hasan Khan, Ahmad Nayfeh, Mudassir Masood, Ali Ahmad Al-Shaikhi, Muhammad Mahboob Ur Rahman, Tareq Y. Al-Naffouri",
+      "date": "2026-04-02",
+      "pdf": "https://arxiv.org/pdf/2604.02501v1",
+      "score": "6.0",
+      "evidence": "生理信号波形（心电图）的基础模型",
+      "tldr": "本综述探讨了心电图（ECG）基础模型与医疗大语言模型（LLM）的融合，提出了“代理式心血管智能”新范式。文章系统回顾了自监督学习、多模态对齐等技术在ECG分析中的应用，并重点讨论了针对智能手表等边缘设备的模型量化与剪枝优化技术，旨在实现低延迟、隐私保护的实时临床决策支持。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Electrocardiogram (ECG) foundation models represent a paradigm shift from task-specific pipelines to generalizable architectures pre-trained on large-scale unlabeled waveform data. This survey presents a unified and deployment-aware review of foundation models and medical large language models (LLMs) for ECG intelligence in cardiovascular disease (CVD) diagnosis, monitoring, and clinical decision support. The central thesis of this survey paper is that next-generation cardiovascular AI systems will be inherently agentic, requiring the synergistic integration of two complementary model classes: (i) ECG foundation models that act as signal-level interpreters, learning rich electrophysiological representations via self-supervised and multimodal pretraining, and (ii) medical LLMs, trained on biomedical text corpora, that function as knowledge-based reasoning backbones for contextual inference, guideline alignment, and clinical decision support. Thus, the survey systematically reviews existing pool of generalist medical LLMs, as well as ECG foundation models that utilize techniques such as self-supervised learning, multimodal ECG-language alignment, vision transformer architectures, and possess capabilities such as zero-shot classification, automated report generation, and longitudinal risk modeling. Recognizing the constraints of consumer-grade wearable edge devices, we further examine model optimization techniques such as quantization, pruning, knowledge distillation, as well as the role of small language models in enabling low-latency, energy-efficient, and privacy-preserving ECG intelligence on edge platforms such as smartwatches. Finally, we outline future directions in multimodal ECG foundation models, agent-driven monitoring, and explainable, secure edge intelligence, with particular emphasis on real-time, on-device cardiovascular analytics in consumer electronics ecosystems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/06/2604.02751v1-understanding-latent-diffusability-via-fisher-geometry",
+      "section": "quick",
+      "title_en": "Understanding Latent Diffusability via Fisher Geometry",
+      "authors": "Jing Gu, Morteza Mardani, Wonjun Lee, Dongmian Zou, Gilad Lerman",
+      "date": "2026-04-03",
+      "pdf": "https://arxiv.org/pdf/2604.02751v1",
+      "score": "6.0",
+      "evidence": "潜空间扩散模型扩散能力的理论分析",
+      "tldr": "本文研究了扩散模型在潜空间（如VAE）训练时性能下降的问题，通过费舍尔几何量化了“潜空间可扩散性”。研究将最小均方误差（MMSE）的变化率分解为费舍尔信息（FI）和费舍尔信息率（FIR），揭示了编码器几何畸变（维度压缩、切向畸变和曲率注入）对扩散性能的影响，为诊断和优化潜空间扩散模型提供了理论基础和评估工具。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion models often degrade when trained in latent spaces (e.g., VAEs), yet the formal causes remain poorly understood. We quantify latent-space diffusability through the rate of change of the Minimum Mean Squared Error (MMSE) along the diffusion trajectory. Our framework decomposes this MMSE rate into contributions from Fisher Information (FI) and Fisher Information Rate (FIR). We demonstrate that while global isometry ensures FI alignment, FIR is governed by the encoder's local geometric properties. Our analysis explicitly decouples latent geometric distortion into three measurable penalties: dimensional compression, tangential distortion, and curvature injection. We derive theoretical conditions for FIR preservation across spaces, ensuring maintained diffusability. Experiments across diverse autoencoding architectures validate our framework and establish these efficient FI and FIR metrics as a robust diagnostic suite for identifying and mitigating latent diffusion failure.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

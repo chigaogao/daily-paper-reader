@@ -1,0 +1,94 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-06T19:42:55.472443+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.02501v1",
+      "title": "ECG Foundation Models and Medical LLMs for Agentic Cardiovascular Intelligence at the Edge: A Review and Outlook",
+      "abstract": "Electrocardiogram (ECG) foundation models represent a paradigm shift from task-specific pipelines to generalizable architectures pre-trained on large-scale unlabeled waveform data. This survey presents a unified and deployment-aware review of foundation models and medical large language models (LLMs) for ECG intelligence in cardiovascular disease (CVD) diagnosis, monitoring, and clinical decision support. The central thesis of this survey paper is that next-generation cardiovascular AI systems will be inherently agentic, requiring the synergistic integration of two complementary model classes: (i) ECG foundation models that act as signal-level interpreters, learning rich electrophysiological representations via self-supervised and multimodal pretraining, and (ii) medical LLMs, trained on biomedical text corpora, that function as knowledge-based reasoning backbones for contextual inference, guideline alignment, and clinical decision support. Thus, the survey systematically reviews existing pool of generalist medical LLMs, as well as ECG foundation models that utilize techniques such as self-supervised learning, multimodal ECG-language alignment, vision transformer architectures, and possess capabilities such as zero-shot classification, automated report generation, and longitudinal risk modeling. Recognizing the constraints of consumer-grade wearable edge devices, we further examine model optimization techniques such as quantization, pruning, knowledge distillation, as well as the role of small language models in enabling low-latency, energy-efficient, and privacy-preserving ECG intelligence on edge platforms such as smartwatches. Finally, we outline future directions in multimodal ECG foundation models, agent-driven monitoring, and explainable, secure edge intelligence, with particular emphasis on real-time, on-device cardiovascular analytics in consumer electronics ecosystems.",
+      "authors": [
+        "Mudassir Hasan Khan",
+        "Ahmad Nayfeh",
+        "Mudassir Masood",
+        "Ali Ahmad Al-Shaikhi",
+        "Muhammad Mahboob Ur Rahman",
+        "Tareq Y. Al-Naffouri"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-04-02T20:09:05+00:00",
+      "link": "https://arxiv.org/pdf/2604.02501v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Foundation models for physiological signal waveforms (ECG)",
+      "llm_evidence_cn": "生理信号波形（心电图）的基础模型",
+      "llm_evidence": "生理信号波形（心电图）的基础模型",
+      "canonical_evidence": "生理信号波形（心电图）的基础模型",
+      "llm_tldr_en": "Reviews foundation models for ECG signal interpretation, offering methodological parallels for EEG foundation models.",
+      "llm_tldr_cn": "综述了心电图信号解释的基础模型，为脑电大模型提供了方法论参考。",
+      "llm_tldr": "综述了心电图信号解释的基础模型，为脑电大模型提供了方法论参考。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.02751v1",
+      "title": "Understanding Latent Diffusability via Fisher Geometry",
+      "abstract": "Diffusion models often degrade when trained in latent spaces (e.g., VAEs), yet the formal causes remain poorly understood. We quantify latent-space diffusability through the rate of change of the Minimum Mean Squared Error (MMSE) along the diffusion trajectory. Our framework decomposes this MMSE rate into contributions from Fisher Information (FI) and Fisher Information Rate (FIR). We demonstrate that while global isometry ensures FI alignment, FIR is governed by the encoder's local geometric properties. Our analysis explicitly decouples latent geometric distortion into three measurable penalties: dimensional compression, tangential distortion, and curvature injection. We derive theoretical conditions for FIR preservation across spaces, ensuring maintained diffusability. Experiments across diverse autoencoding architectures validate our framework and establish these efficient FI and FIR metrics as a robust diagnostic suite for identifying and mitigating latent diffusion failure.",
+      "authors": [
+        "Jing Gu",
+        "Morteza Mardani",
+        "Wonjun Lee",
+        "Dongmian Zou",
+        "Gilad Lerman"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-03T05:52:09+00:00",
+      "link": "https://arxiv.org/pdf/2604.02751v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical analysis of latent space diffusability for diffusion models",
+      "llm_evidence_cn": "潜空间扩散模型扩散能力的理论分析",
+      "llm_evidence": "潜空间扩散模型扩散能力的理论分析",
+      "canonical_evidence": "潜空间扩散模型扩散能力的理论分析",
+      "llm_tldr_en": "Provides a theoretical framework to understand and improve diffusion models trained in latent spaces.",
+      "llm_tldr_cn": "提供了一个理论框架，用于理解和改进在潜空间中训练的扩散模型。",
+      "llm_tldr": "提供了一个理论框架，用于理解和改进在潜空间中训练的扩散模型。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
