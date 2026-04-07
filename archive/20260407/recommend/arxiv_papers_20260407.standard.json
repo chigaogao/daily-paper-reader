@@ -1,0 +1,564 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-07T20:24:55.149153+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 11,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2604.03480v1",
+      "title": "Large Language Models Align with the Human Brain during Creative Thinking",
+      "abstract": "Creative thinking is a fundamental aspect of human cognition, and divergent thinking-the capacity to generate novel and varied ideas-is widely regarded as its core generative engine. Large language models (LLMs) have recently demonstrated impressive performance on divergent thinking tests and prior work has shown that models with higher task performance tend to be more aligned to human brain activity. However, existing brain-LLM alignment studies have focused on passive, non-creative tasks. Here, we explore brain alignment during creative thinking using fMRI data from 170 participants performing the Alternate Uses Task (AUT). We extract representations from LLMs varying in size (270M-72B) and measure alignment to brain responses via Representational Similarity Analysis (RSA), targeting the creativity-related default mode and frontoparietal networks. We find that brain-LLM alignment scales with model size (default mode network only) and idea originality (both networks), with effects strongest early in the creative process. We further show that post-training objectives shape alignment in functionally selective ways: a creativity-optimized \\texttt{Llama-3.1-8B-Instruct} preserves alignment with high-creativity neural responses while reducing alignment with low-creativity ones; a human behavior fine-tuned model elevates alignment with both; and a reasoning-trained variant shows the opposite pattern, suggesting chain-of-thought training steers representations away from creative neural geometry toward analytical processing. These results demonstrate that post-training objectives selectively reshape LLM representations relative to the neural geometry of human creative thought.",
+      "authors": [
+        "Mete Ismayilzada",
+        "Simone A. Luchini",
+        "Abdulkadir Gokce",
+        "Badr AlKhamissi",
+        "Antoine Bosselut",
+        "Antonio Laverghetta",
+        "Lonneke van der Plas",
+        "Roger E. Beaty"
+      ],
+      "primary_category": "q-bio.NC",
+      "categories": [
+        "q-bio.NC",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-04-03T22:02:15+00:00",
+      "link": "https://arxiv.org/pdf/2604.03480v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Aligning LLM representations with human brain activity",
+      "llm_evidence_cn": "将大语言模型表征与人类大脑活动对齐",
+      "llm_evidence": "将大语言模型表征与人类大脑活动对齐",
+      "canonical_evidence": "将大语言模型表征与人类大脑活动对齐",
+      "llm_tldr_en": "Investigates the alignment between LLMs and brain responses, central to brain-AI cross-modal research.",
+      "llm_tldr_cn": "研究大模型与大脑响应的对齐，是脑机跨模态研究的核心。",
+      "llm_tldr": "研究大模型与大脑响应的对齐，是脑机跨模态研究的核心。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "AI generated content from brain activity and EEG",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.04297v1",
+      "title": "PanLUNA: An Efficient and Robust Query-Unified Multimodal Model for Edge Biosignal Intelligence",
+      "abstract": "Physiological foundation models (FMs) have shown promise for biosignal representation learning, yet most remain confined to a single modality such as EEG, ECG, or PPG, largely because paired multimodal datasets are scarce. In this paper, we present PanLUNA, a compact 5.4M-parameter pan-modal FM that jointly processes EEG, ECG, and PPG within a single shared encoder. Extending LUNA's channel-unification module, PanLUNA treats multimodal channels as entries in a unified query set augmented with sensor-type embeddings, enabling efficient cross-modal early fusion while remaining inherently robust to missing modalities at inference time. Despite its small footprint, PanLUNA matches or exceeds models up to 57$\\times$ larger: 81.21% balanced accuracy on TUAB abnormal EEG detection and state-of-the-art 0.7416 balanced accuracy on HMC multimodal sleep staging. Quantization-aware training with INT8 weights recovers $\\geq$96% of full-precision performance, and deployment on the GAP9 ultra-low-power RISC-V microcontroller for wearables achieves 325.6 ms latency and 18.8 mJ per 10-second, 12-lead ECG inference, and 1.206 s latency at 68.65 mJ for multimodal 5-channel sleep staging over 30-second epochs.",
+      "authors": [
+        "Marija Zelic",
+        "Anna Tegon",
+        "Yawei Li",
+        "Thorir Mar Ingolfsson",
+        "Luca Benini"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-04-05T22:35:42+00:00",
+      "link": "https://arxiv.org/pdf/2604.04297v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Pan-modal foundation model processing EEG within a shared encoder",
+      "llm_evidence_cn": "在共享编码器中处理EEG的泛模态基础模型",
+      "llm_evidence": "在共享编码器中处理EEG的泛模态基础模型",
+      "canonical_evidence": "在共享编码器中处理EEG的泛模态基础模型",
+      "llm_tldr_en": "PanLUNA is a compact multimodal foundation model that efficiently processes EEG, ECG, and PPG signals.",
+      "llm_tldr_cn": "PanLUNA是一个紧凑的多模态基础模型，可高效处理EEG、ECG和PPG信号。",
+      "llm_tldr": "PanLUNA是一个紧凑的多模态基础模型，可高效处理EEG、ECG和PPG信号。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.04316v1",
+      "title": "How Long short-term memory artificial neural network, synthetic data, and fine-tuning improve the classification of raw EEG data",
+      "abstract": "In this paper, we discuss a Machine Learning pipeline for the classification of EEG data. We propose a combination of synthetic data generation, long short-term memory artificial neural network (LSTM), and fine-tuning to solve classification problems for experiments with implicit visual stimuli, such as the Necker cube with different levels of ambiguity. The developed approach increased the quality of the classification model of raw EEG data.",
+      "authors": [
+        "Albert Nasybullin",
+        "Vladimir Maksimenko",
+        "Semen Kurkin"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-05T23:28:13+00:00",
+      "link": "https://arxiv.org/pdf/2604.04316v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Synthetic data generation and fine-tuning for raw EEG classification",
+      "llm_evidence_cn": "用于原始EEG分类的合成数据生成和微调",
+      "llm_evidence": "用于原始EEG分类的合成数据生成和微调",
+      "canonical_evidence": "用于原始EEG分类的合成数据生成和微调",
+      "llm_tldr_en": "Combines synthetic data, LSTM, and fine-tuning to improve raw EEG signal classification.",
+      "llm_tldr_cn": "结合合成数据、LSTM和微调来提高原始EEG信号的分类质量。",
+      "llm_tldr": "结合合成数据、LSTM和微调来提高原始EEG信号的分类质量。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "AI generated content from brain activity and EEG",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.02212v1",
+      "title": "Phase estimation with autoregressive padding (PEAP): addressing inaccuracies and biases in EEG analysis",
+      "abstract": "Accurate phase estimation at the edge of data segments is crucial for EEG applications such as EEG-TMS in offline and real-time data analysis. Our research evaluates the phase estimation performance of four commonly used methods (Phastimate, SSPE, ETP, and PhastPadding) for accuracy and systemic biases, using data from young and elderly healthy controls and chronic stroke participants. To address the identified limitations of the established methods, we introduce Phase Estimation with Autoregressive Padding (PEAP), a method that prevents strong bandpass filtering-induced artifacts. Contrary to the established methods, PEAP does not show significant biases and improves accuracy by 3.2 to 9.2% for the continuous phase estimation. Our offline analysis demonstrates how established methods are systematically biased towards some estimates and how they induce phase shifts. We also show that differences between methods do not vary between clinical and control populations, supporting their translatability. This work indicates that systematic biases in established phase estimation methods may compromise the validity and comparability of phase-dependent findings. PEAP addresses these limitations and thus offers a more reliable and more accurate alternative method.",
+      "authors": [
+        "Miriam Kirchhoff",
+        "Johanna Rösch",
+        "Maria Ermolova",
+        "Oskari Ahola",
+        "Sarah Harders",
+        "Juliana Hougland",
+        "Ulf Ziemann"
+      ],
+      "primary_category": "q-bio.NC",
+      "categories": [
+        "q-bio.NC"
+      ],
+      "published": "2026-04-02T16:05:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.02212v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "EEG signal processing and phase estimation",
+      "llm_evidence_cn": "EEG信号处理与相位估计",
+      "llm_evidence": "EEG信号处理与相位估计",
+      "canonical_evidence": "EEG信号处理与相位估计",
+      "llm_tldr_en": "Introduces PEAP to improve phase estimation accuracy in EEG analysis for real-time applications.",
+      "llm_tldr_cn": "引入PEAP方法，提高了EEG分析中实时应用相位估计的准确性并减少了偏差。",
+      "llm_tldr": "引入PEAP方法，提高了EEG分析中实时应用相位估计的准确性并减少了偏差。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.29796v1",
+      "title": "JEPA-MSAC: A Joint-Embedding Predictive Architecture for Multimodal Sensing-Assisted Communications",
+      "abstract": "Future wireless systems increasingly require predictive and transferable representations that can support multiple physical-layer (PHY) tasks under dynamic environments. However, most existing supervised learning-based methods are designed for a single task, which leads to high adaptation cost. To address this issue, we propose a joint-embedding predictive architecture for multimodal sensing-assisted communications (JEPA-MSAC), a self-supervised multimodal predictive representation learning framework for wireless environments. The proposed framework first maps multimodal sensing and communication measurements into a unified token space, and then pretrains a shared backbone using temporal block-masked JEPA to learn a predictive latent space that captures environment dynamics and cross-modal dependencies. After pretraining, the backbone is frozen and reused as a general future-feature generator, on top of which lightweight task heads are trained for localization, beam prediction, and received signal strength indicator (RSSI) prediction. Extensive experiments show the latent state supports accurate multi-task prediction with low adaptation cost. Additionally, ablation studies reveal its scaling behavior and the impact of key pretraining setups.",
+      "authors": [
+        "Can Zheng",
+        "Jiguang He",
+        "Guofa Cai",
+        "Nannan Li",
+        "Mehdi Bennis",
+        "Henk Wymeersch",
+        "Merouane Debbah"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-03-31T14:29:42+00:00",
+      "link": "https://arxiv.org/pdf/2603.29796v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "self-supervised multimodal predictive representation learning",
+      "llm_evidence_cn": "自监督多模态预测表征学习",
+      "llm_evidence": "自监督多模态预测表征学习",
+      "canonical_evidence": "自监督多模态预测表征学习",
+      "llm_tldr_en": "A self-supervised framework for learning predictive representations from multimodal sensing data.",
+      "llm_tldr_cn": "一种用于从多模态传感数据中学习预测性表征的自监督框架。",
+      "llm_tldr": "一种用于从多模态传感数据中学习预测性表征的自监督框架。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.02711v1",
+      "title": "Foundation Models Defining A New Era In Sensor-based Human Activity Recognition: A Survey And Outlook",
+      "abstract": "Sensor-based Human Activity Recognition (HAR) underpins many ubiquitous and wearable computing applications, yet current models remain limited by scarce labels, sensor heterogeneity, and weak generalization across users, devices, and contexts. Foundation models, which are generally pretrained at scale using self-supervised and multimodal learning, offer a unifying paradigm to address these challenges by learning reusable, adaptable representations for activity understanding. This survey synthesizes emerging foundation models for sensor-based HAR. We first clarify foundational concepts, definitions, and evaluation criteria, then organize existing work using a lifecycle-oriented taxonomy spanning input design, pretraining, adaptation, and utilization. Rather than enumerating individual models, we analyze recurring design patterns and trade-offs across nine technical axes, including modality scope, tokenization, architectures, learning paradigms, adaptation mechanisms, and deployment settings. From this synthesis, we identify three dominant development trajectories: (1) HAR-specific foundation models trained from scratch on large sensor corpora, (2) adaptation of general time-series or multimodal foundation models to sensor-based HAR, and (3) integration of large language models for reasoning, annotation, and human-AI interaction. We conclude by highlighting open challenges in data curation, multimodal alignment, personalization, privacy, and responsible deployment, and outline directions toward general-purpose, interpretable, and human-centered foundation models for activity understanding. A complete, continuously updated index of papers and models is available in our companion repository: https://github.com/zhaxidele/Foundation-Models-Defining-A-New-Era-In-Human-Activity-Recognition.",
+      "authors": [
+        "Sizhen Bian",
+        "Mengxi Liu",
+        "Siyu Yuan",
+        "Lala Shakti Swarup Ray",
+        "Bo Zhou",
+        "Bin Guo",
+        "Zhiwen Yu",
+        "Thomas Ploetz",
+        "Paul Lukowicz",
+        "Vitor Fortes Rey"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-04-03T04:09:47+00:00",
+      "link": "https://arxiv.org/pdf/2604.02711v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Foundation models for sensor-based signals and self-supervised pretraining",
+      "llm_evidence_cn": "基于传感器的基础模型与自监督预训练",
+      "llm_evidence": "基于传感器的基础模型与自监督预训练",
+      "canonical_evidence": "基于传感器的基础模型与自监督预训练",
+      "llm_tldr_en": "A survey on foundation models for sensor-based activity recognition using self-supervised learning.",
+      "llm_tldr_cn": "关于传感器人体活动识别基础模型的综述，涵盖了自监督学习与多模态预训练。",
+      "llm_tldr": "关于传感器人体活动识别基础模型的综述，涵盖了自监督学习与多模态预训练。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.00163v1",
+      "title": "Epileptic Seizure Detection in Separate Frequency Bands Using Feature Analysis and Graph Convolutional Neural Network (GCN) from Electroencephalogram (EEG) Signals",
+      "abstract": "Epileptic seizures are neurological disorders characterized by abnormal and excessive electrical activity in the brain, resulting in recurrent seizure events. Electroencephalogram (EEG) signals are widely used for seizure diagnosis due to their ability to capture temporal and spatial neural dynamics. While recent deep learning methods have achieved high detection accuracy, they often lack interpretability and neurophysiological relevance. This study presents a frequency-aware framework for epileptic seizure detection based on ictal-phase EEG analysis. The raw EEG signals are decomposed into five frequency bands (delta, theta, alpha, lower beta, and higher beta), and eleven discriminative features are extracted from each band. A graph convolutional neural network (GCN) is then employed to model spatial dependencies among EEG electrodes, represented as graph nodes. Experiments on the CHB-MIT scalp EEG dataset demonstrate high detection performance, achieving accuracies of 97.1%, 97.13%, 99.5%, 99.7%, and 51.4% across the respective frequency bands, with an overall broadband accuracy of 99.01%. The results highlight the strong discriminative capability of mid-frequency bands and reveal frequency-specific seizure patterns. The proposed approach improves interpretability and diagnostic precision compared to conventional broadband EEG-based methods.",
+      "authors": [
+        "Ferdaus Anam Jibon",
+        "Fazlul Hasan Siddiqui",
+        "F. Deeba",
+        "Gahangir Hossain"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.NE"
+      ],
+      "published": "2026-03-31T19:11:16+00:00",
+      "link": "https://arxiv.org/pdf/2604.00163v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "EEG signal processing for seizure detection using deep learning",
+      "llm_evidence_cn": "使用深度学习进行癫痫检测的EEG信号处理",
+      "llm_evidence": "使用深度学习进行癫痫检测的EEG信号处理",
+      "canonical_evidence": "使用深度学习进行癫痫检测的EEG信号处理",
+      "llm_tldr_en": "A frequency-aware GCN framework for detecting epileptic seizures from EEG signals.",
+      "llm_tldr_cn": "一种基于频率感知的图卷积网络框架，用于从脑电信号中检测癫痫发作。",
+      "llm_tldr": "一种基于频率感知的图卷积网络框架，用于从脑电信号中检测癫痫发作。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.04129v1",
+      "title": "Measuring Robustness of Speech Recognition from MEG Signals Under Distribution Shift",
+      "abstract": "This study investigates robust speech-related decoding from non-invasive MEG signals using the LibriBrain phoneme-classification benchmark from the 2025 PNPL competition. We compare residual convolutional neural networks (CNNs), an STFT-based CNN, and a CNN--Transformer hybrid, while also examining the effects of group averaging, label balancing, repeated grouping, normalization strategies, and data augmentation. Across our in-house implementations, preprocessing and data-configuration choices matter more than additional architectural complexity, among which instance normalization emerges as the most influential modification for generalization. The strongest of our own models, a CNN with group averaging, label balancing, repeated grouping, and instance normalization, achieves 60.95% F1-macro on the test split, compared with 39.53% for the plain CNN baseline. However, most of our models, without instance normalization, show substantial validation-to-test degradation, indicating that distribution shift induced by different normalization statistics is a major obstacle to generalization in our experiments. By contrast, MEGConformer maintains 64.09% F1-macro on both validation and test, and saliency-map analysis is qualitatively consistent with this contrast: weaker models exhibit more concentrated or repetitive phoneme-sensitive patterns across splits, whereas MEGConformer appears more distributed. Overall, the results suggest that improving the reliability of non-invasive phoneme decoding will likely require better handling of normalization-related distribution shift while also addressing the challenge of single-trial decoding.",
+      "authors": [
+        "Sheng-You Chien",
+        "Bo-Yi Mao",
+        "Yi-Ning Chang",
+        "Po-Chih Kuo"
+      ],
+      "primary_category": "cs.SD",
+      "categories": [
+        "cs.SD",
+        "cs.LG"
+      ],
+      "published": "2026-04-05T14:25:04+00:00",
+      "link": "https://arxiv.org/pdf/2604.04129v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Speech recognition from MEG signals using CNN-Transformer hybrids",
+      "llm_evidence_cn": "使用CNN-Transformer混合模型从MEG信号中识别语音",
+      "llm_evidence": "使用CNN-Transformer混合模型从MEG信号中识别语音",
+      "canonical_evidence": "使用CNN-Transformer混合模型从MEG信号中识别语音",
+      "llm_tldr_en": "Investigates robust speech decoding from MEG signals using various neural architectures and data strategies.",
+      "llm_tldr_cn": "研究了使用多种神经架构和数据策略从MEG信号中进行鲁棒语音解码的方法。",
+      "llm_tldr": "研究了使用多种神经架构和数据策略从MEG信号中进行鲁棒语音解码的方法。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.01533v2",
+      "title": "Validating Computational Markers of Depressive Behavior: Cross-Linguistic Speech-Based Depression Detection with Neurophysiological Validation",
+      "abstract": "Speech-based depression detection has shown promise as an objective diagnostic tool, yet the cross-linguistic robustness of acoustic markers and their neurobiological underpinnings remain underexplored. This study extends Cross-Data Multilevel Attention (CDMA) framework, initially validated on Italian, to investigate these dimensions using a Chinese Mandarin dataset with Electroencephalography (EEG) recordings. We systematically fuse read speech with spontaneous speech across different emotional valences (positive, neutral, negative) to investigate whether emotional arousal is a more critical factor than valence polarity in enhancing detection performance in speech. Additionally, we establish the first neurophysiological validation for a speech-based depression model by correlating its predictions with neural oscillatory patterns during emotional face processing. Our results demonstrate strong cross-linguistic generalizability of the CDMA framework, achieving state-of-the-art performance (F1-score up to 89.6%) on the Chinese dataset, which is comparable to the previous Italian validation. Critically, emotionally valenced speech (both positive and negative) significantly outperformed neutral speech. This comparable performance between positive and negative tasks supports the emotional arousal hypothesis. Most importantly, EEG analysis revealed significant correlations between the model's speech-derived depression estimates and neural oscillatory patterns (theta and alpha bands), demonstrating alignment with established neural markers of emotional dysregulation in depression. This alignment, combined with the model's cross-linguistic robustness, not only supports that the CDMA framework's approach is a universally applicable and neurobiologically validated strategy but also establishes a novel paradigm for the neurophysiological validation of computational mental health models.",
+      "authors": [
+        "Fuxiang Tao",
+        "Dongwei Li",
+        "Shuning Tang",
+        "Xuri Ge",
+        "Wei Ma",
+        "Anna Esposito",
+        "Alessandro Vinciarelli"
+      ],
+      "primary_category": "eess.AS",
+      "categories": [
+        "eess.AS"
+      ],
+      "published": "2026-04-02T02:10:18+00:00",
+      "link": "https://arxiv.org/pdf/2604.01533v2",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Neurophysiological validation using EEG recordings",
+      "llm_evidence_cn": "使用脑电记录进行神经生理学验证",
+      "llm_evidence": "使用脑电记录进行神经生理学验证",
+      "canonical_evidence": "使用脑电记录进行神经生理学验证",
+      "llm_tldr_en": "Investigates speech-based depression detection with neurophysiological validation using EEG data.",
+      "llm_tldr_cn": "研究了基于语音的抑郁检测，并利用脑电数据进行了神经生理学验证。",
+      "llm_tldr": "研究了基于语音的抑郁检测，并利用脑电数据进行了神经生理学验证。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.04313v1",
+      "title": "Convolutional Neural Network and Adversarial Autoencoder in EEG images classification",
+      "abstract": "In this paper, we consider applying computer vision algorithms for the classification problem one faces in neuroscience during EEG data analysis. Our approach is to apply a combination of computer vision and neural network methods to solve human brain activity classification problems during hand movement. We pre-processed raw EEG signals and generated 2D EEG topograms. Later, we developed supervised and semi-supervised neural networks to classify different motor cortex activities.",
+      "authors": [
+        "Albert Nasybullin",
+        "Semen Kurkin"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-05T23:15:33+00:00",
+      "link": "https://arxiv.org/pdf/2604.04313v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Adversarial Autoencoder and CNN for EEG topogram classification",
+      "llm_evidence_cn": "用于EEG地形图分类的对抗自编码器和CNN",
+      "llm_evidence": "用于EEG地形图分类的对抗自编码器和CNN",
+      "canonical_evidence": "用于EEG地形图分类的对抗自编码器和CNN",
+      "llm_tldr_en": "Applies computer vision and adversarial autoencoders to classify motor cortex activity from EEG.",
+      "llm_tldr_cn": "应用计算机视觉和对抗自编码器对EEG运动皮层活动进行分类。",
+      "llm_tldr": "应用计算机视觉和对抗自编码器对EEG运动皮层活动进行分类。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.02250v1",
+      "title": "Smoothing the Landscape: Causal Structure Learning via Diffusion Denoising Objectives",
+      "abstract": "Understanding causal dependencies in observational data is critical for informing decision-making. These relationships are often modeled as Bayesian Networks (BNs) and Directed Acyclic Graphs (DAGs). Existing methods, such as NOTEARS and DAG-GNN, often face issues with scalability and stability in high-dimensional data, especially when there is a feature-sample imbalance. Here, we show that the denoising score matching objective of diffusion models could smooth the gradients for faster, more stable convergence. We also propose an adaptive k-hop acyclicity constraint that improves runtime over existing solutions that require matrix inversion. We name this framework Denoising Diffusion Causal Discovery (DDCD). Unlike generative diffusion models, DDCD utilizes the reverse denoising process to infer a parameterized causal structure rather than to generate data. We demonstrate the competitive performance of DDCDs on synthetic benchmarking data. We also show that our methods are practically useful by conducting qualitative analyses on two real-world examples. Code is available at this url: https://github.com/haozhu233/ddcd.",
+      "authors": [
+        "Hao Zhu",
+        "Di Zhou",
+        "Donna Slonim"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-04-02T16:41:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.02250v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "denoising score matching objective of diffusion models",
+      "llm_evidence_cn": "扩散模型的去噪评分匹配目标",
+      "llm_evidence": "扩散模型的去噪评分匹配目标",
+      "canonical_evidence": "扩散模型的去噪评分匹配目标",
+      "llm_tldr_en": "Uses diffusion denoising objectives to improve causal structure learning stability and scalability.",
+      "llm_tldr_cn": "利用扩散去噪目标来提高因果结构学习的稳定性和可扩展性。",
+      "llm_tldr": "利用扩散去噪目标来提高因果结构学习的稳定性和可扩展性。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.03134v1",
+      "title": "SD-FSMIS: Adapting Stable Diffusion for Few-Shot Medical Image Segmentation",
+      "abstract": "Few-Shot Medical Image Segmentation (FSMIS) aims to segment novel object classes in medical images using only minimal annotated examples, addressing the critical challenges of data scarcity and domain shifts prevalent in medical imaging. While Diffusion Models (DM) excel in visual tasks, their potential for FSMIS remains largely unexplored. We propose that the rich visual priors learned by large-scale DMs offer a powerful foundation for a more robust and data-efficient segmentation approach. In this paper, we introduce SD-FSMIS, a novel framework designed to effectively adapt the powerful pre-trained Stable Diffusion (SD) model for the FSMIS task. Our approach repurposes its conditional generative architecture by introducing two key components: a Support-Query Interaction (SQI) and a Visual-to-Textual Condition Translator (VTCT). Specifically, SQI provides a straightforward yet powerful means of adapting SD to the FSMIS paradigm. The VTCT module translates visual cues from the support set into an implicit textual embedding that guides the diffusion model, enabling precise conditioning of the generation process. Extensive experiments demonstrate that SD-FSMIS achieves competitive results compared to state-of-the-art methods in standard settings. Surprisingly, it also demonstrated excellent generalization ability in more challenging cross-domain scenarios. These findings highlight the immense potential of adapting large-scale generative models to advance data-efficient and robust medical image segmentation.",
+      "authors": [
+        "Meihua Li",
+        "Yang Zhang",
+        "Weizhao He",
+        "Hu Qu",
+        "Yisong Li"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-03T15:54:34+00:00",
+      "link": "https://arxiv.org/pdf/2604.03134v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Adapting Stable Diffusion as a foundation for medical image tasks",
+      "llm_evidence_cn": "将Stable Diffusion适配为医学图像任务的基础",
+      "llm_evidence": "将Stable Diffusion适配为医学图像任务的基础",
+      "canonical_evidence": "将Stable Diffusion适配为医学图像任务的基础",
+      "llm_tldr_en": "Adapts pre-trained Stable Diffusion for few-shot medical image segmentation.",
+      "llm_tldr_cn": "将预训练的Stable Diffusion适配用于少样本医学图像分割。",
+      "llm_tldr": "将预训练的Stable Diffusion适配用于少样本医学图像分割。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.03603v1",
+      "title": "Stochastic Generative Plug-and-Play Priors",
+      "abstract": "Plug-and-play (PnP) methods are widely used for solving imaging inverse problems by incorporating a denoiser into optimization algorithms. Score-based diffusion models (SBDMs) have recently demonstrated strong generative performance through a denoiser trained across a wide range of noise levels. Despite their shared reliance on denoisers, it remains unclear how to systematically use SBDMs as priors within the PnP framework without relying on reverse diffusion sampling. In this paper, we establish a score-based interpretation of PnP that justifies using pretrained SBDMs directly within PnP algorithms. Building on this connection, we introduce a stochastic generative PnP (SGPnP) framework that injects noise to better leverage the expressive generative SBDM priors, thereby improving robustness in severely ill-posed inverse problems. We provide a new theory showing that this noise injection induces optimization on a Gaussian-smoothed objective and promotes escape from strict saddle points. Experiments on challenging inverse tasks, such as multi-coil MRI reconstruction and large-mask natural image inpainting, demonstrate consistent improvement over conventional PnP methods and achieve performance competitive with diffusion-based solvers.",
+      "authors": [
+        "Chicago Y. Park",
+        "Edward P. Chandler",
+        "Yuyang Hu",
+        "Michael T. McCann",
+        "Cristina Garcia-Cardona",
+        "Brendt Wohlberg",
+        "Ulugbek S. Kamilov"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG",
+        "eess.IV"
+      ],
+      "published": "2026-04-04T06:14:38+00:00",
+      "link": "https://arxiv.org/pdf/2604.03603v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Score-based diffusion models as generative priors",
+      "llm_evidence_cn": "基于评分的扩散模型作为生成先验",
+      "llm_evidence": "基于评分的扩散模型作为生成先验",
+      "canonical_evidence": "基于评分的扩散模型作为生成先验",
+      "llm_tldr_en": "Establishes a score-based interpretation of Plug-and-Play to use pretrained diffusion models as priors.",
+      "llm_tldr_cn": "建立了一种基于评分的即插即用解释，将预训练扩散模型直接用作生成先验。",
+      "llm_tldr": "建立了一种基于评分的即插即用解释，将预训练扩散模型直接用作生成先验。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.03619v1",
+      "title": "Can Natural Image Autoencoders Compactly Tokenize fMRI Volumes for Long-Range Dynamics Modeling?",
+      "abstract": "Modeling long-range spatiotemporal dynamics in functional Magnetic Resonance Imaging (fMRI) remains a key challenge due to the high dimensionality of the four-dimensional signals. Prior voxel-based models, although demonstrating excellent performance and interpretation capabilities, are constrained by prohibitive memory demands and thus can only capture limited temporal windows. To address this, we propose TABLeT (Two-dimensionally Autoencoded Brain Latent Transformer), a novel approach that tokenizes fMRI volumes using a pre-trained 2D natural image autoencoder. Each 3D fMRI volume is compressed into a compact set of continuous tokens, enabling long-sequence modeling with a simple Transformer encoder with limited VRAM. Across large-scale benchmarks including the UK-Biobank (UKB), Human Connectome Project (HCP), and ADHD-200 datasets, TABLeT outperforms existing models in multiple tasks, while demonstrating substantial gains in computational and memory efficiency over the state-of-the-art voxel-based method given the same input. Furthermore, we develop a self-supervised masked token modeling approach to pre-train TABLeT, which improves the model's performance for various downstream tasks. Our findings suggest a promising approach for scalable and interpretable spatiotemporal modeling of brain activity. Our code is available at https://github.com/beotborry/TABLeT.",
+      "authors": [
+        "Peter Yongho Kim",
+        "Juhyeon Park",
+        "Jungwoo Park",
+        "Jubin Choi",
+        "Jungwoo Seo",
+        "Jiook Cha",
+        "Taesup Moon"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-04T07:30:29+00:00",
+      "link": "https://arxiv.org/pdf/2604.03619v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Latent transformer for brain signal (fMRI) modeling using autoencoders",
+      "llm_evidence_cn": "使用自编码器进行脑信号（fMRI）建模的潜空间Transformer",
+      "llm_evidence": "使用自编码器进行脑信号（fMRI）建模的潜空间Transformer",
+      "canonical_evidence": "使用自编码器进行脑信号（fMRI）建模的潜空间Transformer",
+      "llm_tldr_en": "TABLeT tokenizes fMRI volumes using image autoencoders for long-range spatiotemporal brain dynamics modeling.",
+      "llm_tldr_cn": "TABLeT利用图像自编码器对fMRI进行标记化，以实现长程时空脑动力学建模。",
+      "llm_tldr": "TABLeT利用图像自编码器对fMRI进行标记化，以实现长程时空脑动力学建模。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
