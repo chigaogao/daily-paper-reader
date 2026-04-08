@@ -6,62 +6,52 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-07
-- 运行时间：2026-04-07 20:27:54 UTC
+- 最新运行日期：2026-04-08
+- 运行时间：2026-04-08 20:37:52 UTC
 - 运行状态：成功
-- 本次总论文数：14
-- 精读区：3
-- 速读区：11
+- 本次总论文数：10
+- 精读区：2
+- 速读区：8
 
 ### 今日简报（AI）
-今日精选 14 篇前沿论文，重点揭示了大语言模型与人脑创造力的对齐机制及边缘侧生物
-- 详情：[/202604/07/README](/202604/07/README)
+今日聚焦脑机接口前沿，深度解析了从脑电信号到语音重建及运动想象解码的 Transformer 创新应用。
+重点突破在于利用韵律特征工程实现高质量语音合成，以及通过多尺度时域卷积提升跨场次运动想象的识别精度。
+建议关注 Transformer 架构在神经信号处理中的跨模态融合趋势，探索其在医疗康复与生成式脑机接口中的落地潜力。
+- 详情：[/202604/08/README](/202604/08/README)
 
 ### 精读区论文标签
-1. [Large Language Models Align with the Human Brain during Creative Thinking](/202604/07/2604.03480v1-large-language-models-align-with-the-human-brain-during-creative-thinking)  
+1. [Brain-to-Speech: Prosody Feature Engineering and Transformer-Based Reconstruction](/202604/08/2604.05751v1-brain-to-speech-prosody-feature-engineering-and-transformer-based-reconstruction)  
    标签：评分：9.0/10、query:eeg-ai
-   evidence：将大语言模型表征与人类大脑活动对齐
-2. [PanLUNA: An Efficient and Robust Query-Unified Multimodal Model for Edge Biosignal Intelligence](/202604/07/2604.04297v1-panluna-an-efficient-and-robust-query-unified-multimodal-model-for-edge-biosignal-intelligence)  
-   标签：评分：9.0/10、query:eeg-ai
-   evidence：在共享编码器中处理EEG的泛模态基础模型
-3. [How Long short-term memory artificial neural network, synthetic data, and fine-tuning improve the classification of raw EEG data](/202604/07/2604.04316v1-how-long-short-term-memory-artificial-neural-network-synthetic-data-and-fine-tuning-improve-the-classification-of-raw-eeg-data)  
+   evidence：基于iEEG的脑机语音合成
+2. [EEG-MFTNet: An Enhanced EEGNet Architecture with Multi-Scale Temporal Convolutions and Transformer Fusion for Cross-Session Motor Imagery Decoding](/202604/08/2604.05843v1-eeg-mftnet-an-enhanced-eegnet-architecture-with-multi-scale-temporal-convolutions-and-transformer-fusion-for-cross-session-motor-imagery-decoding)  
    标签：评分：8.0/10、query:eeg-ai
-   evidence：用于原始EEG分类的合成数据生成和微调
+   evidence：用于EEG解码和时间依赖捕捉的Transformer融合
 
 ### 速读区论文标签
-1. [Phase estimation with autoregressive padding (PEAP): addressing inaccuracies and biases in EEG analysis](/202604/07/2604.02212v1-phase-estimation-with-autoregressive-padding-peap-addressing-inaccuracies-and-biases-in-eeg-analysis)  
+1. [Self-Supervised Foundation Model for Calcium-imaging Population Dynamics](/202604/08/2604.04958v1-self-supervised-foundation-model-for-calcium-imaging-population-dynamics)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：EEG信号处理与相位估计
-2. [Foundation Models Defining A New Era In Sensor-based Human Activity Recognition: A Survey And Outlook](/202604/07/2604.02711v1-foundation-models-defining-a-new-era-in-sensor-based-human-activity-recognition-a-survey-and-outlook)  
+   evidence：神经轨迹的自监督基础模型
+2. [Extending Tabular Denoising Diffusion Probabilistic Models for Time-Series Data Generation](/202604/08/2604.05257v1-extending-tabular-denoising-diffusion-probabilistic-models-for-time-series-data-generation)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：基于传感器的基础模型与自监督预训练
-3. [Measuring Robustness of Speech Recognition from MEG Signals Under Distribution Shift](/202604/07/2604.04129v1-measuring-robustness-of-speech-recognition-from-meg-signals-under-distribution-shift)  
+   evidence：用于时间序列数据生成的去噪扩散概率模型
+3. [Overview of Bayesian Solvers in EEG Distributed Source Models: Prior Selection, Algorithmic Implementation, and Depth Bias Reduction](/202604/08/2604.05913v1-overview-of-bayesian-solvers-in-eeg-distributed-source-models-prior-selection-algorithmic-implementation-and-depth-bias-reduction)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：使用CNN-Transformer混合模型从MEG信号中识别语音
-4. [Convolutional Neural Network and Adversarial Autoencoder in EEG images classification](/202604/07/2604.04313v1-convolutional-neural-network-and-adversarial-autoencoder-in-eeg-images-classification)  
+   evidence：用于EEG源成像和信号重建的贝叶斯求解器
+4. [FEEL: Quantifying Heterogeneity in Physiological Signals for Generalizable Emotion Recognition](/202604/08/2604.05926v1-feel-quantifying-heterogeneity-in-physiological-signals-for-generalizable-emotion-recognition)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：用于EEG地形图分类的对抗自编码器和CNN
-5. [JEPA-MSAC: A Joint-Embedding Predictive Architecture for Multimodal Sensing-Assisted Communications](/202604/07/2603.29796v1-jepa-msac-a-joint-embedding-predictive-architecture-for-multimodal-sensing-assisted-communications)  
+   evidence：生理信号表示学习的自监督预训练
+5. [Diffusion Path Alignment for Long-Range Motion Generation and Domain Transitions](/202604/08/2604.03310v1-diffusion-path-alignment-for-long-range-motion-generation-and-domain-transitions)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：自监督多模态预测表征学习
-6. [Epileptic Seizure Detection in Separate Frequency Bands Using Feature Analysis and Graph Convolutional Neural Network (GCN) from Electroencephalogram (EEG) Signals](/202604/07/2604.00163v1-epileptic-seizure-detection-in-separate-frequency-bands-using-feature-analysis-and-graph-convolutional-neural-network-gcn-from-electroencephalogram-eeg-signals)  
+   evidence：用于AIGC运动生成和领域迁移的扩散模型
+6. [Neurological Plausibility of AI-Generated Music for Commercial Environments: An In-Silico Cortical Investigation Using Wubble and TRIBE v2](/202604/08/2604.04025v1-neurological-plausibility-of-ai-generated-music-for-commercial-environments-an-in-silico-cortical-investigation-using-wubble-and-tribe-v2)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：使用深度学习进行癫痫检测的EEG信号处理
-7. [Validating Computational Markers of Depressive Behavior: Cross-Linguistic Speech-Based Depression Detection with Neurophysiological Validation](/202604/07/2604.01533v2-validating-computational-markers-of-depressive-behavior-cross-linguistic-speech-based-depression-detection-with-neurophysiological-validation)  
+   evidence：AI生成音乐与皮层响应分析
+7. [StrADiff: A Structured Source-Wise Adaptive Diffusion Framework for Linear and Nonlinear Blind Source Separation](/202604/08/2604.04973v1-stradiff-a-structured-source-wise-adaptive-diffusion-framework-for-linear-and-nonlinear-blind-source-separation)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：使用脑电记录进行神经生理学验证
-8. [Smoothing the Landscape: Causal Structure Learning via Diffusion Denoising Objectives](/202604/07/2604.02250v1-smoothing-the-landscape-causal-structure-learning-via-diffusion-denoising-objectives)  
+   evidence：用于盲源分离的自适应扩散框架
+8. [Selective Aggregation of Attention Maps Improves Diffusion-Based Visual Interpretation](/202604/08/2604.05906v1-selective-aggregation-of-attention-maps-improves-diffusion-based-visual-interpretation)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：扩散模型的去噪评分匹配目标
-9. [SD-FSMIS: Adapting Stable Diffusion for Few-Shot Medical Image Segmentation](/202604/07/2604.03134v1-sd-fsmis-adapting-stable-diffusion-for-few-shot-medical-image-segmentation)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：将Stable Diffusion适配为医学图像任务的基础
-10. [Stochastic Generative Plug-and-Play Priors](/202604/07/2604.03603v1-stochastic-generative-plug-and-play-priors)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：基于评分的扩散模型作为生成先验
-11. [Can Natural Image Autoencoders Compactly Tokenize fMRI Volumes for Long-Range Dynamics Modeling?](/202604/07/2604.03619v1-can-natural-image-autoencoders-compactly-tokenize-fmri-volumes-for-long-range-dynamics-modeling)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：使用自编码器进行脑信号（fMRI）建模的潜空间Transformer
+   evidence：扩散模型视觉解释与AIGC的方法论桥梁
 
 
 <div class="dpr-home-promo-card">
