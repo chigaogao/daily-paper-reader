@@ -1,0 +1,79 @@
+{
+  "label": "2026-04-09",
+  "date": "2026-04-09",
+  "generated_at": "2026-04-09T20:20:03",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202604/09/2604.04958v2-self-supervised-foundation-model-for-calcium-imaging-population-dynamics",
+      "section": "quick",
+      "title_en": "Self-Supervised Foundation Model for Calcium-imaging Population Dynamics",
+      "authors": "Xinhong Xu, Yimeng Zhang, Qichen Qian, Yuanlong Zhang",
+      "date": "2026-04-03",
+      "pdf": "https://arxiv.org/pdf/2604.04958v2",
+      "score": "7.0",
+      "evidence": "用于神经记录分析的自监督神经基础模型",
+      "tldr": "针对钙成像神经记录分析中模型任务特定、难以跨任务迁移的问题，本文提出了CalM，一种基于自监督学习的神经基础模型。CalM通过高性能分词器将单神经元钙信号映射到离散词表，并利用双轴自回归Transformer建模神经元间及时间维度的依赖关系。在多动物、多会话的大规模数据集上，CalM在神经动力学预测和行为解码任务中均优于现有基准，展现了强大的泛化能力和可解释性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Recent work suggests that large-scale, multi-animal modeling can significantly improve neural recording analysis. However, for functional calcium traces, existing approaches remain task-specific, limiting transfer across common neuroscience objectives. To address this challenge, we propose \\textbf{CalM}, a self-supervised neural foundation model trained solely on neuronal calcium traces and adaptable to multiple downstream tasks, including forecasting and decoding. Our key contribution is a pretraining framework, composed of a high-performance tokenizer mapping single-neuron traces into a shared discrete vocabulary, and a dual-axis autoregressive transformer modeling dependencies along both the neural and the temporal axis. We evaluate CalM on a large-scale, multi-animal, multi-session dataset. On the neural population dynamics forecasting task, CalM outperforms strong specialized baselines after pretraining. With a task-specific head, CalM further adapts to the behavior decoding task and achieves superior results compared with supervised decoding models. Moreover, linear analyses of CalM representations reveal interpretable functional structures beyond predictive accuracy. Taken together, we propose a novel and effective self-supervised pretraining paradigm for foundation models based on calcium traces, paving the way for scalable pretraining and broad applications in functional neural analysis. Code will be released soon.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.00298v1-sana-i2i-a-text-free-flow-matching-framework-for-paired-image-to-image-translation-with-a-case-study-in-fetal-mri-artifact-reduction",
+      "section": "quick",
+      "title_en": "SANA I2I: A Text Free Flow Matching Framework for Paired Image to Image Translation with a Case Study in Fetal MRI Artifact Reduction",
+      "authors": "Italo Felix Santos, Gilson Antonio Giraldi, Heron Werner Junior",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2604.00298v1",
+      "score": "6.0",
+      "evidence": "用于图像到图像生成的流匹配框架",
+      "tldr": "本研究提出SANA-I2I，一个无需文本引导的高分辨率图像翻译框架。该模型通过在潜空间学习条件流匹配，直接建立源图像到目标图像的映射，摆脱了对语言提示的依赖。在胎儿MRI运动伪影去除任务中，通过合成配对数据进行训练，SANA-I2I在保持解剖结构的同时显著减少了伪影，且推理效率极高，证明了流匹配模型在医学图像翻译中的潜力。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "We propose SANA-I2I, a text-free high-resolution image-to-image generation framework that extends the SANA family by removing textual conditioning entirely. In contrast to SanaControlNet, which combines text and image-based control, SANA-I2I relies exclusively on paired source-target images to learn a conditional flow-matching model in latent space. The model learns a conditional velocity field that maps a target image distribution to another one, enabling supervised image translation without reliance on language prompts. We evaluate the proposed approach on the challenging task of fetal MRI motion artifact reduction. To enable paired training in this application, where real paired data are difficult to acquire, we adopt a synthetic data generation strategy based on the method proposed by Duffy et al., which simulates realistic motion artifacts in fetal magnetic resonance imaging (MRI). Experimental results demonstrate that SANA-I2I effectively suppresses motion artifacts while preserving anatomical structure, achieving competitive performance few inference steps. These results highlight the efficiency and suitability of our proposed flow-based, text-free generative models for supervised image-to-image tasks in medical imaging.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.02392v1-beyond-fixed-inference-quantitative-flow-matching-for-adaptive-image-denoising",
+      "section": "quick",
+      "title_en": "Beyond Fixed Inference: Quantitative Flow Matching for Adaptive Image Denoising",
+      "authors": "Jigang Duan, Genwei Ma, Xu Jiang, Wenfeng Xu, Ping Yang, Xing Zhao",
+      "date": "2026-04-02",
+      "pdf": "https://arxiv.org/pdf/2604.02392v1",
+      "score": "6.0",
+      "evidence": "用于自适应修复的流匹配与扩散模型",
+      "tldr": "针对扩散和流匹配模型在处理未知及多变噪声时推理轨迹固定的局限性，本文提出了一种定量流匹配框架。该方法通过局部像素统计量估计输入图像的噪声水平，并据此动态调整推理轨迹（包括起点、步数和步长计划）。这种自适应机制使去噪过程与实际损伤程度对齐，在提升恢复质量的同时优化了计算效率，在自然、医学及显微图像上均表现出强鲁棒性和泛化性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion and flow-based generative models have shown strong potential for image restoration. However, image denoising under unknown and varying noise conditions remains challenging, because the learned vector fields may become inconsistent across different noise levels, leading to degraded restoration quality under mismatch between training and inference. To address this issue, we propose a quantitative flow matching framework for adaptive image denoising. The method first estimates the input noise level from local pixel statistics, and then uses this quantitative estimate to adapt the inference trajectory, including the starting point, the number of integration steps, and the step-size schedule. In this way, the denoising process is better aligned with the actual corruption level of each input, reducing unnecessary computation for lightly corrupted images while providing sufficient refinement for heavily degraded ones. By coupling quantitative noise estimation with noise-adaptive flow inference, the proposed method improves both restoration accuracy and inference efficiency. Extensive experiments on natural, medical, and microscopy images demonstrate its robustness and strong generalization across diverse noise levels and imaging conditions.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.06260v1-s3-stratified-scaling-search-for-test-time-in-diffusion-language-models",
+      "section": "quick",
+      "title_en": "$S^3$: Stratified Scaling Search for Test-Time in Diffusion Language Models",
+      "authors": "Ahsan Bilal, Muhammad Ahmed Mohsin, Muhammad Umer, Asad Aali, Muhammad Usman Khanzada, Muhammad Usman Rafique, Zihao He, Emily Fox, Dean F. Hougen",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.06260v1",
+      "score": "6.0",
+      "evidence": "扩散模型的测试时缩放以提高生成质量",
+      "tldr": "本研究针对扩散语言模型（DLM）的推理侧扩展展开，指出传统的Best-of-K采样受限于基础分布与高质量输出的偏差。为此提出了S³（分层缩放搜索）方法，通过在去噪过程中引入轻量级验证器进行引导，动态分配计算资源并保留搜索多样性。实验表明，S³在LLaDA-8B模型上显著提升了数学推理等任务的性能，证明了在去噪轨迹上进行经典搜索是DLM推理扩展的有效途径。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Test-time scaling investigates whether a fixed diffusion language model (DLM) can generate better outputs when given more inference compute, without additional training. However, naive best-of-$K$ sampling is fundamentally limited because it repeatedly draws from the same base diffusion distribution, whose high-probability regions are often misaligned with high-quality outputs. We propose $S^3$ (Stratified Scaling Search), a classical verifier-guided search method that improves generation by reallocating compute during the denoising process rather than only at the final output stage. At each denoising step, $S^3$ expands multiple candidate trajectories, evaluates them with a lightweight reference-free verifier, and selectively resamples promising candidates while preserving diversity within the search frontier. This procedure effectively approximates a reward-tilted sampling distribution that favors higher-quality outputs while remaining anchored to the model prior. Experiments with LLaDA-8B-Instruct on MATH-500, GSM8K, ARC-Challenge, and TruthfulQA demonstrate that $S^3$ consistently improves performance across benchmarks, achieving the largest gains on mathematical reasoning tasks while leaving the underlying model and decoding schedule unchanged. These results show that classical search over denoising trajectories provides a practical mechanism for test-time scaling in DLMs.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.06413v1-ode-free-neural-flow-matching-for-one-step-generative-modeling",
+      "section": "quick",
+      "title_en": "ODE-free Neural Flow Matching for One-Step Generative Modeling",
+      "authors": "Xiao Shou",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.06413v1",
+      "score": "6.0",
+      "evidence": "使用流匹配进行一步生成的生成框架",
+      "tldr": "扩散模型和流匹配通常需要多次迭代推理，效率较低。本文提出OT-NFM框架，通过神经流直接参数化传输映射，实现单步生成。针对训练中因噪声-数据配对不一致导致的“均值崩溃”问题，研究证明了保持耦合一致性的必要性，并引入最优传输（OT）配对策略。实验证明该方法在保持生成质量的同时，显著提升了推理速度。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion and flow matching models generate samples by learning time-dependent vector fields whose integration transports noise to data, requiring tens to hundreds of network evaluations at inference. We instead learn the transport map directly. We propose Optimal Transport Neural Flow Matching (OT-NFM), an ODE-free generative framework that parameterizes the flow map with neural flows, enabling true one-step generation with a single forward pass. We show that naive flow-map training suffers from mean collapse, where inconsistent noise-data pairings drive all outputs toward the data mean. We prove that consistent coupling is necessary for non-degenerate learning and address this using optimal transport pairings with scalable minibatch and online coupling strategies. Experiments on synthetic benchmarks and image generation tasks (MNIST and CIFAR-10) demonstrate competitive sample quality while reducing inference to a single network evaluation.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

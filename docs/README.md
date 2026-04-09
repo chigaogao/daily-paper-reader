@@ -6,52 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-08
-- 运行时间：2026-04-08 20:37:52 UTC
+- 最新运行日期：2026-04-09
+- 运行时间：2026-04-09 20:19:55 UTC
 - 运行状态：成功
-- 本次总论文数：10
-- 精读区：2
-- 速读区：8
+- 本次总论文数：5
+- 精读区：0
+- 速读区：5
 
 ### 今日简报（AI）
-今日聚焦脑机接口前沿，深度解析了从脑电信号到语音重建及运动想象解码的 Transformer 创新应用。
-重点突破在于利用韵律特征工程实现高质量语音合成，以及通过多尺度时域卷积提升跨场次运动想象的识别精度。
-建议关注 Transformer 架构在神经信号处理中的跨模态融合趋势，探索其在医疗康复与生成式脑机接口中的落地潜力。
-- 详情：[/202604/08/README](/202604/08/README)
+今日速览 5 篇前沿论文，重点聚焦神经科学自监督基础模型与流匹配（Flow Matching）在医学影像及图像去噪中的创新应用。
+值得关注钙成像基础模型对群体动力学的解析，以及流匹配技术在胎儿 MRI 伪影修复和自适应去噪中的性能突破。
+建议对 AI 与生物医学交叉领域感兴趣的读者优先研读钙成像基础模型，探索大模型在复杂生物信号处理中的潜力。
+- 详情：[/202604/09/README](/202604/09/README)
 
 ### 精读区论文标签
-1. [Brain-to-Speech: Prosody Feature Engineering and Transformer-Based Reconstruction](/202604/08/2604.05751v1-brain-to-speech-prosody-feature-engineering-and-transformer-based-reconstruction)  
-   标签：评分：9.0/10、query:eeg-ai
-   evidence：基于iEEG的脑机语音合成
-2. [EEG-MFTNet: An Enhanced EEGNet Architecture with Multi-Scale Temporal Convolutions and Transformer Fusion for Cross-Session Motor Imagery Decoding](/202604/08/2604.05843v1-eeg-mftnet-an-enhanced-eegnet-architecture-with-multi-scale-temporal-convolutions-and-transformer-fusion-for-cross-session-motor-imagery-decoding)  
-   标签：评分：8.0/10、query:eeg-ai
-   evidence：用于EEG解码和时间依赖捕捉的Transformer融合
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Self-Supervised Foundation Model for Calcium-imaging Population Dynamics](/202604/08/2604.04958v1-self-supervised-foundation-model-for-calcium-imaging-population-dynamics)  
+1. [Self-Supervised Foundation Model for Calcium-imaging Population Dynamics](/202604/09/2604.04958v2-self-supervised-foundation-model-for-calcium-imaging-population-dynamics)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：神经轨迹的自监督基础模型
-2. [Extending Tabular Denoising Diffusion Probabilistic Models for Time-Series Data Generation](/202604/08/2604.05257v1-extending-tabular-denoising-diffusion-probabilistic-models-for-time-series-data-generation)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：用于时间序列数据生成的去噪扩散概率模型
-3. [Overview of Bayesian Solvers in EEG Distributed Source Models: Prior Selection, Algorithmic Implementation, and Depth Bias Reduction](/202604/08/2604.05913v1-overview-of-bayesian-solvers-in-eeg-distributed-source-models-prior-selection-algorithmic-implementation-and-depth-bias-reduction)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：用于EEG源成像和信号重建的贝叶斯求解器
-4. [FEEL: Quantifying Heterogeneity in Physiological Signals for Generalizable Emotion Recognition](/202604/08/2604.05926v1-feel-quantifying-heterogeneity-in-physiological-signals-for-generalizable-emotion-recognition)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：生理信号表示学习的自监督预训练
-5. [Diffusion Path Alignment for Long-Range Motion Generation and Domain Transitions](/202604/08/2604.03310v1-diffusion-path-alignment-for-long-range-motion-generation-and-domain-transitions)  
+   evidence：用于神经记录分析的自监督神经基础模型
+2. [SANA I2I: A Text Free Flow Matching Framework for Paired Image to Image Translation with a Case Study in Fetal MRI Artifact Reduction](/202604/09/2604.00298v1-sana-i2i-a-text-free-flow-matching-framework-for-paired-image-to-image-translation-with-a-case-study-in-fetal-mri-artifact-reduction)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：用于AIGC运动生成和领域迁移的扩散模型
-6. [Neurological Plausibility of AI-Generated Music for Commercial Environments: An In-Silico Cortical Investigation Using Wubble and TRIBE v2](/202604/08/2604.04025v1-neurological-plausibility-of-ai-generated-music-for-commercial-environments-an-in-silico-cortical-investigation-using-wubble-and-tribe-v2)  
+   evidence：用于图像到图像生成的流匹配框架
+3. [Beyond Fixed Inference: Quantitative Flow Matching for Adaptive Image Denoising](/202604/09/2604.02392v1-beyond-fixed-inference-quantitative-flow-matching-for-adaptive-image-denoising)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：AI生成音乐与皮层响应分析
-7. [StrADiff: A Structured Source-Wise Adaptive Diffusion Framework for Linear and Nonlinear Blind Source Separation](/202604/08/2604.04973v1-stradiff-a-structured-source-wise-adaptive-diffusion-framework-for-linear-and-nonlinear-blind-source-separation)  
+   evidence：用于自适应修复的流匹配与扩散模型
+4. [$S^3$: Stratified Scaling Search for Test-Time in Diffusion Language Models](/202604/09/2604.06260v1-s3-stratified-scaling-search-for-test-time-in-diffusion-language-models)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：用于盲源分离的自适应扩散框架
-8. [Selective Aggregation of Attention Maps Improves Diffusion-Based Visual Interpretation](/202604/08/2604.05906v1-selective-aggregation-of-attention-maps-improves-diffusion-based-visual-interpretation)  
+   evidence：扩散模型的测试时缩放以提高生成质量
+5. [ODE-free Neural Flow Matching for One-Step Generative Modeling](/202604/09/2604.06413v1-ode-free-neural-flow-matching-for-one-step-generative-modeling)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：扩散模型视觉解释与AIGC的方法论桥梁
+   evidence：使用流匹配进行一步生成的生成框架
 
 
 <div class="dpr-home-promo-card">
