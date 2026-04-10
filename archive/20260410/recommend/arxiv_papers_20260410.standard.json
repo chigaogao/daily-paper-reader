@@ -1,0 +1,327 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-10T19:44:47.956396+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2604.08063v1",
+      "title": "EEG2Vision: A Multimodal EEG-Based Framework for 2D Visual Reconstruction in Cognitive Neuroscience",
+      "abstract": "Reconstructing visual stimuli from non-invasive electroencephalography (EEG) remains challenging due to its low spatial resolution and high noise, particularly under realistic low-density electrode configurations. To address this, we present EEG2Vision, a modular, end-to-end EEG-to-image framework that systematically evaluates reconstruction performance across different EEG resolutions (128, 64, 32, and 24 channels) and enhances visual quality through a prompt-guided post-reconstruction boosting mechanism. Starting from EEG-conditioned diffusion reconstruction, the boosting stage uses a multimodal large language model to extract semantic descriptions and leverages image-to-image diffusion to refine geometry and perceptual coherence while preserving EEG-grounded structure. Our experiments show that semantic decoding accuracy degrades significantly with channel reduction (e.g., 50-way Top-1 Acc from 89% to 38%), while reconstruction quality slight decreases (e.g., FID from 76.77 to 80.51). The proposed boosting consistently improves perceptual metrics across all configurations, achieving up to 9.71% IS gains in low-channel settings. A user study confirms the clear perceptual preference for boosted reconstructions. The proposed approach significantly boosts the feasibility of real-time brain-2-image applications using low-resolution EEG devices, potentially unlocking this type of applications outside laboratory settings.",
+      "authors": [
+        "Emanuele Balloni",
+        "Emanuele Frontoni",
+        "Chiara Matti",
+        "Marina Paolanti",
+        "Roberto Pierdicca",
+        "Emiliano Santarnecchi"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-09T10:25:54+00:00",
+      "link": "https://arxiv.org/pdf/2604.08063v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "EEG-conditioned diffusion reconstruction for 2D visual images",
+      "llm_evidence_cn": "基于EEG条件的扩散模型2D视觉图像重建",
+      "llm_evidence": "基于EEG条件的扩散模型2D视觉图像重建",
+      "canonical_evidence": "基于EEG条件的扩散模型2D视觉图像重建",
+      "llm_tldr_en": "Presents EEG2Vision, a framework using diffusion models and LLMs to reconstruct images from EEG signals.",
+      "llm_tldr_cn": "提出EEG2Vision框架，利用扩散模型和大语言模型从EEG信号重建图像。",
+      "llm_tldr": "提出EEG2Vision框架，利用扩散模型和大语言模型从EEG信号重建图像。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Reconstructing images from EEG using generative models",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.08068v1",
+      "title": "Brain3D: EEG-to-3D Decoding of Visual Representations via Multimodal Reasoning",
+      "abstract": "Decoding visual information from electroencephalography (EEG) has recently achieved promising results, primarily focusing on reconstructing two-dimensional (2D) images from brain activity. However, the reconstruction of three-dimensional (3D) representations remains largely unexplored. This limits the geometric understanding and reduces the applicability of neural decoding in different contexts. To address this gap, we propose Brain3D, a multimodal architecture for EEG-to-3D reconstruction based on EEG-to-image decoding. It progressively transforms neural representations into the 3D domain using geometry-aware generative reasoning. Our pipeline first produces visually grounded images from EEG signals, then employs a multimodal large language model to extract structured 3D-aware descriptions, which guide a diffusion-based generation stage whose outputs are finally converted into coherent 3D meshes via a single-image-to-3D model. By decomposing the problem into structured stages, the proposed approach avoids direct EEG-to-3D mappings and enables scalable brain-driven 3D generation. We conduct a comprehensive evaluation comparing the reconstructed 3D outputs against the original visual stimuli, assessing both semantic alignment and geometric fidelity. Experimental results demonstrate strong performance of the proposed architecture, achieving up to 85.4% 10-way Top-1 EEG decoding accuracy and 0.648 CLIPScore, supporting the feasibility of multimodal EEG-driven 3D reconstruction.",
+      "authors": [
+        "Emanuele Balloni",
+        "Emanuele Frontoni",
+        "Chiara Matti",
+        "Marina Paolanti",
+        "Roberto Pierdicca",
+        "Emiliano Santarnecchi"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-09T10:35:44+00:00",
+      "link": "https://arxiv.org/pdf/2604.08068v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "EEG-to-3D reconstruction using multimodal generative reasoning and large language models",
+      "llm_evidence_cn": "利用多模态生成推理和大语言模型进行脑电到3D的重建",
+      "llm_evidence": "利用多模态生成推理和大语言模型进行脑电到3D的重建",
+      "canonical_evidence": "利用多模态生成推理和大语言模型进行脑电到3D的重建",
+      "llm_tldr_en": "Brain3D decodes EEG signals into 3D visual representations using a multimodal generative pipeline.",
+      "llm_tldr_cn": "Brain3D利用多模态生成管线将脑电信号解码为3D视觉表示。",
+      "llm_tldr": "Brain3D利用多模态生成管线将脑电信号解码为3D视觉表示。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Cross modal generation from EEG signals using generative AI",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.08537v1",
+      "title": "Meta-learning In-Context Enables Training-Free Cross Subject Brain Decoding",
+      "abstract": "Visual decoding from brain signals is a key challenge at the intersection of computer vision and neuroscience, requiring methods that bridge neural representations and computational models of vision. A field-wide goal is to achieve generalizable, cross-subject models. A major obstacle towards this goal is the substantial variability in neural representations across individuals, which has so far required training bespoke models or fine-tuning separately for each subject. To address this challenge, we introduce a meta-optimized approach for semantic visual decoding from fMRI that generalizes to novel subjects without any fine-tuning. By simply conditioning on a small set of image-brain activation examples from the new individual, our model rapidly infers their unique neural encoding patterns to facilitate robust and efficient visual decoding. Our approach is explicitly optimized for in-context learning of the new subject's encoding model and performs decoding by hierarchical inference, inverting the encoder. First, for multiple brain regions, we estimate the per-voxel visual response encoder parameters by constructing a context over multiple stimuli and responses. Second, we construct a context consisting of encoder parameters and response values over multiple voxels to perform aggregated functional inversion. We demonstrate strong cross-subject and cross-scanner generalization across diverse visual backbones without retraining or fine-tuning. Moreover, our approach requires neither anatomical alignment nor stimulus overlap. This work is a critical step towards a generalizable foundation model for non-invasive brain decoding.",
+      "authors": [
+        "Mu Nan",
+        "Muquan Yu",
+        "Weijian Mai",
+        "Jacob S. Prince",
+        "Hossein Adeli",
+        "Rui Zhang",
+        "Jiahang Cao",
+        "Benjamin Becker",
+        "John A. Pyles",
+        "Margaret M. Henderson",
+        "Chunfeng Song",
+        "Nikolaus Kriegeskorte",
+        "Michael J. Tarr",
+        "Xiaoqing Hu",
+        "Andrew F. Luo"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "q-bio.NC"
+      ],
+      "published": "2026-04-09T17:59:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.08537v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "semantic visual decoding from brain signals",
+      "llm_evidence_cn": "从脑信号中进行语义视觉解码",
+      "llm_evidence": "从脑信号中进行语义视觉解码",
+      "canonical_evidence": "从脑信号中进行语义视觉解码",
+      "llm_tldr_en": "Proposes a meta-learning approach for training-free cross-subject visual decoding from fMRI signals.",
+      "llm_tldr_cn": "提出了一种元学习方法，用于从fMRI信号中进行无需训练的跨主体视觉解码。",
+      "llm_tldr": "提出了一种元学习方法，用于从fMRI信号中进行无需训练的跨主体视觉解码。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.05462v1",
+      "title": "Hierarchical Contrastive Learning for Multimodal Data",
+      "abstract": "Multimodal representation learning is commonly built on a shared-private decomposition, treating latent information as either common to all modalities or specific to one. This binary view is often inadequate: many factors are shared by only subsets of modalities, and ignoring such partial sharing can over-align unrelated signals and obscure complementary information. We propose Hierarchical Contrastive Learning (HCL), a framework that learns globally shared, partially shared, and modality-specific representations within a unified model. HCL combines a hierarchical latent-variable formulation with structural sparsity and a structure-aware contrastive objective that aligns only modalities that genuinely share a latent factor. Under uncorrelated latent variables, we prove identifiability of the hierarchical decomposition, establish recovery guarantees for the loading matrices, and derive parameter estimation and excess-risk bounds for downstream prediction. Simulations show accurate recovery of hierarchical structure and effective selection of task-relevant components. On multimodal electronic health records, HCL yields more informative representations and consistently improves predictive performance.",
+      "authors": [
+        "Huichao Li",
+        "Junhan Yu",
+        "Doudou Zhou"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG",
+        "math.ST"
+      ],
+      "published": "2026-04-07T05:53:04+00:00",
+      "link": "https://arxiv.org/pdf/2604.05462v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Hierarchical contrastive learning for multimodal representation and alignment",
+      "llm_evidence_cn": "用于多模态表示和对齐的分层对比学习",
+      "llm_evidence": "用于多模态表示和对齐的分层对比学习",
+      "canonical_evidence": "用于多模态表示和对齐的分层对比学习",
+      "llm_tldr_en": "Proposes a hierarchical contrastive learning framework for complex multimodal data representation.",
+      "llm_tldr_cn": "提出了一种用于复杂多模态数据表示的分层对比学习框架。",
+      "llm_tldr": "提出了一种用于复杂多模态数据表示的分层对比学习框架。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.05584v1",
+      "title": "Purify-then-Align: Towards Robust Human Sensing under Modality Missing with Knowledge Distillation from Noisy Multimodal Teacher",
+      "abstract": "Robust multimodal human sensing must overcome the critical challenge of missing modalities. Two principal barriers are the Representation Gap between heterogeneous data and the Contamination Effect from low-quality modalities. These barriers are causally linked, as the corruption introduced by contamination fundamentally impedes the reduction of representation disparities. In this paper, we propose PTA, a novel \"Purify-then-Align\" framework that solves this causal dependency through a synergistic integration of meta-learning and knowledge diffusion. To purify the knowledge source, PTA first employs a meta-learning-driven weighting mechanism that dynamically learns to down-weight the influence of noisy, low-contributing modalities. Subsequently, to align different modalities, PTA introduces a diffusion-based knowledge distillation paradigm in which an information-rich clean teacher, formed from this purified consensus, refines the features of each student modality. The ultimate payoff of this \"Purify-then-Align\" strategy is the creation of exceptionally powerful single-modality encoders imbued with cross-modal knowledge. Comprehensive experiments on the large-scale MM-Fi and XRF55 datasets, under pronounced Representation Gap and Contamination Effect, demonstrate that PTA achieves state-of-the-art performance and significantly improves the robustness of single-modality models in diverse missing-modality scenarios.",
+      "authors": [
+        "Pengcheng Weng",
+        "Yanyu Qian",
+        "Yangxin Xu",
+        "Fei Wang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-07T08:24:47+00:00",
+      "link": "https://arxiv.org/pdf/2604.05584v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "knowledge diffusion for human sensing",
+      "llm_evidence_cn": "用于人体感知的知识扩散",
+      "llm_evidence": "用于人体感知的知识扩散",
+      "canonical_evidence": "用于人体感知的知识扩散",
+      "llm_tldr_en": "Integrates meta-learning and knowledge diffusion for robust multimodal human sensing under missing modalities.",
+      "llm_tldr_cn": "结合元学习和知识扩散，实现在模态缺失情况下的鲁棒多模态人体感知。",
+      "llm_tldr": "结合元学习和知识扩散，实现在模态缺失情况下的鲁棒多模态人体感知。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.08048v1",
+      "title": "Guiding a Diffusion Model by Swapping Its Tokens",
+      "abstract": "Classifier-Free Guidance (CFG) is a widely used inference-time technique to boost the image quality of diffusion models. Yet, its reliance on text conditions prevents its use in unconditional generation. We propose a simple method to enable CFG-like guidance for both conditional and unconditional generation. The key idea is to generate a perturbed prediction via simple token swap operations, and use the direction between it and the clean prediction to steer sampling towards higher-fidelity distributions. In practice, we swap pairs of most semantically dissimilar token latents in either spatial or channel dimensions. Unlike existing methods that apply perturbation in a global or less constrained manner, our approach selectively exchanges and recomposes token latents, allowing finer control over perturbation and its influence on generated samples. Experiments on MS-COCO 2014, MS-COCO 2017, and ImageNet datasets demonstrate that the proposed Self-Swap Guidance (SSG), when applied to popular diffusion models, outperforms previous condition-free methods in image fidelity and prompt alignment under different set-ups. Its fine-grained perturbation granularity also improves robustness, reducing side-effects across a wider range of perturbation strengths. Overall, SSG extends CFG to a broader scope of applications including both conditional and unconditional generation, and can be readily inserted into any diffusion model as a plug-in to gain immediate improvements.",
+      "authors": [
+        "Weijia Zhang",
+        "Yuehao Liu",
+        "Shanyan Guan",
+        "Wu Ran",
+        "Yanhao Ge",
+        "Wei Li",
+        "Chao Ma"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-09T09:54:49+00:00",
+      "link": "https://arxiv.org/pdf/2604.08048v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Methodological improvement for diffusion model guidance and sampling",
+      "llm_evidence_cn": "扩散模型引导与采样的算法改进",
+      "llm_evidence": "扩散模型引导与采样的算法改进",
+      "canonical_evidence": "扩散模型引导与采样的算法改进",
+      "llm_tldr_en": "Introduces a token-swapping method to guide diffusion models for higher-fidelity generation.",
+      "llm_tldr_cn": "引入一种令牌交换方法来引导扩散模型，以实现更高保真度的生成。",
+      "llm_tldr": "引入一种令牌交换方法来引导扩散模型，以实现更高保真度的生成。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.08150v1",
+      "title": "FlowEqProp: Training Flow Matching Generative Models with Gradient Equilibrium Propagation",
+      "abstract": "We introduce Gradient Equilibrium Propagation (GradEP), a mechanism that extends Equilibrium Propagation (EP) to train energy gradients rather than energy minima, enabling EP to be applied to tasks where the learning objective depends on the velocity field of a convergent dynamical system. Instead of fixing the input during dynamics as in standard EP, GradEP introduces a spring potential that allows all units, including the visible units, to evolve, encoding the learned velocity in the equilibrium displacement. The spring and resulting nudge terms are both purely quadratic, preserving EP's hardware plausibility for neuromorphic implementation. As a first demonstration, we apply GradEP to flow matching for generative modelling - an approach we call FlowEqProp - training a two-hidden-layer MLP (24,896 parameters) on the Optical Recognition of Handwritten Digits dataset using only local equilibrium measurements and no backpropagation. The model generates recognisable digit samples across all ten classes with stable training dynamics. We further show that the time-independent energy landscape enables extended generation beyond the training horizon, producing sharper samples through additional inference-time computation - a property that maps naturally onto neuromorphic hardware, where longer relaxation yields higher-quality outputs. To our knowledge, this is the first demonstration of EP training a flow-based generative model.",
+      "authors": [
+        "Alex Gower"
+      ],
+      "primary_category": "cond-mat.dis-nn",
+      "categories": [
+        "cond-mat.dis-nn"
+      ],
+      "published": "2026-04-09T12:10:16+00:00",
+      "link": "https://arxiv.org/pdf/2604.08150v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Training flow matching generative models with neuromorphic hardware plausibility",
+      "llm_evidence_cn": "训练具有神经形态硬件可行性的流匹配生成模型",
+      "llm_evidence": "训练具有神经形态硬件可行性的流匹配生成模型",
+      "canonical_evidence": "训练具有神经形态硬件可行性的流匹配生成模型",
+      "llm_tldr_en": "Introduces Gradient Equilibrium Propagation to train flow matching generative models efficiently.",
+      "llm_tldr_cn": "引入梯度平衡传播算法，以高效训练流匹配生成模型。",
+      "llm_tldr": "引入梯度平衡传播算法，以高效训练流匹配生成模型。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.08357v1",
+      "title": "Bias-Constrained Diffusion Schedules for PDE Emulations: Reconstruction Error Minimization and Efficient Unrolled Training",
+      "abstract": "Conditional Diffusion Models are powerful surrogates for emulating complex spatiotemporal dynamics, yet they often fail to match the accuracy of deterministic neural emulators for high-precision tasks. In this work, we address two critical limitations of autoregressive PDE diffusion models: their sub-optimal single-step accuracy and the prohibitive computational cost of unrolled training. First, we characterize the relationship between the noise schedule, the reconstruction error reduction rate and the diffusion exposure bias, demonstrating that standard schedules lead to suboptimal reconstruction error. Leveraging this insight, we propose an \\textit{Adaptive Noise Schedule} framework that minimizes inference reconstruction error by dynamically constraining the model's exposure bias. We further show that this optimized schedule enables a fast \\textit{Proxy Unrolled Training} method to stabilize long-term rollouts without the cost of full Markov Chain sampling. Both proposed methods enable significant improvements in short-term accuracy and long-term stability over diffusion and deterministic baselines on diverse benchmarks, including forced Navier-Stokes, Kuramoto-Sivashinsky and Transonic Flow.",
+      "authors": [
+        "Constantin Le Cleï",
+        "Nils Thürey",
+        "Xiaoxiang Zhu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-09T15:21:31+00:00",
+      "link": "https://arxiv.org/pdf/2604.08357v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Adaptive noise schedules for diffusion models",
+      "llm_evidence_cn": "扩散模型的自适应噪声调度",
+      "llm_evidence": "扩散模型的自适应噪声调度",
+      "canonical_evidence": "扩散模型的自适应噪声调度",
+      "llm_tldr_en": "Optimizes diffusion model noise schedules for spatiotemporal dynamics, applicable to signal reconstruction.",
+      "llm_tldr_cn": "优化了扩散模型的噪声调度以处理时空动力学，可应用于信号重建任务。",
+      "llm_tldr": "优化了扩散模型的噪声调度以处理时空动力学，可应用于信号重建任务。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
