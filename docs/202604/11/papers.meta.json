@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-11",
+  "date": "2026-04-11",
+  "generated_at": "2026-04-11T19:23:39",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/11/2604.02711v2-foundation-models-defining-a-new-era-in-sensor-based-human-activity-recognition-a-survey-and-outlook",
+      "section": "quick",
+      "title_en": "Foundation Models Defining A New Era In Sensor-based Human Activity Recognition: A Survey And Outlook",
+      "authors": "Sizhen Bian, Mengxi Liu, Lala Shakti Swarup Ray, Bo Zhou, Bin Guo, Zhiwen Yu, Thomas Ploetz, Paul Lukowicz, Siyu Yuan, Vitor Fortes Rey",
+      "date": "2026-04-03",
+      "pdf": "https://arxiv.org/pdf/2604.02711v2",
+      "score": "6.0",
+      "evidence": "基于传感器的时序基础模型与自监督学习",
+      "tldr": "本综述探讨了基础模型在基于传感器的个人活动识别（HAR）中的变革作用。针对传统模型在标签稀缺、传感器异构和泛化性差等方面的局限，本文系统梳理了HAR基础模型的生命周期，包括输入设计、预训练、适配与应用。通过分析九大技术维度的设计模式，提出了HAR专用模型、通用模型适配及大语言模型集成三大发展路径，为构建通用、可解释且以人为中心的活动理解系统指明了方向。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Sensor-based Human Activity Recognition (HAR) underpins many ubiquitous and wearable computing applications, yet current models remain limited by scarce labels, sensor heterogeneity, and weak generalization across users, devices, and contexts. Foundation models, which are generally pretrained at scale using self-supervised and multimodal learning, offer a unifying paradigm to address these challenges by learning reusable, adaptable representations for activity understanding. This survey synthesizes emerging foundation models for sensor-based HAR. We first clarify foundational concepts, definitions, and evaluation criteria, then organize existing work using a lifecycle-oriented taxonomy spanning input design, pretraining, adaptation, and utilization. Rather than enumerating individual models, we analyze recurring design patterns and trade-offs across nine technical axes, including modality scope, tokenization, architectures, learning paradigms, adaptation mechanisms, and deployment settings. From this synthesis, we identify three dominant development trajectories: (1) HAR-specific foundation models trained from scratch on large sensor corpora, (2) adaptation of general time-series or multimodal foundation models to sensor-based HAR, and (3) integration of large language models for reasoning, annotation, and human-AI interaction. We conclude by highlighting open challenges in data curation, multimodal alignment, personalization, privacy, and responsible deployment, and outline directions toward general-purpose, interpretable, and human-centered foundation models for activity understanding. A complete, continuously updated index of papers and models is available in our companion repository: https://github.com/zhaxidele/Foundation-Models-Defining-A-New-Era-In-Human-Activity-Recognition.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/11/2604.03134v2-sd-fsmis-adapting-stable-diffusion-for-few-shot-medical-image-segmentation",
+      "section": "quick",
+      "title_en": "SD-FSMIS: Adapting Stable Diffusion for Few-Shot Medical Image Segmentation",
+      "authors": "Meihua Li, Yang Zhang, Weizhao He, Hu Qu, Yisong Li",
+      "date": "2026-04-03",
+      "pdf": "https://arxiv.org/pdf/2604.03134v2",
+      "score": "6.0",
+      "evidence": "利用预训练视觉先验将稳定扩散模型应用于医学图像任务",
+      "tldr": "针对医疗影像中数据稀缺和领域偏移导致的少样本分割（FSMIS）难题，本文提出了SD-FSMIS框架，首次探索将预训练的Stable Diffusion模型应用于该任务。通过引入支持-查询交互（SQI）和视觉-文本条件转换器（VTCT），该方法能有效利用扩散模型的视觉先验，将支持集的视觉特征转化为引导生成的文本嵌入。实验证明，该方法在标准及跨领域场景下均表现优异，展示了大规模生成模型在高效医疗影像分割中的巨大潜力。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Few-Shot Medical Image Segmentation (FSMIS) aims to segment novel object classes in medical images using only minimal annotated examples, addressing the critical challenges of data scarcity and domain shifts prevalent in medical imaging. While Diffusion Models (DM) excel in visual tasks, their potential for FSMIS remains largely unexplored. We propose that the rich visual priors learned by large-scale DMs offer a powerful foundation for a more robust and data-efficient segmentation approach. In this paper, we introduce SD-FSMIS, a novel framework designed to effectively adapt the powerful pre-trained Stable Diffusion (SD) model for the FSMIS task. Our approach repurposes its conditional generative architecture by introducing two key components: a Support-Query Interaction (SQI) and a Visual-to-Textual Condition Translator (VTCT). Specifically, SQI provides a straightforward yet powerful means of adapting SD to the FSMIS paradigm. The VTCT module translates visual cues from the support set into an implicit textual embedding that guides the diffusion model, enabling precise conditioning of the generation process. Extensive experiments demonstrate that SD-FSMIS achieves competitive results compared to state-of-the-art methods in standard settings. Surprisingly, it also demonstrated excellent generalization ability in more challenging cross-domain scenarios. These findings highlight the immense potential of adapting large-scale generative models to advance data-efficient and robust medical image segmentation.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/11/2604.05584v2-purify-then-align-towards-robust-human-sensing-under-modality-missing-with-knowledge-distillation-from-noisy-multimodal-teacher",
+      "section": "quick",
+      "title_en": "Purify-then-Align: Towards Robust Human Sensing under Modality Missing with Knowledge Distillation from Noisy Multimodal Teacher",
+      "authors": "Pengcheng Weng, Yanyu Qian, Yangxin Xu, Fei Wang",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05584v2",
+      "score": "6.0",
+      "evidence": "用于鲁棒人体传感的知识扩散模型",
+      "tldr": "针对多模态人体感知中模态缺失、异构数据表征差异及低质量模态污染等挑战，本文提出了一种名为 PTA（先净化后对齐）的创新框架。该框架结合元学习与知识扩散技术，首先通过元学习动态降低噪声模态权重以净化知识源，随后利用基于扩散模型的知识蒸馏，将净化后的多模态共识知识传递给单模态编码器。实验证明，PTA 在 MM-Fi 和 XRF55 数据集上达到了 SOTA 性能，显著增强了单模态模型在模态缺失场景下的鲁棒性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Robust multimodal human sensing must overcome the critical challenge of missing modalities. Two principal barriers are the Representation Gap between heterogeneous data and the Contamination Effect from low-quality modalities. These barriers are causally linked, as the corruption introduced by contamination fundamentally impedes the reduction of representation disparities. In this paper, we propose PTA, a novel \"Purify-then-Align\" framework that solves this causal dependency through a synergistic integration of meta-learning and knowledge diffusion. To purify the knowledge source, PTA first employs a meta-learning-driven weighting mechanism that dynamically learns to down-weight the influence of noisy, low-contributing modalities. Subsequently, to align different modalities, PTA introduces a diffusion-based knowledge distillation paradigm in which an information-rich clean teacher, formed from this purified consensus, refines the features of each student modality. The ultimate payoff of this \"Purify-then-Align\" strategy is the creation of exceptionally powerful single-modality encoders imbued with cross-modal knowledge. Comprehensive experiments on the large-scale MM-Fi and XRF55 datasets, under pronounced Representation Gap and Contamination Effect, demonstrate that PTA achieves state-of-the-art performance and significantly improves the robustness of single-modality models in diverse missing-modality scenarios.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
