@@ -1,0 +1,53 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-12T19:22:54.414974+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.08157v1",
+      "title": "State-Flow Coordinated Representation for MI-EEG Decoding",
+      "abstract": "Motor Imagery (MI) Electroencephalography (EEG) signals contain two crucial and complementary types of information: state information, which captures the global context of the task, and flow information, which captures fine-grained temporal dynamics. However, existing deep decoding models typically focus on only one of these information streams, resulting in unstable learning and sub-optimal performance. To address this, we propose the State-Flow Coordinated Network (StaFlowNet), a novel architecture that explicitly separates and coordinates state and flow information. We first employ a dual-branch design to extract the global state vector and temporal flow features separately. Critically, a novel state-modulated flow module is proposed to dynamically refine the learning of flow information. This modulated mechanism effectively integrates global context with fine-grained dynamics, thereby significantly enhancing task discriminability and decoding performance. Experiments on three public MI-EEG datasets demonstrate that StaFlowNet significantly outperforms state-of-the-art methods. Ablation studies further confirm that the state-modulated mechanism plays a crucial role in enhancing feature discriminability and overall performance.",
+      "authors": [
+        "Guoqing Cai",
+        "Shoulin Huang",
+        "Ting Ma"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC"
+      ],
+      "published": "2026-04-09T12:17:29+00:00",
+      "link": "https://arxiv.org/pdf/2604.08157v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Deep decoding model for Motor Imagery EEG signals using state and flow information",
+      "llm_evidence_cn": "利用状态和流信息进行运动想象脑电信号解码的深度模型",
+      "llm_evidence": "利用状态和流信息进行运动想象脑电信号解码的深度模型",
+      "canonical_evidence": "利用状态和流信息进行运动想象脑电信号解码的深度模型",
+      "llm_tldr_en": "Introduces StaFlowNet to coordinate global state and temporal flow for improved MI-EEG decoding.",
+      "llm_tldr_cn": "引入StaFlowNet协调全局状态和时间流，以改进运动想象脑电解码。",
+      "llm_tldr": "引入StaFlowNet协调全局状态和时间流，以改进运动想象脑电解码。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

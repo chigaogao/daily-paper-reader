@@ -1,0 +1,23 @@
+{
+  "label": "2026-04-12",
+  "date": "2026-04-12",
+  "generated_at": "2026-04-12T19:23:16",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/12/2604.08157v1-state-flow-coordinated-representation-for-mi-eeg-decoding",
+      "section": "quick",
+      "title_en": "State-Flow Coordinated Representation for MI-EEG Decoding",
+      "authors": "Guoqing Cai, Shoulin Huang, Ting Ma",
+      "date": "2026-04-09",
+      "pdf": "https://arxiv.org/pdf/2604.08157v1",
+      "score": "7.0",
+      "evidence": "利用状态和流信息进行运动想象脑电信号解码的深度模型",
+      "tldr": "针对运动想象（MI）脑电信号解码中现有模型往往只关注全局状态或局部动态流信息，导致性能不佳的问题，本文提出StaFlowNet。该网络采用双分支设计分别提取全局状态向量和时间流特征，并通过创新的状态调制流模块实现两者的协同，显著提升了特征的判别力和解码准确率，在多个公开数据集上达到了领先水平。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Motor Imagery (MI) Electroencephalography (EEG) signals contain two crucial and complementary types of information: state information, which captures the global context of the task, and flow information, which captures fine-grained temporal dynamics. However, existing deep decoding models typically focus on only one of these information streams, resulting in unstable learning and sub-optimal performance. To address this, we propose the State-Flow Coordinated Network (StaFlowNet), a novel architecture that explicitly separates and coordinates state and flow information. We first employ a dual-branch design to extract the global state vector and temporal flow features separately. Critically, a novel state-modulated flow module is proposed to dynamically refine the learning of flow information. This modulated mechanism effectively integrates global context with fine-grained dynamics, thereby significantly enhancing task discriminability and decoding performance. Experiments on three public MI-EEG datasets demonstrate that StaFlowNet significantly outperforms state-of-the-art methods. Ablation studies further confirm that the state-modulated mechanism plays a crucial role in enhancing feature discriminability and overall performance.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

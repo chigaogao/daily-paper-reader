@@ -1,0 +1,337 @@
+Title: State-Flow Coordinated Representation for MI-EEG Decoding
+
+URL Source: https://arxiv.org/pdf/2604.08157v1
+
+Published Time: Fri, 10 Apr 2026 01:30:12 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+## STATE–FLOW COORDINATED REPRESENTATION FOR MI–EEG DECODING 
+
+## Guoqing Cai 1 Shoulin Huang 3 Ting Ma 1,2 ∗
+
+> 1
+
+## Harbin Institute of Technology (Shenzhen), Shenzhen, China 
+
+> 2
+
+## Peng Cheng Laboratory, Shenzhen, China 
+
+> 3
+
+## Guangxi Normal University, Guilin, China 
+
+ABSTRACT 
+
+Motor Imagery (MI) Electroencephalography (EEG) signals contain two crucial and complementary types of information: state informa-tion, which captures the global context of the task, and flow infor-mation, which captures fine-grained temporal dynamics. However, existing deep decoding models typically focus on only one of these information streams, resulting in unstable learning and sub-optimal performance. To address this, we propose the State–Flow Coordi-nated Network (StaFlowNet), a novel architecture that explicitly sep-arates and coordinates state and flow information. We first employ a dual-branch design to extract the global state vector and tempo-ral flow features separately. Critically, a novel state-modulated flow module is proposed to dynamically refine the learning of flow in-formation. This modulated mechanism effectively integrates global context with fine-grained dynamics, thereby significantly enhancing task discriminability and decoding performance. Experiments on three public MI-EEG datasets demonstrate that StaFlowNet signifi-cantly outperforms state-of-the-art methods. Ablation studies further confirm that the state-modulated mechanism plays a crucial role in enhancing feature discriminability and overall performance. 
+
+Index Terms — Motor Imagery, EEG Decoding, State Informa-tion, Flow Information, Dual-Branch Architecture 
+
+1. INTRODUCTION 
+
+Brain–Computer Interfaces (BCIs) enable direct communication be-tween the brain and external devices, offering new opportunities for rehabilitation and assistance to individuals with motor impairments. Among BCI paradigms, Motor Imagery (MI) based on Electroen-cephalography (EEG) is widely used due to its non–invasive nature and ease of deployment [1]. The primary objective in MI-EEG based BCIs is to accurately decode a user’s motor intention from complex EEG signals. Despite significant progress, achieving accurate de-coding of users’ motor intentions from these signals remains a major challenge. MI-EEG signals contain two distinct yet complementary types of information [2]. The first is the global, quasi-stationary informa-tion associated with Event-Related Desynchronization/Synchronization (ERD/ERS) [3]. We define this as the state information. During MI tasks, it manifests as sustained power modulation in specific frequency bands over the sensorimotor cortex. State information captures the macroscopic functional context of the task and forms the foundation for accurate decoding. Classical methods, such as Common Spatial Pattern (CSP), target this component by designing spatial filters to maximize inter-class variance [4]. While effective, 
+
+> *Corresponding author
+
+such methods rely on trial-wide statistics (e.g., covariance), which smooth out temporal variations and sacrifice fine-grained dynamics. In contrast to the stable state information, MI-EEG signals also contain transient and fine-grained temporal dynamics, referred to as the flow information. Flow information includes instantaneous phase relationships, subtle frequency shifts, and the temporal evolu-tion of ERD/ERS, such as onset latency and peak timing [5]. These rapidly changing, non-stationary features provide rich discriminative cues that are crucial for accurate decoding. To capture the flow infor-mation, many deep learning approaches have been proposed. Models such as Convolutional Neural Networks (CNNs), Recurrent Neural Networks (RNNs), and Transformers attempt to learn temporal de-pendencies directly [6–12]. However, these end-to-end approaches face a critical bottleneck. They attempt to model the temporal flow without an architectural prior that leverages the stable, global con-text provided by state information. This lack of guidance forces the models to learn from noisy, non-stationary dynamics, making the learning process unreliable and leading to sub-optimal performance. To address this, we propose the State–Flow Coordinated Net-work (StaFlowNet), which integrates state and flow processing within a unified architecture. StaFlowNet adopts a dual-branch de-sign to separately extract state and flow information. A dedicated State Encoder collapses the temporal dimension into a global state vector that captures the macroscopic context of each trial. In par-allel, a Flow Encoder processes a time-differenced signal to retain fine-grained temporal evolution. The extracted flow features are then passed through a multi-scale temporal pyramid that hierarchically models dynamic patterns. At each pyramid layer, a state-modulated flow module leverages the global state vector to refine the flow rep-resentation, ensuring that local temporal dynamics are consistently guided by the macroscopic context. Through this coordinated fu-sion of state and flow, StaFlowNet mitigates the instability of direct temporal modeling and enhances the discriminability of learned features. Experiments on three public MI-EEG datasets demonstrate that StaFlowNet consistently outperforms existing methods. Visu-alization further reveals that state and flow capture distinct spatial patterns. Moreover, flow features modulated by state information exhibit stronger discriminability than flow alone. 
+
+2. METHODOLOGY 
+
+Given a multi-channel EEG trial X ∈ RC×Tin , where C is the num-ber of channels and Tin is the number of time points, our goal is to extract both global state information and local flow dynamics. To this end, we propose the StaFlowNet architecture, which comprises a State Encoder, a Flow Encoder, a State-Modulated Flow (SMF) module, as shown in Fig. 1.    
+
+> arXiv:2604.08157v1 [cs.HC] 9 Apr 2026 State Encoder
+> Spatial Conv
+> Temporal Conv
+> State Pooling
+> Flow Encoder
+> Spatial Conv
+> Temporal Conv
+> Flow Pooling
+> SMF SMF SMF C
+> MLP
+> Output
+> Xstate :
+> (D,1)
+> Xflow :
+> (D,T)
+> Xmod1 :
+> (D,T 1)
+> Xmod2 :
+> (D,T 2)
+> Xmod3 :
+> (D,T 3)
+> EEG
+> EEG -DIFF
+> GRU
+> Linear
+> AdaPooling
+> Dropout
+> Linear
+> Layernorm
+> Tanh
+> +
+
+(a)  (b)   
+
+> Flow State C
+> Hadamard product
+> Concatenation
+> + Element -wise Add
+> Xmod i-1Xstate
+> Xgru i
+> Xmod i
+
+Fig. 1 . (a) Overview of the proposed StaFlowNet architecture. It consists of three key modules: a State Encoder, a Flow Encoder, and a State-Modulated Flow (SMF) module. The fused representation is passed to an MLP for classification. (b) Structure of the SMF module. Each GRU output is adaptively modulated by the state vector through element-wise gating. 
+
+2.1. State Encoder 
+
+The State Encoder is designed to extract macroscopic, quasi-stationary state information that represents the global cognitive context of the trial. These features, such as ERD/ERS patterns, are relatively stable and exhibit high discriminative power. We ap-ply spatiotemporal convolutional operations followed by adaptive average pooling to obtain a compact state representation: 
+
+Xstate = Dropout (Pool (σ (BN (W2 ∗ (W1 ∗ X))))) (1) where the operator ∗ denotes convolution. W1 is the spatial convo-lution with kernel size (C, 1) , and W2 is the temporal convolution with kernel size (1 , 32) . σ(·) denotes the ELU activation function, and BN represents batch normalization. Pool (·) is an adaptive 2D pooling operation that outputs a fixed-size (1 , 1) tensor. The result-ing vector Xstate ∈ RD×1 serves as a compact global representation of the trial’s state, with D = 80 in our implementation. 
+
+2.2. Flow Encoder 
+
+To emphasize transient dynamics, we compute the temporal deriva-tive of the raw EEG signals instead of absolute amplitude: 
+
+Xdiff [: , t ] = 
+
+(
+
+0, t = 0 ,
+
+X[: , t ] − X[: , t − 1] , 1 ≤ t < T in , (2) The differenced signals are then passed through the same convo-lutional pipeline as the State Encoder, consisting of spatial convolu-tions, temporal convolutions, ELU activation, batch normalization, and dropout. The only architectural difference from State Encoder lies in the use of average pooling: 
+
+Xflow = Dropout (Pool (σ (BN (V2 ∗ (V1 ∗ Xdiff ))))) (3) where V1 and V2 denote the spatial and temporal convolution, re-spectively, and Pool (·) indicates 2D average pooling with a kernel of (1 , 48) and a stride of (1 , 32) . The output Xflow ∈ RD×T forms the flow information, preserving the fine-grained temporal evolution across T time steps. 
+
+2.3. State-Modulated Flow Module (SMF) 
+
+The SMF module is the core of StaFlowNet. It aims to extract tem-poral features at multiple time scales and modulate them using the state vector Xstate .
+
+2.3.1. Temporal GRU Encoding 
+
+We employ a three-level bidirectional GRU pyramid to capture tem-poral dependencies at multiple resolutions [11]. At the i-th level, the flow feature is first transposed to match the temporal input shape and then processed by a bidirectional GRU followed by a linear pro-jection to reduce the feature dimension to D, as illustrated in Fig. 1(b). 
+
+Xgru i = Pool Ti
+
+
+
+Linear 
+
+
+
+GRU i(X⊤
+
+> mod i−1
+
+)
+
+ 
+
+∈ RD×Ti (4) where Xmod i−1 denotes the input from the previous level (or the ini-tial flow features Xflow for i = 1 ). Pool Ti (·) denotes adaptive aver-age pooling into a fixed length Ti. This hierarchical design allows the model to extract temporally compressed representations across different scales ( T1 = 16 , T2 = 4 , T3 = 1 ), thereby enhancing its capacity to model both short- and long-range dynamics. 
+
+2.3.2. State-Based Modulation 
+
+To incorporate state-based modulation, each temporal feature Xgru i
+
+is refined using the global state vector Xstate . The modulation is computed as: 
+
+m = tanh ( LN (WmXstate )) ∈ RD×1, (5) 
+
+Xmod i = Xgru i ⊙ (1 + m) ∈ RD×Ti , (6) where Wm ∈ RD×D is a learnable weight matrix, LN (·) denotes layer normalization, and ⊙ represents element-wise multiplication. 2.3.3. Feature Fusion 
+
+The modulated outputs from different levels are concatenated to form the final spatiotemporal representation: 
+
+Z = Concat (Xmod 1, Xmod 2, Xmod 3) ∈ RD×Tsum (7) where Tsum = T1 + T2 + T3 = 21 . This hierarchical fusion strat-egy allows StaFlowNet to aggregate multi-scale temporal cues under state-based modulation. 
+
+2.4. Classification Head 
+
+The final representation Z is flattened and passed to a multi-layer perceptron (MLP) for classification: 
+
+ˆy = MLP (Flatten (Z)) ∈ RCcls , (8) where Ccls is the number of classes. The MLP contains two hidden layers with ELU activation, batch normalization, and dropout. 
+
+3. EXPERIMENTS 3.1. Datasets 
+
+We evaluate our model on three public MI-EEG datasets: BCI Competition IV-2a (BCI-IV 2a) [13]: This dataset contains EEG recordings from 9 subjects performing four MI tasks. Signals were recorded from 22 EEG channels at 250 Hz. Each subject com-pleted two sessions on separate days, with 288 trials per session. BCI Competition IV-2b (BCI-IV 2b) [13]: This dataset includes EEG data from 9 subjects performing two MI tasks (left– and right– hand) within five sessions on separate days. Each session contains 120 trials. Recordings were made using 3 EEG channels (C3, Cz, C4) and 3 EOG channels at 250 Hz. In this study, we use only the EEG channels. OpenBMI [14]: A large-scale EEG dataset collected from 54 subjects. We use the subset corresponding to the binary MI task (left– and right– hand). EEG was recorded using 62 channels at 1000 Hz and downsampled to 250 Hz for consistency. Each subject participated in two recording sessions, with 200 trials per session. We followed a consistent preprocessing procedure across datasets. For each trial, EEG segments were extracted from 0 to 4 seconds after the cue onset. A 5th-order Butterworth bandpass filter with a range of 4–40 Hz was applied to the data. 
+
+3.2. Comparison Methods 
+
+We compare StaFlowNet with a diverse set of representative deep learning baselines covering compact CNNs, and Transformer-based architectures. EEGNet is a compact and widely adopted CNN base-line for EEG-based BCI applications [8]. ShallowNet is a simple yet strong baseline that has been widely used in MI-EEG decod-ing [15]. FBCNet is a representative state-oriented model that embeds the FBCSP pipeline into an end-to-end deep network [16]. LightConvNet further improves FBCNet by enhancing temporal modeling within the same FBCSP-style design [17]. We also in-clude three Transformer-based methods, EEGConformer, TransNet, and MSVTNet, which model temporal dependencies in EEG signals with different attention and sequence modeling strategies [6, 9, 10]. These baselines provide complementary coverage of state-focused and sequence-focused paradigms in EEG deep learning. 
+
+3.3. Implementation Details 
+
+In this study, all models were trained with the cross-entropy loss and optimized using Adam with a learning rate of 0.001. Training was capped at 1000 epochs. We used early stopping with patience = 100 to mitigate overfitting [6]. We followed a cross-session evaluation protocol for all datasets. For BCI-IV 2a and OpenBMI, the first ses-sion was used for training and the second for testing. For BCI-IV 2b, the first three sessions were used for training and the last two for testing. To reduce the effect of random initialization, each experi-ment was repeated 10 times with different random seeds. For each subject, we first averaged the accuracy over the 10 runs, resulting in one accuracy value per subject for each method. We then performed the paired Wilcoxon signed-rank test across subjects to compare two methods under the same protocol [10]. 
+
+4. RESULTS AND DISCUSSION 4.1. Performance Comparison 
+
+Table 1 reports the performance of StaFlowNet and all baselines on three MI-EEG datasets, measured by classification accuracy, Co-hen’s Kappa, and F1-score. Accuracy is reported as mean ± stan-dard deviation. The results clearly indicate that StaFlowNet consis-tently achieves the best performance across all three datasets. On the BCI-IV 2a dataset, StaFlowNet obtains a mean accuracy of 80.14%, outperforming the second-best method, MSVTNet (78.99%), by a margin of 1.15%. On the BCI-IV 2b dataset, it achieves 79.02% accuracy, surpassing the runner-up, EEGConformer (77.96%). Sim-ilarly, on the large-scale OpenBMI dataset, StaFlowNet leads with 79.51% accuracy, again outperforming EEGConformer (77.91%). The superior Kappa and F1-scores further corroborate the robust-ness and balance of our model’s predictions. The statistical analysis shows that StaFlowNet’s improvements are statistically significant over nearly all competing methods. 
+
+4.2. Ablation Study 
+
+To validate the effectiveness of the core components in StaFlowNet, we conducted a comprehensive ablation study. We designed four variants of our model. StateOnly: Uses only the State Encoder branch and the classifier. FlowOnly: Uses only the Flow Encoder and the temporal pyramid, but without any state-based modulation. RandomState: The full StaFlowNet architecture, but the learned state vector is replaced by a random vector. Concat: A simplified fusion model where the state vector and the final flow representa-tion are simply concatenated before the classifier, bypassing our modulation mechanism. The results, summarized in Table 2, provide several key insights. First, FlowOnly consistently outperforms StateOnly, suggesting that the temporal flow dynamics contain richer discriminative informa-tion than the static state alone. Second, our StaFlowNet signifi-cantly outperforms FlowOnly, demonstrating that the introduction of state guidance provides a substantial performance boost. Third, the RandomState variant performs similarly to FlowOnly and markedly worse than StaFlowNet. This is a crucial finding, confirming that the performance gain comes from the learned state information, not merely from the architectural complexity. Finally, StaFlowNet also surpasses the Concat model, proving that our proposed state-based modulation is a more effective fusion strategy than feature concate-nation. Collectively, these results validate our design choices, high-lighting the necessity of both state and flow information streams. Table 1 . Comprehensive performance comparison on the three datasets. The best result is highlighted in bold , and the second-best is underlined. The p-value indicates the Wilcoxon signed-rank test comparing each method’s accuracy to StaFlowNet. 
+
+BCI-IV 2a Dataset BCI-IV 2b Dataset OpenBMI Dataset 
+
+Methods Accuracy (%) Kappa f1-score Accuracy (%) Kappa f1-score Accuracy (%) Kappa f1-score EEGNet 69.10 ± 14.04 ∗∗ 0.5879 0.6803 77.56 ± 12.42 0.5513 0.7750 70.87 ± 13.69 ∗∗∗ 0.4175 0.7087 ShallowNet 72.49 ± 12.35 ∗∗ 0.6332 0.7144 72.26 ± 13.02 ∗∗ 0.4452 0.7218 74.99 ± 13.01 ∗∗∗ 0.4998 0.7464 FBCNet 77.57 ± 10.55 ∗∗ 0.7009 0.7658 70.25 ± 12.96 ∗∗ 0.4051 0.6953 74.74 ± 14.24 ∗∗∗ 0.4948 0.7389 EEGConformer 78.41 ± 12.09 ∗∗ 0.7122 0.7811 77.96 ± 12.81 ∗ 0.5591 0.7784 77.91 ± 13.43 ∗∗ 0.5581 0.7791 LightConvNet 76.54 ± 13.23 ∗∗ 0.6872 0.7539 72.95 ± 14.36 ∗∗ 0.4589 0.7235 73.62 ± 16.42 ∗∗∗ 0.4725 0.7362 TransNet 76.18 ± 11.78 ∗∗ 0.6824 0.7495 76.73 ± 13.67 ∗∗ 0.5345 0.7664 76.55 ± 15.46 ∗∗ 0.5309 0.7621 MSVTNet 78.99 ± 12.21 ∗∗ 0.7198 0.7846 74.98 ± 14.65 ∗∗ 0.4996 0.7473 77.64 ± 14.89 ∗ 0.5528 0.7754 StaFlowNet 80.14 ± 12.02 0.7351 0.7957 79.02 ± 12.77 0.5804 0.7864 79.51 ± 12.97 0.5902 0.7915  
+
+> ∗∗∗
+
+indicates p < 0.001 , ∗∗ indicates p < 0.01 , ∗ indicates p < 0.05 .
+
+Table 2 . Ablation results for accuracy on the three datasets. The best result is highlighted in bold .
+
+Methods BCI-IV 2a BCI-IV 2b OpenBMI 
+
+StateOnly 78.16 ∗∗ 76.42 ∗∗ 78.12 ∗∗ 
+
+FlowOnly 79.14 ∗ 77.58 ∗ 78.20 ∗∗ 
+
+RandomState 78.98 ∗ 77.64 ∗ 77.90 ∗∗ 
+
+Concat 79.13 ∗ 78.10 ∗ 77.81 ∗∗ 
+
+StaFlowNet 80.14 79.02 79.51  
+
+> ∗∗
+
+indicates p < 0.01 , ∗ indicates p < 0.05 .Fz           
+
+> FC3 FC1 FCz FC2 FC4
+> C5 C3 C1 Cz C2 C4 C6
+> CP3 CP1 CPz CP2 CP4
+> P1 Pz P2
+> POz
+
+State Weights           
+
+> Fz
+> FC3 FC1 FCz FC2 FC4
+> C5 C3 C1 Cz C2 C4 C6
+> CP3 CP1 CPz CP2 CP4
+> P1 Pz P2
+> POz
+
+Flow Weights 
+
+Fig. 2 . Visualization of learned spatial weights from the State En-coder and Flow Encoder on subject 7 (BCI-IV 2a). 
+
+4.3. Visualization 
+
+To better understand the functions of StaFlowNet, we conducted two visualization analyses. First, we visualized the learned spatial weights from the spatial convolutional layers of the State and Flow encoders [12], as shown in Fig. 2. The weights exhibit clear dif-ferences, indicating that the two branches focus on distinct aspects of MI-EEG signals. This supports our design assumption that state and flow may carry complementary information. Second, to evalu-ate the impact of the state-modulated mechanism, we compared fea-ture evolution between StaFlowNet and its FlowOnly variant (with-out state guidance). Fig. 3 presents this comparison on test data from Subject 7 in the BCI-IV 2a dataset. In the FlowOnly model (Fig. 3b), class separation improves gradually across GRU layers, but remains limited. In contrast, StaFlowNet (Fig. 3a) exhibits sub-stantially enhanced feature separability at each pyramid level. Be-sides, the steadily increasing Fisher scores in StaFlowNet further confirm that the state-guided modulation actively transforms the fea-ture space into a more discriminative representation. 5 0 5          
+
+> Component 1
+> 8
+> 6
+> 4
+> 2
+> 0
+> 2
+> 4
+> 6
+> Component 2
+> Xflow (0.0574)
+> Classes
+> 0
+> 1
+> 2
+> 3
+> 10 010
+> Component 1
+> 15
+> 10
+> 5
+> 0
+> 5
+> 10
+> 15
+> Component 2
+> Xmod 1(0.7427)
+> 10 010
+> Component 1
+> 20
+> 15
+> 10
+> 5
+> 0
+> 5
+> 10
+> 15
+> 20
+> Component 2
+> Xmod 2(1.2058)
+> 20 020
+> Component 1
+> 10
+> 5
+> 0
+> 5
+> 10
+> Component 2
+> Xmod 3(2.3479)
+
+(a) Feature distributions from StaFlowNet 5 0 5             
+
+> Component 1
+> 6
+> 4
+> 2
+> 0
+> 2
+> 4
+> 6
+> Component 2
+> Xflow (0.0541)
+> Classes
+> 0
+> 1
+> 2
+> 3
+> 10 010
+> Component 1
+> 10
+> 5
+> 0
+> 5
+> 10
+> Component 2
+> Xgru 1(0.4644)
+> 10 010 20
+> Component 1
+> 10
+> 5
+> 0
+> 5
+> 10
+> 15
+> Component 2
+> Xgru 2(0.4580)
+> 20 10 010 20
+> Component 1
+> 10
+> 5
+> 0
+> 5
+> 10
+> Component 2
+> Xgru 3(1.0463)
+
+(b) Feature distributions from the FlowOnly variant 
+
+Fig. 3 . Feature distributions (t-SNE) from the test set of subject 7 (BCI-IV 2a) at successive network layers. Fisher scores (in paren-theses) are computed at each stage to quantify class separability, with higher scores indicating greater inter-class distance relative to intra-class variance. 
+
+5. CONCLUSION 
+
+In this study, we propose StaFlowNet, a novel architecture for MI-EEG decoding that explicitly separates and coordinates two com-plementary types of neural information: the global state and the dynamic flow. The state provides a robust global context, while the flow retains fine-grained temporal variations. By using a dual-branch design and introducing a state-modulated mechanism over a multi-scale temporal pyramid, StaFlowNet effectively integrates global context with local dynamics. Extensive experiments on three datasets demonstrate that StaFlowNet consistently outperforms rep-resentative deep learning models. Visualization analyses further con-firm that the state and flow branches capture distinct spatial pat-terns. Critically, the state-modulated mechanism significantly im-proves feature separability across layers, leading to more discrim-inative representations. Our findings underscore the importance of coordinating state and flow representations for MI-EEG analysis and suggest a promising architectural direction for improving MI-EEG decoding performance. 6. REFERENCES 
+
+[1] Y. He, Z. Lu, J. Wang, and J. Shi, “A channel attention based mlp-mixer network for motor imagery decoding with eeg,” in 
+
+ICASSP 2022 - 2022 IEEE International Conference on Acous-tics, Speech and Signal Processing (ICASSP) , 2022, pp. 1291– 1295. [2] A. Gosztolai, R. L. Peach, A. Arnaudon, M. Barahona, and P. Vandergheynst, “Marble: interpretable representations of neural population dynamics using geometric deep learning,” 
+
+Nature Methods , pp. 1–9, 2025. [3] C. Neuper, M. W¨ ortz, and G. Pfurtscheller, “Erd/ers patterns reflecting sensorimotor activation and deactivation,” in Event-Related Dynamics of Brain Oscillations , ser. Progress in Brain Research, C. Neuper and W. Klimesch, Eds. Elsevier, 2006, vol. 159, pp. 211–222. [4] G. Cai, F. Zhang, B. Yang, S. Huang, and T. Ma, “Manifold learning-based common spatial pattern for eeg signal classifi-cation,” IEEE Journal of Biomedical and Health Informatics ,vol. 28, no. 4, pp. 1971–1981, 2024. [5] S. Pahuja, G. Ivucic, S. Cai, D. De Silva, T. Schultz, and H. Li, “Atgnet: Adaptive temporal graph network for eeg-enabled sound source tracking in cocktail party scenarios,” in 
+
+ICASSP 2025 - 2025 IEEE International Conference on Acous-tics, Speech and Signal Processing (ICASSP) , 2025, pp. 1–5. [6] Y. Song, Q. Zheng, B. Liu, and X. Gao, “Eeg conformer: Convolutional transformer for eeg decoding and visualization,” 
+
+IEEE Transactions on Neural Systems and Rehabilitation En-gineering , vol. 31, pp. 710–719, 2022. [7] P. Kaushik, I. Tripathi, and P. P. Roy, “Motor activity recog-nition using eeg data and ensemble of stacked blstm-lstm net-work and transformer model,” in ICASSP 2023 - 2023 IEEE International Conference on Acoustics, Speech and Signal Pro-cessing (ICASSP) , 2023, pp. 1–5. [8] V. J. Lawhern, A. J. Solon, N. R. Waytowich, S. M. Gor-don, C. P. Hung, and B. J. Lance, “Eegnet: a compact con-volutional neural network for eeg-based brain–computer inter-faces,” Journal of neural engineering , vol. 15, no. 5, p. 056013, 2018. [9] X. Ma, W. Chen, Z. Pei, Y. Zhang, and J. Chen, “Attention-based convolutional neural network with multi-modal temporal information fusion for motor imagery eeg decoding,” Comput-ers in Biology and Medicine , p. 108504, 2024. [10] K. Liu, T. Yang, Z. Yu, W. Yi, H. Yu, G. Wang, and W. Wu, “Msvtnet: Multi-scale vision transformer neural network for eeg-based motor imagery decoding,” IEEE Journal of Biomed-ical and Health Informatics , vol. 28, no. 12, pp. 7126–7137, 2024. [11] M. Borsdorf, S. Pahuja, G. Ivucic, S. Cai, H. Li, and T. Schultz, “Multi-head attention and gru for improved match-mismatch classification of speech stimulus and eeg response,” in ICASSP 2023-2023 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) . IEEE, 2023, pp. 1–2. [12] G. Cai, Y. Chen, B. Yang, Y. Yang, T. Ma, and Y. Wang, “Cgnet: A complex-valued graph network for jointly learning amplitude-phase information in eeg-based brain–computer interfaces,” Neural Networks , vol. 191, p. 107795, 2025. [Online]. Available: https://www.sciencedirect.com/science/ article/pii/S0893608025006756 [13] K. K. Ang, Z. Y. Chin, H. Zhang, and C. Guan, “Filter bank common spatial pattern (fbcsp) in brain-computer interface,” in 
+
+2008 IEEE International Joint Conference on Neural Networks (IEEE World Congress on Computational Intelligence) , 2008, pp. 2390–2397. [14] L. Min-Ho, K. O-Yeon, K. Yong-Jeong, K. Hong-Kyung, L. Young-Eun, W. John, F. Siamac, and L. Seong-Whan, “Eeg dataset and openbmi toolbox for three bci paradigms: an inves-tigation into bci illiteracy,” Gigaence , no. 5, p. 5, 2019. [15] R. T. Schirrmeister, J. T. Springenberg, L. D. J. Fiederer, M. Glasstetter, K. Eggensperger, M. Tangermann, F. Hutter, W. Burgard, and T. Ball, “Deep learning with convolutional neural networks for eeg decoding and visualization,” Human brain mapping , vol. 38, no. 11, pp. 5391–5420, 2017. [16] R. Mane, E. Chew, K. Chua, K. K. Ang, N. Robinson, A. P. Vinod, S.-W. Lee, and C. Guan, “Fbcnet: A multi-view con-volutional neural network for brain-computer interface,” arXiv preprint arXiv:2104.01233 , 2021. [17] X. Ma, W. Chen, Z. Pei, J. Liu, B. Huang, and J. Chen, “A temporal dependency learning cnn with attention mechanism for mi-eeg decoding,” IEEE Transactions on Neural Systems and Rehabilitation Engineering , vol. 31, pp. 3188–3200, 2023.

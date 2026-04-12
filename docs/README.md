@@ -6,32 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-11
-- 运行时间：2026-04-11 19:23:30 UTC
+- 最新运行日期：2026-04-12
+- 运行时间：2026-04-12 19:23:08 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：1
 - 精读区：0
-- 速读区：3
+- 速读区：1
 
 ### 今日简报（AI）
-今日探索大模型如何重塑传感器活动识别与医疗影像分割，并攻克多模态数据缺失难题。
-Stable Diffusion 在少样本医疗分割中展现潜力，而“净化后对齐”策略显著提升了传感器感知的鲁棒性。
-推荐关注生成式 AI 与多模态蒸馏技术在解决垂直领域小样本及噪声数据问题上的实战应用。
-- 详情：[/202604/11/README](/202604/11/README)
+今日聚焦运动想象脑电解码，探索状态流协同表示新方法。
+该研究通过状态流协同表征优化了 MI-EEG 信号的特征提取，有效提升了解码的准确性与鲁棒性。
+推荐关注脑机接口算法及神经信号表征学习的读者快速浏览其核心架构。
+- 详情：[/202604/12/README](/202604/12/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Foundation Models Defining A New Era In Sensor-based Human Activity Recognition: A Survey And Outlook](/202604/11/2604.02711v2-foundation-models-defining-a-new-era-in-sensor-based-human-activity-recognition-a-survey-and-outlook)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：基于传感器的时序基础模型与自监督学习
-2. [SD-FSMIS: Adapting Stable Diffusion for Few-Shot Medical Image Segmentation](/202604/11/2604.03134v2-sd-fsmis-adapting-stable-diffusion-for-few-shot-medical-image-segmentation)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：利用预训练视觉先验将稳定扩散模型应用于医学图像任务
-3. [Purify-then-Align: Towards Robust Human Sensing under Modality Missing with Knowledge Distillation from Noisy Multimodal Teacher](/202604/11/2604.05584v2-purify-then-align-towards-robust-human-sensing-under-modality-missing-with-knowledge-distillation-from-noisy-multimodal-teacher)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：用于鲁棒人体传感的知识扩散模型
+1. [State-Flow Coordinated Representation for MI-EEG Decoding](/202604/12/2604.08157v1-state-flow-coordinated-representation-for-mi-eeg-decoding)  
+   标签：评分：7.0/10、query:eeg-ai
+   evidence：利用状态和流信息进行运动想象脑电信号解码的深度模型
 
 
 <div class="dpr-home-promo-card">

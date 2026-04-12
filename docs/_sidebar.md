@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-12 <!--dpr-date:20260412-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/12/2604.08157v1-state-flow-coordinated-representation-for-mi-eeg-decoding" data-sidebar-item="{&quot;title&quot;: &quot;State-Flow Coordinated Representation for MI-EEG Decoding&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.08157v1-state-flow-coordinated-representation-for-mi-eeg-decoding&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;eeg-ai&quot;}], &quot;evidence&quot;: &quot;利用状态和流信息进行运动想象脑电信号解码的深度模型&quot;}">State-Flow Coordinated Representation for MI-EEG Decoding</a>
   * 2026-04-11 <!--dpr-date:20260411-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/11/2604.02711v2-foundation-models-defining-a-new-era-in-sensor-based-human-activity-recognition-a-survey-and-outlook" data-sidebar-item="{&quot;title&quot;: &quot;Foundation Models Defining A New Era In Sensor-based Human Activity Recognition: A Survey And Outlook&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.02711v2-foundation-models-defining-a-new-era-in-sensor-based-human-activity-recognition-a-survey-and-outlook&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;eeg-ai&quot;}], &quot;evidence&quot;: &quot;基于传感器的时序基础模型与自监督学习&quot;}">Foundation Models Defining A New Era In Sensor-based Human Activity Recognition: A Survey And Outlook</a>
