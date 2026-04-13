@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-13",
+  "date": "2026-04-13",
+  "generated_at": "2026-04-13T20:23:05",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/13/2604.06702v1-ultras----unified-learning-of-transformer-representations-for-audio-and-speech-signals",
+      "section": "quick",
+      "title_en": "ULTRAS -- Unified Learning of Transformer Representations for Audio and Speech Signals",
+      "authors": "Ameenudeen P E, Charumathi Narayanan, Sriram Ganapathy",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.06702v1",
+      "score": "6.0",
+      "evidence": "Transformer表示的自监督学习",
+      "tldr": "针对语音（时域）与音频（频域）自监督学习框架难以互通的问题，本文提出了ULTRAS统一学习框架。该方法基于Transformer架构，对log-mel频谱图的长补丁进行掩码预测建模，通过结合空间和时间目标的损失函数，强制模型同时编码时间和频率特征。实验证明，ULTRAS在多种语音和音频任务上均优于现有基准模型，实现了跨领域的通用表征学习。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Self-supervised learning (SSL) has driven impressive advances in speech processing by adopting time-domain prediction objectives, while audio representation learning frameworks operate on time-frequency spectrograms. Models optimized for one paradigm struggle to transfer to the other, highlighting the need for a joint framework. We propose Unified Learning of Transformer Representations for Audio and Speech (ULTRAS), where the masking and predictive modeling is performed over long patches of the data. The model, based on the transformer architecture, encodes spectral-patches of log-mel spectrogram features. The predictive modeling of masked segments is performed on spectral and temporal targets using a combined loss-function, forcing the representations to encode time and frequency traits. Experiments are performed on a variety of speech and audio tasks, where we illustrate that the ULTRAS framework achieves improved performance over other established baselines.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/13/2604.07397v1-data-warmup-complexity-aware-curricula-for-efficient-diffusion-training",
+      "section": "quick",
+      "title_en": "Data Warmup: Complexity-Aware Curricula for Efficient Diffusion Training",
+      "authors": "Jinhong Lin, Pan Wang, Zitong Zhan, Lin Zhang, Pedro Morgado",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.07397v1",
+      "score": "6.0",
+      "evidence": "扩散模型高效训练的课程学习策略",
+      "tldr": "针对扩散模型训练初期网络难以处理复杂梯度的问题，本文提出 Data Warmup 课程学习策略。该方法利用结合前景占比与典型性的语义复杂度指标对数据排序，在训练初期优先学习简单图像并逐渐过渡到全量数据。实验证明，该策略在 ImageNet 上显著提升了生成质量（IS/FID）并大幅加速收敛，且预处理开销极低，可与现有加速技术无缝集成。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "A key inefficiency in diffusion training occurs when a randomly initialized network, lacking visual priors, encounters gradients from the full complexity spectrum--most of which it lacks the capacity to resolve. We propose Data Warmup, a curriculum strategy that schedules training images from simple to complex without modifying the model or loss. Each image is scored offline by a semantic-aware complexity metric combining foreground dominance (how much of the image salient objects occupy) and foreground typicality (how closely the salient content matches learned visual prototypes). A temperature-controlled sampler then prioritizes low-complexity images early and anneals toward uniform sampling. On ImageNet 256x256 with SiT backbones (S/2 to XL/2), Data Warmup improves IS by up to 6.11 and FID by up to 3.41, reaching baseline quality tens of thousands of iterations earlier. Reversing the curriculum (exposing hard images first) degrades performance below the uniform baseline, confirming that the simple-to-complex ordering itself drives the gains. The method combines with orthogonal accelerators such as REPA and requires only ~10 minutes of one-time preprocessing with zero per-iteration overhead.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/13/2604.08936v1-m-idol-information-decomposition-for-modality-specific-and-diverse-representation-learning-in-medical-foundation-model",
+      "section": "quick",
+      "title_en": "M-IDoL: Information Decomposition for Modality-Specific and Diverse Representation Learning in Medical Foundation Model",
+      "authors": "Yihang Liu, Ying Wen, Jiaxiong Yang, Longzhen Yang, Lianghua He, Heng Tao Shen",
+      "date": "2026-04-10",
+      "pdf": "https://arxiv.org/pdf/2604.08936v1",
+      "score": "6.0",
+      "evidence": "用于多模态表示的自监督医学大模型",
+      "tldr": "针对医疗基础模型中多模态表示混淆导致特异性和多样性不足的问题，本文提出M-IDoL框架。该方法通过信息分解策略，利用混合专家（MoE）子空间最大化模态间熵以增强特异性，并最小化模态内不确定性以提升多样性。在115万张医学图像上预训练后，M-IDoL在21个临床任务中表现优异，显著超越了20个现有基础模型。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Medical foundation models (MFMs) aim to learn universal representations from multimodal medical images that can generalize effectively to diverse downstream clinical tasks. However, most existing MFMs suffer from information ambiguity that blend multimodal representations in a single embedding space, leading to the degradation of modality specificity and diversity. In this paper, we propose M-IDoL, a self-supervised \\underline{\\textit{M}}FM that introduces Information Decomposition for multimodal representation Learning via two objectives: i) maximize inter-modality entropy by dispersing multimodal representation into separable Mixture-of-Experts (MoE) subspaces to achieve representation specificity across modalities; and ii) minimize intra-modality uncertainty by performing fine-grained semantic discrimination within each MoE subspace to enrich representation diversity per modality. By pre-training on 1.15 million medical images, M-IDoL i) delivers superior generalization across 21 downstream clinical tasks, outperforming 20 foundation models on five imaging modalities (e.g., X-ray, fundus, OCT, dermoscopy and pathology), and ii) learns modality-specific and diverse representations, showing clearer separation of feature cluster across modalities and finer-grained feature discrimination within each modality.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/13/2604.09436v1-score-clean-image-generation-from-diffusion-models-trained-on-noisy-images",
+      "section": "quick",
+      "title_en": "SCoRe: Clean Image Generation from Diffusion Models Trained on Noisy Images",
+      "authors": "Yuta Matsuzaki, Seiichi Uchida, Shumpei Takezaki",
+      "date": "2026-04-10",
+      "pdf": "https://arxiv.org/pdf/2604.09436v1",
+      "score": "6.0",
+      "evidence": "用于清洁图像生成的通用扩散模型优化方法",
+      "tldr": "针对扩散模型在噪声数据集上训练会导致生成图像包含高频伪影的问题，本文提出了一种无需训练的生成时方法 SCoRe。该方法利用扩散模型的光谱偏差，通过频率截止抑制生成图像中的受损高频成分，并结合 SDEdit 进行重新生成。通过理论推导确定截止频率与 SDEdit 初始化步长的映射关系，SCoRe 在合成和真实噪声数据集上均显著提升了生成质量，且无需任何微调。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion models trained on noisy datasets often reproduce high-frequency training artifacts, significantly degrading generation quality. To address this, we propose SCoRe (Spectral Cutoff Regeneration), a training-free, generation-time spectral regeneration method for clean image generation from diffusion models trained on noisy images. Leveraging the spectral bias of diffusion models, which infer high-frequency details from low-frequency cues, SCoRe suppresses corrupted high-frequency components of a generated image via a frequency cutoff and regenerates them via SDEdit. Crucially, we derive a theoretical mapping between the cutoff frequency and the SDEdit initialization timestep based on Radially Averaged Power Spectral Density (RAPSD), which prevents excessive noise injection during regeneration. Experiments on synthetic (CIFAR-10) and real-world (SIDD) noisy datasets demonstrate that SCoRe substantially outperforms post-processing and noise-robust baselines, restoring samples closer to clean image distributions without any retraining or fine-tuning.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

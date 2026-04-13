@@ -6,26 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-12
-- 运行时间：2026-04-12 19:23:08 UTC
+- 最新运行日期：2026-04-13
+- 运行时间：2026-04-13 20:22:57 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：4
 - 精读区：0
-- 速读区：1
+- 速读区：4
 
 ### 今日简报（AI）
-今日聚焦运动想象脑电解码，探索状态流协同表示新方法。
-该研究通过状态流协同表征优化了 MI-EEG 信号的特征提取，有效提升了解码的准确性与鲁棒性。
-推荐关注脑机接口算法及神经信号表征学习的读者快速浏览其核心架构。
-- 详情：[/202604/12/README](/202604/12/README)
+今日聚焦音频语音统一表征、扩散模型高效训练及医疗多模态信息分解三大前沿。
+重点推荐通过复杂度感知课程加速扩散模型训练，以及利用信息分解提升医疗影像表征的特异性。
+建议关注 ULTRAS 架构如何整合音频与语音信号，为跨任务模型设计提供高效的统一表征思路。
+- 详情：[/202604/13/README](/202604/13/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [State-Flow Coordinated Representation for MI-EEG Decoding](/202604/12/2604.08157v1-state-flow-coordinated-representation-for-mi-eeg-decoding)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：利用状态和流信息进行运动想象脑电信号解码的深度模型
+1. [ULTRAS -- Unified Learning of Transformer Representations for Audio and Speech Signals](/202604/13/2604.06702v1-ultras----unified-learning-of-transformer-representations-for-audio-and-speech-signals)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：Transformer表示的自监督学习
+2. [Data Warmup: Complexity-Aware Curricula for Efficient Diffusion Training](/202604/13/2604.07397v1-data-warmup-complexity-aware-curricula-for-efficient-diffusion-training)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：扩散模型高效训练的课程学习策略
+3. [M-IDoL: Information Decomposition for Modality-Specific and Diverse Representation Learning in Medical Foundation Model](/202604/13/2604.08936v1-m-idol-information-decomposition-for-modality-specific-and-diverse-representation-learning-in-medical-foundation-model)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：用于多模态表示的自监督医学大模型
+4. [SCoRe: Clean Image Generation from Diffusion Models Trained on Noisy Images](/202604/13/2604.09436v1-score-clean-image-generation-from-diffusion-models-trained-on-noisy-images)  
+   标签：评分：6.0/10、query:eeg-ai
+   evidence：用于清洁图像生成的通用扩散模型优化方法
 
 
 <div class="dpr-home-promo-card">

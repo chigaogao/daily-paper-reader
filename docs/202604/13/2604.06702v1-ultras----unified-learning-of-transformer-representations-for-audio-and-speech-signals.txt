@@ -1,0 +1,454 @@
+Title: ULTRAS -- Unified Learning of Transformer Representations for Audio and Speech Signals
+
+URL Source: https://arxiv.org/pdf/2604.06702v1
+
+Published Time: Thu, 09 Apr 2026 00:33:05 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# ULTRAS - Unified Learning of Transformer Representations for Audio and Speech Signals 
+
+Ameenudeen P E, Charumathi Narayanan, and Sriram Ganapathy 
+
+LEAP Laboratory, Electrical Engineering, Indian Institute of Science, Bangalore, India. 
+
+ameenudeenp@iisc.ac.in 
+
+Abstract —Self-supervised learning (SSL) has driven impressive advances in speech processing by adopting time-domain predic-tion objectives, while audio representation learning frameworks operate on time-frequency spectrograms. Models optimized for one paradigm struggle to transfer to the other, highlighting the need for a joint framework. We propose Unified Learning of Transformer Representations for Audio and Speech (ULTRAS), where the masking and predictive modeling is performed over long patches of the data. The model, based on the transformer ar-chitecture, encodes spectral-patches of log-mel spectrogram fea-tures. The predictive modeling of masked segments is performed on spectral and temporal targets using a combined loss-function, forcing the representations to encode time and frequency traits. Experiments are performed on a variety of speech and audio tasks, where we illustrate that the ULTRAS framework achieves improved performance over other established baselines. 
+
+Index Terms —Time-Frequency masking, Spectrogram Trans-former, Self-supervised Learning, Unified Representation Learn-ing. 
+
+I. I NTRODUCTION 
+
+Self-supervised learning (SSL) has revolutionized repre-sentation learning across various input modalities. In natu-ral language processing, models like BERT [1], introduced masked language modeling (MLM) on deep bidirectional transformers, achieving state-of-the-art results on many tasks. In computer vision, masked auto-encoding (MAE) has proven similarly effective: for example, He et al. [2] reports that randomly masking a significant proportion of image patches and reconstructing them (MAE framework) yields scalable learners. The Vision-Transformer [3] has delivered perfor-mance breakthroughs when coupled with the SSL frameworks. In the audio and speech domain, SSL methods have also made significant inroads. Models such as wav2vec 2.0 [4] and HuBERT [5] apply masked prediction on raw waveform or feature sequences, learning powerful encoders of 1-D temporal representations of speech. These approaches exploit sequential structure in speech and are well suited for tasks like automatic speech recognition (ASR), emotion recognition and speaker recognition. On the other hand, general audio signals (e.g. environmental sounds, music, etc.) often carry information in the 2-D spectro-temporal domain. The standard convolutional networks or spectrogram-transformers ingest patches of log-mel spectro-grams and model the spectral patterns [6]. For instance, Gong 
+
+> This work was performed with grants received from Ministry of Information Technology (MEiTY) NLTM, India.
+
+et al. [7] demonstrates that a spectrogram-based transformer (SSAST) with masked spectrogram-patch modeling dramati-cally improves performance on audio event classification tasks. However, these approaches fail to generalize to speech related tasks. Beyond uni-modal audio, several recent multi-modal frame-works incorporate audio representations. Zhu et al. [8] propose VATLM, which unifies visual, audio, and text inputs into a shared semantic space via a masked unified-token prediction objective. Choi et al. [9] introduce AV2AV, a system for audio-visual speech translation that learns modality-agnostic speech representations (leveraging AV-HuBERT) so that a single model can translate speech without intermediate text. Likewise, Su et al. [10] introduced VAB, which encodes video frames via a pre-trained image encoder and audio via a neural codec, and applied masked audio-token prediction conditioned on visual context to learn a joint audio-visual model. These multimodal SSL models demonstrate the feasibility of aligning audio with other modalities, but require the presence of multiple modalities in the input data. There are limited efforts on attempting to jointly model speech and naturalistic audio signals using the same SSL framework. BEATs encoder [11] introduces an acoustic to-kenizer and an iterative discrete-label prediction objective, bringing the textual discrete SSL paradigm to general audio data. The EnCodecMAE [12] attempts to perform universal modeling using a masked autoencoder and a neural audio codec. A teacher-student framework for clip-level and frame-level representation learning was proposed by Xian et al. [13]. In another work, Nilzumi et al. [14] proposed the learning of separate models for masked and unmasked regions of the audio. However, none of these frameworks explicitly model the joint temporal and spectral information present in the audio signal, leading to a degradation in the diverse evaluation of speech and audio tasks. In this paper, we propose Unified Learning of Transformer 
+
+Representations for Audio and Speech (ULTRAS), an ap-proach to jointly model the time-frequency attributes of the input acoustic signal. Unlike the conventional speech SSL approaches that encode units of short windows ( 20 ms), the proposed framework masks relatively long duration audio segments ( 160 ms windows). The ULTRAS encodes spectral patches of the input signal using a stack of transformer layers. The collection of spectral patches belonging to the same segment allows the predictive modeling of both spectral  
+
+> arXiv:2604.06702v1 [eess.AS] 8 Apr 2026 Fig. 1. Block schematic of the proposed framework of joint 1-D and 2-D modeling of audio data. The gradient colored blocks are learnable, while the rest do not have any learnable parameters.
+
+codes (discrete symbol representations of spectral patches) as well as the temporal codes (discrete symbol representation of temporal frames). The joint predictive task encourages the representations to embed spectral and temporal language modeling traits, which are important for downstream tasks. The proposed model is pre-trained on a combined dataset of speech and audio signals. The evaluations are performed on various downstream tasks, where the SSL model is frozen and only a light-weight classification head is trained for the supervised task. We compare the proposed SSL with several other established SSL frameworks on utterance-level tasks in speech, music and audio-event related domains. In these tasks, the ULTRAS illustrates improved performance highlighting the benefits of the joint spectro-temporal predictive tasks. The key contributions of this work are:- 
+
+> •
+
+Masked modeling of long audio segments of syllable length for effective encoding of acoustic information.  
+
+> •
+
+Joint prediction of spectral and temporal targets for embedding time-frequency characteristics.  
+
+> •
+
+Comprehensive evaluation on a diverse set of speech and audio downstream tasks to illustrate the effectiveness of the work. II. P ROPOSED ULTRAS F RAMEWORK 
+
+Figure 1 illustrates the main workflow of our proposed iterative audio pre-training framework. Our approach leverages a Vision Transformer-style SSL model that takes a 2-D audio spectrogram as input. The model is optimized through an unified loss function. The goal is to learn robust and gen-eralizable audio representations applicable to both speech and audio tasks. 
+
+A. Input pre-processing 
+
+The input audio waveform is first transformed into a log-mel spectrogram representation. Specifically, we compute 128 -dimensional mel-filterbank (fbank) features using a 25 ms Hanning window with a 10 ms hop size. Let the spectrogram be denoted as X = [ x1, x2, . . . , xM ], where M is the number of time-frames and xt ∈ R D , D = 128 .
+
+B. Windowing and modeling 
+
+The spectrogram is divided into non-overlapping windows of P frames. In our experiments, we use P = 16 frames, corresponding to 160 ms of audio. Let the windowed input be denoted as Y = [ Y1, Y2, . . . , YN ]. Here, Yn is a windowed spectrogram of size RD×P , where N = M/P 
+
+C. Random Masking Strategy 
+
+To enable self-supervised learning, we apply a random masking strategy to the windowed spectrograms Y. Each segment is masked with a probability p. Additionally, to encourage the model to learn long contextual dependencies, if a patch is masked, its subsequent patch is also masked with a fixed probability of p′.Let the resulting masked sequence be denoted as: 
+
+bY = [ bY1, bY2, . . . , bYN ]
+
+where: 
+
+bYn =
+
+(
+
+[MASK] , if location n is selected for masking 
+
+Yn, otherwise In our experiments, p = 0 .6 and p′ = 0 .2.D. Spectral Embedding and Transformer Encoding 
+
+Each windowed spectrogram Yn ∈ R D×P is uniformly partitioned into R non-overlapping spectral patches, each of size P × P . These patches are denoted as: 
+
+Yn =
+
+
+
+S(1) 
+
+> n
+
+S(2) 
+
+> n
+
+. . . 
+
+S(R)
+
+> n
+
+ ; S(i) 
+
+> n
+
+∈ R P ×P ,
+
+where R = DP
+
+Each spectral patch S(i) 
+
+> n
+
+is flattened into a vector and added with a learnable positional embedding to retain spatial context. The resulting sequence of vectors, obtained from patched spectrogram inputs, is passed through the transformer encoder, which outputs a sequence of embeddings: 
+
+Zn = [ z(1)  
+
+> n
+
+, z(2)  
+
+> n
+
+, . . . , z(R) 
+
+> n
+
+], z(i) 
+
+> n
+
+∈ R D′×1
+
+With the masked input bY to the transformer, the outputs are, 
+
+bZ = [ bZ1, bZ2, . . . , bZN ],
+
+where each bZn consists of R encoded patch embeddings of the masked input. 
+
+E. Spectral Targets and Loss Function 
+
+Each spectrogram patch S(k) 
+
+> n
+
+∈ RP ×P (for k = 1 , . . . , R )is flattened and quantized using a K-means quantizer Q to obtain discrete targets representing frequency bin patterns. These targets are denoted as: 
+
+C(k) 
+
+> s,n
+
+= Q(S(k) 
+
+> n
+
+), C(k) 
+
+> s,n
+
+∈ { 1, 2, . . . , K s}
+
+where Ks is the number of spectral-patch clusters (codebook size) in the quantizer. The model outputs corresponding to the masked patches 
+
+bz(k) 
+
+> n
+
+∈ RD′×1 are projected using a learnable multi-layer perceptron (MLP) head, Ws ∈ RKs×D′
+
+, followed by asoftmax activation to produce cluster probabilities: 
+
+bP(k) 
+
+> n
+
+= softmax (Ws bZ(k) 
+
+> n
+
+)
+
+The spectral-loss function is the cross-entropy loss between the predicted distribution and the quantized target label for each masked patch: 
+
+Ls = 1
+
+|M| · R
+
+X
+
+> n∈M
+> R
+
+X
+
+> k=1
+
+C.E. 
+
+bP(k) 
+
+> n
+
+, C(k)
+
+> s,n
+
+
+
+(1) where M denotes the set of masked window indices, and C.E. (·, ·) denotes the standard cross-entropy loss. 
+
+F. Temporal Targets and Loss 
+
+Each Yn ∈ RD×P can also be partitioned temporally into 
+
+R non-overlapping frames, i.e., 
+
+Yn = [ T(1)  
+
+> n
+
+T(2)  
+
+> n
+
+. . . T(R) 
+
+> n
+
+], T(j) 
+
+> n
+
+∈ R D×P ′
+
+The temporal frames T(j) 
+
+> n
+
+, are quantized using a K-means quantizer Q trained with Kt clusters, resulting in discrete frame-level targets: 
+
+Q(T(k) 
+
+> n
+
+) = C(k) 
+
+> t,n
+
+where C(k) 
+
+> t,n
+
+∈ { 1, 2, . . . , K t}
+
+These targets represent the temporal information across all the spectral patches. Hence, the spectral embeddings, bzin, are mean-pooled, 
+
+bzn = 1
+
+R
+
+> R
+
+X
+
+> k=1
+
+bz(k) 
+
+> n
+
+.
+
+The temporal softmax prediction for the frame is given by: 
+
+bP(j) 
+
+> n
+
+= softmax (Wjtbzn),
+
+where Wjt are learnable parameters of the MLP classification head. The training objective is the average cross-entropy loss over all R frames of each masked window: 
+
+Lt = 1
+
+|M| · R
+
+X
+
+> n∈M
+> R
+
+X
+
+> j=1
+
+C.E. 
+
+bP(j) 
+
+> n
+
+, C(j)
+
+> t,n
+
+
+
+(2) 
+
+G. Total Loss 
+
+The overall training objective of the ULTRAS is a weighted combination of the spectral loss Ls and time-frame loss Lt:
+
+Ltotal = λLt + (1 − λ)Ls (3) where λ ∈ [0 , 1] is a tunable hyperparameter to balance the two components. 
+
+H. Implementation Details 
+
+The proposed ULTRAS framework, as shown in Figure 1, consists of a spectral target as well as a temporal target. Further, the input spectrograms are masked and passed through a spectral encoder (stack of transformer layers) to embed the spectrogram patches. In our implementation, we train the ULTRAS with both speech and audio inputs, represented as mel-spectrogram features. 
+
+Inputs : Each input audio recording is truncated or zero-padded to a fixed duration of 8 seconds. The waveform is then transformed into log-Mel spectrogram using a 25 ms Hanning window with a 10 ms hop size, producing a spectrogram of shape X ∈ RD×M , with D = 128 and M = 800 .The spectrogram is partitioned into blocks of P temporal frames, and further split into P × P patches, with P = 16 .Hence, each spectral patch ( S(i) 
+
+> n
+
+) represents time-frequency information corresponding to 160 ms segments of the input audio and for 16 mel-spectral bands. For a given spectrogram block of 160 ms, this would result in R = 8 spectral patches. Transformer Encoder : Each patch S(i) 
+
+> n
+
+is vectorized and linearly projected to generate a D′ = 768 -dimensional patch embedding. These embeddings are combined with learnable positional embeddings and input to the Transformer encoder. The architecture of the transformer encoder is similar to the Vision-Transformer (ViT) [3], consisting of 12 layers with 12 
+
+attention heads. 
+
+Targets : For the spectral K-means clustering, the spectrogram patches of size P × P patches are vectorized and projected to 
+
+256 -dimensional space. The k-means clustering is performed with a codebook size of Ks = 100 clusters and with Euclidean distance metric. For the temporal K-means clustering, we use spectrogram partitions of size D × P ′, with P ′ = 2 in our case. This would mean the encoding of 20 ms chunks of audio. While the spectrograms could be directly quantized, we use a pre-trained HuBERT encoder [5] for generating embeddings at 50 Hz sampling rate from the raw waveform. These embeddings from the 6-th HuBERT layer are of 768 
+
+dimensional and are vector quantized to Kt = 500 clusters to generate the temporal targets. 
+
+Initialization : Before the joint training with the spectral and temporal targets, we pre-train the ULTRAS model only with the spectral targets. For this training, we use a masking strategy inspired by SSAST [7]. Specifically, we randomly mask about 60 % of the spectrogram patches of size P × P
+
+and train the model using the masked language modeling (MLM) loss. As shown in Figure 1, this would pre-train the transformer encoder and the MLP head corresponding to the spectral loss. This pre-training is performed for 100 k steps, before the joint training with the combined loss function (Eq: 3). 
+
+Model Training : Following the initialization, we continue the training using joint spectro-temporal masking and predictive modeling with the combined loss function. The total number of pre-training steps is set to 150 k. We use the AdamW optimizer with weight decay of 0.05 and β = [0 .9, 0.98] . A linear learning rate scheduler is applied, where the learning rate linearly increases from 1e − 6 to 1e − 4 during the first 
+
+10 % of training steps (warm-up) and then decays linearly for the remaining steps to the final value of 1e − 6.III. E XPERIMENTAL SETUP 
+
+We train the proposed ULTRAS on a balanced dataset comprising an equal number of speech and audio recordings, sourced from the LibriSpeech corpus [15] and the AudioSet corpus [16], respectively. 
+
+A. Pre-training Data 
+
+200 hour setup : We pre-train the proposed ULTRAS as well as other baseline SSL frameworks on a 200 -hour dataset comprising of 100 hours each from Librispeech and AudioSet dataset. With this small setup, we also perform several ablation experiment, which are reported in Section IV. 
+
+2000 hour setup : In this setting, we use the entire Librispeech (1000 hours) [15] and a random 1000 hour partition of the AudioSet data [16]. These experiments were designed to identify the scalability of the proposed setting. We compare this framework with various other published works on the downstream tasks considered. 
+
+B. Evaluation Setting 
+
+The effectiveness of the learned representations is evaluated across six downstream tasks—three from the speech domain and three from the general audio domain. For downstream evaluations, we adopt the evaluation protocol from SUPERB (Speech Processing Universal PERformance Benchmark) [17]. In particular, all the evaluations use the pre-trained self-supervised model as a frozen embedding extractor. For each downstream task evaluation, a weighted sum of the hidden representations from each layer of the SSL encoder is passed to a light-weight task-specific prediction head. During evaluation, only the parameters of the layer-wise aggregation and the prediction head for the given task are updated, while the rest of the model remains frozen. This way of evaluation measures the quality of the pre-training representations directly without the influence of the task specific fine-tuning. 
+
+C. Downstream Tasks 
+
+We evaluate on six downstream classification tasks, span-ning a variety of domains: environmental sound, speech, and music. These have been used as benchmark tasks in various prior works [5], [11], [17].  
+
+> •
+
+ESC-50 [18]: A single-label environmental sound classi-fication task with 2000 recordings of 5-second duration derived from 50 environmental sound classes. The dataset is evaluated in a 5-fold cross-validation setting.  
+
+> •
+
+IEMOCAP [19]: A speech emotion recognition dataset with approximately 12 hours of audio data categorized into four emotion classes (happy, sad, angry, neutral). The emotion classification is evaluated using 5-fold cross validation.  
+
+> •
+
+US8K [20]: A single-label audio scene classification dataset with 8,732 clips (less than 4 seconds) categorized into 10 urban sound classes. It is evaluated using 10-fold cross-validation.  
+
+> •
+
+SPCV2 [21]: A spoken command recognition dataset containing 84,843 training, 9,981 validation, and 11,005 test clips. The task is to classify each 1-second audio into one of 35 spoken commands.  
+
+> •
+
+VOX1 [22]: A speaker identification task with 1,251 speakers. The dataset contains 138,361 training, 6,904 validation, and 8,251 test samples.  
+
+> •
+
+NSYNTH [23]: A musical instrument classification task involving 4-second audio clips. The goal is to classify each clip into one of 11 instrument family classes. 
+
+a) Evaluation Metrics.: We adopt classification accuracy (Acc. %) as the performance metric for all tasks. TABLE I ACCURACY (%) OF DIFFERENT MODELS PRETRAINED ON 200 HOUR AND 2000 HOUR PRE -TRAINING SETUP , WHERE ALL THE SYSTEMS USE THE SAME TRAINING DATA AND NUMBER OF PRE -TRAINING STEPS . T HE MODELS ALSO HAVE SIMILAR PARAMETER SIZE .200 hour setup 
+
+Model Audio Speech 
+
+ESC-50 US8k NSYNTH IEMOCAP VOX1 SPCV2 
+
+SSAST [7] 56.75 65.54 70.78 52.56 14.58 61.22 HuBERT [5] 66.10 70.05 64.43 59.91 28.83 84.82 SSAST [7]+MLM 77.65 78.46 74.32 60.49 32.19 78.89 ULTRAS 86.00 84.12 75.83 63.82 46.47 91.95 
+
+2000 hour setup SSAST [7] 63.40 70.10 73.21 54.79 16.94 74.95 HuBERT [5] 80.55 78.42 68.23 66.27 64.56 95.55 
+
+SSAST [7]+MLM 85.50 84.27 76.57 62.05 47.95 82.03 ULTRAS 91.15 86.07 76.52 67.78 73.55 95.10 
+
+> b
+
+Highest accuracy for each task is shown in bold. TABLE II COMPARISON OF THE PROPOSED ULTRAS WITH OTHER BASELINE SYSTEMS . I N THESE SETTINGS , WE HAVE USED THE PRE -TRAINED CHECKPOINT AVAILABLE ONLINE AND PERFORMED DOWNSTREAM EVALUATION BY FINE -TUNING THE LIGHT -WEIGHT HEAD . E XCEPT FOR THE HUBERT-BASE MODEL , ALL OTHER WORKS USE SIGNIFICANTLY HIGHER AMOUNT OF PRE -TRAINING DATA COMPARED TO ULTRAS. 
+
+Model #Param. (M) Data (hrs) Audio Speech 
+
+ESC-50 US8k NSYNTH IEMOCAP VOX1 SPCV2 
+
+HuBERT [5] 95 960 77.45 77.61 69.40 68.30 86.68 96.10 SSAST [7] 89 5,800 37.85 54.87 60.78 55.21 15.62 37.87 BEATs [11] 91 5,800 92.45 83.21 79.14 67.61 56.84 92.30 EnCodecMAE [12] 86.6 11,000 88.25 85.42 77.23 67.80 71.65 97.30 
+
+ULTRAS 89 2,000 91.15 86.07 76.52 67.78 73.55 95.10 
+
+For datasets with a validation set (SPCV2, VOX1, NSYNTH), we use the validation set for hyperparameter tuning and model selection, and report the final accuracy on the evaluation set. For ESC-50, US8K and IEMOCAP, we report the average accuracy across 5, 10 and 5 fold validation respectively. We finetune for 300 epochs using ADAM optimizer, with cosine annealing of the learning rate down to 10 −6. The initial learning rate was found separately for each task using validation. 
+
+D. Downstream Evaluation and Comparison with Baselines 
+
+Table I presents the accuracy (%) of different models evaluated on six diverse downstream tasks, all pretrained on a common dataset of (a) 200 hours and (b) 2000 hours. All the models compared in this table use the same pre-training data and follow the pre-training recipes proposed in the respective repositories, which are available open-source. We compare: (i) SSAST model [7], (ii) HuBERT [5] which consisted of 2-stage pre-training, (iii) SSAST [7] with masked-language modeling loss (replacing the reconstruction and the location identification loss proposed in the original framework) and, (iv) proposed ULTRAS framework, pretrained with joint spectro-temporal masking and predictive modeling on the same dataset. Our framework will also be made available upon paper acceptance. The following are the key takeaways from this Table.  
+
+> •
+
+The baseline SSAST model is significantly inferior to the HuBERT setting on speech tasks.  
+
+> •
+
+The replacement of the SSAST loss function with the MLM loss leads to performance improvements across the board.  
+
+> •
+
+The proposed ULTRAS improves the SSAST+MLM set-ting on all the tasks considered here, highlighting the value of the joint spectral and temporal loss functions.  
+
+> •
+
+All the systems show improvements from 200 hour to 
+
+2000 hour setup, illustrating the value of large-scale SSL pre-training for improved performance.  
+
+> •
+
+The proposed ULTRAS is observed to be superior in all tasks in 200 hour setting and it outperforms majority of the models in 2000 hour setting. To evaluate the effectiveness of the proposal with state-of-art models, we compare its performance with publicly available checkpoints of: HuBERT [5], SSAST [7], BEATs [11], and EnCodecMAE [12]. Note that, these pre-trained models use different amounts of data as well as mixtures of speech and audio corpora, while the proposed ULTRAS uses a relatively TABLE III IMPACT (A CC . %) OF MASKING STRATEGIES AND LOSS FUNCTIONS . E XPERIMENTS ARE PERFORMED ON 200 HR SETUP .                                                                    
+
+> Model Variant Audio Speech
+> ESC-50 US8k NSYNTH IEMOCAP VOX1 SPCV2
+> SSAST [7] 56.75 65.54 70.78 52.56 14.58 61.22 – + MLM 77.65 78.46 75.32 60.49 32.19 78.67 – – + Long-context masking 82.20 79.31 75.52 61.06 36.33 82.17 ULTRAS 86.00 84.12 75.83 63.11 46.47 91.95
+> TABLE IV PERFORMANCE (A CC . %) FOR DIFFERENT λVALUES IN 200 HR SETUP .
+> λAudio Speech
+> ESC US8k NSYNTH IEMO VOX SPCV2
+> 082.20 79.31 75.52 61.06 36.33 82.17 0.5 85.50 84.03 75.77 62.22 45.72 91.81
+> 0.75 86.00 84.12 75.83 63.11 46.47 91.95
+> 0.99 84.10 83.18 74.20 62.25 45.33 89.76
+
+smaller dataset size of 2000 hours of data. All the downstream task evaluations pertain to the setup used in the previous setting, where the SSL model parameters are frozen during fine-tuning. As shown in Table II, the proposed model significantly improves over the SSAST setting on all tasks, while using a reduced pre-training dataset. The EnCodecMAE [12] illus-trates the best performance on all the speech tasks, as it utilizes a significant amount of pre-training data ( 11 , 000 hours which includes about 6, 000 hours of speech data). IV. A BLATION STUDIES 
+
+A. Long-Context Masking and Joint Loss 
+
+In this analysis, we delve into the impact of the masked language modeling (MLM) loss as well the value of masking long-contextual windows ( 160 ms chunks). These results are shown in Table III. The SSAST [7] framework is used as the starting point as it encodes spectral patches of the audio similar to the proposed ULTRAS. The introduction of the MLM loss improves the results on all tasks compared to the baseline SSAST setting. Further, the long-contextual masking, where all the spectral patches that belong to the same segment of 160 ms duration are masked, further improves the performance on all tasks ex-cept for the emotion recognition task in IEMOCAP. The proposed ULTRAS framework modifies this setting using a joint spectro-temporal loss function. This joint optimization significantly improves the performance on speech tasks while also marginally improving the performance on audio tasks. These experiments highlight the incremental value of the key steps in the ULTRAS framework, i.e., of masked lan-guage modeling loss functions on spectrogram patches, long-contextual masking and joint spectro-temporal loss functions. 
+
+B. Effect of λ in Joint Loss 
+
+The loss function (Eq. 3) is a combination of spectral and temporal loss functions with a factor λ regulating the weightage of the two losses. To study the impact of the λ used in our ULTRAS framework, we conduct an ablation where we set λ as {0, 0.5, 0.75, 0.99 }. A higher value of λ increases the weight for the temporal loss. The best choice of λ is 0.75 ,as shown in Table IV. We also observe that increasing λ upto 0.75 leads to improved performance on speech tasks, while maintaining consistent performance on audio tasks. V. C ONCLUSIONS 
+
+In this work, we introduced ULTRAS, which proposed a self-supervised learning (SSL) framework for the joint model-ing of speech and audio representations. The proposal consists of encoding spectral patches belonging to relatively long-contextual windows ( 160 ms). The masked language modeling (MLM) setting is designed to predict the temporal and spectral codes of the masked regions of the audio. This joint modeling is proposed as a way to force the encoding of spectral and temporal attributes of the acoustic signal, thereby enabling diverse downstream speech and audio tasks. We perform experiments in a setting where the SSL frame-work is frozen while light-weight classification heads are learned on the downstream tasks. In this setting, we have compared the proposed ULTRAS with other frameworks using the same pre-training data ( 200 hour setup and 2000 hour setup). When the pre-training data is matched, the proposed framework improves over prior works on audio tasks. The comparison of this work with other published models also reveals that the model achieves competitive performance while using significantly reduced training data size. A set of ablation studies are conducted to understand the value of the masking strategy and the joint loss function. These experiments justify the design choices made in the proposed ULTRAS framework. These results highlight the importance of spectro-temporal representation learning and long-context masking in building general-purpose audio foundation models. Future directions include scaling ULTRAS to larger unlabeled corpora and extending it to tokenization schemes of audio large language models (LLMs). REFERENCES [1] J. Devlin, M.-W. Chang, K. Lee, and K. Toutanova, “BERT: Pre-training of deep bidirectional transformers for language understanding,” in Pro-ceedings of the 2019 conference of the North American chapter of the association for computational linguistics: human language technologies, volume 1 (long and short papers) , 2019, pp. 4171–4186. [2] K. He, X. Chen, S. Xie, Y. Li, P. Doll´ ar, and R. Girshick, “Masked au-toencoders are scalable vision learners,” in Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , 2022, pp. 16 000–16 009. [3] A. Dosovitskiy, L. Beyer, A. Kolesnikov, D. Weissenborn, X. Zhai, T. Unterthiner, M. Dehghani, M. Minderer, G. Heigold, S. Gelly et al. ,“An image is worth 16x16 words: Transformers for image recognition at scale,” arXiv preprint arXiv:2010.11929 , 2020. [4] A. Baevski, Y. Zhou, A. Mohamed, and M. Auli, “Wav2Vec 2.0: A framework for self-supervised learning of speech representations,” 
+
+Advances in neural information processing systems , vol. 33, pp. 12 449– 12 460, 2020. [5] W.-N. Hsu, B. Bolte, Y.-H. H. Tsai, K. Lakhotia, R. Salakhutdinov, and A. Mohamed, “HuBERT: Self-supervised speech representation learning by masked prediction of hidden units,” IEEE/ACM transactions on audio, speech, and language processing , vol. 29, pp. 3451–3460, 2021. [6] Y. Gong, Y.-A. Chung, and J. Glass, “AST: Audio spectrogram trans-former,” arXiv preprint arXiv:2104.01778 , 2021. [7] Y. Gong, C.-I. Lai, Y.-A. Chung, and J. Glass, “SSAST: Self-supervised audio spectrogram transformer,” in Proceedings of the AAAI Conference on Artificial Intelligence , vol. 36, no. 10, 2022, pp. 10 699–10 709. [8] Q. Zhu, L. Zhou, Z. Zhang, S. Liu, B. Jiao, J. Zhang, L. Dai, D. Jiang, J. Li, and F. Wei, “VATLM: Visual-audio-text pre-training with unified masked prediction for speech representation learning,” IEEE Transactions on Multimedia , 2023. [9] J. Choi, S. J. Park, M. Kim, and Y. M. Ro, “AV2AV: Direct audio-visual speech to audio-visual speech translation with unified audio-visual speech representation,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2024, pp. 27 325–27 337. [10] K. Su, X. Liu, and E. Shlizerman, “From vision to audio and beyond: A unified model for audio-visual representation and generation,” arXiv preprint arXiv:2409.19132 , 2024. [11] S. Chen, Y. Wu, C. Wang, S. Liu, D. Tompkins, Z. Chen, and F. Wei, “BEATS: Audio pre-training with acoustic tokenizers,” arXiv preprint arXiv:2212.09058 , 2022. [12] L. Pepino, P. Riera, and L. Ferrer, “EnCodecMAE: Leveraging neural codecs for universal audio representation learning,” Proc. of INTER-SPEECH , 2025. [13] X. Li, N. Shao, and X. Li, “Self-supervised audio teacher-student transformer for both clip-level and frame-level tasks,” IEEE/ACM Trans-actions on Audio, Speech, and Language Processing , vol. 32, pp. 1336– 1351, 2024. [14] D. Niizumi, D. Takeuchi, Y. Ohishi, N. Harada, and K. Kashino, “Masked modeling duo: Towards a universal audio pre-training frame-work,” IEEE/ACM Transactions on Audio, Speech, and Language Pro-cessing , 2024. [15] V. Panayotov, G. Chen, D. Povey, and S. Khudanpur, “Librispeech: an ASR corpus based on public domain audio books,” in 2015 IEEE international conference on acoustics, speech and signal processing (ICASSP) . IEEE, 2015, pp. 5206–5210. [16] J. F. Gemmeke, D. P. Ellis, D. Freedman, A. Jansen, W. Lawrence, R. C. Moore, M. Plakal, and M. Ritter, “AUDIOSET: An ontology and human-labeled dataset for audio events,” in 2017 IEEE international conference on acoustics, speech and signal processing (ICASSP) . IEEE, 2017, pp. 776–780. [17] S.-w. Yang, P.-H. Chi, Y.-S. Chuang, C.-I. J. Lai, K. Lakhotia, Y. Y. Lin, A. T. Liu, J. Shi, X. Chang, G.-T. Lin et al. , “SUPERB: Speech processing universal performance benchmark,” arXiv preprint arXiv:2105.01051 , 2021. [18] K. J. Piczak, “ESC: Dataset for environmental sound classification,” in 
+
+Proceedings of the 23rd ACM international conference on Multimedia ,2015, pp. 1015–1018. [19] C. Busso, M. Bulut, C.-C. Lee, A. Kazemzadeh, E. Mower, S. Kim, J. N. Chang, S. Lee, and S. S. Narayanan, “IEMOCAP: Interactive emotional dyadic motion capture database,” Language resources and evaluation ,vol. 42, pp. 335–359, 2008. [20] J. Salamon, C. Jacoby, and J. P. Bello, “A dataset and taxonomy for urban sound research,” in Proceedings of the 22nd ACM international conference on Multimedia , 2014, pp. 1041–1044. [21] P. Warden, “Speech Commands: A dataset for limited-vocabulary speech recognition,” arXiv preprint arXiv:1804.03209 , 2018. [22] A. Nagrani, J. S. Chung, and A. Zisserman, “VoxCeleb: a large-scale speaker identification dataset,” arXiv preprint arXiv:1706.08612 , 2017. [23] J. Engel, C. Resnick, A. Roberts, S. Dieleman, M. Norouzi, D. Eck, and K. Simonyan, “Neural audio synthesis of musical notes with wavenet au-toencoders,” in International conference on machine learning . PMLR, 2017, pp. 1068–1077.

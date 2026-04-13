@@ -1,0 +1,167 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-13T20:22:32.948239+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.06702v1",
+      "title": "ULTRAS -- Unified Learning of Transformer Representations for Audio and Speech Signals",
+      "abstract": "Self-supervised learning (SSL) has driven impressive advances in speech processing by adopting time-domain prediction objectives, while audio representation learning frameworks operate on time-frequency spectrograms. Models optimized for one paradigm struggle to transfer to the other, highlighting the need for a joint framework. We propose Unified Learning of Transformer Representations for Audio and Speech (ULTRAS), where the masking and predictive modeling is performed over long patches of the data. The model, based on the transformer architecture, encodes spectral-patches of log-mel spectrogram features. The predictive modeling of masked segments is performed on spectral and temporal targets using a combined loss-function, forcing the representations to encode time and frequency traits. Experiments are performed on a variety of speech and audio tasks, where we illustrate that the ULTRAS framework achieves improved performance over other established baselines.",
+      "authors": [
+        "Ameenudeen P E",
+        "Charumathi Narayanan",
+        "Sriram Ganapathy"
+      ],
+      "primary_category": "eess.AS",
+      "categories": [
+        "eess.AS"
+      ],
+      "published": "2026-04-08T05:42:03+00:00",
+      "link": "https://arxiv.org/pdf/2604.06702v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "self-supervised learning for transformer representations",
+      "llm_evidence_cn": "Transformer表示的自监督学习",
+      "llm_evidence": "Transformer表示的自监督学习",
+      "canonical_evidence": "Transformer表示的自监督学习",
+      "llm_tldr_en": "A unified self-supervised transformer framework for audio and speech representation learning.",
+      "llm_tldr_cn": "一种用于音频和语音表示学习的统一自监督Transformer框架。",
+      "llm_tldr": "一种用于音频和语音表示学习的统一自监督Transformer框架。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.07397v1",
+      "title": "Data Warmup: Complexity-Aware Curricula for Efficient Diffusion Training",
+      "abstract": "A key inefficiency in diffusion training occurs when a randomly initialized network, lacking visual priors, encounters gradients from the full complexity spectrum--most of which it lacks the capacity to resolve. We propose Data Warmup, a curriculum strategy that schedules training images from simple to complex without modifying the model or loss. Each image is scored offline by a semantic-aware complexity metric combining foreground dominance (how much of the image salient objects occupy) and foreground typicality (how closely the salient content matches learned visual prototypes). A temperature-controlled sampler then prioritizes low-complexity images early and anneals toward uniform sampling. On ImageNet 256x256 with SiT backbones (S/2 to XL/2), Data Warmup improves IS by up to 6.11 and FID by up to 3.41, reaching baseline quality tens of thousands of iterations earlier. Reversing the curriculum (exposing hard images first) degrades performance below the uniform baseline, confirming that the simple-to-complex ordering itself drives the gains. The method combines with orthogonal accelerators such as REPA and requires only ~10 minutes of one-time preprocessing with zero per-iteration overhead.",
+      "authors": [
+        "Jinhong Lin",
+        "Pan Wang",
+        "Zitong Zhan",
+        "Lin Zhang",
+        "Pedro Morgado"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-04-08T08:55:49+00:00",
+      "link": "https://arxiv.org/pdf/2604.07397v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "curriculum strategy for efficient diffusion training",
+      "llm_evidence_cn": "扩散模型高效训练的课程学习策略",
+      "llm_evidence": "扩散模型高效训练的课程学习策略",
+      "canonical_evidence": "扩散模型高效训练的课程学习策略",
+      "llm_tldr_en": "Introduces a complexity-aware curriculum to improve the efficiency and quality of diffusion model training.",
+      "llm_tldr_cn": "引入一种复杂度感知的课程策略，以提高扩散模型训练的效率和质量。",
+      "llm_tldr": "引入一种复杂度感知的课程策略，以提高扩散模型训练的效率和质量。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.08936v1",
+      "title": "M-IDoL: Information Decomposition for Modality-Specific and Diverse Representation Learning in Medical Foundation Model",
+      "abstract": "Medical foundation models (MFMs) aim to learn universal representations from multimodal medical images that can generalize effectively to diverse downstream clinical tasks. However, most existing MFMs suffer from information ambiguity that blend multimodal representations in a single embedding space, leading to the degradation of modality specificity and diversity. In this paper, we propose M-IDoL, a self-supervised \\underline{\\textit{M}}FM that introduces Information Decomposition for multimodal representation Learning via two objectives: i) maximize inter-modality entropy by dispersing multimodal representation into separable Mixture-of-Experts (MoE) subspaces to achieve representation specificity across modalities; and ii) minimize intra-modality uncertainty by performing fine-grained semantic discrimination within each MoE subspace to enrich representation diversity per modality. By pre-training on 1.15 million medical images, M-IDoL i) delivers superior generalization across 21 downstream clinical tasks, outperforming 20 foundation models on five imaging modalities (e.g., X-ray, fundus, OCT, dermoscopy and pathology), and ii) learns modality-specific and diverse representations, showing clearer separation of feature cluster across modalities and finer-grained feature discrimination within each modality.",
+      "authors": [
+        "Yihang Liu",
+        "Ying Wen",
+        "Jiaxiong Yang",
+        "Longzhen Yang",
+        "Lianghua He",
+        "Heng Tao Shen"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-10T04:06:11+00:00",
+      "link": "https://arxiv.org/pdf/2604.08936v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Self-supervised medical foundation model for multimodal representation",
+      "llm_evidence_cn": "用于多模态表示的自监督医学大模型",
+      "llm_evidence": "用于多模态表示的自监督医学大模型",
+      "canonical_evidence": "用于多模态表示的自监督医学大模型",
+      "llm_tldr_en": "Proposes a self-supervised medical foundation model using information decomposition for diverse modalities.",
+      "llm_tldr_cn": "提出一种自监督医学基础模型，通过信息分解实现多模态表示学习。",
+      "llm_tldr": "提出一种自监督医学基础模型，通过信息分解实现多模态表示学习。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.09436v1",
+      "title": "SCoRe: Clean Image Generation from Diffusion Models Trained on Noisy Images",
+      "abstract": "Diffusion models trained on noisy datasets often reproduce high-frequency training artifacts, significantly degrading generation quality. To address this, we propose SCoRe (Spectral Cutoff Regeneration), a training-free, generation-time spectral regeneration method for clean image generation from diffusion models trained on noisy images. Leveraging the spectral bias of diffusion models, which infer high-frequency details from low-frequency cues, SCoRe suppresses corrupted high-frequency components of a generated image via a frequency cutoff and regenerates them via SDEdit. Crucially, we derive a theoretical mapping between the cutoff frequency and the SDEdit initialization timestep based on Radially Averaged Power Spectral Density (RAPSD), which prevents excessive noise injection during regeneration. Experiments on synthetic (CIFAR-10) and real-world (SIDD) noisy datasets demonstrate that SCoRe substantially outperforms post-processing and noise-robust baselines, restoring samples closer to clean image distributions without any retraining or fine-tuning.",
+      "authors": [
+        "Yuta Matsuzaki",
+        "Seiichi Uchida",
+        "Shumpei Takezaki"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-10T15:51:57+00:00",
+      "link": "https://arxiv.org/pdf/2604.09436v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "General diffusion model refinement method for clean image generation",
+      "llm_evidence_cn": "用于清洁图像生成的通用扩散模型优化方法",
+      "llm_evidence": "用于清洁图像生成的通用扩散模型优化方法",
+      "canonical_evidence": "用于清洁图像生成的通用扩散模型优化方法",
+      "llm_tldr_en": "Proposes SCoRe to remove artifacts from diffusion models, potentially applicable to brain-to-image tasks.",
+      "llm_tldr_cn": "提出SCoRe方法消除扩散模型伪影，可用于脑电图像重建等生成任务。",
+      "llm_tldr": "提出SCoRe方法消除扩散模型伪影，可用于脑电图像重建等生成任务。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
