@@ -1,0 +1,139 @@
+Title: Brain-Grasp: Graph-based Saliency Priors for Improved fMRI-based Visual Brain Decoding
+
+URL Source: https://arxiv.org/pdf/2604.10617v1
+
+Published Time: Tue, 14 Apr 2026 01:30:26 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+## BRAIN-GRASP: GRAPH-BASED SALIENCY PRIORS FOR IMPROVED FMRI-BASED VISUAL BRAIN DECODING 
+
+## Mohammad Moradi, Morteza Moradi, Marco Grassia, Giuseppe Mangioni 
+
+## University of Catania, Catania, Italy mohammad.moradi@phd.unict.it 
+
+ABSTRACT 
+
+Recent progress in brain-guided image generation has im-proved the quality of fMRI-based reconstructions; however, fundamental challenges remain in preserving object-level structure and semantic fidelity. Many existing approaches overlook the spatial arrangement of salient objects, leading to conceptually inconsistent outputs. We propose a saliency-driven decoding framework that employs graph-informed saliency priors to translate structural cues from brain signals into spatial masks. These masks, together with semantic in-formation extracted from embeddings, condition a diffusion model to guide image regeneration, helping preserve object conformity while maintaining natural scene composition. In contrast to pipelines that invoke multiple diffusion stages, our approach relies on a single frozen model, offering a more lightweight yet effective design. Experiments show that this strategy improves both conceptual alignment and structural similarity to the original stimuli, while also introducing a new direction for efficient, interpretable, and structurally grounded brain decoding. 
+
+Index Terms — Visual Brain Decoding, fMRI Brain Sig-nal, Saliency Prior, Graph Neural Networks. 
+
+1. INTRODUCTION 
+
+Visual brain decoding based on fMRI [1] has advanced rapidly with the advent of diffusion-based generative models [2] and large vision–language models [3]. Recent methods [4, 5, 6] achieve substantially higher fidelity and quality in reconstructions, progress enabled by the latest generation of generative techniques. These advances strengthen pipelines in two ways: (i) powerful representations from models such as CLIP [7] improve alignment of regions of interest with visual features, yielding richer and more accurate conceptu-alizations of brain signals, and (ii) diffusion-based generators translate latent representations into outputs that are both meaningful and recognizable, pushing visual brain decoding to levels unattainable only a few years ago. Despite recent progress, fMRI-based visual brain de-coding remains in its early stages and faces critical chal-lenges, particularly in preserving object-level attributes such as saliency, count, and spatial arrangement in reconstructed scenes [8]. These limitations go beyond pixel fidelity and can negatively impact decision-making, task performance, and perceived realism in downstream applications. Moreover, the decoding pipeline is computationally intensive, motivating the reuse of established components—such as intermedi-ate embeddings from prior work—to reduce cost, support sustainable “green AI,” and enable modular pipelines that allow researchers to focus on addressing these unresolved challenges. For example, Brain-Optimized Inference (BOI) [9] refines MindEye [4] reconstructions by iteratively sampling candi-date images from a diffusion model and selecting those most consistent with measured fMRI activity, thereby improv-ing perceptual quality and brain–image alignment. Similarly, TROI [10] builds on MindEye2 [11] but replaces hand-crafted ROIs with a trainable voxel selection module. Using sparse mask training and learning-rate rewinding, it learns compact, subject-specific voxel masks, enhancing cross-subject decod-ing efficiency and reconstruction quality with fewer samples. Following this trend, we introduce Brain-GraSP, a subject-specific fMRI-based visual brain decoding framework that leverages Graph-based Saliency Priors to enhance object conformity and reconstruction accuracy. Brain-GraSP uses the MindEye’s precomputed fMRI–CLIP embeddings, from which textual cues are extracted and a graph neural network (GNN) is trained to generate saliency maps directly. These semantic and spatial priors, combined with the embeddings, condition a frozen Stable Diffusion model to produce recon-structions. Our main contributions are: (1) introducing a GNN-based method for deriving saliency maps directly from fMRI–CLIP embeddings, (2) incorporating saliency cues to improve structural fidelity, and (3) generating reconstructions that preserve object-level conformity between stimuli and outputs. Experiments demonstrate competitive reconstruc-tion quality while highlighting saliency as a promising prior for future VBD models. 
+
+> arXiv:2604.10617v1 [eess.IV] 12 Apr 2026 Precomputed CLIP-fMRI
+> Embeddings
+> (MindEye)
+> Textual Cue
+> Extraction
+> Semantic Cues Saliency Mask
+> Reconstruction
+> Saliency Loss
+> GNN-based Saliency Detection
+> Saliency Detector
+> Stable Diffusion
+
+Fig. 1 . The architecture of Brain-GraSP for fMRI-based visual reconstruction with saliency priors and textual cues. Dashed lines indicate steps used only in saliency detector training, not in the reconstruction pipeline. 
+
+2. METHODOLOGY 2.1. Overview 
+
+We present Brain-GraSP, an fMRI-based decoding framework that integrates saliency and semantic priors into image recon-struction (Figure 1). Leveraging precomputed CLIP–fMRI embeddings from MindEye, it reduces computational cost while providing rich representations. A GNN predicts saliency from these embeddings, which, together with ex-tracted textual cues, condition a frozen diffusion model to generate reconstructions that preserve object fidelity, miti-gate structural inconsistencies, and maintain modularity. As the saliency detector and mapper are optimized per subject, Brain-GraSP is a subject-specific VBD model that enables fine-grained characterization of individual neural representa-tions. 
+
+2.2. fMRI–CLIP Embedding Integration 
+
+We transform fMRI data into multimodal feature representa-tions using the fMRI-CLIP embeddings introduced by Mind-Eye , a seminal brain-vision alignment framework. These embeddings capture fine-grained correspondences between neural activity and visual-semantic features, providing a strong initialization for downstream decoding while avoiding the cost of training new encoders. This choice not only re-duces computational and energy demands in line with “green AI” practices, but also makes the pipeline modular: improve-ments in upstream embedding models can directly propagate into our framework, which can in turn serve as a test-bed to evaluate the impact of alternative fMRI–CLIP embeddings in the same fMRI-to-image pipeline. Formally, given fMRI measurements x ∈ Rd, the MindEye encoder outputs CLIP-aligned embeddings E ∈ R257 ×768 , where 257 denotes the number of tokens and 768 is the channel dimension and each token encodes localized visual-semantic information. 
+
+2.3. GNN-based Saliency Modeling 
+
+A central contribution of our framework is the direct estima-tion of saliency from fMRI–CLIP embeddings using GNNs. Unlike previous approaches that rely on post-hoc analysis of generated images, we target embeddings as the source for saliency because they precede the stochastic and artifact-prone processes of image synthesis. Although embeddings may contain some noise due to imperfect mapping between fMRI signals and visual features, they remain comparatively cleaner and more faithful to the original brain activity. Detect-ing saliency at this stage ensures that object-level structural information is extracted before additional irregularities from generative models accumulate, thereby improving reliability. To operationalize this, the embedding tensor E ∈ R257 ×768 
+
+is modeled as a graph G = ( V, E), where nodes vi ∈ V repre-sent embedding tokens and edges (vi, v j ) ∈ E encode spatial or semantic proximity. A GNN assigns node-level weights 
+
+αi reflecting importance, which are aggregated to construct a saliency map: 
+
+S(x, y ) = σ X
+
+> i
+
+αi ϕi(x, y )
+
+!
+
+, S ∈ [0 , 1] H×W , (1) where ϕi maps node activations into image space and σ
+
+denotes a logistic normalization. This formulation naturally captures the relational and structural dependencies inherent in visual representations, making GNNs well-suited for saliency inference. Since this is a novel direction in brain decoding, we de-signed and implemented three GNN-based saliency detectors: Graph Convolutional Network (GCN) [12], Graph Attention Network (GAT) [13], and GraphSAGE [14]. Further details on the training of the saliency detectors are presented in Sec-tion 3. Among the models, GraphSAGE demonstrated the most consistent performance and was chosen as the backbone, with quantitative results reported in the Experiments section. 
+
+2.4. Semantic Cue Extraction 
+
+To complement spatial saliency priors, we extract semantic textual cues directly from fMRI-CLIP embeddings. Given an embedding tensor E ∈ R257 ×768 , we project it into CLIP’s text-aligned space via a mapping function: 
+
+f : R257 ×768 → Rd,
+
+yielding a textual embedding T = f (E). Candidate textual descriptors are then obtained by measuring similarity between 
+
+T and a vocabulary of CLIP text tokens. This process es-sentially converts brain-derived embeddings into text-like de-scriptors that can guide image generation. Extracting semantics at the embedding level has two advantages. First, embeddings remain closer to the neural source, avoiding distortions introduced during generative sampling. Second, since E is already aligned with CLIP’s multimodal space, T provides language-grounded descrip-tors directly usable for conditioning. Crucially, deriving both saliency priors and semantic cues from the same embed-ding ensures compatibility between structural and conceptual priors, reducing conflicts between “what” and “where” and generating reconstructions that are more coherent in spatial arrangement and semantic fidelity. 
+
+2.5. Saliency-Guided Image Generation 
+
+Image synthesis is performed using a pretrained Stable Diffusion pipeline Dθ integrated with an IP-Adapter mod-ule. The IP-Adapter receives fMRI-derived embeddings 
+
+E ∈ R257 ×768 and maps them via a lightweight network fϕ
+
+into a conditioning vector z ∈ R1024 , which is L2-normalized and injected into the UNet backbone of Dθ . This mechanism enables conditioning without retraining the diffusion model, ensuring modularity and efficiency. Two complementary priors guide the generation: (i) 
+
+saliency masks S ∈ [0 , 1] H×W , where H and W denote the height and width, obtained from GNN outputs, which en-code spatial structure, and (ii) textual cues T , extracted from embeddings, which provide high-level semantic descriptions of the visual scene. Both S and T are incorporated through the IP-Adapter [15] and prompt conditioning. Saliency is ap-plied in three modes: (1) inpainting , where S defines regions for localized refinement; (2) mask-blend , where foreground 
+
+Ifg and background Ibg are generated separately and fused as 
+
+I = S ⊙ Ifg + (1 − S) ⊙ Ibg ; and (3) ranked generation , where candidates {Ii} are scored by: score (Ii) = λCLIP sCLIP (Ii, T ) + λmask smask (Ii, S ), (2) where sCLIP and smask measure semantic alignment (cosine similarity) and structural consistency (IoU/Dice), respec-tively, and λCLIP , λ mask are tuned hyperparameters. The highest-scoring candidate is then selected as the final re-construction. 
+
+3. EXPERIMENTS 
+
+To evaluate the performance of Brain-GraSP , we followed common best practices in the field as introduced in [4]. Re-constructions were generated from fMRI recordings provided by the benchmark NSD dataset for subjects 1, 2, 5, and 7. For a fair comparison, as our GNN-based saliency detector was trained on the last 301 (of 982) images from the NSD test set, we conducted evaluation on the first 681 images, com-paring our method against state-of-the-art models (MindEye [4], MindBridge [5] and BOI [9]) for which reconstructions were either publicly available, provided upon request, or re-produced by us. We re-evaluated all models on this shared subset using widely adopted metrics, including pixel correlation (Pix-Corr) for low-level intensity alignment, SSIM for percep-tual structural similarity, AlexNet-2/5 [16] features for low-and high-level visual representations, CLIP similarity for semantic alignment, Inception Score [17] for image qual-ity and diversity, EfficientNet (EffNet-B) [18] features for multi-scale content representation, and SwAV similarity for instance-level consistency in a self-supervised space. As previously noted, to identify the most effective GNN architecture for detecting saliency directly from embeddings, we evaluated three implementations: GCN, GAT, and Graph-SAGE. To train the saliency detectors on the last 301 images of the NSD test set, we employed the EDN model [19] to generate saliency maps, which served as ground truth since the NSD dataset does not provide salient object masks. It is worth mentioning that using EDN-generated saliency maps as pseudo–ground truth may introduce bias toward that model’s inductive priors and does not reflect absolute human attention. Nevertheless, due to the absence of human-annotated saliency masks in NSD, EDN is used solely as a proxy reference for relative, cross-method comparison, with the analysis focusing on structural consistency rather than agreement with a single saliency model. Training was performed using the Adam optimizer with a learning rate of 1 × 10 −3. The objective function was defined as L = LwIoU (Sal, GT ) + LwBCE (Sal, GT ) where Sal is the predicted saliency mask and GT is the ground truth. Here, 
+
+LwIoU denotes the weighted Intersection-over-Union (IoU) loss, and LwBCE represents the weighted binary cross-entropy (BCE) loss. As shown in Table 2, the GraphSAGE imple-mentation achieved the highest average performance across the four subjects. Consequently, the saliency generated by this model was selected as the spatial prior for conditioning Stable Diffusion. The qualitative comparison of reconstructions from each model is presented in Figure 2. 
+
+4. RESULT ANALYSIS AND ABLATION STUDIES 
+
+According to the performance analysis in Table 1 (both in comparison with other models and on a subject-wise basis for our model), the proposed Brain-GraSP demonstrates supe-rior results on most metrics compared to state-of-the-art base-lines. The gains are particularly evident in PixCorr, SSIM, Inception, CLIP, and SwAV, which together assess structural fidelity, semantic alignment, and representation-level similar-ity. These improvements highlight the effectiveness of our strategy that leverages saliency priors and textual cues to en-hance object conformity and semantic understanding in the reconstructions. While Brain-GraSP does not achieve the top scores on AlexNet-based features, it consistently outperforms on higher-level metrics, which are more indicative of natural-istic image quality and human-aligned perception. Table 1 . Quantitative evaluation of Brain-GraSP against three state-of-the-art models (top), along with a subject-wise perfor-mance breakdown. Highlighted scores indicate better performance. 
+
+Models PixCorr ↑ SSIM ↑ Alex(2) ↑ Alex(5) ↑ Incep ↑ CLIP ↑ EffNet-B ↓ SwAV ↓
+
+MindBridge 0.120 0.266 85.31% 93.86% 91.94% 93.15% 0.725 0.421 BOI 0.260 0.268 94.38% 97.78% 93.72% 93.97% 0.649 0.364 MindEye 0.305 0.292 95.83% 97.92% 94.22% 93.45% 0.370 0.655 
+
+Brain-GraSP 0.326 0.299 92.79% 96.68% 97.85% 98.80% 0.562 0.315 
+
+Subj01 0.327 0.296 93.41% 97.46% 98.97% 99.23% 0.535 0.306 Subj02 0.330 0.304 93.26% 97.22% 98.84% 99.30% 0.533 0.306 Subj05 0.315 0.295 90.69% 94.82% 94.59% 97.15% 0.645 0.346 Subj07 0.330 0.301 93.80% 97.22% 99.01% 99.53% 0.533 0.303 Original Image Ours MindEye MindBridge BOI 
+
+Fig. 2 . Qualitative examples of reconstructions by our model, MindEye, MindBridge and BOI. To ensure a fair comparison, we re-evaluated MindEye, BOI, and MindBridge on a reduced test set of 681 images from NSD and compared their results with the originally re-ported scores on the full set of 982 images. For most metrics, the re-evaluated scores differed by less than 4% from the full-set results, confirming that the reduced set is highly represen-tative. This indicates that Brain-GraSP’s performance is not only competitive on the reduced set but can also be strongly extended to the full test set, further underscoring its robust-ness and promise. To assess the role of saliency and semantic cues in Brain-GraSP, we conducted ablation studies on Subj01 (Ta-ble 2). Saliency priors enhance pixel-level fidelity and semantic alignment, while textual cues improve perceptual and representation-based similarity. Using only embeddings leads to a sharp performance drop, highlighting that gains arise not just from embeddings but from how the architecture 
+
+Table 2 . Performance of GNN-based saliency detection methods across four subjects. (Higher is better for all met-rics except MAE) 
+
+Methods MAE ↓ F-max ↑ E-max ↑ Fbw ↑
+
+GAT 0.1435 0.5627 0.7611 0.4722 GraphSAGE 0.1480 0.5813 0.7719 0.4800 
+
+GCN 0.1643 0.5072 0.7206 0.4187 
+
+Table 3 . Performance comparison of three different GNN-based saliency detection methods.                     
+
+> Methods PixCorr ↑SSIM ↑Alex(2) ↑SwAV ↓
+> w/o Sal. Prior 0.245 0.280 89.36% 0.318 w/o Text Cues 0.314 0.248 86.05% 0.403 Only Embeds 0.110 0.206 73.32% 0.440
+
+leverages them. Notably, Brain-GraSP harnesses MindEye’s precomputed fMRI–CLIP embeddings more effectively than the original MindEye pipeline. Moreover, in selecting an appropriate GNN-based model for detecting saliency from embeddings—an essential com-ponent of our pipeline—Table 3 shows that GraphSAGE achieves the best overall performance. Its higher scores across key metrics indicate more accurate saliency localiza-tion, stronger structural preservation, and better alignment with salient regions. This advantage comes from its inductive neighborhood aggregation [14], which captures local struc-ture and feature diversity more effectively than GCN or GAT, making it well-suited for modeling the distributed patterns in fMRI–CLIP embeddings. 
+
+5. CONCLUSION 
+
+In this work, we propose Brain-GraSP, an fMRI-based VBD model that incorporates saliency masks and textual cues into Stable Diffusion, achieving superior performance over state-of-the-art baselines. While we follow best practices by reusing precomputed CLIP–fMRI embeddings from a semi-nal work, the tailored design of our pipeline enables Brain-GraSP to outperform that base model.This highlights opportu-nities for designing modular pipelines that reuse components to reduce cost and enhance VBD with semantic–spatial cues. 
+
+ACKNOWLEDGMENT: The authors acknowledge finan-cial support from PNRR MUR project PE0000013-FAIR. 
+
+6. REFERENCES 
+
+[1] Shuo Huang, Wei Shao, Mei-Ling Wang, and Dao-Qiang Zhang, “fmri-based decoding of visual informa-tion from human brain activity: A brief review,” Inter-national Journal of Automation and Computing , vol. 18, no. 2, pp. 170–184, 2021. [2] Hanqun Cao, Cheng Tan, Zhangyang Gao, Yilun Xu, Guangyong Chen, Pheng-Ann Heng, and Stan Z Li, “A survey on generative diffusion models,” IEEE transac-tions on knowledge and data engineering , vol. 36, no. 7, pp. 2814–2830, 2024. [3] Jingyi Zhang, Jiaxing Huang, Sheng Jin, and Shijian Lu, “Vision-language models for vision tasks: A survey,” 
+
+IEEE transactions on pattern analysis and machine in-telligence , vol. 46, no. 8, pp. 5625–5644, 2024. [4] Paul Scotti, Atmadeep Banerjee, Jimmie Goode, Stepan Shabalin, Alex Nguyen, Aidan Dempster, Nathalie Ver-linde, Elad Yundler, David Weisberg, Kenneth Norman, et al., “Reconstructing the mind’s eye: fmri-to-image with contrastive learning and diffusion priors,” Ad-vances in Neural Information Processing Systems , vol. 36, pp. 24705–24728, 2023. [5] Shizun Wang, Songhua Liu, Zhenxiong Tan, and Xin-chao Wang, “Mindbridge: A cross-subject brain de-coding framework,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recogni-tion , 2024, pp. 11333–11342. [6] Yongqiang Ma, Yulong Liu, Liangjun Chen, Guibo Zhu, Badong Chen, and Nanning Zheng, “Brainclip: Brain representation via clip for generic natural visual stimu-lus decoding,” IEEE Transactions on Medical Imaging ,2025. [7] Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sas-try, Amanda Askell, Pamela Mishkin, Jack Clark, et al., “Learning transferable visual models from natural lan-guage supervision,” in International conference on ma-chine learning . PmLR, 2021, pp. 8748–8763. [8] Mohammad Moradi, Morteza Moradi, Marco Grassia, and Giuseppe Mangioni, “What is wrong with vi-sual brain decoding? a saliency-based investigation,” in 2025 International Joint Conference on Neural Net-works (IJCNN) . IEEE, 2025, pp. 1–8. [9] Reese Kneeland, Jordyn Ojeda, Ghislain St-Yves, and Thomas Naselaris, “Brain-optimized inference im-proves reconstructions of fmri brain activity,” ArXiv ,pp. arXiv–2312, 2023. [10] Ziyu Wang, Tengyu Pan, Zhenyu Li, Ji Wu, Xiuxing Li, and Jianyong Wang, “Troi: Cross-subject pretraining with sparse voxel selection for enhanced fmri visual de-coding,” arXiv preprint arXiv:2502.00412 , 2025. [11] Paul S Scotti, Mihir Tripathy, Cesar Kadir Torrico Villanueva, Reese Kneeland, Tong Chen, Ashutosh Narang, Charan Santhirasegaran, Jonathan Xu, Thomas Naselaris, Kenneth A Norman, et al., “Mindeye2: Shared-subject models enable fmri-to-image with 1 hour of data,” arXiv preprint arXiv:2403.11207 , 2024. [12] TN Kipf, “Semi-supervised classification with graph convolutional networks,” arXiv preprint arXiv:1609.02907 , 2016. [13] Petar Veliˇ ckovi´ c, Guillem Cucurull, Arantxa Casanova, Adriana Romero, Pietro Lio, and Yoshua Ben-gio, “Graph attention networks,” arXiv preprint arXiv:1710.10903 , 2017. [14] Will Hamilton, Zhitao Ying, and Jure Leskovec, “Induc-tive representation learning on large graphs,” Advances in neural information processing systems , vol. 30, 2017. [15] Hu Ye, Jun Zhang, Sibo Liu, Xiao Han, and Wei Yang, “Ip-adapter: Text compatible image prompt adapter for text-to-image diffusion models,” arXiv preprint arXiv:2308.06721 , 2023. [16] Alex Krizhevsky, Ilya Sutskever, and Geoffrey E Hin-ton, “Imagenet classification with deep convolutional neural networks,” Advances in neural information pro-cessing systems , vol. 25, 2012. [17] Christian Szegedy, Vincent Vanhoucke, Sergey Ioffe, Jon Shlens, and Zbigniew Wojna, “Rethinking the in-ception architecture for computer vision,” in Proceed-ings of the IEEE conference on computer vision and pat-tern recognition , 2016, pp. 2818–2826. [18] Mingxing Tan and Quoc Le, “Efficientnet: Rethinking model scaling for convolutional neural networks,” in 
+
+International conference on machine learning . PMLR, 2019, pp. 6105–6114. [19] Yu-Huan Wu, Yun Liu, Le Zhang, Ming-Ming Cheng, and Bo Ren, “Edn: Salient object detection via extremely-downsampled network,” IEEE Transactions on Image Processing , vol. 31, pp. 3125–3136, 2022.

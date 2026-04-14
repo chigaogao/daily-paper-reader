@@ -1,0 +1,577 @@
+Title: CoRe-ECG: Advancing Self-Supervised Representation Learning for 12-Lead ECG via Contrastive and Reconstructive Synergy
+
+URL Source: https://arxiv.org/pdf/2604.11359v1
+
+Published Time: Tue, 14 Apr 2026 02:09:21 GMT
+
+Number of Pages: 33
+
+Markdown Content:
+# CoRe-ECG: Advancing Self-Supervised Representation Learning for 12-Lead ECG via Contrastive and Reconstructive Synergy 
+
+Zehao Qin a,†, Xiaojian Lin d,†, Ping Zhang d,, Hongliang Wu e,, Xinkang Wang f,,Guangling Liu a,, Bo Chen d,*, Wenming Yang a,*, Guijin Wang b,c,*
+
+> a
+
+Department of Electronic Engineering, Shenzhen International Graduate School, Tsinghua University, Shenzhen 518071, PR China 
+
+> b
+
+Department of Electronic Engineering, Tsinghua University, Beijing 100084, PR China 
+
+> c
+
+Shanghai AI Laboratory, Shanghai, 200232, PR China 
+
+> d
+
+Department of Cardiology, Beijing Tsinghua Changgung Hospital, School of Clinical Medicine, Tsinghua Medicine, Tsinghua University, Beijing, 102218, PR China 
+
+> e
+
+Department of Anesthesiology, National Cancer Center /National Clinical Research Center for Cancer /Cancer Hospital, Chinese Academy of Medical Sciences and Peking Union Medical College, Beijing, 100021, PR China 
+
+> f
+
+Department of Electrocardiographic Diagnosis, Fuzhou University A ffi liated Provincial Hospital, Fuzhou, 350001, PR China 
+
+Abstract 
+
+Accurate interpretation of electrocardiogram (ECG) remains challenging due to the scarcity of labeled data and the high cost of expert annotation. Self-supervised learn-ing (SSL) o ff ers a promising solution by enabling models to learn expressive repre-sentations from unlabeled signals. Existing ECG SSL methods typically rely on either contrastive learning or reconstructive learning. However, each approach in isolation provides limited supervisory signals and su ff ers from additional limitations, includ-ing non-physiological distortions introduced by naive augmentations and trivial cor-relations across multiple leads that models may exploit as shortcuts. In this work, we propose CoRe-ECG, a unified contrastive and reconstructive pretraining paradigm that establishes a synergistic interaction between global semantic modeling and local structural learning. CoRe-ECG aligns global representations during reconstruction, enabling instance-level discriminative signals to guide local waveform recovery. To 
+
+> †
+
+Equal Contribution. 
+
+> *
+
+Correspondence: Bo Chen (cba04570@btch.edu.cn); Wenming Yang (yang.wenming@sz.tsinghua.edu.cn); Guijin Wang (wangguijin@tsinghua.edu.cn) 
+
+> arXiv:2604.11359v1 [cs.AI] 13 Apr 2026
+
+further enhance pretraining, we introduce Frequency Dynamic Augmentation (FDA) to adaptively perturb ECG signals based on their frequency-domain importance, and Spatio-Temporal Dual Masking (STDM) to break linear dependencies across leads, increasing the di ffi culty of reconstructive tasks. Our method achieves state-of-the-art performance across multiple downstream ECG datasets. Ablation studies further demonstrate the necessity and complementarity of each component. This approach provides a robust and physiologically meaningful representation learning framework for ECG analysis. 
+
+Keywords: 
+
+Self-supervised learning, Electrocardiogram, Data augmentation, Mask, Representation learning 
+
+1. Introduction 
+
+Electrocardiogram (ECG) is a widely used non-invasive tool for cardiac disease diagnosis [1]. Despite recent advances in automated ECG interpretation, the devel-opment of robust data-driven models remains fundamentally constrained in practice. ECG signals are sensitive medical data subject to strict privacy regulations, which lim-its the availability of large-scale public datasets. Moreover, ECG annotation requires specialized expertise from cardiologists, making the labeling process costly and time-consuming [2, 3]. As a result, severe label scarcity persists, hindering the generaliza-tion and stability of supervised learning approaches. Supervised deep learning methods have achieved promising performance in ECG analysis when su ffi cient labeled data are available [4, 5, 6, 7]. However, their e ff ec-tiveness strongly depends on the scale of annotated datasets, and model performance often degrades under limited supervision. Such data scarcity is common in clinical practice, which motivates the development of learning paradigms that can e ff ectively exploit large amounts of unlabeled ECG data. Self-supervised learning (SSL) has emerged as a powerful framework for represen-tation learning without manual annotations, demonstrating strong transferability across domains such as natural language processing and computer vision [8, 9, 10, 11]. By 2designing appropriate pretraining objectives, SSL enables models to capture intrinsic structural patterns from raw data, making it particularly appealing for ECG analysis, where labeled data are scarce but unlabeled recordings are abundant. Existing ECG SSL methods can be broadly categorized into two paradigms: con-trastive learning and reconstructive learning [12]. Contrastive learning focuses on instance-level discrimination by aligning representations of augmented views and sepa-rating di ff erent samples, which encourages the learning of globally discriminative fea-tures. Reconstructive learning relies on masked reconstruction objectives, requiring the model to recover missing signal segments and capture local waveform structures. These two paradigms describe ECG representations from complementary perspectives, namely global semantic information and local structural patterns. However, most ex-isting approaches adopt only a single pretraining objective, which limits the diversity of supervisory signals during pretraining [35]. This observation naturally raises an im-portant question: Can contrastive learning and reconstructive learning be unified within a single self-supervised framework to jointly exploit their complementary strengths? 
+
+Moreover, directly adopting generic self-supervised strategies designed for general time-series data is suboptimal for ECG signals. In contrastive learning, inappropri-ate data augmentations may disrupt the intrinsic rhythmic structure of cardiac cycles and distort clinically meaningful waveform patterns [36]. In reconstructive learning, naive random masking strategies can introduce shortcut solutions in multi-lead ECG modeling due to strong inter-lead correlations, preventing the model from learning se-mantically meaningful representations [37]. To address these challenges, we propose CoRe-ECG , a unified Contrastive and Re-constructive SSL pretraining framework for ECG representation learning. As shown in Fig. 1(c), CoRe-ECG tightly integrates contrastive learning and reconstructive learn-ing, allowing instance-level discriminative signals to directly guide the reconstruction process and enabling cooperative learning of global semantic representations and local waveform structures. To further enhance physiological consistency and representa-tion robustness, we introduce a frequency dynamic augmentation mechanism and a spatio-temporal dual masking strategy, which mitigate non-physiological distortions 3Mask  Encoder  
+
+> Reconstructive Loss
+> Reconstructed
+
+(b) Reconstructive Learning  
+
+> Input
+> Decoder
+> Input
+> Data
+> Augmentation Contrastive Loss
+
+(c)  CoRe  Learning 
+
+> Encoder
+> Encoder
+
+(a) Contrastive Learning    
+
+> Mask
+> Reconstructed
+> Input
+> Projection
+> Augmented
+> Encoder Decoder
+> Decoder Data
+> Augmentation
+> Encoder
+> Reconstructive Loss
+> Contrastive Loss Figure 1: Overview of CoRe Learning. Our approach integrates Contrastive Learning and Reconstructive Learning in a unified framework. The model reconstructs the original ECG signal while simultaneously aligning the global representations of the original signal and its augmented view. This design allows the two learning paradigms to remain compatible and to mutually reinforce each other.
+
+and shortcut learning in multi-lead ECG modeling. The entire framework is trained end-to-end with unified contrastive and reconstructive objectives, yielding expressive and transferable ECG representations for downstream classification tasks. We conduct systematic experiments on multiple public ECG datasets. The results demonstrate that CoRe-ECG achieves state-of-the-art performance on downstream ECG classification tasks and provide strong evidence for the necessity and complementary e ff ects of the proposed components. Our main contributions are summarized as follows. (1) We propose CoRe-ECG, a unified contrastive and reconstructive self-supervised pretraining paradigm that injects instance-level discriminative signals from con-trastive learning directly into ECG reconstruction, enabling cooperative learning of global semantics and local waveform structures. (2) We design a frequency dynamic augmentation mechanism that explicitly mod-els the importance distribution of ECG in frequency domain and applies adaptive perturbations, e ff ectively enhancing representation robustness while avoiding non-4physiological waveform distortions. (3) We design a spatio-temporal dual masking strategy along both lead and temporal dimensions, which breaks trivial linear dependencies and forces the model to learn cross-lead and cross-temporal reconstruction. 
+
+2. Related work 
+
+2.1. ECG Contrastive Learning 
+
+Contrastive learning aims to learn discriminative representations by minimizing the distance between similar samples while maximizing the distance between dissimi-lar ones. In practice, this paradigm relies on the construction of positive and negative sample pairs. For ECG representation learning, positive pairs are typically derived from the same underlying signal segment, whereas negative pairs are sampled from di ff erent signal instances [13]. To generate positive pairs, prior works commonly apply diverse transformations to a single ECG recording to produce multiple views, such as data augmentation. Typical augmentation strategies include random cropping, addi-tive Gaussian noise, and temporal scaling through stretching or compression along the time axis [14]. By contrasting these augmented views, models are encouraged to learn global representations that are robust to noise and minor morphological variations. MoCo v3 [15] introduces a momentum-updated target encoder together with a pre-dictor network to stabilize contrastive training. Multiple augmented views of the same ECG signal are generated, and the model is trained to align representations of the orig-inal signal and its augmented counterparts under a self-supervised contrastive learning framework. In contrast, CMSC [16] avoids explicit data augmentation and instead exploits the temporal structure of ECG signals. It segments a single ECG record-ing into multiple non-overlapping temporal subsegments and constructs positive pairs using representations of subsegments from the same patient, thereby capturing time-invariant characteristics of ECG signals. Several methods extend contrastive learning to multi-lead ECG signals. LFBT [17] proposes a lead-fusion contrastive framework that integrates intra-lead and inter-lead Barlow Twins losses, jointly enforcing repre-sentation consistency within individual leads and alignment across di ff erent leads. This 5design enables the encoder to capture both lead-specific patterns and cross-lead cor-relations. For downstream tasks, LFBT adopts a multi-branch concatenation (MBC) strategy, where each lead is processed by an independent encoder and the resulting representations are concatenated to fuse information from all leads. Zhang et al. [18] proposes a self-supervised ECG representation learning method based on manipulated temporal-spatio reverse detection. By applying temporal reversal, spatial reversal, and combined temporal-spatio reversal to ECG signals, the model is trained to distinguish original signals from their manipulated versions, formulating representation learning as a pretext classification task. MRC [19] focuses on jointly modeling morphological and rhythmic characteristics of multi-lead ECG signals. It employs random beat se-lection and 0-1 pulse generation to create augmented views, and adopts a three-branch architecture to map di ff erent views into a shared latent space, enabling dual contrastive learning across morphology and rhythm. Despite the e ff ectiveness of these contrastive learning approaches, their perfor-mance heavily depends on the construction of positive sample pairs. Directly leverag-ing existing data to form positive and negative pairs may limit the diversity of variations observed during training, preventing models from capturing richer semantic informa-tion. Moreover, overly aggressive augmentation strategies, such as spatio-temporal re-versal or the addition of synthetic sine waves, may introduce physiologically implausi-ble positive pairs and lead the model toward suboptimal representations. Consequently, designing physiologically meaningful data augmentation strategies that provide su ffi -cient and informative variations remains a central challenge for contrastive learning in ECG representation learning. 
+
+2.2. ECG Reconstructive Learning 
+
+Reconstructive learning represents another paradigm of self-supervised learning, where the core idea is to recover artificially masked or corrupted data in order to capture latent structural characteristics. In practice, this paradigm typically applies masking or perturbation operations to the original input, generating visible and masked regions. The model is trained to extract representations from the visible parts and reconstruct the masked portions, thereby encouraging the learning of fine-grained local representations 6and contextual dependencies within the input data. Oh et al. [20] propose a lead-agnostic self-supervised framework that randomly masks entire ECG signals from di ff erent leads and leverages a hybrid CNN-Transformer architecture to jointly learn local and global representations. MaeFE [21] applies masked autoencoding to ECG self-supervised learning by performing reconstruction tasks through temporal or spatial masking. However, this approach does not explicitly model the joint interaction between temporal and spatial dimensions. ECG-MAE [22] extends this paradigm by simultaneously applying random masking along both the tem-poral and lead dimensions, enabling the model to capture spatiotemporal information in multi-lead ECG signals. Additionally, ECG-MAE investigates the performance di ff er-ences between random masking and structured grid masking with continuous masked regions. ST-MEM [23] introduces a lead indicator module to explicitly model both intra-lead consistency and inter-lead variability. By sharing a reconstruction decoder across the same leads, this method enhances the reconstruction process and improves the utilization of lead-specific and cross-lead information. BMIRC [24] further en-riches reconstructive learning by incorporating frequency-domain representations ob-tained via Fourier transformation into the masked reconstruction task. Moreover, it es-tablishes internal representation connections (IRC) between the encoder and decoder to facilitate information flow and improve reconstruction quality. HeartLang [25] formu-lates ECG representation learning from a language modeling perspective. It segments ECG signals by identifying QRS complexes and introduces a quantized codebook to represent ECG patches as discrete tokens. Reconstruction is then performed at the to-ken level, encouraging the model to learn higher level semantic representations of ECG signals. Despite their promising performance, reconstructive methods critically depend on the design of masking strategies. Most existing approaches adopt random masking schemes, which may be suboptimal for ECG signals characterized by strong regularity and periodic structure. Such strategies often fail to account for the potential linear cou-pling among di ff erent leads, making the reconstruction task overly trivial. As a result, models may rely on simple signal regularities to complete reconstruction, rather than learning essential physiological patterns. In masked image modeling, recent studies 7Visible Patch  Dropped Patch  
+
+> 𝑧 𝑠
+> 𝑣
+> (𝑧 𝑠
+> 𝑣 ,𝑞 𝑠
+> 𝑚 )
+> Select Masked Patches
+> EMA Update
+> 𝑧 𝑡
+> 𝑎
+> EMA Update
+> ℎ𝑠
+> 𝑎
+> ℎ𝑡
+> 𝑎
+> Cosine Similarity
+> Masked Patch
+
+𝐿 𝑐𝑜𝑛 
+
+(b)  Reconstructi ve  Branch 
+
+(a)  Contrastive Branch     
+
+> ECG Patches
+> Input ECG
+> Patchify
+> Lead Token Time Token
+> Teacher Encoder Teacher Projection
+> Transformer Block MLP Block
+> ො𝑥 𝑠
+> 𝑎 ො𝑥 𝑠
+> 𝑚
+> Encoder
+> Time Decoder
+
+𝐿 𝑟𝑒𝑐    
+
+> Projection
+> Temporal Mask
+> Lead Drop
+> Select Visible Patch
+> Latent Decoder
+> 1D FFT
+> Noise Injection
+> 1D iFFT
+> Lead Token Time Token
+> Frozen In
+> Backpropagation
+> Trainable
+> (𝑧 𝑠
+> 𝑣 ,𝑞 𝑡
+> 𝑚 )
+
+STDM 
+
+FDA Figure 2: Overview of the CoRe-ECG architecture, which consists of two parallel branches: the Contrastive Branch and the Reconstructive Branch. In (a), we utilize frequency dynamic augmentation to generate an augmented view, which is transformed into a global representation via the encoder-projection structure. Simultaneously, the visible representations of the raw signal extracted by the Encoder are passed through the decoder-projection module to yield a corresponding global representation. The contrastive loss is calculated between these two representations. In (b), the input undergoes spatio-temporal dual masking and is processed by the encoder-decoder network to reconstruct the original input signal. The reconstruction loss is computed exclusively on the masked patches. 
+
+have begun to explore how masking strategies influence self-supervised representation learning [26, 27]. Similarly, for ECG signals, disrupting simplistic correlations be-tween visible and masked regions and forcing models to capture long range temporal dependencies and cross-lead contextual information has become a key research focus. 
+
+3. Method 
+
+3.1. The architecture of CoRe-ECG 
+
+As shown in Fig. 2, the proposed CoRe-ECG framework integrates two comple-mentary learning branches: the Contrastive Branch and the Reconstructive Branch, enabling robust ECG representation learning during pre-training. In the Contrastive Branch, we employ frequency dynamic augmentation to generate 8the augmented view from the raw view. To produce a global, high-semantic feature representation that serves as a contrastive target for the original view, the model is compelled to learn instance-discriminative features. Since the Encoder only observes visible patches from the raw ECG due to masking, the Teacher Encoder processes the full augmented signal to provide a complete semantic target representation, ensuring that the student learns to infer global context from partial observations. Subsequently, we utilize the Latent Decoder to complement the output features of the Encoder before computing the contrastive loss against the global features of the augmented view. In the Reconstructive Branch, starting from the raw 12-lead ECG, we first apply a Spatio-Temporal Dual Masking policy that partitions patches into visible, masked, and dropped patches. Visible patches are encoded by the Encoder to obtain visible ECG representations, which are processed by the Time Decoder to reconstruct the raw ECG. The reconstruction loss is computed exclusively on the masked patches, preventing linear dependencies across leads from leaking and thereby compelling the model to learn comprehensive cross-lead and cross-temporal ECG representations. In detail, in the Reconstructive Branch, given an input ECG signal X ∈ RC×T ,where C denotes the number of ECG leads and T represents the temporal length of the signal, we first partition it into patches. Specifically, a non-overlapping temporal segmentation is adopted to divide the signal into temporal patches xas ∈ RC×N×P, where 
+
+N denotes the number of patches, P denotes the temporal length of each patch, and the superscript a indicates all patches. Most reconstructive learning frameworks typically adopt random masking strate-gies, applying random masking with equal probability along both the temporal and lead dimensions simultaneously. However, in multi-lead ECG modeling, such approaches su ff er from a linear dependence issue. Due to the physical derivation of ECG leads (e.g., Einthoven’s law [34], where Lead I + Lead III = Lead II), a model may triv-ially infer masked regions through simple linear combinations of visible leads, without learning robust semantic representations. Spatio-Temporal Dual Masking (which will be detailed in Section 3.2) is applied to all ECG patches xas , resulting in visible ECG patches xvs, masked ECG patches xms , and dropped ECG patches xds . The visible patches 9xvs are then fed into the Encoder Es to extract ECG representations zvs.
+
+zvs = Es(xvs; θEs ), (1) The Encoder Es consists of a patch embedding layer implemented using 1D convolu-tional layers, followed by multiple Transformer layers, aiming to capture the global contextual information of the ECG signal from visible patches. Subsequently, the representations zvs are concatenated with randomly initialized mask embeddings qms corresponding to the masked and dropped positions. The con-catenated embeddings are then passed to the Time Decoder Dt to reconstruct the raw ECG signal ˆ xas .ˆxas = Dt(zvs, qms ; θDt ), (2) In the Contrastive Branch, standard contrastive frameworks process two augmented views symmetrically. Time-series data augmentation methods commonly adopt heuris-tic geometric transformations, including jittering, scaling, and permutation. Although these techniques have shown e ff ectiveness in general time-series modeling, they are less suitable for ECG analysis. In particular, permutation-based operations can alter the intrinsic temporal structure of the P-QRS-T complex, compromising clinically mean-ingful patterns. In addition, simple noise injection can alter the subtle morphological characteristics of ECG signals, resulting in a distribution mismatch that is inconsistent with the physiological signals generation mechanisms. To avoid semantic damage to the ECG caused by traditional data augmentation methods, we utilize Frequency Dy-namic Augmentation (which will be detailed in Section 3.3) to generate an augmented view xat of the raw ECG xas . Here, we do not adopt any masking method, in order to obtain the global representation of the augmented view as the learning target for the raw ECG representation. We pass xat through the Teacher Encoder Et to obtain the ECG representation zat .
+
+zat = Et(xat ; θEt ), (3) To prevent representation collapse and stabilize training, we adopt a momentum up-date mechanism. The parameters of the Teacher Encoder θEt are not updated via back-propagation but are an exponential moving average (EMA) [33] of the Encoder param-10 eters θEs .
+
+θEt ← m · θEt + (1 − m) · θEs , (4) Simultaneously, we concatenate the visible ECG representations zvs obtained above with randomly initialized mask embeddings qmt . We feed the concatenated embeddings into the Latent Decoder Dl and use mean pooling to reconstruct the global ECG embedding ˆzas .ˆzas = Dl(zvs, qmt ; θDl ), (5) This asymmetry forces the model to not only reconstruct the signal but also infer a global semantic representation from partial observations that matches the robust fea-tures extracted from the frequency-augmented signal. To align the representations un-der di ff erent views, we map ˆ zas and zat to the same space via the Projection Hs and the Teacher Projection Ht respectively, obtaining Has and Hat .
+
+Has = Hs(ˆ zas ; θHs ), (6) 
+
+Hat = Ht(zat ; θHt ), (7) Similarly, the parameters of the Teacher Projection are updated via EMA from the Projection. 
+
+θHt ← m · θHt + (1 − m) · θHs , (8) Through the above process, the Time Decoder produces the reconstructed ECG patches ˆ xas , which are used to compute the reconstruction loss over the masked posi-tions. Meanwhile, the Projection Head and Teacher Projection Head generate global representations Has and Hat under the raw and frequency-augmented views, respectively. These representations serve as the targets for contrastive learning, enabling the model to jointly learn accurate signal reconstruction and robust global semantic representa-tions. 
+
+3.2. Spatio-Temporal Dual Masking (STDM) 
+
+To prevent trivial inference caused by inter-lead linear relationships, we propose Spatio-Temporal Dual Masking (STDM). Unlike uniform random masking, STDM dynamically alternates between full temporal mask, which forces the model to rely 11 Lead       
+
+> Time Full Mask
+> I
+> V1
+> aVR
+> V4
+> aVL
+> II
+> III
+> V2
+> aVF
+> V3
+> V5
+> V6
+> 𝑡 0𝑡 1𝑡 2𝑡 3
+> 𝑡 0𝑡 2
+> 𝑡 1𝑡 3
+
+Step 1: Temporal Mask   
+
+> Partial Mask
+> Full Mask
+> 𝑡 0𝑡 2
+> 𝑡 1𝑡 3
+> Partial Mask
+
+Step 2: Lead Drop     
+
+> 𝑡 0𝑡 1𝑡 2𝑡 3Time
+> Lead
+> Visible
+> Patch
+> Dropped
+> Patch
+> Masked
+> Patch Figure 3: The structure of Spatio-Temporal Dual Masking (STDM).
+
+on long-range temporal context, and partial mask with lead drop, which encourages the learning of non-linear spatial dependencies across leads. Formally, given an input ECG signal X ∈ RC×T , we partition it into non-overlapping temporal patches xas ∈ RC×N×P. For each patch index n ∈ { 1, . . . , N}, we construct a vis-ible index set Vn as input to the Encoder and a masked index set Mn for reconstruction supervision through the following hierarchical procedure: 
+
+Step 1 Temporal Mask : For each temporal index n, we sample a mode indicator 
+
+δn ∼ Bernoulli( Ptime ). If δn = 1 (full temporal mask), the entire time step is masked, yielding an empty visible set Vn = ∅, while all leads are assigned to the reconstruction target Mn = {1, . . . , C}.
+
+Step 2 Lead Drop : If δn = 0 (partial mask), we randomly sample a subset of k
+
+leads to remain visible, denoted as Vn ⊂ { 1, . . . , C} with |Vn| = k. The remaining leads 
+
+Rn = {1, . . . , C}\ Vn constitute candidates for reconstruction. To prevent the model from exploiting trivial spatial correlations among the masked leads, we do not reconstruct the entire candidate set Rn. Instead, we apply a lead drop strategy: 
+
+Dn = {c ∈ Rn | zc = 1, zc ∼ Bernoulli( Plead )}, (9) where Dn denotes the set of dropped indices and Mn = Rn \ Dn denotes the set of 12 masked indices. By stochastically excluding easy-to-infer leads from the supervision signal, STDM compels the Encoder to capture morphological characteristics rather than relying on linear combinations. Finally, we aggregate the indices from the above sets and construct the visible ma-trix V = {Vn} ∈ { 0, 1}C×N , masked matrix M = {Mn} ∈ { 0, 1}C×N , and dropped matrix 
+
+D = {Dn} ∈ { 0, 1}C×N . The visible, masked, and dropped ECG patches are obtained by an element-wise masking operation: 
+
+xvs = xas ⊙ V, xms = xas ⊙ M, xds = xas ⊙ D, (10) where ⊙ denotes element-wise multiplication. 
+
+3.3. Frequency Dynamic Augmentation (FDA) 
+
+To preserve the physiological characteristics of ECG signals while enabling con-trollable perturbations, we design Frequency Dynamic Augmentation (FDA), a method that performs perturbations in the frequency domain with frequency components weighted by their relative importance. This approach is motivated by the observation that ECG signals exhibit high energy concentration in specific frequency bands (typically 0.65-40 Hz). Transforming signals into the frequency domain allows us to decouple global semantic information from local noise, enabling more controllable augmentation. Formally, given the input ECG signal X, we first compute its frequency represen-tation X f ∈ CC×K via the Fast Fourier Transform (FFT), where K = ⌊T/2⌋ + 1. To distinguish between informative signals and noise components, we generate a global learnable weight matrix W ∈ RC×K . The frequency importance map A ∈ [0 , 1] C×K is obtained via a sigmoid activation A = σ(W). A higher value in A indicates that the corresponding frequency component encodes critical morphological information. Unlike standard dropout or additive noise, FDA employs an inverse-weighted noise injection strategy. We consider that critical frequencies should remain stable, while less informative frequencies can tolerate higher variance. We define a frequency-wise noise scaling factor λ ∈ RC×K , which is inversely proportional to the importance map A: 
+
+λ = 1
+
+ϵ + A , (11) 13 Sigmoid 
+
+## Frequency Importance 
+
+## Generator 
+
+## 𝑊 
+
+## 𝐴 
+
+Frequency Bins (K) 
+
+Leads (C)       
+
+> 0.5 0.2 0.7 0.9
+> 0.9 0.7 0.5 0.2
+
+## 𝜆 
+
+## 𝑧 ~𝑁 0,1Z
+
+## 1D FFT 
+
+## 1D  iFFT 
+
+## Sorted By Importance 
+
+## 𝐴 
+
+## Frequency Importance Map  Magnitude Spectrum 
+
+## Input ECG Figure 4: Illustration of Frequency Dynamic Augmentation (FDA). By modulating frequency components in the magnitude spectrum based on learnable importance, FDA preserves critical physiological semantics while introducing diverse perturbations. 
+
+where ϵ is a stability term. To further protect critical frequency components from being perturbed, we take the 50th percentile of A across frequency components in each lead as the threshold θ to distinguish important from non-important frequencies. Specifically, for each frequency component, if its importance weight exceeds θ, the corresponding 14 noise scaling factor is set to zero: 
+
+λ =
+
+
+
+0, A ≥ θ, 
+
+(ϵ + A)−1, otherwise .
+
+(12) Moreover, to prevent excessive noise injection, the non-zero elements of λ are nor-malized within each lead to ensure a stable perturbation magnitude. 
+
+Algorithm 1 Frequency Dynamic Augmentation (FDA) 
+
+1: Input: ECG X ∈ RC×T , frequency importance A ∈ RC×K
+
+2: Output: Augmented ECG Patches xat ∈ RC×N×P
+
+3: Xf ← FFT( X) // Fast Fourier Transform 
+
+4: for c = 1 to C do 
+
+5: θc ← Quantile 0.5(Ac,:) // as the threshold for frequency selection 
+
+6: Zc,: ∼ N (0, I) // Gaussian noise 
+
+7: for k = 1 to K do 
+
+8: if A c,k ≥ θc then 
+
+9: λc,k ← 0 // do not perturb high-importance frequency 
+
+10: else 
+
+11: λc,k ← (Ac,k + ϵ)−1 // inverse-proportional noise strength 
+
+12: end if 
+
+13: end for 
+
+14: μc ← mean( λc,k | λc,k , 0) // mean over non-zero noise coe ffi cients 
+
+15: for k = 1 to K do 
+
+16: if λc,k , 0 then 
+
+17: λc,k ← λc,k/μ c // normalize non-zero frequency perturbation 
+
+18: end if 
+
+19: end for 
+
+20: Xfaug ← Xfc,: ⊙  Ac,: + λc,: ⊙ Zc,:
+
+ // frequency-domain perturbation 
+
+21: end for 
+
+22: xat ← Patchify(iFFT( Xfaug )) 
+
+The final augmented frequency is obtained by modulating the original frequency 15 with the fused importance-noise map: 
+
+X faug = X f ⊙ (A + λ ⊙ Z), (13) where ⊙ denotes element-wise multiplication and Z ∼ N (0 , 1) represents randomly sampled Gaussian noise. Here, A represents the importance of frequency components, while λ ⊙ Z represents the intensity of the injected noise. For important frequency com-ponents, A is close to 1 and λ is set to 0, ensuring that the original morphology is pre-served. Conversely, for unimportant frequencies, as A approaches 0, λ becomes larger, resulting in greater morphological variation. Finally, the augmented ECG patches xat
+
+is obtained via the Inverse FFT (iFFT) of X faug . By end-to-end training, FDA learns to preserve diagnostically important frequencies while diversifying the background noise profile, thereby improving model robustness. 
+
+3.4. Training and Inference 
+
+Based on the above two branches, we obtain the reconstruction result of the original ECG, denoted as ˆ xas . As described in Section 3.2, to prevent the model from exploiting linear correlations between leads to cheat, we compute the reconstruction loss solely on the masked patches xms . This is formulated as: 
+
+Lrec = 1
+
+|M| (xas − ˆxas ) ⊙ M 2 
+
+> F
+
+,
+
+Additionally, we calculate the contrastive loss based on Has and Hat for all samples in the batch. Specifically, we optimize the InfoNCE loss to maximize the similarity between each Has and its corresponding positive target Hat , which is derived from the same ECG signal via data augmentation, while minimizing the similarity with nega-tive samples from other ECG signals within the current batch. The batch-level loss is defined as: 
+
+Lcon = 1
+
+|B| 
+
+X 
+
+> Has∈B
+
+− log exp(sim( Has , Hat )/τ )
+
+PH′∈B exp(sim( Has , H′)/τ ) , (14) where B denotes the set of all sample representations in the current batch, including both positive and negative samples and τ is the temperature coe ffi cient controlling the sharpness of the similarity distribution. 16 Time  
+
+> Lead
+> Time
+> Lead
+> Pretrain
+> 1D Conv
+> Time Embedding
+> Lead Embedding
+> +
+> +
+> Transformer Layer 1
+> Transformer Layer 2
+> Transformer Layer n
+> Encoder
+> Layer Norm
+> Linear
+> Downstream
+> Logits Feature Classifier Head
+> Input ECG
+> Input ECG
+> All Patches
+> STDM
+> Teacher
+> Projector
+> Time Decoder
+> Latent Decoder
+> FDA
+> Projector
+> Teacher
+> Encoder
+> 1D Conv
+> Time Embedding
+> Lead Embedding
+> +
+> +
+> Transformer Layer 1
+> Transformer Layer 2
+> Transformer Layer n
+> Encoder
+
+𝐿 𝑐𝑜𝑛 
+
+𝐿 𝑟𝑒𝑐 
+
+> Load Weights
+
+Figure 5: Schematic illustration of the downstream fine-tuning phase. 
+
+In summary, our total loss is given by: 
+
+L = α · Lrec + β · Lcon , (15) where α and β are hyperparameters. In the downstream phase, we employ the pre-trained Encoder coupled with a ran-domly initialized linear layer to address the classification task. As illustrated in Fig. 5, we initialize the Encoder using the pre-trained checkpoint. All ECG patches are fed into the Encoder to extract feature representations, which are subsequently passed through the linear classification head to produce the output logits. During this process, the model undergoes full fine-tuning, where the parameters of both the Encoder and the newly added linear layer are updated. 
+
+4. Experiment 
+
+4.1. Datasets and Preprocessing 
+
+To evaluate the e ff ectiveness of our model, we pretrain it on the largest publicly available ECG dataset MIMIC-IV-ECG [28], which contains approximately 800,000 17 12-lead diagnostic ECG recordings from nearly 160,000 patients. For downstream tasks, we finetune and evaluate the model on three publicly available datasets: 
+
+• PTB-XL [29]: Consists of 21,837 12-lead ECG records from 18,885 patients. Each record has a 10-second duration and was originally sampled at 500 Hz. It is categorized into 5 diagnostic classes. 
+
+• ICBEB2018 [30]: Contains over 6,000 12-lead ECG records with durations ranging from 6 to 60 seconds, sampled at 500 Hz. It is categorized into 9 di-agnostic classes. 
+
+• Ningbo [31]: Sourced from the PhysioNet /Computing in Cardiology Challenge 2021 [32]. It comprises 34,905 ECG recordings, each with a 10-second dura-tion sampled at 500 Hz. This dataset presents a multi-label classification task including 25 categories. To standardize the input format across these heterogeneous datasets, we adopt a unified preprocessing pipeline as follows: Fixed length. We first extract ECG signals from the above datasets. Signals shorter than 10 seconds are excluded. For recordings longer than 10 seconds, we segment the signals using a sliding-window cropping strategy with a fixed window length of 10 seconds, iteratively extracting contiguous segments until the remaining signal length is shorter than 10 seconds. This results in standardized ECG clips of fixed duration. Denoising. We apply a cascaded high-pass and low-pass Butterworth filtering scheme to remove noise components outside the 0.65-40 Hz frequency band, e ff ec-tively suppressing baseline wander and high-frequency artifacts while preserving diag-nostically relevant ECG information. Alignment. To ensure fair comparison with baseline methods, all ECG signals are resampled to 250 Hz, yielding 2,500 timesteps per recording. Following the experi-mental settings of ST-MEM [23], we randomly crop 2,250 timesteps as model input. Lead ordering is standardized according to the conventional sequence: I, II, III, aVR, aVL, aVF, V1-V6. In addition, Z-score normalization is applied along the temporal dimension to compensate for amplitude variations across di ff erent recording devices. 18 Labeling and splits. The diagnostic labels are harmonized to support downstream multi-class and multi-label tasks. We adopt a consistent 80%, 10%, and 10% split for training, validation, and testing sets, respectively. To avoid information leakage, all ECG recordings from the same patient appear in only one of these sets. 
+
+4.2. Implementation Details and Evaluation Metrics 
+
+In our method, the ECG patch size is set to 75, resulting in 30 patches for each input ECG segment with 2,250 timesteps. The Encoder employs 10 transformer layers with a latent dimension of 256 and 4 attention heads. The Latent Decoder employs 8 transformer layers with a latent dimension of 256 and 4 attention heads. The Time Decoder employs 10 transformer layers with a latent dimension of 256 and 4 attention heads. In STDM, masking probabilities are set as Ptime = 0.5 and Plead = 0.2. In the Lead Drop setting, the number of retained leads k is set to 4. In contrastive loss, the temperature coe ffi cient τ in Eq. (14) is set to 0.2. The loss weights for contrastive learning and reconstructive learning are set to 1 and 1, respectively. During pre-training stage, we train for 80 epochs with a batch size of 256. The AdamW optimizer is used with the weight decay of 0.01 and the learning rate of 1.5 × 10 −4. A cosine annealing scheduler with 5 warm-up epochs is adopted. Dur-ing fine-tuning, we train for 80 epochs with a learning rate of 8 × 10 −5 and no warmup; other hyperparameters remain the same as in pre-training. We follow the implemen-tation of most baseline methods in ST-MEM. For the experimental metrics of other baseline methods already reported in ST-MEM, we directly adopt the recorded results. For ST-MEM, BMIRC, and a few methods whose metrics have not been reported, we perform pretraining on the same datasets and conduct careful hyperparameter tuning and evaluation on the same downstream datasets. All experiments are conducted on four NVIDIA RTX 3090 GPUs. To evaluate model performance, we report Accuracy (ACC), F1-score (F1), and the Area Under the Receiver Operating Characteristic curve (AUROC) across di ff er-ent ECG datasets. For single-label datasets such as PTB-XL and ICBEB2018, each sample has only one label, and Accuracy is computed at the sample level, measuring the proportion of samples whose predicted class matches the ground truth. F1-score 19 and AUROC are computed per class and then averaged (macro) to equally weight each class, accounting for class imbalance. For multi-label datasets such as Ningbo, each sample may have multiple labels, and Accuracy is computed at the label level (mi-cro accuracy), treating each label independently. F1-score and AUROC are similarly computed per class and macro-averaged to ensure that each label contributes equally, accommodating both the multi-label nature and class imbalance of the dataset. For metrics requiring binary decisions (i.e., Accuracy and F1-score), predicted probabili-ties are converted into binary labels using a fixed threshold of 0.5. 
+
+4.3. Comparison with Other Methods 
+
+We compare our CoRe-ECG with a comprehensive range of baselines, including purely supervised learning (Random Init), which directly trains our backbone on down-stream datasets, and various SSL paradigms based on contrastive or reconstructive objectives. For contrastive learning, we evaluate MoCo v3 [15], which focuses on instance-level consistency after data augmentation, and CMSC [16], which maximizes the similarity between di ff erent temporal segments of the same ECG recording to cap-ture temporal invariance. In the realm of reconstructive learning, we consider MTAE and MLAE [21], which reconstruct masked temporal and spatial patches respectively. Furthermore, we include ST-MEM [23], a spatio-temporal masked modeling frame-work that explicitly captures multi-dimensional dependencies via lead-specific embed-dings, and the recent BMIRC [24] method, which introduces a frequency-spectrum modality and internal representation connections to alleviate the decoder’s reconstruc-tion burden, thereby encouraging the encoder to prioritize the acquisition of high-level discriminative features. In this section, we evaluate the proposed CoRe-ECG against the above baselines. All reported results (with the exception of the purely supervised Random Init baseline) are obtained following the representative pretrain and finetune paradigm. Specifically, the models are first pre-trained on the large-scale MIMIC-IV-ECG dataset [28] to learn general electrocardiogram representations. Subsequently, the pre-trained weights are transferred to three diverse downstream datasets: PTB-XL, ICBEB2018, and Ningbo. Rigorous data partitioning was executed to ensure that no subjects overlap between the 20 Table 1: Performance comparison among our model and baseline methods on three ECG datasets. The best results are highlighted in bold and the second-best results are underlined.                                                                                   
+
+> Methods PTB-XL ICBEB2018 Ningbo
+> ACC ↑F1 ↑AUROC ↑ACC ↑F1 ↑AUROC ↑ACC ↑F1 ↑AUROC ↑
+> Supervised 71.4 60.2 89.6 75.3 73.7 93.7 83.2 37.6 83.9 MoCo V3 [15] 79.9 64.4 91.3 85.2 83.8 96.7 95.1 41.7 89.1 CMSC [16] 72.4 51.0 87.7 73.6 71.7 93.8 90.3 35.6 83.2 MTAE [21] 78.9 61.3 91.0 79.3 76.9 96.1 94.4 41.1 87.7 MLAE [21] 80.2 62.5 91.5 83.4 81.6 97.3 95.7 41.3 89.6 ST-MEM [23] 80.9 63.4 92.9 87.2 82.0 97.7 97.2 42.5 90.8 BMIRC [24] 75.2 62.1 88.3 79.6 66.2 92.4 70.4 41.7 90.2
+> CoRe-ECG 81.4 69.5 94.2 86.9 84.0 97.9 97.7 43.4 92.2
+
+pre-training and downstream phases, thereby eliminating any risk of data leakage. Table 1 summarizes the quantitative performance. It is evident that our proposed CoRe-ECG consistently outperforms the competitive baselines across the majority of metrics. Notably, on the PTB-XL dataset, our model achieves a 6.1% improvement in F1-score compared to the reconstructive ST-MEM and a 5.1% improvement compared to the contrastive MoCo V3. This performance gain can be attributed to our hybrid strategy, which synergistically combines reconstructive and contrastive objectives to capture both local morphological details and global semantic invariance. While reconstructive methods like ST-MEM achieve high accuracy on ICBEB2018 (87.2%), our model demonstrates superior discriminatory power, as reflected by a higher AUROC (97.9%) and F1-score (84.0%). The substantial performance leap over the Supervised baseline (e.g., +4.6% AUROC on PTB-XL) underscores the necessity of self-supervised pre-training for mitigating the labeling scarcity in specialized ECG diagnostic tasks. 21 Table 2: Performance comparison under di ff erent numbers of leads across three ECG datasets. The best results for each lead configuration are highlighted in bold.                                                                  
+
+> Leads Models PTB-XL ICBEB2018 Ningbo
+> ACC F1 AUROC ACC F1 AUROC ACC F1 AUROC 12 ST-MEM 80.9 63.4 92.9 87.2 82.0 97.7 97.2 42.5 90.8 CoRe-ECG 81.4 69.5 94.2 86.9 84.0 97.9 97.7 43.4 92.2
+> 6ST-MEM 76.8 57.7 90.2 80.3 77.7 95.2 95.1 36.7 89.4 CoRe-ECG 77.1 60.7 90.3 81.0 78.8 96.3 96.7 38.1 90.9
+> 1ST-MEM 67.4 42.1 81.5 71.1 68.8 93.7 93.3 23.1 86.5 CoRe-ECG 69.5 47.9 82.4 72.0 69.3 93.9 94.6 25.8 88.7
+
+4.4. E ff ect of Lead Reduction 
+
+Table 2 summarizes the model performance under various lead configurations, in-cluding standard 12-lead, 6-lead (limb leads), and single-lead (Lead I) settings. Our proposed model consistently maintains robust performance across all scenarios, out-performing the ST-MEM baseline [23] in nearly every metric. Specifically, while reducing the leads from 12 to 6 typically results in performance degradation for most models, our method limits the drop in AUROC to only 3.9% on PTB-XL and 1.6% on ICBEB2018, significantly smaller than the declines observed in the baselines. Even in the extreme single-lead setting, our model retains substantial discriminative capability, achieving AUROCs of 82.4% and 88.7% on the PTB-XL and Ningbo datasets, respectively. These results demonstrate that the integration of lead-indicator embeddings combined with our sophisticated masking strategy enables the model to e ff ectively capture inter-lead correlations. Consequently, the encoder can infer missing spatial information from visible leads, ensuring high diagnostic reliability even in lead-deficient clinical or wearable scenarios. 
+
+4.5. E ff ect of Reduced Fine-Tuning Data 
+
+To evaluate the generalization capability and data e ffi ciency of our model, we simu-late data-scarce scenarios by fine-tuning on reduced subsets of the downstream training 22 Table 3: Performance comparison under di ff erent training data ratios (100%, 50%, and 5%) on three ECG datasets. The best results for each data ratio are highlighted in bold.                                                                  
+
+> Data Ratio Models PTB-XL ICBEB2018 Ningbo
+> ACC F1 AUROC ACC F1 AUROC ACC F1 AUROC 100% ST-MEM 80.9 63.4 92.9 87.2 82.0 97.7 97.2 42.5 90.8 CoRe-ECG 81.4 69.5 94.2 86.9 84.0 97.9 97.7 43.4 92.2
+> 50% ST-MEM 79.4 61.2 92.7 84.7 81.6 97.3 95.3 36.9 86.7 CoRe-ECG 80.5 64.7 93.3 86.2 83.3 97.6 96.5 37.1 88.3
+> 5% ST-MEM 74.5 53.4 86.4 81.7 80.9 95.4 93.0 27.1 82.0 CoRe-ECG 76.0 57.1 88.1 83.9 82.3 97.1 93.7 28.9 82.7
+
+data. Specifically, we randomly sample 50% and 5% of the original training sets to as-sess model robustness in low data regimes, while maintaining consistent validation and test splits as described in Section 4.1. The experimental results in Table 3 demonstrate that our model consistently out-performs the state-of-the-art ST-MEM [23] across all data scales. Notably, in extreme low-data conditions (5% subset), our model maintains a competitive AUROC of 88.1% on PTB-XL and 97.1% on ICBEB2018, significantly exceeding the performance of the baseline. Furthermore, we observe that using only 50% of the training data with our method yields results comparable to, or even exceeding, those achieved by ST-MEM using the full 100% dataset on PTB-XL (93.3% vs. 92.9% AUROC). This supe-rior performance in data constrained settings suggests that our synergistic pre-training stage e ff ectively extracts highly transferable and information-rich ECG representations, thereby reducing the dependency on large scale labeled datasets for downstream task adaptation. 
+
+4.6. Ablation Studies 4.6.1. Contrastive vs. Reconstructive vs. CoRe Learning 
+
+To validate the advantage of joint pre-training compared to utilizing either con-trastive learning or reconstructive learning in isolation, we conduct an ablation study 23 Table 4: Ablation study of di ff erent pre-training paradigms across three datasets. CoRe Learning (Ours) combines contrastive and reconstructive objectives. The best results for each dataset are highlighted in bold. 
+
+Method PTB-XL ICBEB2018 Ningbo 
+
+ACC F1 AUROC ACC F1 AUROC ACC F1 AUROC Contrastive Learning 80.6 68.7 93.6 83.4 82.5 97.0 96.3 41.1 91.3 Reconstructive Learning 81.2 69.1 94.0 84.4 83.0 97.3 96.5 42.4 91.7 
+
+CoRe Learning 81.4 69.5 94.2 86.9 84.0 97.9 97.7 43.4 92.2 
+
+by training models with only a single objective enabled. Our findings, summarized in Table 4, demonstrate that contrastive and reconstructive learning are mutually benefi-cial processes. Specifically, while the Contrastive Learning variant achieves competitive AUROC scores (e.g., 93.6% on PTB-XL), the Reconstructive Learning approach generally ex-hibits superior performance in capturing local morphological details, resulting in higher F1-scores across all three datasets. However, our proposed CoRe Learning framework achieves the highest performance across all metrics, reaching an AUROC of 94.2% on PTB-XL, 97.9% on ICBEB2018, and 92.2% on Ningbo. This indicates that the synergy between the two objectives allows the model to simultaneously learn global semantic invariance and precise spatio-temporal signal reconstruction. Furthermore, we observe that inappropriate data augmentation strategies can neg-atively impact the reconstruction task by introducing physiologically misleading arti-facts during training. By balancing these objectives, our model alleviates the limita-tions of single-paradigm approaches, extracting more comprehensive and discrimina-tive ECG representations. 
+
+4.6.2. E ff ect of Data Augmentation and Masking Strategy 
+
+To evaluate the individual contributions of our proposed Frequency Dynamic Aug-mentation (FDA) and Spatio-Temporal Dual Masking (STDM) strategy, we conducted an ablation study under four distinct conditions. The results, summarized in Table 24 Table 5: Ablation study of the proposed STDM and FDA. The checkmark ( ✓) indicates the component is included, and ( ×) indicates it is not.                                                    
+
+> STDM FDA PTB-XL ICBEB2018 Ningbo
+> ACC F1 AUROC ACC F1 AUROC ACC F1 AUROC
+> ××80.0 66.1 92.3 83.7 81.4 96.4 94.1 41.3 89.7
+> ×✓80.1 66.4 92.6 84.1 82.3 96.7 94.8 41.7 90.0
+> ✓×80.6 67.8 93.7 84.9 82.8 97.1 96.1 42.3 90.7
+> ✓✓81.4 69.5 94.2 86.9 84.0 97.9 97.7 43.4 92.2
+
+5, demonstrate that both components significantly enhance the model’s capability to capture essential ECG features. Specifically, the introduction of frequency domain augmentation FDA alone yields consistent performance gains across all datasets (e.g., AUROC on PTB-XL increases from 92.3% to 92.6%), highlighting its ability to generate physiologically meaningful variations without introducing misleading artifacts. The STDM strategy provides an even more substantial improvement, raising the AUROC on the Ningbo dataset from 89.7% to 90.7%. This suggests that increasing the complexity of the reconstruction task e ff ectively compels the encoder to model intricate inter-lead spatial correlations. Ultimately, the synergy between both components achieves the optimal performance, reaching peak AUROC scores of 94.2%, 97.9%, and 92.2% on PTB-XL, ICBEB2018, and Ningbo, respectively. 
+
+4.6.3. Analysis of Mask Rates in STDM 
+
+The synergy between temporal and spatial masking in our STDM strategy is gov-erned by the Time Full Mask Rate ( Ptime ) and the Lead Drop Rate ( Plead ). As illustrated in Fig. 6, the model performance across both PTB-XL and ICBEB2018 datasets ex-hibits a consistent parabolic trend relative to masking density. Specifically, CoRe-ECG achieves its peak diagnostic accuracy when Ptime is maintained at 0.5 and Plead at 0.2. We observe that an aggressive increase in Ptime to 0.8 precipitates a substantial perfor-25 93.87  94.12  93.49       
+
+> 93.92 94.15 93.60
+> 94.10 94.21 93.73 20%
+> 50%
+> 80%
+> 20% 50% 80%
+
+AUROC 
+
+Time Full Mask Rate         
+
+> Lead Drop Rate  97.31 97.67 97.15
+> 97.49 97.79 97.26
+> 97.73 97.93 97.35 20%
+> 50%
+> 80%
+> 20% 50% 80%
+
+AUROC 
+
+Time Full Mask Rate 
+
+> Lead Drop Rate
+
+(a)  PTB -XL  (b)  ICBEB201 8        
+
+> 83.31 83.61 82.87
+> 83.49 83.77 83.03
+> 83.69 83.97 83.17 20%
+> 50%
+> 80%
+> 20% 50% 80%
+
+F1 
+
+Time Full Mask Rate         
+
+> Lead Drop Rate 69.01 69.31 68.87
+> 69.15 69.38 69.03
+> 69.32 69.53 69.17 20%
+> 50%
+> 80%
+> 20% 50% 80%
+
+F1 
+
+Time Full Mask Rate 
+
+> Lead Drop Rate
+
+Low 
+
+High Figure 6: Sensitivity analysis of the Time Full Mask Rate ( Ptime ) and Lead Drop Rate ( Plead ) in STDM strategy. 
+
+mance decline, which underscores that obliterating entire temporal segments across all 12 leads renders the reconstruction task prohibitively di ffi cult, thereby depriving the encoder of the essential rhythmic continuity required to extract stable physiological features. Furthermore, under a constant Ptime , a higher Plead consistently correlates with di-minished F1-scores and AUROC values. This phenomenon suggests that while remov-ing spatial redundancies is necessary to prevent trivial solutions, an excessive drop rate starves the model of the inter-lead correlations defined by cardiac electrophysiology, ultimately hindering the formation of a robust latent representation. These empirical findings confirm that the optimal masking configuration is not merely about increasing task di ffi culty, but rather finding a critical threshold that forces the model to capture deep spatio-temporal dependencies without destabilizing the reconstructive learning process. 26 (a) 
+
+(b) Figure 7: Visual comparison of reconstruction fidelity between ST-MEM (a) and our method (b). Red lines represent the reconstructed signals, while blue lines denote the original signals. STTC  MI  CD  HYP  NORM    
+
+> (a) PTB -XL
+> ST -MEM
+> NORM AF
+> STD PVC PAC
+> RBBB LBBB I-AVB
+> STE
+> (b) ICBEB201 8
+> CoRe -ECG CoRe -ECG ST -MEM
+
+Figure 8: T-SNE visualization of the learned representations fine-tuned on two datasets. ICBEB2018 with 9 diagnostic categories. PTB-XL with 5 diagnostic categories. 
+
+4.7. Visualization analysis 
+
+To provide a more intuitive comparison between the baseline and the proposed method, we conduct a qualitative analysis focusing on signal reconstruction fidelity and feature space distribution. As depicted in Fig. 7, which displays the reconstruction results for a representative ECG segment, our method significantly outperforms the baseline in recovering fine-grained morphological details. While the baseline tends to lose the precise shapes of the P-wave and T-wave components, our approach achieves high fidelity, suggesting that the STDM strategy successfully forces the model to capture subtle spatio-temporal 27 dynamics essential for cardiac diagnosis. Furthermore, we utilize T-SNE to project the high dimensional features from the ICBEB2018 dataset into a two dimensional space. As shown in Figs. 8, our method generates a more structured and separable feature distribution compared to the base-line. The distinct boundaries between di ff erent categories and the increased intra class compactness indicate that our model learns more discriminative representations, which facilitates downstream classification tasks. 
+
+5. Conclusion 
+
+In this paper, we propose CoRe-ECG, a unified self-supervised pretraining frame-work that synergizes contrastive and reconstructive learning paradigms. Unlike ex-isting methods that rely on a single learning objective, CoRe-ECG enables instance-level discriminative signals from contrastive learning to guide local waveform recon-struction, fostering cooperative learning of global semantic invariance and fine-grained spatio-temporal structural features of ECG signals. To further enhance the physiologi-cal rationality, we design Frequency Dynamic Augmentation (FDA) to perform adap-tive frequency domain perturbations that preserve diagnostically critical ECG charac-teristics, and Spatio-Temporal Dual Masking (STDM) to break trivial linear dependen-cies across leads, eliminating shortcut learning in multi-lead ECG reconstruction. Ex-tensive experiments on three public downstream ECG datasets demonstrate that CoRe-ECG achieves state-of-the-art performance. Ablation studies further validate the com-plementarity of contrastive and reconstructive learning, as well as the indispensable role of FDA and STDM in boosting model performance. Additionally, CoRe-ECG ex-hibits strong robustness in lead reduction and low data fine-tuning scenarios, verifying the high transferability of the learned ECG representations and its potential for clinical applications with limited labeled data or incomplete lead collection. 28 References 
+
+[1] Y. Ansari, O. Mourad, K. Qaraqe, E. Serpedin, Deep learning for ECG arrhyth-mia detection and classification: An overview of progress for period 2017–2023, Frontiers in Physiology 14 (2023) 1246746. [2] M. Hammad, R. N. V. P. S. Kandala, A. Abdelatey, M. Abdar, M. Zomorodi-Moghadam, R. San Tan, U. R. Acharya, J. Pławiak, R. Tadeusiewicz, V. Makarenkov, et al., Automated detection of shockable ECG signals: A review, Information Sciences 571 (2021) 580–604. [3] K. Nezamabadi, N. Sardaripour, B. Haghi, M. Forouzanfar, Unsupervised ECG analysis: A review, IEEE Reviews in Biomedical Engineering 16 (2022) 208– 224. [4] N. Alamatsaz, L. Tabatabaei, M. Yazdchi, H. Payan, N. Alamatsaz, F. Nasimi, A lightweight hybrid CNN–LSTM explainable model for ECG-based arrhythmia detection, Biomedical Signal Processing and Control 90 (2024) 105884. [5] M. S. Islam, K. F. Hasan, S. Sultana, S. Uddin, J. M. W. Quinn, M. A. Moni, et al., HARDC: A novel ECG-based heartbeat classification method using hierarchical attention-based dual structured RNN with dilated CNN, Neural Networks 162 (2023) 271–287. [6] C. Ji, L. Wang, J. Qin, L. Liu, Y. Han, Z. Wang, MSGformer: A multi-scale grid transformer network for 12-lead ECG arrhythmia detection, Biomedical Signal Processing and Control 87 (2024) 105499. [7] C. L. Liu, B. Xiao, C. H. Hsieh, Multimodal fusion of spatial–temporal and fre-quency representations for enhanced ECG classification, Information Fusion 118 (2025) 102999. [8] J. Devlin, M.-W. Chang, K. Lee, K. Toutanova, Bert: Pre-training of deep bidi-rectional transformers for language understanding, in: Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, 2019, pp. 4171–4186. 29 [9] T. Chen, S. Kornblith, M. Norouzi, G. Hinton, A simple framework for con-trastive learning of visual representations, in: International Conference on Ma-chine Learning, 2020, pp. 1597–1607. [10] K. He, X. Chen, S. Xie, Y. Li, P. Dollár, R. Girshick, Masked autoencoders are scalable vision learners, in: Proceedings of the IEEE /CVF Conference on Com-puter Vision and Pattern Recognition, 2022, pp. 16000–16009. [11] A. Radford, J. W. Kim, C. Hallacy, A. Ramesh, G. Goh, S. Agarwal, G. Sastry, A. Askell, P. Mishkin, J. Clark, et al., Learning transferable visual models from natural language supervision, in: International Conference on Machine Learning, 2021, pp. 8748–8763. [12] M. A. Al-Masud, J. M. L. Alcaraz, N. Strodtho ff , Benchmarking ECG foundational models: A reality check across clinical tasks, arXiv preprint arXiv:2509.25095 (2025). [13] S. Zhang, Y. Du, W. Wang, X. He, F. Cui, L. Zhao, B. Wang, Z. Hu, Z. Wang, Q. Xia, et al., ECGFM: A foundation model for ECG analysis trained on a multi-center million-ECG dataset, Information Fusion 124 (2025) 103363. [14] Y. Wang, Y. Han, H. Wang, X. Zhang, Contrast everything: A hierarchical con-trastive framework for medical time-series, Advances in Neural Information Pro-cessing Systems 36 (2023) 55694–55717. [15] K. He, H. Fan, Y. Wu, S. Xie, R. Girshick, Momentum contrast for unsupervised visual representation learning, in: Proceedings of the IEEE /CVF Conference on Computer Vision and Pattern Recognition, 2020, pp. 9729–9738. [16] D. Kiyasseh, T. Zhu, D. A. Clifton, Clocs: Contrastive learning of cardiac sig-nals across space, time, and patients, in: International Conference on Machine Learning, 2021, pp. 5606–5615. [17] W. Liu, S. Pan, Z. Li, S. Chang, Q. Huang, N. Jiang, Lead-fusion Barlow twins: A fused self-supervised learning method for multi-lead electrocardiograms, In-formation Fusion 114 (2025) 102698. 30 [18] W. Zhang, S. Geng, S. Hong, A simple self-supervised ECG representation learn-ing method via manipulated temporal–spatial reverse detection, Biomedical Sig-nal Processing and Control 79 (2023) 104194. [19] W. Liu, H. Zhang, S. Chang, H. Wang, J. He, Q. Huang, Learning representa-tions for multilead electrocardiograms from morphology–rhythm contrast, IEEE Transactions on Instrumentation and Measurement 73 (2024) 1–15. [20] J. Oh, H. Chung, J. M. Kwon, D. G. Hong, E. Choi, Lead-agnostic self-supervised learning for local and global representations of electrocardiogram, in: Conference on Health, Inference, and Learning, PMLR, 2022, pp. 338–353. [21] H. Zhang, W. Liu, J. Shi, S. Chang, H. Wang, J. He, Q. Huang, Maefe: Masked autoencoders family of electrocardiogram for self-supervised pretraining and transfer learning, IEEE Transactions on Instrumentation and Measurement 72 (2022) 1–15. [22] R. Hu, J. Chen, L. Zhou, Spatiotemporal self-supervised representation learn-ing from multi-lead ECG signals, Biomedical Signal Processing and Control 84 (2023) 104772. [23] Y. Na, M. Park, Y. Tae, S. Joo, Guiding masked representation learning to capture spatio-temporal relationship of electrocardiogram, in: International Conference on Learning Representations, 2024. [24] Y. Wei, C. Lian, B. Xu, P. Zhao, H. Yang, Z. Zeng, Bimodal masked autoencoders with internal representation connections for electrocardiogram classification, Pat-tern Recognition 161 (2025) 111311. [25] J. Jin, H. Wang, H. Li, J. Li, J. Pan, S. Hong, Reading your heart: Learning ECG words and sentences via pre-training ECG language model, in: International Conference on Learning Representations, 2025. [26] H. Qiu, J. Huang, P. Gao, L. Lu, X. Zhang, S. Lu, Masked AutoDecoder is e ff ec-tive multi-task vision generalist, in: Proceedings of the IEEE /CVF Conference on Computer Vision and Pattern Recognition, 2024, pp. 14152–14161. 31 [27] V. Hondru, F. A. Croitoru, S. Minaee, R. T. Ionescu, N. Sebe, Masked image modeling: A survey, International Journal of Computer Vision 133 (2025) 7154– 7200. [28] B. Gow, T. Pollard, L. A. Nathanson, A. Johnson, B. Moody, C. Fernandes, N. Greenbaum, J. W. Waks, P. Eslami, T. Carbonati, A. Chaudhari, E. Herbst, D. Moukheiber, S. Berkowitz, R. Mark, S. Horng, MIMIC-IV-ECG: Diagnostic electrocardiogram matched subset (version 1.0), PhysioNet, 2023. [29] P. Wagner, N. Strodtho ff , R. D. Bousseljot, D. Kreiseler, F. I. Lunze, W. Samek, T. Schae ff ter, PTB-XL, a large publicly available electrocardiography dataset, Scientific Data 7 (1) (2020) 1–15. [30] F. Liu, C. Liu, L. Zhao, X. Zhang, X. Wu, X. Xu, Y. Liu, C. Ma, S. Wei, Z. He, J. Li, E. N. Y. K. Ng, An open access database for evaluating the algorithms of electrocardiogram rhythm and morphology abnormality detection, Journal of Medical Imaging and Health Informatics 8 (7) (2018) 1368–1373. [31] J. Zheng, H. Chu, D. Struppa, J. Zhang, S. M. Yacoub, H. El-Askary, A. Chang, L. Ehwerhemuepha, I. Abudayyeh, A. Barrett, et al., Optimal multi-stage arrhyth-mia classification approach, Scientific Reports 10 (1) (2020) 2898. [32] M. A. Reyna, N. Sadr, E. A. P. Alday, A. Gu, A. J. Shah, C. Robichaux, G. D. Cli ff ord, Will two do? Varying dimensions in electrocardiography: the PhysioNet /Computing in Cardiology Challenge 2021, in: 2021 Computing in Cardiology (CinC), Vol. 48, IEEE, 2021, pp. 1–4. [33] J.-B. Grill, F. Strub, F. Altché, C. Tallec, P. Richemond, E. Buchatskaya, C. Do-ersch, B. A. Pires, Z. Guo, M. G. Azar, et al., Bootstrap your own latent: A new approach to self-supervised learning, in: Advances in Neural Information Processing Systems, 2020, pp. 21271–21284. [34] A. Ghafari, N. Pourjafari, and A. Gha ff ari, Vector-based postprocessing method for improving ECG denoising techniques by re-establishing lead relationships, IEEE Transactions on Instrumentation and Measurement 73 (2023) 1–9. 32 [35] Y. Ge, H. Zhang, J. Shi, D. Luo, S. Chang, J. He, et al., JAMC: A jigsaw-based au-toencoder with masked contrastive learning for cardiovascular disease diagnosis, Knowledge-Based Systems 311 (2025) 113090. [36] W. Chen, H. Wang, L. Zhang, M. Zhang, Temporal and spatial self-supervised learning methods for electrocardiograms, Scientific Reports 15 (1) (2025) 6029. [37] T. Qiu, Y. Xie, H. Niu, Y. Xiong, X. Gao, Enhancing masked time-series model-ing via dropping patches, in: Proceedings of the AAAI Conference on Artificial Intelligence, Vol. 39, No. 19, 2025, pp. 20077–20085. 33

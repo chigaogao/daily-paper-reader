@@ -1,0 +1,1300 @@
+Title: NeuroFlow: Toward Unified Visual Encoding and Decoding from Neural Activity
+
+URL Source: https://arxiv.org/pdf/2604.09817v1
+
+Published Time: Tue, 14 Apr 2026 00:15:23 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+## NeuroFlow: Toward Unified Visual Encoding and Decoding from Neural Activity 
+
+Weijian Mai 1,2 Mu Nan 2,3 Yu Zhu 1 Jiahang Cao 1,2 Rui Zhang 2 Yuqin Dai 4
+
+Chunfeng Song 1† Andrew F. Luo 2† Jiamin Wu 1,5†
+
+1Shanghai Artificial Intelligence Laboratory 2University of Hong Kong 
+
+3Shenzhen Loop Area Institute 4Tsinghua University 5Chinese University of Hong Kong 
+
+Project Page: https://michaelmaiii.github.io/NeuroFlow-S NeuroFlow 
+
+Neural 
+
+Activity 
+
+Visual 
+
+Stimulus 
+
+Encoding Decoding 
+
+Unified Model 
+
+Encoding Decoding Encoding & Decoding 
+
+Semantic 
+
+Consistency          
+
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+
+Figure 1. Unified Visual Encoding and Decoding via NeuroFlow . For the first time, NeuroFlow unifies visual encoding and decoding from neural activity with strong semantic consistency through a single flow model. NeuroFlow preserves the functional selectivity of cortical responses, with synthetic fMRI activations that suppress early visual activity and emphasize higher-order functional regions. 
+
+Abstract 
+
+Visual encoding and decoding models act as fundamental tools for understanding the neural mechanisms underlying human visual perception. Typically, visual encoding models that predict brain activity from stimuli and decoding mod-els that reproduce stimuli from brain activity are treated as distinct tasks, requiring separate models and training pro-cedures. This separation is inefficient and fails to model the consistency between encoding and decoding processes. To address this limitation, we propose NeuroFlow , the first unified framework that jointly models visual encoding and decoding from neural activity within a single flow model. NeuroFlow introduces two key components: (i) NeuroVAE 
+
+is designed as a variational backbone to model neural vari-ability and establish a compact, semantically structured la-tent space for bidirectional modeling across visual and neu-ral modalities. (ii) Cross-modal Flow Matching (XFM) 
+
+bypasses the typical paradigm of noise-to-data diffusion guided by a specific modality condition, instead learning a reversibly consistent flow model between visual and neural latent distributions. For the first time, visual encoding and decoding are reformulated as a time-dependent, reversible process within a shared latent space for unified modeling. Empirical results demonstrate that NeuroFlow achieves su-perior overall performance in visual encoding and decod-ing tasks with higher computational efficiency compared to any isolated methods. We further analyze principal fac-tors that steer the model toward encoding–decoding con-sistency and demonstrate through brain functional analyses that NeuroFlow captures consistent activation patterns un-derlying neural variability. NeuroFlow marks a major step toward unified visual encoding and decoding from neural activity, providing mechanistic insights that inform future bidirectional visual brain–computer interfaces. 
+
+1. Introduction 
+
+Understanding the neural mechanisms of visual encod-ing and decoding is fundamental to neuroscience [19, 23, 40, 59] and essential to advancing brain-computer inter-faces [13]. Visual encoding aims to transform external stimuli into neural activity, whereas visual decoding re-verses this transformation to recover perceptual content from neural responses. Functional magnetic resonance imaging (fMRI), a non-invasive neuroimaging technique, has emerged as a promising modality for visual encoding 1        
+
+> arXiv:2604.09817v1 [cs.LG] 10 Apr 2026 Linear
+> Linear XFM
+> 𝐸 !
+> 𝐷 !
+> 𝐸 "
+> 𝐷 "𝐷 !
+> 𝐸 !𝐸 "
+> 𝐷 "𝐷 !
+> 𝐸 !
+> (a) Pixel -Voxel (b) Latent -Latent
+> Independent LRs
+> (c) Latent -Latent
+> Unified XFM
+
+Figure 2. Visual encoding-decoding frameworks. 
+
+and decoding from the human brain, as it measures blood-oxygen-level-dependent signals with high spatial resolution that serve as indirect proxies for neural activity [41]. By translating visual inputs into fMRI-measured neural pat-terns, visual encoding models not only advance our under-standing of human visual perception, but also lay the bio-logical groundwork for research in visual decoding. Recent advances in this domain predominantly focus on either encoding or decoding in isolation: (i) Encoding models [3, 35, 39] predict neural responses given visual input, thereby characterizing stimulus-driven brain repre-sentations; (ii) Decoding models reproduce visual stimuli based on brain activity, providing a window into percep-tual content [38]. Several models attempt to connect both directions, but still struggle with learning two independent networks to bridge the visual and neural domains between pixel-voxel spaces [4, 16] or latent spaces [45]. These chal-lenges motivate a key research question: How can we unify visual encoding and decoding within a single model? Aunified model should satisfy two essential properties: (i) Shared latent space: encoding and decoding processes should be optimized in a common latent space that supports mutual interactions; (ii) Encoding-decoding consistency: 
+
+encoding and decoding serve as complementary processes that should ensure synthetic neural signals can be trans-formed back into coherent images in the reverse direction. To address these challenges, we propose NeuroFlow ,the first unified framework that jointly models visual en-coding and decoding from fMRI activity within a single flow model. NeuroFlow comprises two key components designed to satisfy essential properties of unified model-ing. (i) NeuroVAE , a variational backbone designed to achieve a compact and structured latent space for bidirec-tional modeling. NeuroVAE introduces probabilistic learn-ing to model neural variability and constrains the latent space with visual semantics for cross-modal alignment. This framework projects fMRI signals into a semantically organized latent space, from which neural signals can be re-produced with semantic coherence, rather than overfitting to voxel-level noise. Hence, NeuroVAE lays the foundation for encoding-decoding consistency by supporting visual-conditional fMRI synthesis that preserves semantic coher-DP  
+
+> Condition
+> DiT
+> Condition
+> XFM
+> Decoding Encoding
+> Neural Distribution
+> Visual Distribution
+> Gaussian Distribution
+> Unified Encoding -Decoding
+
+Figure 3. Cross-modal alignment pipelines. 
+
+ence. (ii) Cross-model Flow Matching (XFM) is designed to unify encoding and decoding processes by learning a seamless and consistent flow between empirical visual and neural latent distributions. Here, encoding and decoding are reformulated as a time-dependent, reversible process within 
+
+a shared latent space , where encoding-decoding consis-tency is rigorously enforced by flow matching principles, and reversing the temporal direction naturally transitions between the two processes. Through this architecture, NeuroFlow provides a unified modeling paradigm that ensures encoding-decoding consis-tency within a single model, as illustrated in Fig. 1. Specif-ically, its advantages are reflected in two aspects: (i) Supe-rior overall performance with strong encoding-decoding consistency : As a unified model, NeuroFlow achieves su-perior or comparable performance compared with decoding methods and surpasses all encoding methods significantly, demonstrating strong consistency between encoding and decoding. (ii) Superior parameter efficiency: NeuroFlow achieves strong parameter efficiency, using only 25% of the parameters of the decoding model MindEye2, while match-ing or even exceeding its performance across several met-rics. Our main contributions are as follows: • We propose NeuroFlow , the first unified framework that jointly models visual encoding and decoding with strong semantic consistency within a single architecture. Neu-roFlow achieves superior overall performance in encod-ing and decoding tasks with higher parameter efficiency. • NeuroFlow establishes a compact, probabilistic, and se-mantically organized latent space for bidirectional mod-eling across visual and neural modalities, from which neural signals can be synthesized with semantic coher-ence, rather than overfitting to voxel-level noise. • NeuroFlow bypasses the conditional noise-to-data formu-lation and establishes a reversibly consistent flow be-tween visual and neural latent distributions . For the first time, we reformulate encoding and decoding as a time-dependent process within a shared latent space, which is reversible by simply changing the temporal direction. • NeuroFlow identifies key factors essential for unified modeling and, through brain functional analysis, reveals that synthetic fMRI signals preserve interpretable corti-
+
+2cal patterns underlying biological neural variability. 
+
+2. Related Work 
+
+2.1. Visual Encoding and Decoding 
+
+Computational modeling of neural activity typically follows two complementary paradigms: encoding models that map from stimuli to neural responses, and decoding models that infer stimuli from neural data [1, 9, 17, 22, 24, 41, 42, 48, 53, 54]. Recent advances in machine learning have acceler-ated progress in both directions. 
+
+Visual Encoding. The prevailing recipe for encoding models couples a pretrained visual feature extractor with linear voxel-wise weights [11, 12, 16, 20, 27, 61]. Be-yond prediction, encoding models have facilitated investi-gations into the coding properties in higher-order visual ar-eas [25, 26, 28, 35, 50, 65, 66, 68]. More recently, sev-eral works reformulate encoding as a generative problem that synthesizes fMRI responses conditioned on visual in-put, leveraging transformer architectures [39] and diffusion transformers [3]. 
+
+Visual Decoding. Decoding models provide a window into perceptual content by reproducing visual stimuli from evoked neural activity measured with fMRI, elec-troencephalography (EEG), and magnetoencephalography (MEG) signals [5, 7, 8, 10, 14, 18, 21, 29, 32–34, 37, 43, 52, 55, 57, 60, 62, 63, 70]. Recent approaches typically map neural signals into pretrained vision-language embed-ding spaces (e.g., CLIP [46]) and decode them back into images using pretrained generative models [49, 64, 67, 69]. 
+
+Visual Encoding & Decoding. Prior research has pre-dominantly modeled visual encoding and decoding as in-dependent problems. Recent approaches have begun to link the two, yet they still depend on distinct networks and lack a shared latent space [4, 16, 45] as illustrated in Fig. 2. Specifically, early attempts focused on fine-grained mapping between pixel and voxel spaces , which often produced blurry reconstructions lacking semantic co-herence [4, 16]. To address this limitation, later studies sought to bridge the neural and visual latent spaces to en-rich semantic information, but still rely on two independent linear regressions for the encoding and decoding directions without shared representations [45]. As a result, none of these methods has achieved a unified framework capable of coherent encoding and decoding transformation within a shared latent space. 
+
+2.2. Cross-Modal Alignment 
+
+A central challenge in visual encoding or decoding lies in 
+
+cross-modal alignment that aims to establish a precise map-ping between neural and visual distributions. Early methods relied on simple linear regressions to approximate the unidi-rectional relationship, which limited their ability to capture complex semantic correspondences [37, 43, 57]. Recent approaches introduced nonlinear mappings using Diffusion Transformer (DiT) [44] or Diffusion Prior (DP) [47] un-der generative objectives [3, 52], operating by conditioning Gaussian noise on one modality (e.g., neural or visual latent distribution) and iteratively guiding it toward the target dis-tribution, as illustrated in Fig. 3. However, such conditional noise-to-data pipelines still treat encoding and decoding as separate processes. In contrast, our proposed XFM estab-lishes continuous and reversible flows directly between the neural and visual distributions, achieving a unified frame-work for encoding and decoding. 
+
+3. Methodology 
+
+Our goal is to develop a unified framework for visual en-coding and decoding within a single model that preserves semantic consistency between the two complementary pro-cesses. To this end, we propose NeuroFlow, which inte-grates a pretrained visual backbone, a neural backbone (i.e., NeuroVAE), and a cross-model flow matching (XFM) mod-ule to bridge the gap between visual and neural latent distri-butions. The overall framework is depicted in Fig. 4, and we will detail the principles and architectures in this section. 
+
+3.1. Visual Backbone: CLIP & UnCLIP 
+
+The visual backbone is built upon an encoder-decoder ar-chitecture that projects visual inputs into a latent space and decodes them back into the pixel space. We instanti-ate this architecture using CLIP [46] and UnCLIP[47, 52] models. The CLIP embedding space is trained via vision-language contrastive learning to form a high-dimensional, structured semantic space, which captures the semantic re-lationship between semantic concepts. Specifically, a pre-trained CLIP-Image encoder maps an input image ximg ∈
+
+Rh×w×3 to a visual latent representation zv = Ev (ximg ) ∈
+
+Rm×d, where m is the number of visual tokens and d is the feature dimension. A pretrained UnCLIP model serves as the generative counterpart to synthesize images from vi-sual latents ˆximg = Dv (zv ). This visual backbone is kept 
+
+frozen in this work, offering a semantically grounded in-terface for bridging visual and neural modalities. 
+
+3.2. Neural Backbone: NeuroVAE 
+
+NeuroVAE is a variational backbone designed to model the neural variability and to achieve a compact, structured latent space for bidirectional modeling between fMRI and stimuli. As illustrated in Fig. 4-A, NeuroVAE introduces probabilis-tic characteristics to model the one-to-many relationships between visual stimuli and fMRI responses [39] , and con-strains the latent space with visual semantics for structured distributions and semantically coherent reconstructions. Given an fMRI input xfMRI ∈ R1×n, the neural en-coder En estimates a posterior distribution q(zn ∈ Rm×d |
+
+xfMRI ) of latent representations that capture underlying 3𝐷 !
+
+# 𝐸 "
+
+# 𝐷 "
+
+# 𝐸 !   
+
+> 𝑁 0,𝐼
+> ℒ!"
+> ℒ#$% ℒ&"'(
+> ℒ&)&
+
+𝑧 !
+
+𝑧 " 𝑧 #
+
+𝑡0 𝑡1 
+
+Cross -Modal 
+
+Flow Matching 
+
+## 𝐸 !
+
+## 𝐸 "
+
+XFM 
+
+## 𝐷 "
+
+## 𝐷 !
+
+> Decoding
+> Encoding
+
+Visual 
+
+Distribution 
+
+Neural 
+
+Distribution 
+
+A B
+
+C
+
+> Reversible Flow
+
+ℒ$%&  
+
+> 𝑧 *𝑧 +
+
+f-MRI Figure 4. Architecture overview. Stage-1 (A): NeuroVAE introduces probabilistic learning to model neural variability and constrains the latent space with visual semantics for consistent image-to-fMRI synthesis. Stage-2 (B): XFM unifies encoding and decoding processes by learning a time-dependent, reversible flow between empirical visual and neural latent distributions. Stage-3 (C): Encoding and decoding are performed within a single model at inference, where reversing the temporal direction naturally transitions between the two processes. 
+
+neural dynamics, where m denotes the number of chan-nels and d is the feature dimension. A linear projection layer subsequently aggregates the channel-wise representa-tions into a compact latent vector zc ∈ R1×d, which will be passed to the decoder Dn for neural signal reconstruc-tion ˆxfMRI = Dn(zc). Here, zc serves to decouple the en-coding pathway from the decoding process , enabling task-specific abstraction for fMRI synthesis. Compared with SynBrain [39], an encoding-only method, we introduce a compact latent representation zc, a cycle-consistency loss 
+
+Lcyc , and several architectural modifications for bidirec-tional modeling (see Appendix C for details). 
+
+Training Objectives. To encourage a probabilistic and semantically structured latent space alongside faithful fMRI reconstruction, NeuroVAE is optimized with a composite objective comprising the following objective terms. 
+
+i) Reconstruction Loss measures the voxel-wise mean squared error between reconstructed fMRI signals ˆxfMRI 
+
+and original inputs xfMRI to enforce voxel-level fidelity: 
+
+Lmse = ∥ˆxfMRI − xfMRI ∥22. (1) 
+
+ii) KL Divergence Loss regularizes the learned posterior distribution q(zn | xfMRI ) to be close to a standard Gaus-sian distribution N (0 , I ). This term introduces noises and encourages smoothness in the latent space to model neu-ral variability and facilitate continuous flow matching be-tween neural and visual distributions, achieved by: 
+
+Lkl = KL (q(zn | xfMRI ) ∥ N (0 , I )) . (2) 
+
+iii) Contrastive Loss facilitates cross-modal alignment by learning shared representations across modalities. This alignment encourages the neural latent space to encode se-mantic information that is consistent with visual stimuli, achieved by minimizing SoftCLIP loss [15]: 
+
+Lclip = SoftCLIP (zn, z v ), zn = En(xfMRI ). (3) 
+
+iv) Cycle-consistency Loss ensures that reconstructed fMRI signals maintain semantic information instead of overfitting to the voxel-level fine-grained details, achieved by feeding synthetic signals into the neural encoder and computing SoftCLIP loss with visual representations: 
+
+Lcyc = SoftCLIP (ˆ zn, z v ), ˆzn = En(ˆ xfMRI ). (4) The final training loss is defined as a weighted sum of the above components: 
+
+LVAE = Lmse + αLkl + βLclip + λLcyc . (5) Here we set α = 0 .001 to softly regularize the latent dis-tribution rather than strictly enforcing a standard Gaussian prior , and set β = 1 , 000 , λ = 1 , 000 to encourage a seman-tically organized latent space as well as semantically co-herent fMRI reconstruction. Through this design, conflict-ing objectives could be transformed into complementary ones. Specifically, NeuroVAE achieves a balance between 
+
+Lclip and Lkl to prompt semantic structure while preserving stochastic sampling capability, and balances Lmse and Lcyc 
+
+to prompt semantic fidelity while preserving critical voxel-wise details. Together, NeuroVAE provides a probabilis-tic and structured latent space for subsequent cross-model alignment and semantic-level fMRI synthesis. 43.3. Cross-Modal Flow Matching (XFM) 
+
+Motivation. Visual encoding and decoding serve as com-plementary processes that model neural and visual distri-butions in the opposite direction. However, current mod-els are biased toward the conditional noise-to-data diffusion strategy that synthesizes the target modality from noise dis-tributions guided by another modality [3, 51, 52], deriving two issues: (i) Unidirectional modeling : this strategy only builds a stochastic correspondence between one empirical distribution and Gaussian noise; (ii) Training-inference dis-tribution gap : this strategy starts iterative denoising from a noisy empirical distribution during training, but infer-ences from pure Gaussian noise that is far from the training ones [39]. To tackle these issues, we propose Cross-model Flow Matching (XFM) to unify encoding and decoding pro-cesses by learning a reversibly consistent flow between em-pirical visual and neural latent distributions. 
+
+Framework. For the first time, visual encoding and de-coding are reformulated as a time-dependent, reversible process within a shared latent space , as illustrated in Fig. 4-B. This formulation derives reversibility from the uniqueness of ordinary differential equation (ODE) solu-tions: the learned vector field can be integrated forward for visual encoding zv → zn or backward for visual decoding 
+
+zn → zv. Given that, encoding-decoding consistency is rigorously enforced by principles of flow matching. XFM simulates the biological encoding process and regards the decoding process as a reversible transformation. This for-mulation adheres to the Bayesian relationship between en-coding and decoding [41], where neural distributions can be regarded as the likelihood of visual representations, shaped by the statistical regularities of visual stimuli, from which posterior visual distributions can be inferred. Formally, we define a time-dependent vector field 
+
+vθ (z, t ) that transports samples between neural and visual distributions: 
+
+dz (t)
+
+dt = vθ (zt, t ), z0 = zv, z 1 = zn. (6) The vector field is parameterized by a Scalable Interpolant Transform (SiT) [36] backbone with positional and tem-poral embeddings. Following the theory of flow match-ing [31], the intermediate state can be defined via cosine interpolation between distributions: 
+
+zt = αtz0 + σtz1, α t = cos 2  π 
+
+> 2
+
+t , σ t = sin 2  π 
+
+> 2
+
+t , (7) and the corresponding target vector field is: 
+
+v∗(zt, t ) = dα t 
+
+> dt
+
+· z0 + dσ t 
+
+> dt
+
+· z1. (8) The training objective minimizes the squared error between predicted and target fields under uniform time sampling :
+
+LXFM = Et∼U (0 ,1) 
+
+∥vθ (zt, t ) − v∗(zt, t )∥22
+
+ . (9) During inference, cross-modal translation is achieved by numerically solving the learned ODE with Euler updates parameterized by the learned vector field vθ (zt, t ). The up-date rule is given by: 
+
+zt+∆ t = zt + ∆ t v θ (zt, t ), (10) where the sign of ∆t determines the inference direction. A positive ∆t integrates forward in time ( t0 → t1), performing 
+
+visual encoding (zv → zn), while a negative ∆t integrates backward in time ( t1 → t0), performing visual decoding 
+
+(zn → zv). In this way, NeuroFlow achieves a unified for-mulation for visual encoding and decoding, with the two processes distinguished solely by the temporal sampling di-rection, as shown in Fig. 4-C. 
+
+4. Experiments 
+
+Dataset. We perform experiments on the Natural Scenes Dataset (NSD) [2], a large-scale fMRI dataset where eight participants viewed natural images from COCO [30] over approximately 40 hours of scanning. We restrict our anal-ysis to four subjects (Sub-1, Sub-2, Sub-5, Sub-7) who completed all experimental sessions, following the standard protocols in this field. For each subject, 9,000 unique im-ages are used for training, and evaluation is performed on a shared set of 1,000 test images, each presented in three tri-als to simulate neural variability. Additional dataset details are provided in the Appendix A. 
+
+Training Details. Our model is implemented on a sin-gle NVIDIA A100-40G GPU, with all training completed within 5 hours. Specifically, NeuroVAE is trained us-ing the AdamW optimizer over 50 training epochs, with hyperparameters set as follows: (β1, β 2) = (0 .9, 0.999) ,
+
+learning rate = 1 × 10 −4, weight decay = 0 .05 , and 
+
+batch size = 64 . The XFM is optimized under the same hyperparameter configuration and trained for 50,000 steps. 
+
+Evaluation Metrics. We measure visual encoding and decoding performance at the semantic level :
+
+i) Visual Decoding (fMRI →Image). Given fMRI sig-nals, we generate images and assess their semantic fidelity against the original visual stimuli using Inception Score (In-cep) [56], CLIP similarity (CLIP) [46], EfficientNet dis-tance (Eff) [58], and SwAV distance (SwAV) [6]. 
+
+ii) Visual Encoding (Image →fMRI →Image). Same as the decoding metrics above, but focuses on encoding-decoding consistency that assesses whether the neural rep-resentation of synthetic signals preserves critical semantic information for faithful image synthesis. 
+
+iii) Retrieval Metrics. We evaluate how well fMRI signals preserve semantic information by computing top-1 retrieval accuracy based on cosine similarity between neural ( zn/ˆzn)and visual ( zv ) latent representations [39, 52]. Two signal sources are compared: (i) raw fMRI (Raw) → zn, and (ii) synthetic fMRI signals (Syn) → ˆzn.5Visual 
+
+Stimulus NeuroFlow MindEye2 MindEye BrainDiffuser 
+
+Cross -trial fMRI Responses Visual Decoding (fMRI → Image) Visual Encoding 
+
+fMRI fMRI →Image MindEye2 -np 
+
+Visual 
+
+Stimulus Trial -1 Trial -2 Trial -3                                                            
+
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+
+Figure 5. Qualitative visual encoding and decoding performance comparisons. Left: NeuroFlow achieves superior decoding quality in semantic fidelity and visual structure. Right: NeuroFlow suppresses irrelevant cortical activity while enhancing category-specific regions, capturing consistent activation patterns underlying neural variability to support image synthesis consistent with visual stimuli. Positive (red) and negative (blue) values indicate increased and reduced activations, with color intensity reflecting the absolute magnitude of deviation. Table 1. Quantitative visual encoding and decoding performance comparisons. 
+
+Method Type Decoding Encoding ( → Decoding) Retrieval Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Raw ↑ Syn ↑
+
+MindSimulator [3] E - - - - 93.1% 91.2% .689 .391 - -SynBrain [39] E - - - - 95.7% 94.3% .639 .362 84.8% 92.5% BrainDiffuser [43] D 91.3% 90.9% .728 .421 - - - - 18.8% -MindEye [51] D 94.6% 93.3% .622 .343 - - - - 90.0% -MindEye2 [52] D 95.4% 93.0% .618 .344 - - - - 98.8% -NeuroFlow E&D 95.6% 94.2% .674 .364 98.6% 98.7% .590 .341 80.6% 97.0% 
+
+Table 2. Model efficiency comparisons. 
+
+Method Type Pretrain Architecture Param SynBrain [39] E × VAE+Transformer 690M MindEye [51] D × MLP+DP 1.00B MindEye2 [52] D ✓ Linear+MLP+DP 2.60B NeuroFlow E&D × VAE+XFM 660M 
+
+Together, these metrics provide a comprehensive assess-ment of semantic consistency across modalities, covering visual encoding, decoding, and encoding–decoding consis-tency. Details are provided in the Appendix B. 
+
+5. Results and Analysis 
+
+5.1. Main Results 
+
+We evaluate NeuroFlow on visual encoding and decoding tasks, providing qualitative visualizations and quantitative results compared with state-of-the-art methods. 
+
+Visual Decoding. NeuroFlow achieves comparable per-formance with MindEye2, while significantly surpassing other methods in the coherence of semantic fidelity and vi-sual structure, as shown in Fig. 5-Left. Here, MindEye2 (np) is a variant of MindEye2 that is not pretrained , offering a fairer comparison with our approach. Even though no ex-plicit low-level visual information is incorporated into Neu-roFlow, distinct from all compared methods, our approach can still generate coherent structures consistent with the original stimuli. We attribute this capability to the visual de-coder in NeuroFlow, which is an UnCLIP model that trains to faithfully reproduce the reference images [52]. Quan-titatively, NeuroFlow outperforms all decoding baselines, reaching the best overall performance in Incep (95.6%) and 
+
+CLIP (94.2%) scores, while maintaining competitive re-sults in Eff and SwAV distances. These results demonstrate that NeuroFlow effectively reproduces semantically coher-ent visual content from fMRI activity. 
+
+Visual Encoding ( → Decoding). Neural responses to identical stimuli vary across trials with substantial voxel-level variability, as illustrated in Fig. 5-Right. NeuroFlow effectively learns to abstract away fine-grained fluctuations and captures consistent patterns across trials . Specifi-cally, NeuroFlow selectively compresses early visual and irrelevant cortical regions, thereby enhancing activation in category-specific areas, such as the FFA (faces), EBA (bod-ies), OPA/PPA (places), and the food-selective region. De-spite fine-grained differences, our synthetic fMRI signals possess coherent activation patterns to reproduce images that are semantically consistent with the original stimuli. 6Early -Vis Early -Vis   
+
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+
+Visual 
+
+Stimuli NeuroFlow w/o 𝓛 𝒌𝒍 w/o 𝓛 𝐗𝐅𝐌 
+
+Visual Decoding 
+
+w/o 𝓛 𝒄𝒍𝒊𝒑 -𝓛 𝒄𝒚𝒄𝒍𝒆 Step -1 Step -5 Step -10 Step -15 Step -20 
+
+Sampling Trajectory             
+
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+
+Visual 
+
+Stimuli 
+
+Visual 
+
+Stimuli 
+
+Explained 
+
+Variance 
+
+Spearman 
+
+Correlation 
+
+fMRI 
+
+Activation 
+
+Synthetic 
+
+Activation              
+
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+> Step -0
+> Early -Vis Early -Vis
+> FFA -2
+> FFA -1
+> OPA
+> OPA
+> EBA EBA
+> PPA PPA
+> FFA -1
+
+A B
+
+C D
+
+NSD 
+
+Test Set Figure 6. Empirical visualizations. (A) Ablation study : removing key objectives leads to degraded visual fidelity and semantic coherence. 
+
+(B) Flow trajectory : Encoding trajectory reveals a suppression of early visual responses and a transition toward functional regions (i.e., FFA and EBA). Decoding trajectory evolves from an initial structural sketch, not Gaussian noises , to a realistic and high-fidelity image. 
+
+(C-D) Brain functional analysis : category-selective fMRI activations and voxel-wise evaluation derived from raw and synthetic fMRI, computed on the whole test set, showing that NeuroFlow suppresses early visual activity and emphasizes higher-order functional regions. Table 3. Quantitative performance comparisons between NeuroFlow and its ablated variants on Subject 1. 
+
+Method Decoding Encoding ( → Decoding) Retrieval Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Raw ↑ Syn ↑
+
+w/o zc 94.7% 94.0% .683 .378 97.2% 96.6% .636 .373 84.1% 90.4% w/o Lkl 89.0% 79.6% .807 .475 60.7% 57.1% .956 .606 75.1% 11.5% w/o Lcyc 94.9% 93.7% .687 .383 96.8% 95.5% .658 .382 81.4% 88.9% w/o Lclip -Lcyc 57.6% 58.8% .961 .674 52.6% 51.3% .983 .700 0.3% 0.5% w/o LXFM 87.7% 83.7% .788 .497 60.3% 58.1% .953 .644 86.4% 14.1% NeuroFlow 95.9% 95.0% .675 .370 98.5% 98.7% .600 .347 86.4% 96.4% 
+
+Quantitatively, we assess whether synthetic fMRI sig-nals retain essential semantic information to support coher-ent decoding. As shown in Tab. 1, NeuroFlow significantly surpasses all encoding models, exhibiting strong encoding-decoding consistency within a single model. Although NeuroFlow sacrifices raw retrieval performance for unified modeling, its encoding and decoding performance remain superior. Notably, decoding and retrieval performance us-ing synthetic fMRI signals even outperform those based on raw fMRI (e.g., Incep: 98.6% vs. 95.6%, and Retrieval: 97.0% vs. 80.6%). These results indicate that NeuroFlow effectively distills task-relevant, semantic information from sparse and redundant fMRI signals and synthesizes neural signals that are more coherent with visual semantics. 
+
+Model Efficiency Comparison. Tab. 2 summarizes model efficiency in terms of architecture, pretraining, and parameter scale. NeuroFlow serves as a unified frame-work for visual encoding and decoding, yet it comprises only 660M trainable parameters without any pretraining– approximately 25% of the parameter count of MindEye2 
+
+(2.60B). Despite its compact design, it achieves perfor-mance comparable to, and in several metrics surpassing, that of MindEye and MindEye2. These results highlight the strong scalability and parameter efficiency of NeuroFlow, exhibiting that a unified framework can achieve superior performance with substantially reduced computational cost. 
+
+5.2. Ablation Study 
+
+To investigate the contribution of key components in Neu-roFlow, we conduct systematic ablation experiments on Subject 1, examining the effects of removing the compact latent ( zc), variational sampling ( Lkl ), cycle-consistency mechanism ( Lcyc ), contrastive learning ( Lclip -Lcyc ), and XFM ( LXFM ). Results are summarized in Tab. 3. 
+
+Impact of Compact Latent ( zc). Removing this term leads to consistent performance drops across tasks. As an encoding-specific branch derived from zn, zc further iso-lates and compresses task-relevant information for fMRI synthesis. This separation of pathways, where zn supports decoding and zc supports encoding, enhances the overall consistency and effectiveness of bidirectional modeling. 7Impact of Variation Sampling ( Lkl ). Removing this term leads to severe performance degradation across all met-rics, particularly in the encoding direction. This high-lights the importance of the probabilistic latent space 
+
+for one-to-many cross-modal alignment (Raw Retrieval: 86.4% →75.1%) and continuous cross-modal flow matching (Syn Retrieval: 96.4% →11.5%) between visual and neural distributions. As shown in Fig. 6-A, the absence of LKL 
+
+leads to highly distorted synthetic images that lose seman-tic fidelity and structural coherence. 
+
+Impact of Cycle-Consistency Mechanism ( Lcyc ). Re-moving this component results in moderate degradation in all metrics, indicating that enforcing synthetic fMRI signals to focus on semantic-aware patterns instead of overfitting to the voxel-level details enhances encoding/decoding stabil-ity and cross-modal coherence. 
+
+Impact of Contrastive Learning ( Lclip –Lcyc ). Neu-roFlow incorporates two contrastive objectives to align neural and visual latent representations. Removing them leads to a dramatic collapse in retrieval performance (Raw: 
+
+86 .4% → 0.3% , Syn: 96 .4% → 0.5% ), highlighting the ne-cessity of contrastive alignment for constructing a shared la-tent space across modalities. Beyond retrieval, contrastive learning also provides a coarse but critical alignment be-tween the neural and visual distributions, which serves as aprerequisite for effective cross-modal flow matching . With-out that, XFM fails to establish direct flows between the two distributions without any guidance, resulting in a drastic de-cline in encoding and decoding performance. As shown in Fig. 6-A, the absence of Lclip –Lcyc leads to severe visual degradation, i.e, synthetic images lose semantic content and collapse into repetitive or texture-like artifacts. 
+
+Impact of Cross-Modal Flow Matching ( LXFM ). XFM is critical for bridging the residual modality gap between neural and visual distributions that remains after contrastive alignment. Removing the XFM module yields substantial degradation across all metrics, most notably on the encod-ing side, indicating that XFM is the key mechanism that unifies visual encoding and decoding with strong semantic consistency. As shown in Fig. 6-A, ablating LXFM prevents the synthesis of realistic images, producing only distorted outlines and fragmented textures. We further demonstrate that replacing XFM with a simple MSE objective (Neu-roVAE+MSE) or two linear regressions (NeuroVAE+LRs) as baseline models leads to significant performance degra-dation, underscoring the importance of XFM for unified modeling (see Appendix D for details). 
+
+5.3. Sampling Trajectory 
+
+Fig. 6-B illustrates the stepwise flow trajectory of Neu-roFlow over 20 sampling steps, computed using the Euler solver. Unlike diffusion models that initialize from Gaus-sian noise and rely on strong guidance to approach the tar-get distribution, XFM directly learns continuous, reversible flows between the neural and visual latent distributions. The encoding trajectory reveals a suppression of early visual re-sponses and a gradual transition toward category-selective regions, e.g., EBA and FFA, corresponding to the stimu-lus with body and face. The decoding trajectory is initial-ized from a semantically grounded neural distribution (Neu-roFlow w/o LXFM , Step-0), with early frames capturing the visual structure and later iterations refining fine details to produce realistic and semantically coherent images. This strategy shortens the sampling path, stabilizes trajectories, and preserves coherent semantics throughout the sampling process, establishing a stable and reversible pathway be-tween the two distributions without external guidance. 
+
+5.4. Brain Functional Analysis 
+
+We first analyze category-selective fMRI activations by comparing raw and synthetic neural responses across var-ious stimulus categories. As shown in Fig. 6-C, Neu-roFlow preserves the functional selectivity of cortical re-sponses, with synthetic fMRI signals selectively activat-ing regions (i.e., FFA and EBA). These results demonstrate that the model captures biologically meaningful patterns and maintains consistency with known cortical organiza-tion. To further quantify the alignment between synthetic and raw neural signals, we compute voxel-wise Explained Variance (EV) and Spearman Correlation across the whole NSD test set (Fig. 6-D). The results reveal that NeuroFlow suppresses activity in early visual areas (e.g., V1–V4) and enhances signals in higher-order visual cortices, includ-ing FFA, EBA, and PPA. These patterns reveal that Neu-roFlow prioritizes semantically relevant neural components and generates functionally aligned representations. Overall, these findings confirm that NeuroFlow not only improves encoding-decoding performance but also produces neural signals that are interpretable and functionally aligned with human visual cortex organization. 
+
+6. Conclusions 
+
+We introduce NeuroFlow , the first unified framework that jointly models visual encoding and decoding from neu-ral activity. By integrating a variational neural back-bone (NeuroVAE) with cross-modal flow matching (XFM), NeuroFlow establishes a shared latent space and enforces encoding-decoding consistency in a principled, reversible manner. Empirical results demonstrate that NeuroFlow achieves superior overall performance across tasks with higher parameter efficiency. Further brain functional analy-ses show that NeuroFlow preserves biologically meaningful activations and suppresses irrelevant neural noise, produc-ing interpretable and functionally aligned representations. NeuroFlow takes a major step toward bridging encoding and decoding in a unified model and provides insights into future development of bidirectional, biologically grounded brain–computer interfaces. 8Acknowledgment 
+
+This work is supported by Shanghai Artificial Intelligence Laboratory. This work is supported by Intern Discovery. This work was done during Weijian Mai’s internship at Shanghai Artificial Intelligence Laboratory. 
+
+References 
+
+[1] Hossein Adeli, Sun Minni, and Nikolaus Kriegeskorte. Pre-dicting brain activity using transformers. bioRxiv , pages 2023–08, 2023. 3 [2] Emily J Allen, Ghislain St-Yves, Yihan Wu, Jesse LBreedlove, Jacob S Prince, Logan T Dowdle, Matthias Nau, Brad Caron, Franco Pestilli, Ian Charest, et al. A massive 7t fmri dataset to bridge cognitive neuroscience and artificial intelligence. Nature neuroscience , 25(1):116–126, 2022. 5, 12 [3] Guangyin Bao, Qi Zhang, Zixuan Gong, Zhuojia Wu, and Duoqian Miao. Mindsimulator: Exploring brain concept localization via synthetic fmri. arXiv preprint arXiv:2503.02351 , 2025. 2, 3, 5, 6, 12 [4] Roman Beliy, Guy Gaziv, Assaf Hoogi, Francesca Strappini, Tal Golan, and Michal Irani. From voxels to pixels and back: Self-supervision in natural-image reconstruction from fmri. Advances in Neural Information Processing Systems ,32, 2019. 2, 3 [5] Yohann Benchetrit, Hubert Banville, and Jean-R´ emi King. Brain decoding: toward real-time reconstruction of visual perception. arXiv preprint arXiv:2310.19812 , 2023. 3 [6] Mathilde Caron, Ishan Misra, Julien Mairal, Priya Goyal, Pi-otr Bojanowski, and Armand Joulin. Unsupervised learning of visual features by contrasting cluster assignments. Ad-vances in neural information processing systems , 33:9912– 9924, 2020. 5 [7] Zijiao Chen, Jiaxin Qing, Tiange Xiang, Wan Lin Yue, and Juan Helen Zhou. Seeing beyond the brain: Conditional dif-fusion model with sparse masked modeling for vision decod-ing. In Proceedings of the IEEE/CVF Conference on Com-puter Vision and Pattern Recognition , pages 22710–22720, 2023. 3 [8] Zijiao Chen, Jiaxin Qing, and Juan Helen Zhou. Cinematic mindscapes: High-quality video reconstruction from brain activity. Advances in Neural Information Processing Sys-tems , 36, 2024. 3 [9] Yuqin Dai, Zhouheng Yao, Chunfeng Song, Qihao Zheng, Weijian Mai, Kunyu Peng, Shuai Lu, Wanli Ouyang, Jian Yang, and Jiamin Wu. Mindaligner: Explicit brain func-tional alignment for cross-subject visual decoding from lim-ited fmri data. arXiv preprint arXiv:2502.05034 , 2025. 3 [10] Adrien Doerig, Tim C Kietzmann, Emily Allen, Yihan Wu, Thomas Naselaris, Kendrick Kay, and Ian Charest. Semantic scene descriptions as an objective of human vision. arXiv preprint arXiv:2209.11737 , 2022. 3 [11] Serge O Dumoulin and Brian A Wandell. Population recep-tive field estimates in human visual cortex. Neuroimage , 39 (2):647–660, 2008. 3 [12] Michael Eickenberg, Alexandre Gramfort, Ga¨ el Varoquaux, and Bertrand Thirion. Seeing it all: Convolutional network layers map the function of the human visual system. Neu-roImage , 152:184–194, 2017. 3 [13] F Guerreiro Fernandes, M Raemaekers, Z Freudenburg, and N Ramsey. Considerations for implanting speech brain computer interfaces based on functional magnetic resonance imaging. Journal of Neural Engineering , 21(3):036005, 2024. 1 [14] Matteo Ferrante, Furkan Ozcelik, Tommaso Boccato, Rufin VanRullen, and Nicola Toschi. Brain captioning: Decoding human brain activity into images and text. arXiv preprint arXiv:2305.11560 , 2023. 3 [15] Yuting Gao, Jinfeng Liu, Zihan Xu, Tong Wu, Enwei Zhang, Ke Li, Jie Yang, Wei Liu, and Xing Sun. Softclip: Softer cross-modal alignment makes clip stronger. In Proceed-ings of the AAAI Conference on Artificial Intelligence , pages 1860–1868, 2024. 4 [16] Guy Gaziv, Roman Beliy, Niv Granot, Assaf Hoogi, Francesca Strappini, Tal Golan, and Michal Irani. Self-supervised natural image reconstruction and large-scale se-mantic classification from brain activity. NeuroImage , 254: 119121, 2022. 2, 3 [17] Alessandro T Gifford, Benjamin Lahner, Pablo Oyarzo, Aude Oliva, Gemma Roig, and Radoslaw M Cichy. What opportunities do large-scale visual neural datasets offer to the vision sciences community? Journal of Vision , 24(10): 152–152, 2024. 3 [18] Zixuan Gong, Qi Zhang, Guangyin Bao, Lei Zhu, Yu Zhang, KE LIU, Liang Hu, and Duoqian Miao. Lite-mind: Towards efficient and robust brain representation learning. In ACM Multimedia 2024 , 2024. 3 [19] Zijin Gu, Keith Jamison, Mert Sabuncu, and Amy Kuceyeski. Personalized visual encoding model construc-tion with small data. Communications Biology , 5(1):1382, 2022. 1 [20] Umut G¨ uc ¸l¨ u and Marcel AJ Van Gerven. Deep neural net-works reveal a gradient in the complexity of neural represen-tations across the ventral stream. Journal of Neuroscience ,35(27):10005–10014, 2015. 3 [21] Zhanqiang Guo, Jiamin Wu, Yonghao Song, Jiahui Bu, Wei-jian Mai, Qihao Zheng, Wanli Ouyang, and Chunfeng Song. Neuro-3d: Towards 3d visual decoding from eeg signals. In 
+
+Proceedings of the Computer Vision and Pattern Recognition Conference , pages 23870–23880, 2025. 3 [22] Kuan Han, Haiguang Wen, Junxing Shi, Kun-Han Lu, Yizhen Zhang, Di Fu, and Zhongming Liu. Variational au-toencoder: An unsupervised model for encoding and decod-ing fmri activity in visual cortex. NeuroImage , 198:125–136, 2019. 3 [23] Alexander G Huth, Wendy A De Heer, Thomas L Griffiths, Fr´ ed´ eric E Theunissen, and Jack L Gallant. Natural speech reveals the semantic maps that tile human cerebral cortex. 
+
+Nature , 532(7600):453–458, 2016. 1 [24] Yukiyasu Kamitani and Frank Tong. Decoding the visual and subjective contents of the human brain. Nature neuroscience ,8(5):679–685, 2005. 3 
+
+9[25] Meenakshi Khosla and Leila Wehbe. High-level visual ar-eas act like domain-general filters with strong selectivity and functional specialization. bioRxiv , pages 2022–03, 2022. 3 [26] Meenakshi Khosla, Keith Jamison, Amy Kuceyeski, and Mert Sabuncu. Characterizing the ventral visual stream with response-optimized neural encoding models. Advances in Neural Information Processing Systems , 35:9389–9402, 2022. 3 [27] David Klindt, Alexander S Ecker, Thomas Euler, and Matthias Bethge. Neural system identification for large pop-ulations separating “what” and “where”. Advances in neural information processing systems , 30, 2017. 3 [28] Alexander Lappe, Anna Bogn´ ar, Ghazaleh Ghamkahri Ne-jad, Albert Mukovskiy, Lucas Martini, Martin Giese, and Rufin Vogels. Parallel backpropagation for shared-feature visualization. Advances in Neural Information Processing Systems , 37:22993–23012, 2024. 3 [29] Dongyang Li, Chen Wei, Shiying Li, Jiachen Zou, Haoyang Qin, and Quanying Liu. Visual decoding and reconstruction via eeg embeddings with guided diffusion. arXiv preprint arXiv:2403.07721 , 2024. 3 [30] Tsung-Yi Lin, Michael Maire, Serge Belongie, James Hays, Pietro Perona, Deva Ramanan, Piotr Doll´ ar, and C Lawrence Zitnick. Microsoft coco: Common objects in context. In 
+
+European Conference on Computer Vision , pages 740–755, 2014. 5 [31] Yaron Lipman, Ricky TQ Chen, Heli Ben-Hamu, Maximil-ian Nickel, and Matt Le. Flow matching for generative mod-eling. In 11th International Conference on Learning Repre-sentations, ICLR 2023 , 2023. 5 [32] Yulong Liu, Yongqiang Ma, Wei Zhou, Guibo Zhu, and Nan-ning Zheng. Brainclip: Bridging brain and visual-linguistic representation via clip for generic natural visual stimulus de-coding from fmri. arXiv preprint arXiv:2302.12971 , 2023. 3[33] Weiheng Lu, Chunfeng Song, Jiamin Wu, Pengyu Zhu, Yuchen Zhou, Weijian Mai, Qihao Zheng, and Wanli Ouyang. Unimind: Unleashing the power of llms for unified multi-task brain decoding. arXiv preprint arXiv:2506.18962 ,2025. [34] Yizhuo Lu, Changde Du, Dianpeng Wang, and Huiguang He. Minddiffuser: Controlled image reconstruction from human brain activity with semantic and structural diffusion. arXiv preprint arXiv:2303.14139 , 2023. 3 [35] Andrew Luo, Maggie Henderson, Leila Wehbe, and Michael Tarr. Brain diffusion for visual exploration: Cortical discov-ery using large scale generative models. Advances in Neural Information Processing Systems , 36, 2024. 2, 3 [36] Nanye Ma, Mark Goldstein, Michael S Albergo, Nicholas M Boffi, Eric Vanden-Eijnden, and Saining Xie. Sit: Explor-ing flow and diffusion-based generative models with scalable interpolant transformers. In European Conference on Com-puter Vision , pages 23–40. Springer, 2024. 5, 13 [37] Weijian Mai and Zhijun Zhang. Unibrain: Unify image reconstruction and captioning all in one diffusion model from human brain activity. arXiv preprint arXiv:2308.07428 ,2023. 3 [38] Weijian Mai, Jian Zhang, Pengfei Fang, and Zhijun Zhang. Brain-conditional multimodal synthesis: A survey and tax-onomy. IEEE Transactions on Artificial Intelligence , 2024. 2[39] Weijian Mai, Jiamin Wu, Yu Zhu, Zhouheng Yao, Dongzhan Zhou, Andrew F Luo, Qihao Zheng, Wanli Ouyang, and Chunfeng Song. Synbrain: Enhancing visual-to-fmri synthe-sis via probabilistic representation learning. arXiv preprint arXiv:2508.10298 , 2025. 2, 3, 4, 5, 6, 12, 13 [40] Tom M Mitchell, Svetlana V Shinkareva, Andrew Carlson, Kai-Min Chang, Vicente L Malave, Robert A Mason, and Marcel Adam Just. Predicting human brain activity associ-ated with the meanings of nouns. science , 320(5880):1191– 1195, 2008. 1 [41] Thomas Naselaris, Kendrick N Kay, Shinji Nishimoto, and Jack L Gallant. Encoding and decoding in fmri. Neuroimage ,56(2):400–410, 2011. 2, 3, 5 [42] Kenneth A Norman, Sean M Polyn, Greg J Detre, and James V Haxby. Beyond mind-reading: multi-voxel pattern analysis of fmri data. Trends in cognitive sciences , 10(9): 424–430, 2006. 3 [43] Furkan Ozcelik and Rufin VanRullen. Natural scene recon-struction from fmri signals using generative latent diffusion. 
+
+Scientific Reports , 13(1):15666, 2023. 3, 6 [44] William Peebles and Saining Xie. Scalable diffusion models with transformers. In Proceedings of the IEEE/CVF inter-national conference on computer vision , pages 4195–4205, 2023. 3 [45] Xuelin Qian, Yikai Wang, Xinwei Sun, Yanwei Fu, Xi-angyang Xue, and Jianfeng Feng. LEA: Learning latent em-bedding alignment model for fMRI decoding and encoding. 
+
+Transactions on Machine Learning Research , 2024. 2, 3 [46] Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, et al. Learning transferable visual models from natural language supervi-sion. In International conference on machine learning , pages 8748–8763. PmLR, 2021. 3, 5 [47] Aditya Ramesh, Prafulla Dhariwal, Alex Nichol, Casey Chu, and Mark Chen. Hierarchical text-conditional image gener-ation with clip latents. arXiv preprint arXiv:2204.06125 , 1 (2):3, 2022. 3 [48] Ziqi Ren, Jie Li, Xuetong Xue, Xin Li, Fan Yang, Zhicheng Jiao, and Xinbo Gao. Reconstructing seen image from brain activity by visually-guided cognitive representation and ad-versarial learning. NeuroImage , 228:117602, 2021. 3 [49] Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Bj¨ orn Ommer. High-resolution image synthesis with latent diffusion models. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 10684–10695, 2022. 3 [50] Gabriel H Sarch, Michael J Tarr, Katerina Fragkiadaki, and Leila Wehbe. Brain dissection: fmri-trained networks re-veal spatial selectivity in the processing of natural images. 
+
+bioRxiv , pages 2023–05, 2023. 3 [51] Paul Scotti, Atmadeep Banerjee, Jimmie Goode, Stepan Sha-balin, Alex Nguyen, Aidan Dempster, Nathalie Verlinde, 
+
+10 Elad Yundler, David Weisberg, Kenneth Norman, et al. Re-constructing the mind’s eye: fmri-to-image with contrastive learning and diffusion priors. Advances in Neural Informa-tion Processing Systems , 36:24705–24728, 2023. 5, 6 [52] Paul S Scotti, Mihir Tripathy, Cesar Kadir Torrico Vil-lanueva, Reese Kneeland, Tong Chen, Ashutosh Narang, Charan Santhirasegaran, Jonathan Xu, Thomas Naselaris, Kenneth A Norman, et al. Mindeye2: Shared-subject mod-els enable fmri-to-image with 1 hour of data. arXiv preprint arXiv:2403.11207 , 2024. 3, 5, 6, 12, 13 [53] Katja Seeliger, Umut G¨ uc ¸l¨ u, Luca Ambrogioni, Yagmur G¨ uc ¸l¨ ut¨ urk, and Marcel AJ van Gerven. Generative adver-sarial networks for reconstructing natural images from brain activity. NeuroImage , 181:775–785, 2018. 3 [54] Guohua Shen, Tomoyasu Horikawa, Kei Majima, and Yukiyasu Kamitani. Deep image reconstruction from human brain activity. PLoS computational biology , 15(1):e1006633, 2019. 3 [55] Guobin Shen, Dongcheng Zhao, Xiang He, Linghao Feng, Yiting Dong, Jihang Wang, Qian Zhang, and Yi Zeng. Neuro-vision to language: Enhancing brain recording-based visual reconstruction and language interaction. Advances in Neural Information Processing Systems , 37:98083–98110, 2024. 3 [56] Christian Szegedy, Vincent Vanhoucke, Sergey Ioffe, Jon Shlens, and Zbigniew Wojna. Rethinking the inception archi-tecture for computer vision. In Proceedings of the IEEE con-ference on computer vision and pattern recognition , pages 2818–2826, 2016. 5 [57] Y Takagi and S Nishimoto. High-resolution image recon-struction with latent diffusion models from human brain ac-tivity. In Proceedings of the IEEE/CVF Conference on Com-puter Vision and Pattern Recognition , pages 14453–14463, 2023. 3 [58] Mingxing Tan and Quoc Le. Efficientnet: Rethinking model scaling for convolutional neural networks. In International conference on machine learning , pages 6105–6114. PMLR, 2019. 5 [59] Jerry Tang, Meng Du, Vy Vo, Vasudev Lal, and Alexander Huth. Brain encoding models based on multimodal trans-formers can transfer across language and vision. Advances in neural information processing systems , 36:29654–29666, 2023. 1 [60] Shizun Wang, Songhua Liu, Zhenxiong Tan, and Xinchao Wang. Mindbridge: A cross-subject brain decoding frame-work. In Proceedings of the IEEE/CVF Conference on Com-puter Vision and Pattern Recognition , pages 11333–11342, 2024. 3 [61] Haiguang Wen, Junxing Shi, Yizhen Zhang, Kun-Han Lu, Ji-ayue Cao, and Zhongming Liu. Neural encoding and decod-ing with deep learning for dynamic natural vision. Cerebral cortex , 28(12):4136–4160, 2018. 3 [62] Weihao Xia, Raoul de Charette, Cengiz Oztireli, and Jing-Hao Xue. Dream: Visual decoding from reversing human vi-sual system. In Proceedings of the IEEE/CVF Winter Confer-ence on Applications of Computer Vision , pages 8226–8235, 2024. 3 [63] Weihao Xia, Raoul de Charette, Cengiz Oztireli, and Jing-Hao Xue. Umbrae: Unified multimodal brain decoding. In 
+
+European Conference on Computer Vision , pages 242–259. Springer, 2024. 3 [64] Xingqian Xu, Zhangyang Wang, Gong Zhang, Kai Wang, and Humphrey Shi. Versatile diffusion: Text, images and variations all in one diffusion model. In Proceedings of the IEEE/CVF international conference on computer vision ,pages 7754–7765, 2023. 3 [65] Huzheng Yang, James Gee, and Jianbo Shi. Alignedcut: Visual concepts discovery on brain-guided universal feature space. arXiv preprint arXiv:2406.18344 , 2024. 3 [66] Huzheng Yang, James Gee, and Jianbo Shi. Brain decodes deep nets. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 23030– 23040, 2024. 3 [67] Hu Ye, Jun Zhang, Sibo Liu, Xiao Han, and Wei Yang. Ip-adapter: Text compatible image prompt adapter for text-to-image diffusion models. arXiv preprint arXiv:2308.06721 ,2023. 3 [68] Muquan Yu, Mu Nan, Hossein Adeli, Jacob S Prince, John A Pyles, Leila Wehbe, Margaret M Henderson, Michael J Tarr, and Andrew F Luo. Meta-learning an in-context trans-former model of human higher visual cortex. arXiv preprint arXiv:2505.15813 , 2025. 3 [69] Lvmin Zhang, Anyi Rao, and Maneesh Agrawala. Adding conditional control to text-to-image diffusion models. In 
+
+Proceedings of the IEEE/CVF international conference on computer vision , pages 3836–3847, 2023. 3 [70] Yuchen Zhou, Jiamin Wu, Zichen Ren, Zhouheng Yao, Weiheng Lu, Kunyu Peng, Qihao Zheng, Chunfeng Song, Wanli Ouyang, and Chao Gou. Csbrain: A cross-scale spa-tiotemporal brain foundation model for eeg decoding. arXiv preprint arXiv:2506.23075 , 2025. 3 
+
+11 A. NSD Dataset 
+
+In this study, we leverage the largest publicly available fMRI-image dataset, the Natural Scenes Dataset (NSD) [2], which encompasses extensive 7T fMRI data collected from eight subjects while they viewed images from the COCO dataset. Each subject viewed each image for 3 seconds and indicated whether they had previously seen the image dur-ing the experiment. Our analysis focuses on data from four subjects (Sub-1, Sub-2, Sub-5, and Sub-7) who completed all viewing trials. The training dataset consists of 9,000 im-ages and 27,000 fMRI trials, while the test dataset includes 1,000 images and 3,000 fMRI trials, with up to 3 repeti-tions per image. It is important to note that the test images are consistent across all subjects, whereas distinct training images are utilized. We used preprocessed scans from NSD for functional data, with a resolution of 1.8 mm. Our analysis involved employing single-trial beta weights derived from general-ized linear models, along with region-of-interest (ROI) data specific to early and higher (ventral) visual regions as pro-vided by NSD. The ROI voxel counts for the respective four subjects are as follows: [15724, 14278, 13039, 12682]. 
+
+A.1. Preprocessing 
+
+We perform per-session z-score normalization to centre each voxel to zero mean and scale it to unit variance within its respective session. All trials are retained individually for model training, while repeated presentations in the test set are averaged to yield a single, denoised beta pattern for each stimulus. To focus on visual cortical processing, we em-ploy the official nsdgeneral ROI mask, which spans early to higher-order visual regions. Voxels within this mask are extracted and flattened into a one-dimensional sequence that serves as the fMRI input xfMRI ∈ R1×n to the neural en-coder. 
+
+A.2. Brain Functional Regions 
+
+High-level visual cortex contains multiple category-selective regions that respond preferentially to distinct types of visual stimuli. In humans, the most extensively studied functional regions are those selective for faces, bod-ies, places, and food , which exhibit reliable and dissociable responses across individuals. These regions provide a well-characterized framework for investigating category-specific neural representations and are commonly targeted in fMRI studies of visual processing. 
+
+Face-selective regions. These areas respond preferen-tially to faces and primarily include the fusiform face area (FFA). They are organized along the ventral visual pathway and support the perception of facial identity and expression. 
+
+Body-selective regions. Located adjacent to face-selective cortex, these regions respond strongly to images of Places    
+
+> Places Places
+> Places
+> Faces Faces
+> Bodies
+> Early -Vis Early -Vis
+> Bodies
+> Figure 7. High-order functional regions in the visual cortex.
+
+human bodies, with the extrastriate body area (EBA) play-ing a key role in encoding body form, posture, and move-ment. 
+
+Place-selective regions. This network responds most strongly to scenes and environmental layouts. It comprises the parahippocampal place area (PPA) and the occipital place area (OPA), which collectively encode spatial struc-ture and navigationally relevant information. 
+
+Food-selective regions. These regions are located within the ventral temporal cortex and show enhanced re-sponses to edible items and food-related visual features. 
+
+B. Evaluation Metric 
+
+We evaluate visual encoding and decoding at the semantic level rather than at the voxel or pixel level, as lower-level analyses exhibit poor consistency between encoding and de-coding, leading to blurry reconstructions. 
+
+i) Visual Decoding (fMRI →Image). Given fMRI sig-nals, we generate images and assess their semantic fidelity against the original visual stimuli using multiple semantic metrics: i) Incep: A two-way comparison of the last pool-ing layer of InceptionV3; ii) CLIP: A two-way comparison of the output layer of the CLIP-Image model; iii) Eff: Adistance metric gathered from EfficientNet-B1 model; iv) 
+
+SwAV: A distance metric gathered from SwAV-ResNet50 model. A two-way comparison evaluates the accuracy per-centage by determining whether the original image embed-ding aligns more closely with its corresponding brain em-bedding or with a randomly selected brain embedding. 
+
+ii) Visual Encoding (Image →fMRI →Image). Same as the decoding metrics above, but focuses on encoding-decoding consistency that assesses whether the neural rep-resentation of synthetic signals preserves critical seman-tic information for faithful image synthesis. Note that the encoding-only models (i.e., SynBrain [39] and MindSim-ulator [3]) need to employ the decoding-only model (i.e., MindEye2 [52]) as the frozen fMRI-to-image generator to evaluate the semantic quality of synthetic fMRI signals. 
+
+iii) Retrieval Metrics. We evaluate how well fMRI sig-nals preserve semantic information by computing top-1 re-12 Algorithm 1 NeuroVAE Architecture  
+
+> 1:
+
+Input: fMRI signal x ∈ R1×n 
+
+> 2:
+
+Encoder:  
+
+> 3:
+
+x ← Conv1D (x, c out = 64)  
+
+> 4:
+
+x ← MLP (x, h = 1024 , d out = 6656)  
+
+> 5:
+
+x ← DownBlock (x, num block = 2)  
+
+> 6:
+
+Sampling:  
+
+> 7:
+
+[μ, log σ2] = Conv1d (x, c out = 512)  
+
+> 8:
+
+zn ∼ N (μ, σ 2) ▷ z n ∈ R256 ×1664  
+
+> 9:
+
+Pre-Projector:  
+
+> 10:
+
+zc = Conv1d (zn, c out = 1) ▷ z c ∈ R1×1664  
+
+> 11:
+
+Post-Projector:  
+
+> 12:
+
+x = Conv1d (zc, c out = 256)  
+
+> 13:
+
+Decoder:  
+
+> 14:
+
+x ← UpBlock (x, num block = 2)  
+
+> 15:
+
+x ← MLP (x, h = 1024 , d out = n) 
+
+> 16:
+
+ˆx ← Conv1D (x, c out = 1)  
+
+> 17:
+
+return ˆx ∈ R1×n
+
+trieval accuracy based on cosine similarity between neural latent representations ( zn/ˆzn) and 300 candidate visual la-tent representations ( zv ) extracted from test images, with one being the ground-truth visual stimulus for the fMRI data [39, 52]. Two signal sources are compared: (i) raw fMRI (Raw) → zn, and (ii) synthetic fMRI signals (Syn) 
+
+→ ˆzn. Retrieval performance is evaluated by calculating the average Top-1 retrieval accuracy (with a chance level of 1/300) and repeating the process 30 times to account for batch sampling variability. Together, these metrics offer a comprehensive evaluation of semantic consistency across modalities, encompassing visual encoding, decoding, and the consistency between en-coding and decoding. 
+
+C. Architecture Details 
+
+C.1. NeuroVAE Architecture 
+
+The overall architecture of NeuroVAE is summarized in Algorithm 1. Given an fMRI input xfMRI ∈ R1×n, the encoder first applies a 1 × 1 Conv1D, followed by an MLP and two downsampling blocks to produce interme-diate features. A Conv1D layer then estimates the pos-terior parameters [μ, log σ2] for the latent representation 
+
+zn ∼ N (μ, σ 2). A pre-projector Conv1D compresses zn
+
+into a channel-aggregated vector zc ∈ R1×d, which is mapped back through a post-projector Conv1D and two up-sampling blocks, followed by an MLP and final Conv1D, to reconstruct the fMRI signal ˆxfMRI . Here, c out denotes the output number of channels, and d out denotes the out-put number of feature dimensions. This design decouples the encoding and decoding pathways, resulting in a com-pact, probabilistic latent space that captures essential neural dynamics while supporting bidirectional cross-modal gen-erative modeling. Building on this foundation, NeuroVAE provides a vari-ational backbone that constructs a semantically organized latent space for mapping between fMRI and visual em-beddings. Compared with SynBrain [39], NeuroVAE in-troduces several key improvements motivated by biological plausibility, computational efficiency, and the requirements of generative neural modeling. 
+
+i) Biologically motivated feature processing. The en-coder processes one-dimensional fMRI inputs using 1 × 1
+
+Conv1D layers, which act as channel-wise linear transfor-mations rather than spatial convolutions. Since voxel order-ing in the 1D flattened fMRI vector does not encode mean-ingful spatial relationships , this design avoids injecting ar-tificial spatial inductive biases. SynBrain instead applies adaptive max pooling, which implicitly assumes spatial lo-cality; NeuroVAE replaces this with an MLP projection to obtain a more biologically justified global transformation. 
+
+ii) Reduced attention dimensionality and improved computational efficiency. SynBrain computes attention over a R512 ×4096 representation, requiring four A100-40GB GPUs for training. NeuroVAE reduces the represen-tation to R256 ×1664 , which aligns with the CLIP visual fea-ture space and allows training on a single A100-40GB GPU. This reduction preserves semantic alignment while substan-tially lowering memory and compute demands. 
+
+iii) Compact latent space enabling bidirectional mod-eling. SynBrain retains a R256 ×1664 latent tensor and supports only encoding. NeuroVAE aggregates channel-wise information into a single latent vector zc ∈ R1×1664 ,cleanly separating the encoder and decoder pathways. This compact latent representation enables both neural recon-struction and generative fMRI synthesis through cross-modal flow matching. 
+
+iv) Cycle-consistency loss for semantically coherent fMRI synthesis. To ensure that reconstructed fMRI signals maintain semantic fidelity, NeuroVAE introduces a cycle-consistency loss that feeds synthetic signals back into the encoder and aligns their latent representations with the cor-responding visual embeddings. This encourages generative fMRI signals to preserve semantic information instead of overfitting to voxel-level noise. Together, these improvements allow NeuroVAE to con-struct a structured and probabilistic neural latent space that is both computationally efficient and better suited for semantic-level bidirectional modeling between visual and neural domains. 
+
+C.2. XFM Architecture 
+
+The Cross-modal Flow Matching (XFM) module is built on a SiT backbone [36] with temporal and positional embed-dings. We use an 12-layer Transformer with 13 attention 13 heads per layer. The neural and visual latent representations share the same dimensionality, with 256 tokens and a fea-ture dimension of 1664 (i.e., zn, z v ∈ R256 ×1664 ), which is required for cosine interpolation when defining the contin-uous path between the two distributions. The patching and unpatching layers are removed since XFM operates directly in the high-dimensional latent space. Bypassing the Gaussian noise distributions in standard implementations, we treat visual and neural distributions as the initial ( z0, t = 0 ) and target distributions( z1, t = 1 ), and learn a reversibly consistent flow between them. This reframes the unidirectional denoising process into a uni-fied cross-modal transport. We further remove the clas-sifier guidance to facilitate a direct transport between the two distributions that aligns more closely with the biologi-cal process of visual encoding and decoding. For the first time, we reformulate visual encoding and decoding as atime-dependent, reversible process for unified modeling between neural and visual latent distributions. This formu-lation derives reversibility from the uniqueness of ordinary differential equation (ODE) solutions: the learned vector field can be integrated forward for visual encoding zv → zn
+
+or backward for visual decoding zn → zv. Given that, 
+
+encoding-decoding consistency is rigorously enforced by principles of flow matching. During inference, cross-modal translation is achieved by numerically solving the learned ODE with Euler updates parameterized by the learned vec-tor field. In this way, NeuroFlow achieves a unified for-mulation for visual encoding and decoding, with the two processes distinguished solely by the temporal sampling direction .
+
+Ablation Study on Interpolation Schedule. We assessed the effect of different interpolation schedules on cross-modal flow performance. As reported in Tab. 4, Neu-roFlow performs well under both linear and cosine sched-ules, demonstrating the robustness of our approach. The cosine schedule yields slightly better results, likely due to its smoother transition, which enables a more stable and ac-curate mapping between the visual and neural latent dis-tributions. The smoother progression helps reduce abrupt changes in the latent space, facilitating better alignment and more reliable flow estimation. These findings indicate that while NeuroFlow is inherently robust, careful design of the interpolation path can further enhance performance. 
+
+Ablation Study on Sampling Step. We examined the effect of different sampling steps on NeuroFlow’s perfor-mance using the Euler solver. As shown in Tab. 5, the model remains robust across varying step counts, with 20 steps providing an optimal balance between accuracy and computational efficiency. Increasing to 30 steps offers only marginal gains, indicating that 20 steps are sufficient to achieve high-quality results while maintaining efficiency. 
+
+D. Baseline Models 
+
+D.1. Framework 
+
+As illustrated in Sec. 5.2, a nontrivial modality gap remains between neural and visual distributions after contrastive learning in the first stage (i.e., NeuroVAE , or w/o LXFM .), leading to distorted image reconstructions. To evaluate the contribution of the proposed XFM module in bridging this gap, we construct two baseline configurations that replace XFM with simpler mechanisms: 
+
+i) NeuroVAE + MSE. This variant substitutes XFM with a direct mean-squared error loss between the neural and visual latent codes. It represents a na¨ ıve regression-based alignment strategy and tests whether pointwise matching alone is sufficient to reduce the modality discrepancy. 
+
+ii) NeuroVAE + LRs. This variant replaces XFM with two independent linear projection networks map-ping between neural and visual latent spaces. As a non-unified framework, it provides a direct comparison point for evaluating the advantage of our unified XFM formula-tion in bridging the modality gap and maintaining encod-ing–decoding consistency. By contrasting these baselines with NeuroFlow (Neu-roVAE + XFM) , which provides a single, unified flow-based transformation between neural and visual latent dis-tributions, we can directly quantify the benefits of a shared latent structure for improving encoding–decoding consis-tency and for effectively bridging the neural–visual modal-ity gap. 
+
+D.2. Results 
+
+We present the quantitative and qualitative comparisons in Tab. 6 and Fig. 8. The results reveal clear differ-ences between the baseline configurations and demonstrate the advantages of the proposed cross-modal flow matching (XFM) framework. As shown in Tab. 6, incorporating a simple MSE objec-tive ( NeuroVAE + MSE ) does not improve performance; instead, it causes noticeable degradation across decoding, encoding, and retrieval metrics. This suggests that point-wise supervision in a shared latent space is inadequate for aligning neural and visual representations and may even ex-acerbate the existing modality gap. Replacing XFM with two independent linear projection networks ( NeuroVAE + LRs ) produces a mixed pattern of results. While decoding performance decreases slightly, both encoding accuracy and retrieval improve substantially. This indicates that linear mappings provide a more flexible alignment mechanism than a pointwise MSE loss. How-ever, a linear network is not sufficient for modeling the complexities inherent in the latent distributions , and the 14 Table 4. Ablation experiments on linear and cosine interpolation schedules. 
+
+Schedule Decoding Encoding ( →Decoding) Retrieval Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Raw ↑ Syn ↑
+
+Linear 95.4% 94.4% .682 .377 98.5% 98.4% .618 .359 86.4% 96.0% Cosine* 95.9% 95.0% .675 .370 98.5% 98.7% .600 .347 86.4% 96.4% 
+
+> Table 5. Ablation experiments on the effect of different sampling steps.
+
+Step Decoding Encoding ( →Decoding) Retrieval Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Raw ↑ Syn ↑
+
+10 95.0% 94.3% .682 .385 98.0% 98.3% .617 .356 86.4% 96.0% 20* 95.9% 95.0% .675 .370 98.5% 98.7% .600 .347 86.4% 96.4% 
+
+30 95.7% 95.3% .674 .372 98.5% 98.7% .597 .345 86.4% 96.4% 
+
+independence of the forward and backward transforms pre-vents them from operating as a unified cross-modal map-ping. As a consequence, the modality gap is only partially reduced, and the resulting encoding–decoding consistency remains limited. Moving to a unified transformation framework, Neu-roVAE + XFM (NeuroFlow) achieves the best performance across all evaluation metrics, including decoding, encoding-decoding consistency, and retrieval. The substantial gains highlight the effectiveness of XFM in bridging the neu-ral–visual modality gap through a coherent flow-based alignment, while simultaneously preserving strong encod-ing–decoding consistency .These trends are also evident qualitatively in Fig. 8. Neu-roFlow produces reconstructions that better preserve global structure and fine-grained visual semantics in both decod-ing (fMRI →Image) and encoding (Image →fMRI →Image), whereas NeuroVAE , NeuroVAE + MSE , and NeuroVAE + LRs baselines show varying degrees of blurriness, struc-tural distortion, or semantic drift . Together, these results demonstrate that unified flow-matching alignment is essen-tial for achieving high-fidelity cross-modal generation. 
+
+E. Additional Results 
+
+E.1. Subject-specific Results 
+
+Tab. 7 presents quantitative visual encoding and decoding results for four subjects (Sub1, Sub2, Sub5, Sub7). Neu-roFlow consistently achieves high performance across de-coding metrics (Inception, CLIP, Eff, SwAV), encoding-decoding consistency, and retrieval accuracy, demonstrat-ing robust performance on different subjects. While abso-lute scores vary due to individual neural differences, over-all trends remain stable, highlighting reliable model perfor-mance. Qualitative results in Fig. 9 show visual reconstructions for Sub1, Sub2, Sub5, and Sub7, including direct decod-ing from fMRI and encoding-decoding cycles (image →
+
+fMRI → image). These examples confirm that NeuroFlow preserves semantic content and fine-grained visual details across subjects, maintaining strong encoding-decoding con-sistency and further demonstrating the robustness and gen-eralizability of the model. 
+
+E.2. Brain Functional Analysis 
+
+As illustrated in Fig. 10, we present subject-specific fMRI activations generated by NeuroFlow along with their cor-responding fMRI-to-image reconstructions across different functional domains, including face, body, place, and food-related regions. Despite substantial inter-subject variability in the spatial distribution of brain activations, NeuroFlow consistently focuses on the appropriate functional areas, such as the fusiform face area (FFA) for face stimuli, while generating semantically coherent reconstructions. Furthermore, Fig. 11 shows subject-specific category-selective fMRI activations for Faces, Bodies, Places, and Food. These results reinforce that NeuroFlow reliably cap-tures functional specificity across individuals, attending to the corresponding brain regions for each stimulus category and preserving consistent semantic content in the generated images. 15 Table 6. Quantitative comparison between NeuroFlow (NeuroVAE+XFM*) and baseline models. 
+
+Method Decoding Encoding →Decoding Retrieval Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Raw ↑ Syn ↑
+
+NeuroVAE 87.7% 83.7% .788 .497 60.3% 58.1% .953 .644 86.4% 14.1% NeuroVAE+MSE 85.2% 81.4% .832 .536 51.0% 52.0% .978 .671 86.4% 2.8% NeuroVAE+LRs 86.8% 83.0% .794 .496 90.3% 87.0% .783 .493 86.4% 90.8% NeuroVAE+XFM* 95.9% 95.0% .675 .370 98.5% 98.7% .600 .347 86.4% 96.4% 
+
+> Table 7. Quantitative subject-specific visual encoding and decoding results.
+
+Method Decoding Encoding →Decoding Retrieval Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Incep ↑ CLIP ↑ Eff ↓ SwAV ↓ Raw ↑ Syn ↑
+
+Sub1 95.9% 95.0% .675 .370 98.5% 98.7% .600 .347 86.4% 96.4% Sub2 95.4% 93.3% .677 .362 98.5% 98.5% .595 .344 81.3% 97.8% Sub5 97.0% 95.9% .645 .345 98.8% 99.0% .569 .329 84.7% 98.3% Sub7 93.9% 92.7% .699 .378 98.5% 98.5% .598 .344 69.8% 95.5% Visual              
+
+> Stimulus VAE -XFM VAE -LRs VAE
+> Visual Decoding (fMRI →Image) Visual Encoding (Image →fMRI →Image)
+> VAE -MSE VAE -XFM VAE -LRs VAE VAE -MSE
+> Figure 8. Qualitative comparisons between NeuroFlow (NeuroVAE-XFM) and baseline models.
+
+16 Visual 
+
+Stimulus Sub -1 Sub -2 Sub7 
+
+Visual Decoding (fMRI → Image) 
+
+Sub -5 Sub -1 Sub -2 Sub7 
+
+Visual Encoding (Image → fMRI → Image) 
+
+Sub -5Figure 9. Qualitative subject-specific visual encoding and decoding results. 
+
+17 Visual 
+
+Stimulus Sub -1 Sub -2 Sub7 
+
+Synthetic fMRI Activations 
+
+Sub -5 Sub -1 Sub -2 Sub7 
+
+fMRI → Image 
+
+Sub -5
+
+Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA 
+
+OPA OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA 
+
+OPA OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA 
+
+OPA OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA 
+
+OPA OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA 
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA 
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA 
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA 
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA -1
+
+Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA -1
+
+Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA -1
+
+Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA -1Figure 10. Subject-specific fMRI activations and corresponding image reconstructions. Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA -1 Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA 
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA 
+
+OPA OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA -1 Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA 
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA 
+
+OPA OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA -1 Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA 
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA 
+
+OPA OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA -1 Early -Vis Early -Vis 
+
+FFA -2
+
+FFA -1
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA 
+
+OPA 
+
+OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA Early -Vis Early -Vis 
+
+FFA 
+
+OPA OPA 
+
+EBA EBA 
+
+PPA PPA 
+
+FFA 
+
+Visual 
+
+Stimuli Sub1 Sub2 Sub5 Sub7 
+
+Figure 11. Subject-specific category-selective fMRI activations: Faces, Bodies, Places, and Food. 
+
+18

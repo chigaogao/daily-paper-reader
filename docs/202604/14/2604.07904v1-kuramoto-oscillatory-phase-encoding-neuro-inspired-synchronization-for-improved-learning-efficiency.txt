@@ -1,0 +1,1195 @@
+Title: Kuramoto Oscillatory Phase Encoding: Neuro-inspired Synchronization for Improved Learning Efficiency
+
+URL Source: https://arxiv.org/pdf/2604.07904v1
+
+Published Time: Fri, 10 Apr 2026 00:40:46 GMT
+
+Number of Pages: 24
+
+Markdown Content:
+# Kuramoto Oscillatory Phase Encoding: Neuro-inspired Synchronization for Improved Learning Efficiency 
+
+Mingqing Xiao 1 Yansen Wang 1 Dongqi Han 1 Caihua Shan 1 Dongsheng Li 1
+
+## Abstract 
+
+Spatiotemporal neural dynamics and oscillatory synchronization are widely implicated in biologi-cal information processing and have been hypoth-esized to support flexible coordination such as feature binding. By contrast, most deep learn-ing architectures represent and propagate infor-mation through activation values, neglecting the joint dynamics of rate and phase. In this work, we introduce Kuramoto oscillatory Phase Encod-ing (KoPE) as an additional, evolving phase state to Vision Transformers, incorporating a neuro-inspired synchronization mechanism to advance learning efficiency. We show that KoPE can im-prove training, parameter, and data efficiency of vision models through synchronization-enhanced structure learning. Moreover, KoPE benefits tasks requiring structured understanding, including se-mantic and panoptic segmentation, representation alignment with language, and few-shot abstract visual reasoning (ARC-AGI). Theoretical analy-sis and empirical verification further suggest that KoPE can accelerate attention concentration for learning efficiency. These results indicate that synchronization can serve as a scalable, neuro-inspired mechanism for advancing state-of-the-art neural network models. 
+
+## 1. Introduction 
+
+Artificial neural networks are primarily built upon activation-based neurons, initially inspired by the McCulloch-Pitts neuron (McCulloch & Pitts, 1943) and often treated as a rate-based analogue of biological neural activity (Hop-field, 1984). Much of the progress in neural networks has then been driven by architectural/connectivity design, with developments from MLP (Rumelhart et al., 1986) to LSTM (Hochreiter & Schmidhuber, 1997), CNN (LeCun 
+
+> 1Microsoft Research Asia. Correspondence to: Mingqing Xiao
+> <mingqingxiao@microsoft.com >.
+> Preprint. April 10, 2026.
+
+et al., 2002), residual connections (He et al., 2016), Trans-former (Vaswani et al., 2017), etc. It is widely observed that modern neural networks can increasingly improve per-formance with the scaling of data, computation and model size (Kaplan et al., 2020; Zhai et al., 2022; Cherti et al., 2023), and recent progress has been strongly driven by scal-ing paradigms (Bommasani, 2021; Oquab et al., 2024). On the other hand, human brains typically do not rely on data at the scale used in modern large models and can often acquire new concepts, abstractions, and structured generalization from far fewer examples than current deep models (Chollet, 2019; Ilievski et al., 2025). This gap suggests that additional mechanisms or inductive biases from human brains for ef-ficient learning may still be missing in mainstream neural architectures. In contrast to activation-based neural networks, neuro-science research has long emphasized spatiotemporal neural dynamics, where travelling waves have been proposed as important mechanisms for information processing (Muller et al., 2018). Beyond firing rates, oscillatory waves are char-acterized by their phases as a component of neural coding. A prominent phenomenon in this regime is phase synchro-nization for information processing, which has been impli-cated in coordinating neural processing across space and time (Singer, 1999; Fries, 2015). An appealing hypothesis of synchronization is its relation to the binding problem (Singer & Gray, 1995; Engel & Singer, 2001), a long-standing problem in both neuroscience and AI related to structure learning and compositional general-ization (Greff et al., 2020). Binding refers to the dynamic integration of distributed feature representations into co-herent structured entities, such as features belonging to the same object or concept are selectively associated while remaining separable from others (Treisman, 1996). Such kind of structure enables systematic reuse and recombina-tion of representations to facilitate generalization and data efficiency (Greff et al., 2020), and lacking of it was con-sidered as a fundamental reason behind drawbacks of deep learning (Greff et al., 2020; Zheng et al., 2022), especially for unstructured visual data. For phase synchronization, it was conjectured to indicate binding relations among concur-rently processed features (Singer & Gray, 1995; Greff et al., 1
+
+> arXiv:2604.07904v1 [cs.LG] 9 Apr 2026 Kuramoto Oscillatory Phase Encoding
+
+2020), thus potentially leading to structures for generaliza-tion and efficiency. Therefore, synchronization may be a kind of inductive bias for efficient learning. Some previous works explored synchronization in neural networks in the form of complex-valued neurons (Reichert & Serre, 2013; L ¨owe et al., 2022) or spiking time (Zheng et al., 2023), focusing on binding-specific problems such as object discovery. Recently, Kuramoto dynamics, a mathe-matical model for synchronization of oscillators (Acebr ´on et al., 2005), have also been introduced to formulate a phase-only neuron model that evolves for synchronization (Miyato et al., 2025). Yet a predominant problem for these works and other binding-like object-centric methods (Locatello et al., 2020; L ¨owe et al., 2023) is the scalability to common large-scale tasks on natural images. Most of these models are isolated from state-of-the-art scalable models, not answer-ing how such mechanism can advance mainstream tasks. A natural question is: can phase synchronization be turned into a scalable inductive bias for modern deep learning, facilitat-ing binding-like structure learning and improving learning efficiency without sacrificing scalability? In this work, we introduce Kuramoto oscillatory Phase En-coding (KoPE), an additional, evolving phase state along with the mainstream Vision Transformer (ViT) model (Doso-vitskiy et al., 2021), and show that neuro-inspired synchro-nization can advance scalable neural networks for learning efficiency. Specifically, we incorporate phase representa-tions for each token, which is updated across layers via Kuramoto dynamics with data-dependent coupling derived from token representations. In parallel, phases are injected into the interactive attention module through complex-form rotations, coupling phase evolution to token (rate) repre-sentations. In this way, the synchronization dynamics of phases encourage structure formation from data, provid-ing an architecture-level inductive bias to improve learning efficiency through joint rate-phase dynamics. We conduct extensive experiments across supervised and self-supervised learning, demonstrating that KoPE can im-prove training, parameter, and data efficiency. Moreover, KoPE shows superior performance for tasks demanding structured understanding, including semantic and panop-tic segmentation, vision-language representation alignment, and the challenging few-shot abstract visual reasoning tasks, ARC-AGI (Chollet, 2019; Chollet et al., 2025). Theoretical analysis and empirical verification further sug-gest that KoPE can facilitate attention learning, i.e., the structural relation among tokens, through attention concen-tration on relevant parts. Together, these results suggest a practical route for bringing synchronization-based dynamics into modern neural architectures, bridging neuro-inspired principles with scalable vision learning. 
+
+## 2. Preliminary 
+
+2.1. Kuramoto Model 
+
+The Kuramoto model (Acebr ´on et al., 2005) is a non-linear dynamical model describing the synchronization of coupled oscillators. It has been widely applied in neuroscience to characterize neural oscillation (Breakspear et al., 2010). Specifically, for each oscillator i, it has a phase ϕi ∈ [0 , 2π)
+
+that evolves following the differential equation: 
+
+˙ϕi = ωi + X
+
+> j
+
+Jij sin( ϕj − ϕi), (1) where ωi is the natural frequency of the oscillator and Jij 
+
+are coupling connections between oscillators. It can also be extended to a multi-dimensional vector version (Miyato et al., 2025): 
+
+˙xi = Ωixi + Proj xi
+
+X
+
+> j
+
+Jij xj
+
+ , (2) where xi ∈ Rn, ∥xi∥2 = 1 is a vector on a hypersphere, Ωi
+
+is an anti-symmetric matrix, and Proj xi (y) = y − ⟨ y, xi⟩xi
+
+is projection to the orthogonal direction. When xi =(cos( ϕi), sin( ϕi)) ⊤, Ωi =
+
+ 0 −ωi
+
+ωi 0
+
+
+
+, and Jij = Jij I,the vector version is equivalent to the phase version. When 
+
+Jij = Jji and ωi = ω, the Kuramoto model is Lyapunov and minimizes the energy U (ϕ) = P 
+
+> i,j
+
+Jij (1 − cos( ϕi −
+
+ϕj )) . Oscillators will converge to a phase-locked equilib-rium state with (cluster) synchronization depending on the coupling structure and initial condition. In practice, we discretize the differential equation as: 
+
+∆xti = Ωixti + Proj xti
+
+X
+
+> j
+
+Jij xtj
+
+ ,
+
+xt+1  
+
+> i
+
+= xti + γ∆xti
+
+∥xti + γ∆xti∥2
+
+.
+
+(3) Miyato et al. (2025) leverage the Kuramoto model to form phase-only neurons for synchronization, yet they neglect the joint dynamics of rate and phase, isolating the model from state-of-the-art neural networks. Differently, we con-sider a synergy of rate and phase, incorporating Kuramoto dynamics as a synchronization prior to vision transformers. 
+
+2.2. Vision Transformer 
+
+ViT patchifies images into tokens {zi} and updates token representations through Transformer layers: 
+
+zl+1 ′ = zl + MHSA  LN( zl),
+
+zl+1 = zl+1 ′ + MLP  LN( zl+1 ′), (4) where MHSA is multi-head self-attention, MLP is multi-layer perception, and LN is layer normalization. 2Kuramoto Oscillatory Phase Encoding Self -Attention  MLP  
+
+> Kuramoto Dynamics
+> Phase Rotation
+> Data -adaptive
+> coupling
+> ×N
+> 𝜽
+> Token
+> representation
+> Phase
+> representation
+> Synchronization
+> Output
+
+Figure 1. Illustration of the proposed KoPE. We introduce phase states apart from token representations, which will be updated by Kuramoto dynamics along the depth of the layers. The phases are injected into the interactive attention module through complex-form rotations, and Kuramoto dynamics are based on data-adaptive couplings derived from token representations. 
+
+Neural ODE view of ViT In the neural ODE view (Chen et al., 2018), deep residual networks implement discrete time steps of an underlying continuous -time dynamical system 
+
+˙z(t) = f (z(t), t, θ (t)) , so their depth l indexes the evolution rate of a hidden state through a learned vector field. This perspective extends naturally to Transformers (and ViTs), where the stacked updates can be interpreted as a splitting scheme for an ODE (Lu et al., 2020). This dynamical system view motivates us to integrate Kuramoto dynamics of phases into the depth evolution of ViT. 
+
+## 3. Method 
+
+To incorporate Kuramoto dynamics as a structural prior, we propose Kuramoto oscillatory Phase Encoding as an additional evolving phase dimension along the depth of ViT, as shown in Fig. 1. The phases are updated based on data-dependent attentive connections derived from token representations, with the aim of synchronizing parts related to similar concepts/entities; on the other hand, token rep-resentations are modulated by phases in the complex form within the interactive attention module, analogous to the joint dynamics of rate and phase. 
+
+3.1. Phase Representation and Rotary Integration 
+
+For each token, apart from token representations zi ∈
+
+Rd, we introduce phase representations ri ∈ R2p in-dicating the concatenation of multiple phase vectors 
+
+(cos( ϕi,j ), sin( ϕi,j )) . We expect the phases to inform the re-lations through synchronization and phase differences, e.g., phases are synchronized for the same entity and differed for different ones. The complex form of rate and phase thus encodes both feature and relational information. Inspired by rotary position embedding (Su et al., 2024), we can leverage such complex form in the attention module by rotating the query and key vectors. For a simple case with dimension 
+
+d = 2 and one phase per token, the formulation is: 
+
+fq (zm) = ( Wq zm)eiϕ m ,fk(zn) = ( Wkzn)eiϕ n ,
+
+⟨fq (zm), f k(zn)⟩ = Re 
+
+h
+
+(Wq zm)( Wkzn)∗ei(ϕm−ϕn)i
+
+,
+
+(5) where the phase difference ϕm − ϕn is naturally integrated into the dot product of query and key in the attention calcu-lation. It can be implemented as multiplying the rotation ma-trix R(ϕm) = 
+
+cos( ϕm) − sin( ϕm)sin( ϕm) cos( ϕm)
+
+
+
+to the query/key vectors with efficient realization. In this way, phases are modulating the attention scores. We further extend the rotation to value and output vectors so that phases modulate the value integration process as well. For the same case as above, the calculation is: 
+
+fv (zm) = R(ϕm)( Wv zm),fo(zn) = WoR(−ϕn) X
+
+> m
+
+an,m fv (zm) (6) where am,n is the attention score. This enables phase inter-ference for amplitude enhancement or attenuation. For the general high-dimensional setting where d is even, we also divide the d-dimension space into d/ 2 subspaces (Su et al., 2024) and integrate phases for each one. We will take p = d/ 2 (or p = dh/2 for each head in multi-head attention) to assign a phase for each subspace. While this complex form is inspired by rotary position em-bedding, we essentially differ from those methods targeted for static positions, as our objective is relational phase dif-ferences induced by endogenous Kuramoto phase dynamics, which induces structure from data through synchronization. 3Kuramoto Oscillatory Phase Encoding 
+
+3.2. Phase Dynamics 
+
+We align the discrete temporal dynamics of phases with the depth of ViT and update them at each layer. The couplings 
+
+J are data-adaptive attentive connections so that phases are expected to converge to cluster synchronization depending on the data. Specifically, we apply shared parameterized modules hq (·) and hk(·) : Rd → Rd over token represen-tations at each layer and calculate coupling connections as: 
+
+Jl = softmax col 
+
+ hq (zl)hk(zl)⊤
+
+√d
+
+
+
+. (7) Then phase representations are updated as Eq. (3) based on coupling connections. Since we only care about the relative phase differences (Section 3.1), we can omit the calculation of Ωi if all oscillators share the same natural frequency (the condition for Lyapunov). Therefore, the calculation of each layer is summarized as: 
+
+zl+1 ′ = zl + RMHSA  LN( zl), rl,
+
+zl+1 = zl+1 ′ + MLP  LN( zl+1 ′),
+
+rl+1 = Π (2) 
+
+rl + γProj (2) 
+
+> rl
+
+ Jl+1 rl
+
+,
+
+(8) where RMHSA refers to multi-head self-attention with phase rotation, and Π(2) and Proj (2)  
+
+> rl
+
+means pairwise (i.e., for the two elements of cos and sin ) normalization and orthog-onal projection. The coupling also maintains the multi-head setting as in the attention module (details in Appendix A). 
+
+3.3. Intuition of KoPE 
+
+KoPE provides a different phase dimension to encode struc-ture information from data through data-adaptive synchro-nization, facilitating the interactive attention module to for-mulate structured representations. Intuitively, KoPE aims to synchronize phases from the same entity or concept, and phase differences will encode relations among the entities (e.g., small differences indicate the same entity, or certain angles represent specific relations). Then the attention mod-ule is informed by such structure information through phase rotation, learning to adjust attention in a structured way. This decoupled dimension benefits (1) maintenance of the structure information without re-learning at each layer, (2) disentangle part of relational learning from attention, so that attention can learn to concentrate faster and is allevi-ated from learning various different functions (e.g., both entity identification and compositional integration). With synchronization-enhanced structure learning, the learning efficiency of the model could be improved. We will illustrate learning efficiency and benefits for struc-tured understanding in Section 4, and provide theoretical and empirical analysis for speedup of attention learning and structured attention representations in Section 5. 
+
+3.4. Implementation Details Phase Initialization In practice, we initialize phases at the first layer with multi-frequency 2d positional embed-dings (Heo et al., 2024) so that phase rotation is meaningful in the beginning layers. In this case, our phase dynamics start from spatial positions and gradually evolve to semantic-relationally synchronized states. Under this setting, we can also adopt a mixture of phases in attention calculation. Please refer to Appendix A for details. We also verified the importance of a meaningful phase intialization in Ap-pendix D.5. 
+
+Parameter and Computation We parameterize hq and 
+
+hk by linear projections. Since they are shared across layers, it introduces little additional parameters. γ is usually a fixed scalar and we can also parameterize it. The overall parameter overhead is only 1-2% of original parameters. For the computation of phase update, we can reuse the existing efficient attention calculation methods. It brings about 20% additional FLOPs for the common setting of ViTs. We can also control similar FLOPs by reducing the network (Appendix D.2). 
+
+## 4. Experiments 
+
+In this section, we conduct extensive experiments among supervised learning and self-supervised learning (SSL) to illustrate the learning efficiency of KoPE and its superior per-formance for tasks demanding structured understanding, in-cluding visual segmentation, vision-language learning, and few-shot abstract visual reasoning. We first start from the conventional supervised learning on ImageNet-1K (Deng et al., 2009) to demonstrate the learning efficiency. 
+
+4.1. Learning Efficiency 
+
+We train ViT and ViT+KoPE models with different scales (small, base, and large, all with pixel size 16) under the same setting and compare their training dynamics and per-formance over parameters/FLOPs. We mainly follow the DeiT-III setting (Touvron et al., 2022) and train models for 300 epochs. As shown in Fig. 2(a-b), KoPE largely speeds up the convergence of ViTs under different scales, and the performance gains maintain throughout the training. Con-sidering the final performance, ViT+KoPE achieves better accuracy and show more parameter and computation effi-ciency as well as larger generalization performance gains on ImageNet V2 (Fig. 2(d-g); additional experiments with re-duced parameters and matched FLOPs are in Appendix D.2). Such gains maintain when we train models for a longer time, e.g., 800 epochs (Appendix D.1), demonstrating the persis-tent advantages. We also investigate data efficiency by using different ratio of training data with similar training computing (Fig. 2(c)), 4Kuramoto Oscillatory Phase Encoding 20 40 60 80 100 
+
+> Epoch
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> 60
+> 70
+> 80
+> ImageNet Val Acc (%)
+> ViT-S
+> ViT-B
+> ViT-L
+> ViT+KoPE-S
+> ViT+KoPE-B
+> ViT+KoPE-L
+
+(a) Early training stage 100 150 200 250 300  
+
+> Epoch
+> 70
+> 75
+> 80
+> 85
+> ImageNet Val Acc (%)
+> ViT-S
+> ViT-B
+> ViT-L
+> ViT+KoPE-S
+> ViT+KoPE-B
+> ViT+KoPE-L
+
+(b) Late training stage 40 60 80 100  
+
+> Training Data Ratio (%)
+> 77
+> 78
+> 79
+> 80
+> 81
+> 82
+> 83
+> ImageNet Val Acc (%)
+> ViT
+> ViT+KoPE
+
+(c) Data efficiency 20 50 100 300 
+
+> Parameters (M)
+> 80
+> 81
+> 82
+> 83
+> 84
+> ImageNet Val Acc (%)
+> ViT
+> ViT+KoPE
+
+(d) Param–Acc (ImageNet val) 20 50 100 300  
+
+> Parameters (M)
+> 69
+> 70
+> 71
+> 72
+> 73
+> 74
+> ImageNet V2 Acc (%)
+> ViT
+> ViT+KoPE
+
+(e) Param–Acc (ImageNet V2) 5 10 20 50 80  
+
+> FLOPs (G)
+> 80
+> 81
+> 82
+> 83
+> 84
+> ImageNet Val Acc (%)
+> ViT
+> ViT+KoPE
+
+(f) FLOPs–Acc (ImageNet val) 5 10 20 50 80  
+
+> FLOPs (G)
+> 69
+> 70
+> 71
+> 72
+> 73
+> 74
+> ImageNet V2 Acc (%)
+> ViT
+> ViT+KoPE
+
+(g) FLOPs–Acc (ImageNet V2) 
+
+Figure 2. Summary of learning efficiency results on ImageNet-1K. (a-b) Training dynamics of different models at early and late stages. (c) Accuracy of ViT-B and ViT+KoPE-B trained with different fractions of the training data. (d-e) Parameter–accuracy trade-off curve on ImageNet validation set and ImageNet V2. (f-g) FLOPs–accuracy trade-off curve on ImageNet validation set and ImageNet V2. 20 40 60 80 100 
+
+> Epoch
+> 0
+> 15
+> 30
+> 45
+> 60
+> 75
+> ImageNet Val Acc (%)
+> ViT
+> w/o Kuramoto
+> KoPE
+
+(a) Early stage 100 150 200 250 300  
+
+> Epoch
+> 70
+> 75
+> 80
+> 85
+> ImageNet Val Acc (%)
+> ViT
+> w/o Kuramoto
+> KoPE
+
+(b) Late stage 
+
+Figure 3. Ablation study on learning efficiency. “w/o Kuramoto” uses fixed phase states as initialization. 
+
+where ViT+KoPE also shows improved efficiency, achieving similar performance as ViT with 20% reduction of data. 
+
+Ablation study Fig. 3 verifies that the efficiency comes from Kuramoto dynamics rather than attention rotation, as rotation alone has no improvement over ViT. More anal-ysis experiments can be found in Appendix D.3 and Ap-pendix D.5. 
+
+4.2. Self-supervised Learning 
+
+Modern visual models leverage self-supervised learning for scaling (Caron et al., 2021; Oquab et al., 2024; Sim ´eoni et al., 2025), and we show the compatibility of the proposed KoPE with SSL. We consider SimDINOv2 (Wu et al., 2025), which is a simplified yet better variant of DINOv2 (Oquab et al., 2024) based on coding rate regularization. We train the models on ImageNet-1K for 100 epochs and evaluate the linear probing and finetuning performance on ImageNet. 
+
+Table 1. Self-supervised learning results on ImageNet-1K. We train all models by SimDINOv2 for 100 epochs and evaluate linear probing and finetuning accuracy (%) results. 
+
+Scale Model Linear Finetuning val ReaL V2 
+
+small ViT 76.9 81.2 87.1 70.7 ViT+KoPE 77.5 81.7 87.3 71.7 
+
+base ViT 80.7 82.7 87.2 72.2 ViT+KoPE 80.9 83.2 87.5 73.5 
+
+large ViT 82.6 83.4 87.7 73.3 ViT+KoPE 82.7 84.1 88.3 73.8 
+
+As shown in Table 1, KoPE consistently improves the perfor-mance of ViT under different scales, verifying the architec-tural improvement for state-of-the-art learning paradigms. 
+
+4.3. Semantic and Panoptic Segmentation 
+
+Since phase synchronization provides a potential inductive bias for binding, we expect it to benefit visual segmenta-tion which requires identifying and binding concepts or objects. We evaluate the model on two tasks: (1) semantic segmentation on ADE-20K (Zhou et al., 2019); (2) panoptic segmentation on COCO (Kirillov et al., 2019), which is a more challenging task that jointly unifies instance and se-mantic segmentation to produce a complete scene parse. For semantic segmentation, we leverage the SETR-PUP (Zheng et al., 2021) that builds light heads on the ViT backbones 5Kuramoto Oscillatory Phase Encoding 
+
+(a) Original image (b) ViT-B (c) ViT+KoPE-B (d) Original image (e) ViT-B (f) ViT+KoPE-B 
+
+Figure 4. Visualization of panoptic segmentation results with Mask2Former under ViT and ViT+KoPE backbones. 
+
+Table 2. Semantic segmentation results on ADE20K (val) with SETR-PUP under single-scale evaluation. 
+
+Backbone mIoU (%) ↑ PixAcc (%) ↑
+
+ViT-B 44.10 81.58 ViT+KoPE-B 46.94 82.45 
+
+ViT-L 47.48 82.78 ViT+KoPE-L 48.84 83.04 
+
+Table 3. Panoptic segmentation results on COCO (val2017) with Mask2Former under single-scale evaluation. 
+
+Backbone PQ ↑ PQ th ↑ PQ st ↑ SQ ↑ RQ ↑
+
+ViT-B 54.51 60.34 45.72 83.18 64.75 ViT+KoPE-B 55.53 61.67 46.25 83.32 65.82 
+
+and report mIoU and pixel accuracy. For panoptic segmen-tation, we adopt the state-of-the-art Mask2Former (Cheng et al., 2022) and use ViT or ViT+KoPE as backbones with a simple feature-to-pyramid module on the last layer similar to Li et al. (2022). We report panoptic quality for all, things, and stuff (PQ, PQ th , PQ st ), segmentation quality (SQ), and recognition quality (RQ). We use backbones pretrained by SimDINOv2 for 100 epochs on ImageNet-1K. More details can be found in Appendix A. As shown in Table 2 and Table 3, KoPE largely improves ViT for the segmentation results, and the advantage of KoPE is amplified on a complex subset (Appendix D.5). The learning efficiency is also improved (see Appendix D.4). Visualization results are presented in Fig. 4, showing that KoPE encourages more correct binding of parts so that objects can be successfully detected and segmented. This verifies the benefit of phase synchronization for binding in real large-scale settings. 
+
+4.4. Vision-language Learning 
+
+Recent advancements in multi-modal models increasingly pose the requirement to align vision models with languages. 0M 50M 100M 150M 200M 250M 
+
+> Training Samples Seen
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> Zero-shot ImageNet Val (%)
+> ViT
+> ViT+KoPE
+
+(a) ImageNet val 0M 50M 100M 150M 200M 250M  
+
+> Training Samples Seen
+> 5
+> 10
+> 15
+> 20
+> 25
+> Zero-shot ImageNet V2 (%)
+> ViT
+> ViT+KoPE
+
+(b) ImageNet V2 
+
+Figure 5. Training dynamics comparison between ViT-B and ViT+KoPE-B in vision-language learning, evaluated by zero-shot classification performance on ImageNet validation set and Ima-geNet V2. 
+
+Table 4. Summary of zero-shot generalization performance under vision-language learning. “Robust” is the average of ImageNet V2/A/R/Sketch/O and ObjectNet. “VTAB” is the average of visual task adaptation benchmark tasks. “Retrv.” is the average Recall@5 among Flickr30k, Flickr8k, and MSCOCO. 
+
+Model IN-1K Robust VTAB Retrv. I2T Retrv. T2I 
+
+ViT-B 28.21 23.44 24.50 41.62 54.59 ViT+KoPE-B 29.22 24.88 28.25 42.45 55.58 
+
+Since languages are highly abstract and conceptual, we also expect KoPE to facilitate alignment learning with languages. We evaluate ViT and ViT+KoPE under CLIP-style learn-ing (Radford et al., 2021), using the medium-scale data from DataComp (Gadre et al., 2023) and the OpenCLIP frame-work (Ilharco et al., 2021; Cherti et al., 2023). During train-ing, we evaluate the zero-shot classification performance on ImageNet validation set and ImageNet V2; after training, we also systematically evaluate the zero-shot performance on 40 datasets following CLIP benchmark (Cherti & Beaumont, 2022). More details can be found in Appendix A. 
+
+Learning efficiency As shown in Fig. 5, KoPE improves the learning efficiency and final performance of vision-language models, achieving similar performance with 15-20% less seen training samples. 
+
+Generalization Meanwhile, ViT+KoPE has better zero-shot generalization performance (Table 4 and Ap-6Kuramoto Oscillatory Phase Encoding 
+
+Table 5. Results on ARC-AGI tasks. We pretrain the model and perform test-time training following Hu et al. (2025), and report mean ±std (max) over five runs of test-time training. * denotes continual pretraining on ARC-AGI-2 training tasks (VARC default on ARC-AGI-1). Comparison results taken from Hu et al. (2025). 
+
+system #params ARC-1 ARC-2 
+
+large language models (LLMs) 
+
+Deepseek R1 671B 15.8 1.3 Claude 3.7 8k N/A 21.2 0.9 o3-mini-high N/A 34.5 3.0 GPT-5 N/A 44.0 1.9 Grok-4-thinking 1.7T 66.7 16.0 Bespoke (Grok-4) 1.7T 79.6 29.4 
+
+recurrent models 
+
+HRM 27M 40.3 5.0 TRM 7M 44.6 7.8 
+
+vision models (VARC) 
+
+ViT (Hu et al., 2025) 18M 54.5 ±0.7 8.3 ±0.4 ViT (Hu et al., 2025) 66M 53.0 -Enc-Dec ViT 36M 54.7 ±0.6 (55.3) 7.3 ±0.9 (8.3) Enc-Dec ViT+KoPE 37M 56.8 ±0.7 (57.5) 9.8 ±0.6 (10.8) 
+
+Enc-Dec ViT+KoPE* 37M / 10.2 ±0.4 (10.8) 
+
+pendix D.6), with remarkable robust generalization perfor-mance (e.g., +2.69 pp on ObjectNet, indicating that KoPE encourages more object-centric recognition) and adaptation performance (+3.75 pp in average). These results further suggests the (symbolic) structure learning ability of KoPE. 
+
+4.5. Abstract Visual Reasoning 
+
+Finally, we investigate challenging few-shot abstract visual reasoning tasks, ARC-AGI-1 (Chollet, 2019) and ARC-AGI-2 (Chollet et al., 2025), which are easy for humans while hard for state-of-the-art AI models. These tasks require con-cepts of objectness and compositionality, and we expect that KoPE can improve current models. We follow the VARC method (Hu et al., 2025) and compare ViT+KoPE versus ViT in an adapted encoder-decoder framework. Please refer to Appendix B for details. As shown in Table 5, the encoder-decoder model with ViT+KoPE achieves state-of-the-art performance over single models trained from scratch (Wang et al., 2025; Jolicoeur-Martineau, 2025; Hu et al., 2025), validating the benefit of KoPE for visual reasoning with structured understanding. 
+
+## 5. Analysis of KoPE 
+
+In this section, we further provide analysis to present in-tuitions of why KoPE improves the learning efficiency of ViTs. Recent theoretical results have shown the important of attention sparsity (concentration) during training evo-lution (Li et al., 2023) and for emergence (Zucchet et al., 2025), and training/sample complexity of shallow ViTs can be derived (Li et al., 2023). We first show that in a simplified 0 50 100 150 200 250 300 
+
+> Epoch
+> 0.65
+> 0.75
+> 0.85
+> 0.95
+> Attention Gini
+> ViT-B
+> ViT+KoPE-B
+
+(a) Gini metric of attention 0 50 100 150 200 250 300  
+
+> Epoch
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Attn-weighted Synchronization
+
+(b) Weighted synchronization 
+
+Figure 6. Empirical verification of attention concentration and weighted phase synchronization throughout ImageNet supervised learning. (a) Evolution of average Gini metric over all tokens for all heads of the attention of CLS token in the last layer during training. (b) Evolution of phase synchronization weighted by the attention of CLS token in the last layer during training. 
+
+theoretical setting, KoPE can accelerate attention learning (i.e., the sparse attention to focus on relevant parts) and potentially reduce training and sample complexity, and then provide empirical verification. ViT+ KoPE  ViT 
+
+Figure 7. Visualization of attention maps for models (base) trained on ImageNet-1K under supervised learning. Attention maps are from two best attention heads of CLS token in the last layer. 
+
+5.1. Attention Concentration and Training Efficiency 
+
+We first consider a simplified theoretical setting for anal-ysis. As in Li et al. (2023), we consider binary classifi-cation over token sequences with both discriminative and non-discriminative parts, for a shallow ViT with one self-attention layer followed by a two-layer perception. We append a CLS token in the model. For KoPE, we consider the setting that phases have converged to clustered synchro-nization, analogous to the final layer in real ViTs. The cluster tightness, separation, and consistency will be char-acterized by 1 − εϕ/2, ∆ϕmin , and 1 − ξϕ, and we have 
+
+ρϕ = cos(∆ ϕmin ) < γ ϕ = cos( εϕ). We also simplify the rotation in attention as a function to enhance within-cluster interaction and suppress cross-cluster parts. This is only a simplified setting for intuition and is a conservative expla-nation for KoPE, as it may be more complex and powerful for feature extraction from complex data in real scenarios. 7Kuramoto Oscillatory Phase Encoding 
+
+We show that under this simplified setting, the condition for attention concentration on relevant token ( P 
+
+> j∈S∗
+
+a0j )is relaxed by KoPE, so it is likely accelerated. 
+
+Lemma 5.1 (Relaxed condition for attention concentration, informal) . Let ∆ = min j∈S∗ ⟨q, k j ⟩ − max r∈S¬∗ ⟨q, k r ⟩ de-note the content-only logit gap for relevant tokens from the CLS token. The condition to reach 1 − ϵ attention concentra-tion on relevant tokens is relaxed from ∆ ≥ log |S¬∗ ||S∗| +log 1 
+
+> ϵ
+
+to ∆ ≥ log |S¬∗ ||S∗| + log 1 
+
+> ϵ
+
+− f (γϕ, ρ ϕ, ξ ϕ), where 
+
+f (γϕ, ρ ϕ, ξ ϕ) > 0 is a function depending on γϕ, ρ ϕ, ξ ϕ.Then under similar training dynamics that increases ∆, at-tention concentration will be achieved earlier. 
+
+Detailed descriptions can be found in Appendix C. With more concentrated attention on relevant tokens and sup-pression of irrelevant information, the training and sample complexity are potentially reduced, given the close relation-ship between attention concentration and training/sample complexity (Li et al., 2023). 
+
+5.2. Empirical Verification 
+
+We provide empirical verification of accelerated attention learning by presenting the dynamics of the average Gini metric over all tokens for all heads of the attention from the last layer’s CLS token, which measures the concentration of attention. As shown in Fig. 6(a), KoPE largely accelerates the process of attention concentration, consistent with the theoretical analysis. As the average Gini metric is over all tokens rather than label-relevant tokens, it is only a surrogate for the expected concentration and there exists a two-stage evolution where the first stage increases Gini metric while the second stage decreases it, potentially learning more ac-curate relevant tokens. KoPE has a larger concentration throughout the training. Fig. 6(b) also verifies the phase synchronization of attended tokens in the last layer during training (synchronization weighted by the attention from CLS token), indicating both synchronization of relevant parts and the increased attention on them (more analysis results can be found in Appendix D.5). We further visualize the (phase-gated) attention maps from the last layers’ CLS token in Fig. 7, demonstrating that KoPE enables better at-tention to objects relevant to the labels, suggesting a more structured attention representation on relevant tokens. More visualization results in Appendix D.7 further verify the struc-tured representations and the complementary advantages of KoPE over learning paradigms. 
+
+## 6. Related Work 
+
+A line of works attempt to introduce complex value with phase information into neural networks. Complex-valued neurons (Reichert & Serre, 2013; L ¨owe et al., 2022; Lee et al., 2022; L ¨owe et al., 2023) introduce complex repre-sentations for neural networks and have been applied to object discovery or naturally complex-valued data and sig-nals. Neural synchrony are studied in this context (Reichert & Serre, 2013; L ¨owe et al., 2022; Stani ´c et al., 2023; L ¨owe et al., 2023) or other spatiotemporal structure such as spik-ing time (Zheng et al., 2022; 2023). These works mainly focus on binding-specific problems, e.g., object discovery, not targeting general vision tasks. Some recent works intro-duce Kuramoto dynamics into deep learning (Miyato et al., 2025; Song et al., 2025), formulating phase-only neurons for object discovery, adversarial robustness, and sudoku rea-soning (Miyato et al., 2025), or injecting structural inductive bias for the diffusion process (Song et al., 2025). Kuramoto model is also introduced in graph learning (Nguyen et al., 2024; Ding et al., 2025a) for the over-smoothing problem. Nevertheless, most works are usually restricted to specific tasks rather than advancing scalable modern neural new-torks for large-scale vision tasks. In contrast, the proposed KoPE instantiates coupled rate–phase dynamics within stan-dard Vision Transformers, enabling synchronization as an structural inductive bias under realistic large-scale training. Complex formulation has also been studied in the literature of positional embedding, with the representative method of rotary positional embedding (Su et al., 2024) and subse-quent extensions (Heo et al., 2024; Peng et al., 2024). Nev-ertheless, they focus on static phases with only positional information, while we investigate evolving phase dynamics by Kuramoto dynamics to learn structure from data though synchronization. Besides neural synchrony, the binding problem has been studied in the object-centric literature, which is regarded as a key obstacle for compositional and systematic generaliza-tion (Greff et al., 2020). Slot-based models (Burgess et al., 2019; Greff et al., 2019; Locatello et al., 2020) are popular methods for object-centric learning. However, similar to pre-vious synchrony-based models, they struggle on scalability to natural images and require combination with pre-trained vision models (Seitzer et al., 2023). The proposed KoPE, on the other hand, shows that synchronization can be leveraged as a scalable structural inductive bias for large-scale vision tasks with implicit synchronization-based binding instead of explicit slots. This re-positions neural syncrhony as an important and scalable mechanism for solving this problem. A broad literature studies learning efficiency in vision through architectural/connectivity design (Liu et al., 2021), distillation or training recipe (Touvron et al., 2021; 2022), data pruning (Paul et al., 2021), optimization (Foret et al.; Xie et al., 2024), etc. The proposed KoPE turns to a dif-ferent perspective on neural representation and information processing through phases, providing a structural inductive bias that is compatible with most of these works. 8Kuramoto Oscillatory Phase Encoding 
+
+## 7. Conclusion 
+
+In this work, we propose Kuramoto oscillatory Phase En-coding, an evolving phase state incorporated into the main-stream Vision Transformer model. We show that neuro-inspired synchronization can advance scalable neural net-works for training, parameter, and data efficiency, mean-while benefiting tasks requiring structured understanding such as image segmentation, vision-language alignement, and few-shot abstract visual reasoning. Extensive experi-ments and theoretical analysis verify the efficiency and supe-rior performance of the proposed method. Our work shows that synchronization can serve as a scalable, neuro-inspired mechanism for advancing state-of-the-art neural networks, shedding light on new routes for bringing brain-inspired principles with scalable vision learning. 
+
+## Impact Statement 
+
+This work proposes KoPE as a scalable neuro-inspired mech-anism for improving learning efficiency and structured vi-sual understanding. Such mechanisms may help reduce the computation or model capacity needed to reach a target performance level, which could lower the resource barrier for strong vision models. At the same time, KoPE is de-signed for structured representation learning from unstruc-tured data, which may not be assumed to transfer uniformly to all tasks, domains, or applications. Additionally, broader risks such as data bias, shift, or harmful downstream use are not resolved by this mechanism itself and must still be evaluated separately. 
+
+## References 
+
+Acebr ´on, J. A., Bonilla, L. L., P ´erez Vicente, C. J., Ri-tort, F., and Spigler, R. The kuramoto model: A simple paradigm for synchronization phenomena. Reviews of modern physics , 77(1):137–185, 2005. Bommasani, R. On the opportunities and risks of foundation models. arXiv preprint arXiv:2108.07258 , 2021. Breakspear, M., Heitmann, S., and Daffertshofer, A. Gen-erative models of cortical oscillations: neurobiological implications of the kuramoto model. Frontiers in Human Neuroscience , 4:190, 2010. Burgess, C. P., Matthey, L., Watters, N., Kabra, R., Higgins, I., Botvinick, M., and Lerchner, A. Monet: Unsupervised scene decomposition and representation. arXiv preprint arXiv:1901.11390 , 2019. Caron, M., Touvron, H., Misra, I., J ´egou, H., Mairal, J., Bojanowski, P., and Joulin, A. Emerging properties in self-supervised vision transformers. In Proceedings of the IEEE/CVF International Conference on Computer Vision , pp. 9650–9660, 2021. Chen, R. T., Rubanova, Y., Bettencourt, J., and Duvenaud, D. K. Neural ordinary differential equations. Advances in Neural Information Processing Systems , 31, 2018. Cheng, B., Misra, I., Schwing, A. G., Kirillov, A., and Gird-har, R. Masked-attention mask transformer for universal image segmentation. In Proceedings of the IEEE/CVF conference on Computer Vision and Pattern Recognition ,pp. 1290–1299, 2022. Cherti, M. and Beaumont, R. Clip benchmark, Novem-ber 2022. URL https://doi.org/10.5281/ zenodo.15403103 .Cherti, M., Beaumont, R., Wightman, R., Wortsman, M., Ilharco, G., Gordon, C., Schuhmann, C., Schmidt, L., and Jitsev, J. Reproducible scaling laws for con-trastive language-image learning. In Proceedings of the IEEE/CVF conference on Computer Vision and Pattern Recognition , pp. 2818–2829, 2023. Chollet, F. On the measure of intelligence. arXiv preprint arXiv:1911.01547 , 2019. Chollet, F., Knoop, M., Kamradt, G., Landers, B., and Pinkard, H. Arc-agi-2: A new challenge for frontier ai reasoning systems. arXiv preprint arXiv:2505.11831 ,2025. Deng, J., Dong, W., Socher, R., Li, L.-J., Li, K., and Fei-Fei, L. Imagenet: A large-scale hierarchical image database. In Proceedings of the IEEE conference on Computer Vision and Pattern Recognition , pp. 248–255, 2009. Ding, J., Dan, T., Zhou, Z., and Wu, G. Let brain rhythm shape machine intelligence for connecting dots on graphs. In Advances in Neural Information Processing Systems ,2025a. Ding, J., Yu, Z., Liu, J. K., and Huang, T. Neuromorphic computing paradigms enhance robustness through spik-ing neural networks. Nature Communications , 16(1): 10175, 2025b. Dosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn, D., Zhai, X., Unterthiner, T., Dehghani, M., Minderer, M., Heigold, G., Gelly, S., Uszkoreit, J., and Houlsby, N. An image is worth 16x16 words: Transformers for image recognition at scale. In International Conference on Learning Representations , 2021. URL https:// openreview.net/forum?id=YicbFdNTTy .Engel, A. K. and Singer, W. Temporal binding and the neural correlates of sensory awareness. Trends in Cognitive Sciences , 5(1):16–25, 2001. 9Kuramoto Oscillatory Phase Encoding 
+
+Foret, P., Kleiner, A., Mobahi, H., and Neyshabur, B. Sharpness-aware minimization for efficiently improving generalization. In International Conference on Learning Representations .Fries, P. Rhythms for cognition: communication through coherence. Neuron , 88(1):220–235, 2015. Gadre, S. Y., Ilharco, G., Fang, A., Hayase, J., Smyrnis, G., Nguyen, T., Marten, R., Wortsman, M., Ghosh, D., Zhang, J., et al. Datacomp: In search of the next generation of multimodal datasets. Advances in Neural Information Processing Systems , 36:27092–27112, 2023. Greff, K., Kaufman, R. L., Kabra, R., Watters, N., Burgess, C., Zoran, D., Matthey, L., Botvinick, M., and Lerchner, A. Multi-object representation learning with iterative variational inference. In International Conference on Machine Learning , pp. 2424–2433. PMLR, 2019. Greff, K., Van Steenkiste, S., and Schmidhuber, J. On the binding problem in artificial neural networks. arXiv preprint arXiv:2012.05208 , 2020. He, K., Zhang, X., Ren, S., and Sun, J. Deep residual learn-ing for image recognition. In Proceedings of the IEEE conference on Computer Vision and Pattern Recognition ,pp. 770–778, 2016. Heo, B., Park, S., Han, D., and Yun, S. Rotary position em-bedding for vision transformer. In European Conference on Computer Vision , pp. 289–305. Springer, 2024. Hochreiter, S. and Schmidhuber, J. Long short-term memory. 
+
+Neural Computation , 9(8):1735–1780, 1997. Hopfield, J. J. Neurons with graded response have collective computational properties like those of two-state neurons. 
+
+Proceedings of the National Academy of Sciences , 81(10): 3088–3092, 1984. Hu, K., Cy, A., Qiu, L., Ding, X. D., Wang, R., Zhu, Y. E., Andreas, J., and He, K. Arc is a vision problem! arXiv preprint arXiv:2511.14761 , 2025. Ilharco, G., Wortsman, M., Wightman, R., Gordon, C., Car-lini, N., Taori, R., Dave, A., Shankar, V., Namkoong, H., Miller, J., Hajishirzi, H., Farhadi, A., and Schmidt, L. Openclip, July 2021. URL https://doi.org/10. 5281/zenodo.5143773 .Ilievski, F., Hammer, B., van Harmelen, F., Paassen, B., Sar-alajew, S., Schmid, U., Biehl, M., Bolognesi, M., Dong, X. L., Gashteovski, K., et al. Aligning generalization between humans and machines. Nature Machine Intelli-gence , 7(9):1378–1389, 2025. Jolicoeur-Martineau, A. Less is more: Recursive reasoning with tiny networks. arXiv preprint arXiv:2510.04871 ,2025. Kaplan, J., McCandlish, S., Henighan, T., Brown, T. B., Chess, B., Child, R., Gray, S., Radford, A., Wu, J., and Amodei, D. Scaling laws for neural language models. 
+
+arXiv preprint arXiv:2001.08361 , 2020. Kirillov, A., He, K., Girshick, R., Rother, C., and Doll ´ar, P. Panoptic segmentation. In Proceedings of the IEEE/CVF conference on Computer Vision and Pattern Recognition ,pp. 9404–9413, 2019. LeCun, Y., Bottou, L., Bengio, Y., and Haffner, P. Gradient-based learning applied to document recognition. Proceed-ings of the IEEE , 86(11):2278–2324, 2002. Lee, C., Hasegawa, H., and Gao, S. Complex-valued neural networks: A comprehensive survey. IEEE/CAA Journal of Automatica Sinica , 9(8):1406–1426, 2022. Li, H., Weng, M., Liu, S., and Chen, P.-Y. A theoretical understanding of shallow vision transformers: Learning, generalization, and sample complexity. In International Conference on Learning Representations , 2023. Li, Y., Mao, H., Girshick, R., and He, K. Exploring plain vision transformer backbones for object detection. In 
+
+European Conference on Computer Vision , pp. 280–296. Springer, 2022. Liu, Z., Lin, Y., Cao, Y., Hu, H., Wei, Y., Zhang, Z., Lin, S., and Guo, B. Swin transformer: Hierarchical vision transformer using shifted windows. In Proceedings of the IEEE/CVF International Conference on Computer Vision ,pp. 10012–10022, 2021. Locatello, F., Weissenborn, D., Unterthiner, T., Mahendran, A., Heigold, G., Uszkoreit, J., Dosovitskiy, A., and Kipf, T. Object-centric learning with slot attention. Advances in Neural Information Processing Systems , 33:11525– 11538, 2020. L ¨owe, S., Lippe, P., Rudolph, M., Welling, M., et al. Complex-valued autoencoders for object discovery. 
+
+Transactions on Machine Learning Research , (428), 2022. L ¨owe, S., Lippe, P., Locatello, F., and Welling, M. Rotat-ing features for object discovery. Advances in Neural Information Processing Systems , 36:59606–59635, 2023. Lu, Y., Li, Z., He, D., Sun, Z., Dong, B., Qin, T., Wang, L., and Liu, T.-y. Understanding and improving trans-former from a multi-particle dynamic system point of view. In ICLR 2020 Workshop on Integration of Deep Neural Models and Differential Equations , 2020. 10 Kuramoto Oscillatory Phase Encoding 
+
+Maass, W. Networks of spiking neurons: the third genera-tion of neural network models. Neural Networks , 10(9): 1659–1671, 1997. McCulloch, W. S. and Pitts, W. A logical calculus of the ideas immanent in nervous activity. The bulletin of math-ematical biophysics , 5(4):115–133, 1943. Miyato, T., L ¨owe, S., Geiger, A., and Welling, M. Artificial kuramoto oscillatory neurons. In International Confer-ence on Learning Representations , 2025. Mostafa, H. Supervised learning based on temporal coding in spiking neural networks. IEEE Transactions on Neural Networks and Learning Systems , 29(7):3227–3235, 2017. Muller, L., Chavane, F., Reynolds, J., and Sejnowski, T. J. Cortical travelling waves: mechanisms and computational principles. Nature Reviews Neuroscience , 19(5):255–268, 2018. Nguyen, T., Honda, H., Sano, T., Nguyen, V., Nakamura, S., and Nguyen, T. M. From coupled oscillators to graph neural networks: Reducing over-smoothing via a ku-ramoto model-based approach. In International Con-ference on Artificial Intelligence and Statistics , pp. 2710– 2718. PMLR, 2024. Oquab, M., Darcet, T., Moutakanni, T., Vo, H. V., Szafraniec, M., Khalidov, V., Fernandez, P., HAZIZA, D., Massa, F., El-Nouby, A., Assran, M., Ballas, N., Galuba, W., Howes, R., Huang, P.-Y., Li, S.-W., Misra, I., Rabbat, M., Sharma, V., Synnaeve, G., Xu, H., Je-gou, H., Mairal, J., Labatut, P., Joulin, A., and Bo-janowski, P. DINOv2: Learning robust visual features without supervision. Transactions on Machine Learn-ing Research , 2024. ISSN 2835-8856. URL https:// openreview.net/forum?id=a68SUt6zFt . Fea-tured Certification. Paul, M., Ganguli, S., and Dziugaite, G. K. Deep learning on a data diet: Finding important examples early in training. 
+
+Advances in Neural Information Processing Systems , 34: 20596–20607, 2021. Peng, B., Quesnelle, J., Fan, H., and Shippole, E. Yarn: Effi-cient context window extension of large language models. In International Conference on Learning Representations ,2024. Radford, A., Kim, J. W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., Sastry, G., Askell, A., Mishkin, P., Clark, J., et al. Learning transferable visual models from natural language supervision. In International Conference on Machine Learning , pp. 8748–8763, 2021. Reichert, D. P. and Serre, T. Neuronal synchrony in complex-valued deep networks. arXiv preprint arXiv:1312.6115 ,2013. Rumelhart, D. E., Hinton, G. E., and Williams, R. J. Learn-ing representations by back-propagating errors. Nature ,323(6088):533–536, 1986. Schuhmann, C., Beaumont, R., Vencu, R., Gordon, C., Wightman, R., Cherti, M., Coombes, T., Katta, A., Mullis, C., Wortsman, M., et al. Laion-5b: An open large-scale dataset for training next generation image-text models. In Advances in Neural Information Processing Systems ,2022. Seitzer, M., Horn, M., Zadaianchuk, A., Zietlow, D., Xiao, T., Simon-Gabriel, C.-J., He, T., Zhang, Z., Sch ¨olkopf, B., Brox, T., et al. Bridging the gap to real-world object-centric learning. In International Conference on Learning Representations , 2023. Sim ´eoni, O., Vo, H. V., Seitzer, M., Baldassarre, F., Oquab, M., Jose, C., Khalidov, V., Szafraniec, M., Yi, S., Ramamonjisoa, M., et al. Dinov3. arXiv preprint arXiv:2508.10104 , 2025. Singer, W. Neuronal synchrony: a versatile code for the definition of relations? Neuron , 24(1):49–65, 1999. Singer, W. and Gray, C. M. Visual feature integration and the temporal correlation hypothesis. Annual Review of Neuroscience , 18(1):555–586, 1995. Song, Y., Keller, T. A., Brodjian, S., Miyato, T., Yue, Y., Per-ona, P., and Welling, M. Kuramoto orientation diffusion models. In Advances in Neural Information Processing Systems , 2025. Stani ´c, A., Gopalakrishnan, A., Irie, K., and Schmidhuber, J. Contrastive training of complex-valued autoencoders for object discovery. Advances in Neural Information Processing Systems , 36:11075–11101, 2023. Su, J., Ahmed, M., Lu, Y., Pan, S., Bo, W., and Liu, Y. Roformer: Enhanced transformer with rotary position embedding. Neurocomputing , 568:127063, 2024. Touvron, H., Cord, M., Douze, M., Massa, F., Sablayrolles, A., and J ´egou, H. Training data-efficient image transform-ers & distillation through attention. In International Con-ference on Machine Learning , pp. 10347–10357. PMLR, 2021. Touvron, H., Cord, M., and J ´egou, H. Deit iii: Revenge of the vit. In European Conference on Computer Vision , pp. 516–533. Springer, 2022. Treisman, A. The binding problem. Current opinion in neurobiology , 6(2):171–178, 1996. Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., and Polosukhin, I. Atten-tion is all you need. Advances in Neural Information Processing Systems , 30, 2017. 11 Kuramoto Oscillatory Phase Encoding 
+
+Wang, G., Li, J., Sun, Y., Chen, X., Liu, C., Wu, Y., Lu, M., Song, S., and Yadkori, Y. A. Hierarchical reasoning model. arXiv preprint arXiv:2506.21734 , 2025. Wu, Z., Zhang, J., Pai, D., Wang, X., Singh, C., Yang, J., Gao, J., and Ma, Y. Simplifying dino via coding rate regularization. In International Conference on Machine Learning , 2025. Xiao, M., Zhu, Y., He, D., and Lin, Z. Temporal spiking neural networks with synaptic delay for graph reasoning. In International Conference on Machine Learning , pp. 54341–54362. PMLR, 2024. Xie, X., Zhou, P., Li, H., Lin, Z., and Yan, S. Adan: Adap-tive nesterov momentum algorithm for faster optimizing deep models. IEEE Transactions on Pattern Analysis and Machine Intelligence , 46(12):9508–9520, 2024. Zhai, X., Kolesnikov, A., Houlsby, N., and Beyer, L. Scaling vision transformers. In Proceedings of the IEEE/CVF conference on Computer Vision and Pattern Recognition ,pp. 12104–12113, 2022. Zheng, H., Lin, H., Zhao, R., and Shi, L. Dance of snn and ann: solving binding problem by combining spike timing and reconstructive attention. Advances in Neural Information Processing Systems , 35:31430–31443, 2022. Zheng, H., Lin, H., and Zhao, R. Gust: combinatorial generalization by unsupervised grouping with neuronal coherence. Advances in Neural Information Processing Systems , 36:32913–32925, 2023. Zheng, S., Lu, J., Zhao, H., Zhu, X., Luo, Z., Wang, Y., Fu, Y., Feng, J., Xiang, T., Torr, P. H., et al. Rethink-ing semantic segmentation from a sequence-to-sequence perspective with transformers. In Proceedings of the IEEE/CVF conference on Computer Vision and Pattern Recognition , pp. 6881–6890, 2021. Zhou, B., Zhao, H., Puig, X., Xiao, T., Fidler, S., Barriuso, A., and Torralba, A. Semantic understanding of scenes through the ade20k dataset. International Journal of Computer Vision , 127(3):302–321, 2019. Zucchet, N., d’Angelo, F., Lampinen, A. K., and Chan, S. C. The emergence of sparse attention: impact of data distribution and benefits of repetition. Advances in Neural Information Processing Systems , 2025. 12 Kuramoto Oscillatory Phase Encoding 
+
+## A. Implementation Details 
+
+A.1. Multi-head attention and coupling 
+
+In practice, the attention module will be divided into multiple heads, i.e., the input z ∈ Rd is treated as z ∈ Rnh×dh , and attention is carried out for each head with dimension dh. KoPE also maintains separate phases for different heads, which are coupled separately and act on the corresponding attention heads. The coupling connections are calculated for each head, based on per-head representations with dimension dh from hq (z) and hk(z). This is similar to the calculation of multi-head attention, while we do not have value/output projection in the coupling. 
+
+A.2. Phase initialization and calculation 
+
+In practice, we initialize phases at the first layer with multi-frequency 2d positional embeddings so that phase rotation is meaningful in the beginning layers. Specifically, it extends rotary position embedding to 2d grids, and the phases are based on the spatial position (x, y ). For each head with dimension dh (should be dividable by 4), half of the dimensions are used for the x-axis while the remaining for the y-axis. For each axis, the phase representations at index i are calculated by 
+
+cos( iψ j ) and sin( iψ j ), where ψj = base −j/ (dh/4) is the frequency that is different for paired dimension index j. For the CLS token, it is initialized with ϕ = 0 , i.e., cos( ϕ) = 1 and sin( ϕ) = 0 . In this case, our phase dynamics start from spatial positions and gradually evolve to semantic-relationally synchronized states. We can also learn to determine initial phases from token representations, while we use positional initialization in this paper. 
+
+Mixture of phases Then for each head, the coupling process uses a same coupling matrix for phases initialized with different spatial frequencies. This may result in different synchronization structures because they are dependent on the initialization condition as well. Under this setting, we can also adopt a mixture of phases in attention calculation to better leverage information from different dimensions. Specifically, let rk ∈ R(dh/2) ×2 denote the phase representation of the 
+
+k-th head, where rk,j ∈ R2 corresponds the phases that are initialized from the j-th spatial frequency. We parameterize a mixing matrix Mk ∈ R(dh/2) ×(dh/2) (initialized around the identity matrix) for each head to learn to mix different phases for attention rotation. That is, we use Π(2) (Mkrk) for phase rotation. This introduces minimal parameter costs, and analysis in Appendix D.3 shows that this leads to slightly better final performance. The only hyperparameter in KoPE is the step size γ. For supervised learning, we fix γ = 0 .05 . We can also make it learnable, i.e., parameterize it with a softplus function to ensure positivity. In other experiments, we basically use the learnable γ
+
+initialized at 0.05 .
+
+## B. Experiment Details 
+
+B.1. Supervised Learning on ImageNet-1K 
+
+For supervised learning, we mainly follow the DeiT-III setting (Touvron et al., 2022) to adopt strong data augmentation. We set the basic hyper-parameters, such as learning rate, drop path rate (for different model scales), etc., as the recommended value. For computational efficiency, we mainly train models for 300 epochs, while Appendix D.1 also shows results with longer training time (800 epochs). We use exponential moving average (EMA) for models and report the final performance of the EMA models. For the data efficiency experiments, we use a subset of training data (with different ratios) while keeping the whole iteration similar. For example, with 40% ratio of training data, we train models for 300 /(40%) = 750 epochs to keep similar training steps. This is to study the pure influence of the data without the interference of the training steps. The common ViTs adopt the absolute position embeddings with learnable parameters added to the patch embeddings. We keep this settings for all models. For the ablation study, we only use the initial phases for rotation without Kuramoto dynamics, which is similar to rotary position embedding (also kept absolute position embeddings, without it the performance is lower by 2%), and experiments show that it hardly has difference from vanilla ViTs, verifying the necessity of the synchronization prior from Kuramoto dynamics. 
+
+B.2. Self-supervised Learning 
+
+We leverage SimDINOv2 (Wu et al., 2025) to train all models for 100 epochs. The hyperparameters are set as values in their paper, while we set drop path rate as 0.1 for small and base models (0.2 for large models). For finetuning, we train 13 Kuramoto Oscillatory Phase Encoding 
+
+models for 100 epochs for small and base models while 50 epochs for large models. For ViT+KoPE-L, we additionally add a regularization term for phases in the self-supervised objective. Specifically, similar to the ibot loss, we encourage the phases of each token at the last layer from the student network to align with the phases from the teacher network. This both regularizes the phases of tokens from the student network’s input and encourages predicting phases from the masked patches. 
+
+B.3. Image Segmentation 
+
+For semantic segmentation on ADE-20K, we leverage the SETR-PUP method (Zheng et al., 2021) that builds light heads on the ViT backbone. This enables better evaluation of the advantages of ViT-style backbones. For panoptic segmentation on COCO, we leverage the Mask2Former method (Cheng et al., 2022) with ViT or ViT+KoPE as backbones. As Mask2Former requires pyramid inputs, we leverage a simple feature-to-pyramid module on the last layer of ViT or ViT+KoPE, similar to Li et al. (2022). It builds feature maps with resolution scales 4, 2, 1, and 0.5 for the network output through transposed convolutions or max pooling, which is then processed by Mask2Former segmentation heads. All experiments are carried out under the mmsegmentation or mmdetection framework, with segmentation head and training settings as the default configs for SETR-PUP and Mask2Former. 
+
+B.4. Vision-language Learning 
+
+We leverage the OpenCLIP framework (Ilharco et al., 2021; Cherti et al., 2023) to train ViT and ViT+KoPE under CLIP-style learning. We utilize the unfiltered medium-scale data from DataComp (Gadre et al., 2023), which originally contains 128M data (around 4.5 TB) while we only successfully downloaded 70% of the data from the Internet (around 3.2 TB). We use the same data and training settings for both models, and we consider ViT-B-16 and ViT+KoPE-B-16 models. The training setting mainly follows the corresponding medium recipe of DataComp (Gadre et al., 2023) while we double the training samples seen (from 128M to 256M). During training, we evaluate the zero-shot classification performance on ImageNet validation set and ImageNet V2 following the OpenCLIP realization. After training, we also systematically evaluate the zero-shot performance on 40 datasets following CLIP benchmark (Cherti & Beaumont, 2022). The detailed results are reported in Appendix D.6. 
+
+B.5. Abstract Visual Reasoning 
+
+For few-shot abstract visual reasoning on ARC-AGI tasks, we follow the VARC method (Hu et al., 2025) that views it a vision problem, and leverage the same procedure to patchify images and perform data augmentation. We follow the training pipeline to first pretrain the model on training tasks from ARC-AGI-1 and re-arc for 100 epochs, and then perform test-time training separately for each task in the validation set of ARC-1/ARC-2. Test-time training is performed for multiple times and we report the mean, standard deviation, and max results. We adapt the pure ViT in Hu et al. (2025) into an encoder-decoder architecture, where the encoder focuses on understanding the inputs while the decoder focuses on generating the output answer. We only adopt KoPE for the encoder since KoPE facilitates structured understanding. The encoder is composed of self-attention and MLP layers, while the decoder is composed of self-attention, cross-attention, and MLP layers. Hu et al. (2025) leverage 2d rotary positional embeddings in ViT, and we replace it by our KoPE in the encoder while keeping it in the decoder. There are task tokens xti appended to the input tokens in the original setting, and we also keep this setting and leverage task tokens to pass information from encoder to decoder. Specifically, we append the task tokens to inputs for the encoder, which is updated till the output ˆxti , and these tokens for the input to the decoder is set as xti + ˆ xti . The decoder then uses cross-attention to extract information from the output of the encoder to generate answers. Different from ViTs in Hu et al. (2025) that has 10/20 layers, we set 8 layers for the encoder and the decoder, respectively. We set the number of task tokens as 4. 
+
+B.6. Analysis Experiments 
+
+For analysis of attention concentration, we calculate the average Gini metric over all tokens for all heads of the attention of CLS token in the last layer. The Gini metric is computed by: Gini (ˆ a0) = 
+
+PNi=1 (2 i − N − 1)ˆ a0,i 
+
+PNi=1 ˆa0,i 
+
+,
+
+14 Kuramoto Oscillatory Phase Encoding 
+
+where ˆa0 ∈ RN is the sorted attention score ( ˆa0,1 ≤ ˆa0,2 ≤ ˆa0,N ) from the CLS token. This metric reflects the unevenness of the attention (essentially concentration measured by paired L1 distance) and is a surrogate for our targeted concentration on relevant tokens, as a larger value typically reflects more concentration but may not focus on all label-relevant parts (which we do not have ground truth). Therefore, this metric may usually first increase and then decrease. Despite this, it can partially reflect the concentration speed and the concentration comparisons between models. For the synchronization evaluation, we calculate the attention-weighted synchronization of the last layer, i.e., Sync att (ϕ, a 0) = 
+
+> N
+
+X
+
+> j=1
+
+a0,j eiϕ j =
+
+vuuut
+
+> N
+
+X
+
+> j=1
+
+a0,j cos ϕj
+
+
+
+> 2
+
++
+
+
+
+> N
+
+X
+
+> j=1
+
+a0,j sin ϕj
+
+
+
+> 2
+
+,
+
+where ϕ is phases from all tokens while a0 is the attention score from the CLS token. This reflects the group synchronization among attended parts. The results show that this metric continually increases during training, which means that the phases are learned to be synchronized among relevant tokens and also the attention learns to attend on these phase-synchronized parts. For the visualization of attention maps, we calculate the attention scores for each head of the CLS token of the layer layer, where q and k are rotated for KoPE. As KoPE further adopts rotation on v and o for phase interference, we multiply the attention scores by |cos( ϕ0 − ϕi)) | to better reflect the influence of value integration. We present the two best attention heads in the figures. 
+
+## C. Detailed Theoretical Analysis 
+
+We consider a simplified theoretical setting for analysis. We follow the formulation in Li et al. (2023) and we first introduce the basic settings. 
+
+Problem formulation We study the binary classification problem that maps X to y ∈ { +1 , −1} for any (X, y ) ∼ D 
+
+given N training samples (Xn, y n)Nn=1 from the unknown distribution D. Each data point contains L tokens: Xn =[xn 
+
+> 1
+
+, · · · , x nL] ∈ Rd×L, where each token is unit-norm. The data is composed of M distinct patterns {μ1, μ 2, · · · , μ M }, where μ1, μ 2 are discriminative patterns while the remaining 
+
+M − 2 patterns are non-discriminative. The minimum distance between patterns is denoted by 
+
+κ = min  
+
+> 1≤i̸=j≤M
+
+∥μi − μj ∥ > 0.
+
+Each token is a noisy version of one of the patterns: min j∈[M ]∥xnl − μj ∥ ≤ τ , and the noise is smaller than the separation: 
+
+τ < κ/ 4.For each data sample, the label yn is determined by majority voting of discriminative patterns. The label-relevant tokens, confusion tokens, and label-irrelevant tokens are defined as tokens with the same discriminative pattern as the label, tokens with the different discriminative pattern as the label, and non-discriminative tokens, respectively. The set of relevant tokens is denoted as S∗, and S¬∗ means other tokens. The dataset is assumed balanced, i.e., |D +| − |D −| = O(√N ), and the average fractions of the label-relevant and confusion tokens over the distribution D are denoted as α∗ and α#.
+
+Model Training In Li et al. (2023), a simplified shallow ViT with a single-head self-attention layer and a two-layer MLP is considered: 
+
+F (Xn) = 1
+
+|Sn|
+
+X
+
+> l∈Sn
+
+a⊤ 
+
+> (l)
+
+ReLU 
+
+
+
+WO WV Xn softmax  Xn⊤W ⊤ 
+
+> K
+
+WQxnl
+
+
+
+, (9) where WQ ∈ Rmb×d, WK ∈ Rmb×d, and WV ∈ Rma×d are weights for query, key, and value vectors, WO ∈ Rm×ma is the hidden layer of the MLP (weights for output projection is absorbed in it), A = ( a(1) , a (2) , · · · , a (L)) where a(l) ∈ Rm,
+
+l ∈ [L] is the output-layer weights of the MLP, Sn is the set of tokens, and ma, m b > M .Let ψ = ( A, W O , W V , W K , W Q) denote parameters to train. The training problem is empirical risk minimization: 
+
+min  
+
+> ψ
+
+: fN (ψ) = 1
+
+N
+
+> N
+
+X
+
+> n=1
+
+ℓ(Xn, y n; ψ),
+
+15 Kuramoto Oscillatory Phase Encoding 
+
+where ℓ(Xn, y n; ψ) is the Hinge loss function, i.e., 
+
+ℓ(Xn, y n; ψ) = max {1 − yn · F (Xn), 0}.
+
+The training is solved via mini-batch stochastic gradient descent. W (0)  
+
+> V
+
+, W (0)  
+
+> Q
+
+, W (0)  
+
+> K
+
+comes from an initial model with error 
+
+σ, every entry of WO is generated from N (0 , ξ 2) and every entry of A is sampled from 
+
+n
+
++ 1√m , − 1√m
+
+o
+
+. A is fixed during training. We slightly modify the model to append a CLS token in the sequence (index 0), while the model output is still defined as the average of all tokens, so the analysis in Li et al. (2023) can be adapted. We mainly focus on the attention from this token. For KoPE, we consider each token x carries a phase ϕ. Since a shallow ViT is analyzed, we treat it as the final classification layer of real models, and therefore consider the setting that phases have converged to clustered synchronization. For the rotation in attention, while it can be flexibly learned how to leverage phase differences through projection parameters, we simplify it here as a function fa depending on the synchronization that intuitively reflects the binding of related tokens (tokens that share a cluster phase reinforce each other in attention and value aggregation; cross-cluster interactions are suppressed), and represent it as a term in the softmax function, i.e., the attention scores are enhanced by sij := ⟨qi, k j ⟩ + fa(cos(∆ ϕij )) 
+
+where ∆ϕij := ϕi − ϕj and fa is a monotonically increasing function. Let ∆ϕl denote the vector of phase difference between token l and the others. Therefore, the model has the formulation: 
+
+F (Xn) = 1
+
+|Sn|
+
+X
+
+> l∈Sn
+
+a⊤ 
+
+> (l)
+
+ReLU 
+
+
+
+WO WV Xn softmax  Xn⊤W ⊤ 
+
+> K
+
+WQxnl + fa(cos(∆ ϕl)) 
+
+. (10) We only modify the logits, leaving Q, K, V parameterization and all training details as in the base analysis. This is only a simplified setting to provide intuitions for binding-like priors, and a conservative use of phase. In real scenarios, phase dynamics and rotations are more complex, and phase differences may be leveraged for more coding purposes and for feature extraction in early layers. We leave more in-depth analysis for future work. 
+
+Phase Synchronization We make some formal characterization of the clustered synchronization of phases. We assume some tokens are mapped to a cluster for label-relevant parts, while others into different cluster(s). The cluster phase center of the relevant cluster is θrel and the cluster is denoted as C (others as C). We assume the CLS token belongs to the label-relevant cluster through learning or manual specification. For angles we use the distance dist( α, β ) := min m∈Z α − β + 2 πm ∈
+
+[0 , π ].
+
+Assumption C.1 (Within-cluster tightness) . For every token x with phase ϕ in the cluster θrel , dist  ϕ, θ rel 
+
+ ≤ εϕ/2, with a small constant εϕ ∈ [0 , π/ 2) . Hence for same-cluster pairs of θrel , cos(∆ ϕ) ≥ cos( εϕ).
+
+Assumption C.2 (Inter-cluster separation) . Inter-cluster separation with other clusters ∆ϕmin := min ϕ∈C ,ϕ ′∈C dist (ϕ, ϕ ′) is larger than within-cluster tightness, so ρϕ = cos(∆ ϕmin ) < γ ϕ = cos( εϕ).
+
+Assumption C.3 (Cluster–label consistency) . For each data, the fraction of relevant tokens falling outside θrel cluster is less than a small value ξϕ < 1 − exp( −(fa(γϕ) − fa(ρϕ))) . No token from other clusters falls in θrel cluster. We show that the phase modulation in attention scores can enlarge the logit gaps for relevant tokens vs. others. 
+
+Lemma C.4. Let S∗ denote the set of relevant tokens, ˆS∗ denote the set of relevant tokens that fall in the correct cluster, i.e., ˆS∗ := {j ∈ S∗ : π(xj ) = rel } ( ˆS∗ ⊆ S∗, | ˆS∗| ≥ (1 − ξϕ)|S∗|), ∆a := min j∈ ˆS∗ s0j − max r∈S¬∗ s0r denote the logit gap from the CLS token between correct relevant tokens and confusion or irrelevant ones, and ∆ := min j∈S∗ ⟨q0, k j ⟩ − 
+
+max r∈S¬∗ ⟨q0, k r ⟩ denote the content-only logit gap between relevant tokens and others. Under Assumptions C.1, C.2, and C.3, we have ∆a − ∆ ≥ fa(γϕ) − fa(ρϕ).Proof. 
+
+min  
+
+> j∈ˆS∗
+
+s0j − min 
+
+> j∈S∗
+
+⟨q0, k j ⟩ ≥ min  
+
+> j∈ˆS∗
+
+s0j − min  
+
+> j∈ˆS∗
+
+⟨q0, k j ⟩ ≥ min  
+
+> j∈ˆS∗
+
+fa(cos(∆ ϕ0j )) ≥ fa(γϕ), (11) so we have 
+
+∆a − ∆ ≥ fa(γϕ) − max 
+
+> r∈S¬∗
+
+fa(cos(∆ ϕ0r )) ≥ fa(γϕ) − fa(ρϕ). (12) 16 Kuramoto Oscillatory Phase Encoding 
+
+The next lemma states a sufficient condition of the logit gap with correct relevant tokens for 1 − ϵ attention concentration on 
+
+S∗.
+
+Lemma C.5. Let a0j denote the attention weights computed by softmax over logits s0j . If 
+
+∆a ≥ log |S¬∗ |
+
+(1 − ξϕ)|S∗| + log 1
+
+ϵ = log |S¬∗ ||S∗| + log 1
+
+ϵ − log(1 − ξϕ), (13) 
+
+then P 
+
+> j∈S∗
+
+a0j ≥ 1 − ϵ.Proof. Let smin  
+
+> ∗
+
+= min j∈ ˆS∗ s0j and smax  
+
+> ¬∗
+
+= max r∈S¬∗ s0r . Since ˆS∗ ⊆ S∗, then 
+
+X
+
+> j∈S∗
+
+a0j =
+
+P 
+
+> j∈S∗
+
+es0j
+
+P 
+
+> j∈S∗
+
+es0j + P 
+
+> r∈S¬∗
+
+es0r ≥
+
+P  
+
+> j∈ˆS∗
+
+es0j
+
+P  
+
+> j∈ˆS∗
+
+es0j + P 
+
+> r∈S¬∗
+
+es0r = 11 +    
+
+> P
+> r∈S¬∗ es0r
+> P
+> j∈ˆS∗es0j
+
+≥ 11 + |S¬∗ |esmax  
+
+> ¬∗
+> |ˆS∗|esmin
+> ∗
+
+≥ 11 + |S¬∗ | 
+
+> (1 −ξϕ)|S∗|
+
+e−(smin    
+
+> ∗−smax
+> ¬∗ )
+
+.
+
+(14) If (13) holds, then the denominator is at most 1 + ϵ, hence the fraction is at least 1 − ϵ.From Li et al. (2023), it has been shown that the dynamics of WQ, W K amplify discriminative query/key features, and attention mass concentrates on label-relevant tokens. Since we only modify the logits with an additive term in this setting, the core mechanism of amplification by WQ, W K is likely driven by a similar structure of gradients, even accelerated by the structure in the term. Therefore, we assume the underlying amplification dynamics persists under the additive bounded logit perturbation, i.e., the increasing of ∆ (amplifying discriminative query/key features) has similar dynamics. Then combining the two lemmas yields the relaxation of the condition for attention concentration, likely leading to acceleration. 
+
+Lemma C.6. Under Assumptions C.1, C.2, and C.3, a sufficient condition for 1 − ϵ concentration on S∗ is 
+
+∆ ≥ log |S¬∗ ||S∗| + log 1
+
+ϵ −  fa(γϕ) − fa(ρϕ) + log(1 − ξϕ), (15) 
+
+which is relaxed by fa(γϕ) − fa(ρϕ) + log(1 − ξϕ) > 0 compared with the baseline threshold log |S¬∗ ||S∗| + log 1 
+
+> ϵ
+
+. Then under the assumption of a similar training dynamics that increases ∆, attention concentration is achieved earlier. 
+
+Discussion on training and sample complexity As attention concentration is shown closely related to training and sample complexity (Li et al., 2023), KoPE may also potentially reduce the complexity. We briefly discuss the parts that the phase modulation can benefit. Li et al. (2023) derive sufficient condition of training steps and number of training samples for high-probability zero generalization error through a chain: (i) their core SGD dynamics lemma (Lemma 2) establishes that WQ, W K amplify discriminative query/key features and induce attention sparsification (Claim 2); (ii) this yields attention concentration (Proposition 2), together with the growth ∥q1(T )∥2 = Θ(log T ) (Eq. (63)) and the proxy bound ϕn(T )( |Sn| − | S1
+
+> n
+
+|) ≤ ηC
+
+(Eq. (65)); (iii) these concentration/proxy controls enter the margin lower bound (Eq. (66)) and the subsequent slack term (Eq. (69)), leading to the sufficient iteration requirement (Eq. (70)) and sample bound (Theorem 1). KoPE can improve the bottlenecks that feed into training/sample complexity: the residual proxy (Eq. (65)) and the irrelevant interference terms that are controlled using that residual (Eq. (66) and Eq. (69)). Definition 1 in Li et al. (2023) defines ϕn(t), ν n(t), p n(t) and Eq. (65) states ϕn(T )( |Sn| − | S1
+
+> n
+
+|) ≤ ηC for a large C. Under our logit shift, the irrelevant-to-relevant exponential ratio is monotonically decreased. This tightened residual proxy can then improve the iteration and sample requirements. In Li et al. (2023), the sufficient sample bound in Theorem 1 depends on a slack term c′(1 − ζ) (plus c′′ (σ + τ )) introduced in Eq. (69), which arises from upper bounding non-relevant contributions controlled by attention concentration/proxy quantities (Eq. (65)–(66)). Under our additive logit shift, we have a relaxed sufficient condition for attention concentration from the CLS query, hence the 17 Kuramoto Oscillatory Phase Encoding  
+
+> Table 6. Supervised learning results on ImageNet-1K with different training epochs.
+
+Scale Model 300 epochs 800 epochs val V2 val V2 
+
+small ViT 80.1 68.7 81.3 70.3 ViT+KoPE 80.8 69.9 82.1 71.4 
+
+base ViT 82.1 71.2 82.9 72.5 ViT+KoPE 83.0 72.7 83.2 73.2 
+
+large ViT 82.8 71.8 83.6 73.2 ViT+KoPE 84.0 73.8 84.1 74.4  
+
+> Table 7. Supervised learning dynamics of ViT + KoPE with matched FLOPs as ViT (non-EMA models). “ep” refers to the epoch.
+
+Model Parameters FLOPs 25 ep 50 ep 100 ep 200 ep 300 ep ViT 86.6M 17.6G 33.64 57.15 70.78 80.06 81.98 ViT + KoPE (original) 87.9M 21.1G 48.14 63.83 73.36 80.92 82.85 ViT + KoPE (MLP ratio = 2.75) 70.2M 17.6G 48.36 64.00 73.17 80.82 82.82 ViT + KoPE (width = 704) 74.0M 17.8G 47.38 63.26 72.85 80.73 82.70 non-relevant exponential mass entering the proxy bound is reduced at the same stage of training. This suggests a smaller effective constant in the slack term c′(1 − ζ), and therefore potentially smaller sufficient requirements on iterations and samples, consistent with the observed training/data efficiency. 
+
+## D. More Experiment Results 
+
+D.1. Longer Supervised Training 
+
+As our main experiments train models for 300 epochs, we further evaluate longer training time to demonstrate that the advantage of KoPE persists. As shown in Table 6, the performance improvement of KoPE over vanilla ViT remains under longer training, especially for the generalization on ImageNet V2. Meanwhile, the results also show that ViT+KoPE trained by 300 epochs can achieve similar or better performance than vanilla ViT trained by 800 epochs, further demonstrating the learning efficiency of KoPE. 
+
+D.2. Experiments with Matched FLOPs 
+
+To further exclude the influence of additional computational capacity, we conduct experiments to reduce the FLOPs of ViT+KoPE-B to approximately match ViT-B, while having fewer parameters. We either (i) reduce the MLP ratio from 4 to 2.75, or (ii) reduce the network width from 768 to 704 (with 11 attention heads). As shown in Table 7, ViT+KoPE remains superior under similar FLOPs and fewer parameters, indicating that gains stem from the synchronization mechanism rather than additional computational capacity. 
+
+D.3. More Ablation Analysis 
+
+In Fig. 8, we further present more analysis of the components in our implementation. The results show that value and output rotation has efficiency gains at the early stage over only query and key rotation in the attention module, while the final  
+
+> Table 8. Supervised learning dynamics of the baseline that learns phases from token representations. “ep” refers to the epoch.
+
+Model 25 ep 50 ep 100 ep 200 ep 300 ep Phase learned from token 25.80 46.64 65.57 77.69 80.72 KoPE 48.14 63.83 73.36 80.92 82.85 18 Kuramoto Oscillatory Phase Encoding 20 40 60 80 100 
+
+> Epoch
+> 0
+> 15
+> 30
+> 45
+> 60
+> 75
+> ImageNet Val Acc (%)
+> ViT
+> w/o Kuramoto
+> only qk rotation
+> w/o phase mix
+> KoPE
+
+(a) Early stage 100 150 200 250 300  
+
+> Epoch
+> 70
+> 75
+> 80
+> 85
+> ImageNet Val Acc (%)
+> ViT
+> w/o Kuramoto
+> only qk rotation
+> w/o phase mix
+> KoPE
+
+(b) Late stage 
+
+Figure 8. More ablation analyses. “w/o Kuramoto” uses fixed phase states as initialization. “only qk rotation” applies phase rotation only to query and key vectors. “w/o phase mix” does not adopt the mixture of phases. 
+
+Table 9. Supervised learning dynamics of the baselines with lower softmax temperatures in attention. “ep” refers to the epoch. 
+
+Model 25 ep 50 ep 100 ep 200 ep 300 ep ViT 33.64 57.15 70.78 80.06 81.98 ViT (temp=0.7) 33.76 57.20 70.00 79.91 82.00 ViT (temp=0.5) 35.32 57.55 70.06 79.79 81.81 ViT + KoPE 48.14 63.83 73.36 80.92 82.85 performance is similar. Additionally, the mixture of phases has slight final performance gain. The major improvement comes from the Kuramoto dynamics. We also investigate a baseline: replacing Kuramoto dynamics with a shared learnable module that learns to derive (relational) phases from token representations at each layer. As shown in Table 8, this baseline is significantly weaker throughout training, suggesting that the gains are mainly from the synchronization dynamics prior rather than a learned relational bias. To further verify that the gains are from the data-specific attention concentration via KoPE rather than generally sparser attention, we compare KoPE with two ViT baselines with lower softmax temperatures (0.7 or 0.5) that encourage sparser attention. As shown in Table 9, temperature tuning of ViT does not yield gains as KoPE, demonstrating the unique advantage of KoPE. 
+
+D.4. Training Dynamics on Image Segmentation 
+
+In Fig. 9, we present the training dynamics of ViT+KoPE and ViT for image segmentation tasks. It shows that KoPE also demonstrates large training efficiency, especially on ADE-20K with SERT-PUP that better reflects the ability of ViT-style backbones (achieving better performance with less than 40% of training time). For Mask2Former with heavy segmentation heads, ViT+KoPE backbone still enhances the learning efficiency and final performance. Future work can further explore integrating KoPE into modules in these segmentation heads. 
+
+D.5. More Analysis Results Phase synchronization In Fig. 10, we demonstrate the attention-weighted phase synchronization through layers during different training stages. Initially, attention and coupling parameters are random so the synchronization only slightly increases along layers due to the prior of Kuramoto dynamics. During training, KoPE learns to synchronize related parts and the attention module learns to focus on relevant tokens, leading to increased (attended) group synchronization at later layers. We also analyze the phase synchronization on ADE20K and COCO, using the entity labels available in each dataset (semantic-class labels for ADE20K and instance labels for COCO). We compute an average phase synchronization score among tokens belonging to the same entity over the test dataset. Specifically, for an entity e with token set Te, where each 19 Kuramoto Oscillatory Phase Encoding 16K 48K 80K 112K 160K 
+
+Iterations 
+
+> 34
+> 36
+> 38
+> 40
+> 42
+> 44
+> 46
+> mIoU
+> ViT
+> ViT+KoPE
+
+(a) ADE-20K, base model 16K 48K 80K 112K 160K 
+
+Iterations  
+
+> 38
+> 40
+> 42
+> 44
+> 46
+> 48
+> mIoU
+> ViT
+> ViT+KoPE
+
+(b) ADE-20K, large model 100K 200K 300K 369K 
+
+Iterations  
+
+> 30
+> 35
+> 40
+> 45
+> 50
+> 55
+> PQ
+> ViT
+> ViT+KoPE
+
+(c) COCO 
+
+Figure 9. Training dynamics on image segmentation tasks (ADE-20K semantic segmentation with SETR-PUP framework, COCO panoptic segmentation with Mask2Former framework). 1 2 3 4 5 6 7 8 9 10 11 12 
+
+> Layer
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Attn-weighted Synchronization
+
+(a) Epoch 1 1 2 3 4 5 6 7 8 9 10 11 12  
+
+> Layer
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Attn-weighted Synchronization
+
+(b) Epoch 50 1 2 3 4 5 6 7 8 9 10 11 12  
+
+> Layer
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Attn-weighted Synchronization
+
+(c) Epoch 100 1 2 3 4 5 6 7 8 9 10 11 12  
+
+> Layer
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Attn-weighted Synchronization
+
+(d) Epoch 200 1 2 3 4 5 6 7 8 9 10 11 12  
+
+> Layer
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Attn-weighted Synchronization
+
+(e) Epoch 300 
+
+Figure 10. Comparison of attention-weighted phase synchronization through layers during training. 
+
+Table 10. Supervised learning dynamics of different coupling types. “ep” refers to the epoch. 
+
+Coupling Type 25 ep 50 ep 100 ep 200 ep 300 ep Cosine similarity 47.33 63.16 73.06 80.60 82.75 Softmax 48.14 63.83 73.36 80.92 82.85 token has P phases ϕ at layer l, we compute a phase synchronization score: Sync el = 1
+
+P
+
+PX
+
+p=1 
+
+1
+
+|Te|
+
+X
+
+j∈Te
+
+eiϕ (p) 
+
+> j,l
+
+,
+
+which measures the group synchronization of phases for this entity. We then average it over all entities across the whole dataset. Since we have multiple phases for each token and employ a phase-mixing module, we report the average score for both raw and mixed phases. Across depth, synchronization increases, especially after mixing: • ADE20K (raw): layer 0 = 0.597 → layer 11 = 0.757; (mix): 0.771 → 0.963; • COCO (raw): layer 0 = 0.543 → layer 11 = 0.669; (mix): 0.677 → 0.936. These statistics provide quantitative evidence that phase states become more aligned for same-entity tokens across layers. 
+
+Coupling type While we choose attention-like softmax computation for coupling strength computation, it is also possible for other types, e.g., cosine similarity that allows for both positive and negative interactions. We conduct experiments to replace the softmax computation by cosine similarity between hq (zl) and hk(zl) (divided by √d). As shown in Table 10, the results are similar, indicating that KoPE is relatively robust to the coupling type. 
+
+Sensitivity of γ We further study the sensitivity of the hyper-parameter γ. We sweep fixed γ from 0.01 to 1.0, and also test the learnable γ with initialization 0.05. As shown in Table 11, the learning curves and final performance are similar, indicating that KoPE is relatively robust to γ within certain range, as the model may learn to adapt to different step size. 20 Kuramoto Oscillatory Phase Encoding   
+
+> Table 11. Supervised learning dynamics of different γ. “ep” refers to the epoch.
+
+γ 25 ep 50 ep 100 ep 200 ep 300 ep 0.01 48.88 64.01 73.67 80.93 82.81 0.05 (in main text) 48.14 63.83 73.36 80.92 82.85 learnable, init 0.05 48.59 63.93 73.46 81.03 82.76 0.1 48.96 63.88 73.44 80.91 82.92 0.2 48.64 64.04 73.28 80.97 82.94 0.5 47.09 63.96 73.60 80.93 82.66 1.0 46.34 63.26 73.24 80.82 82.68  
+
+> Table 12. Supervised learning dynamics of different phase initialization. “ep” refers to the epoch.
+
+Initialization type 25 ep 50 ep 100 ep 200 ep 300 ep ViT 33.64 57.15 70.78 80.06 81.98 ViT+KoPE, random init 26.50 45.91 62.49 76.12 79.40 ViT+KoPE, learned init 36.05 59.66 72.41 80.58 82.87 ViT+KoPE, 2D rotary init 48.14 63.83 73.36 80.92 82.85  
+
+> Table 13. Semantic segmentation results (mIoU) on subsets of ADE20K (val) with SETR-PUP under single-scale evalution.
+
+Split ViT-B ViT+KoPE-B Full 44.1 46.9 (+2.8) 
+
+Complex subset 34.4 39.3 (+4.9) Phase initialization We also investigate the importance of a meaningful initialization for phases, e.g., 2D rotary initializa-tion. We test alternative initializations: fixed random phases or learned initialization (phase predicted from initial token representations by a learnable module). As shown in Table 12, random init hurts substantially, as it confuses the early layers with meaningless phases, while learned init has similar final performance but slower learning speed. This suggests the importance of a meaningful phase initialization. 
+
+Complex subset of ADE20K To further demonstrate the advantage of KoPE for structured understanding, we analyze a complex subset of ADE20K: images with ≥ 15 distinct semantic classes and ≥ 6 connected components with area below 1% of the image, which constitute around 10% of the original test data. This represents a challenging real-world scenario where structural binding for multiple (small) components is important. As shown in Table 13, KoPE’s advantage is amplified on this harder slice, indicating the potential of KoPE for complex real-world scenarios. 
+
+D.6. Complete CLIP Benchmark Results 
+
+In Table 14, we present the complete results of ViT and ViT+KoPE after vision-language learning on 40 tasks in CLIP benchmark. The results show that KoPE has better performance on most datasets and on average, demonstrating that it encourages structured representation learning that can be better aligned with symbolic languages and has generally better generalization performance. We note a large variability of performance on the Diabetic Retinopathy. This phenomenon has also been reported in the literature (Schuhmann et al., 2022), where they find accuracy goes from 3% to 73.3% for different models. This is likely because the dataset is highly imbalanced and the evaluation may be sensitive to the prompt. Exclusing this subset does not change our main conclusion. 
+
+D.7. More Visualization 
+
+In Fig. 11, we provide more visualization of attention maps of the best head from the the last layer’s CLS token for ViT and ViT+KoPE under supervised training. The results show that KoPE facilitates attention concentration on relevant 21 Kuramoto Oscillatory Phase Encoding ViT+KoPE -B ViT -B ViT+KoPE -B ViT -B
+
+Figure 11. More visualization of attention maps from the last layer’s CLS token for ViT and ViT+KoPE under supervised training on ImageNet-1K. KoPE facilitates attention concentration on relevant tokens even under supervised learning, which was believed to fall short in this objective. ViT+KoPE -B ViT -B ViT+KoPE -B ViT -B
+
+Figure 12. More visualization of attention maps from the last layer’s CLS token for ViT and ViT+KoPE under self-supervised learning (SimDINOv2) on ImageNet-1K. The left images show that compared with vanilla ViT, KoPE reduces attention to non-/different-object parts, while the right images demonstrate that KoPE encourages binding of the whole entities. The results indicate that KoPE can further advance self-supervised learning that has been shown to be able to induce emergent object representations. 
+
+22 Kuramoto Oscillatory Phase Encoding 
+
+tokens, forming more structured representations even under supervised learning that was believed to fall short in object representations (Caron et al., 2021). Additionally, we provide more visualization of attention maps under self-supervised learning (Wu et al., 2025), which has been shown to benefit object representations (Caron et al., 2021). As shown in Fig. 12, KoPE can further reduce attention to non-object or different-object parts or facilitate the binded attention to the whole entities, compared to ViT-B trained by SimDINOv2. The results demonstrate the complementary advantages of KoPE over learning paradigms. 
+
+## E. More Discussions 
+
+Spatiotemporal dynamics are important information processing mechanisms in neuroscience. It has also been investigated in the area of spiking neural networks (Maass, 1997), where spiking time can be used for efficient coding (Mostafa, 2017), relational processing (Xiao et al., 2024), or adversarial robustness (Ding et al., 2025b). Nevertheless, due to the discrete spikes and unfolded time steps, they are hard to scale up with rich spatiotemporal properties. Differently, this paper considers Kuramoto dynamics of phases for temporal information with synchronization and injects it into the depth evoluation of mainstream artificial neural networks. This abstraction of neuro-inspired mechanisms enables scalability to advance state-of-the-art deep learning models. We mainly focus on vision tasks in this paper as they are closely related to structured understanding from unstructured data through binding-like integration. We show that synchronization can serve as a scalable neuro-inspired mechanism, and it is possible for future extension to other modalities, as well as multimodal integration requiring binding among different modalities to formulate coherent representations for concepts or entities. This paper mainly investigates neural architectures from the perspective of neural representation and information processing, which is compatible with mainstream connectivity design. Future works can further explore the combination of efficient connectivity design, e.g. efficient attention/interactive modules, with the components in KoPE to further advance the efficiency of the model. 23 Kuramoto Oscillatory Phase Encoding  
+
+> Table 14. Summary results of comparison on 40 tasks in CLIP benchmark. “T2I” and “I2T” mean text-to-image and image-to-text zero-shot retrieval.
+
+Zero-shot Classification (Acc@1) 
+
+Type Dataset ViT-B ViT+KoPE-B ∆
+
+ImageNet varients & ObjectNet ImageNet-1K 28.21 29.22 +1.01 ImageNet-A 6.45 6.76 +0.31 ImageNet-O 39.50 37.85 −1.65 ImageNet-R 28.93 32.30 +3.36 ImageNet-Sketch 16.38 18.86 +2.48 ImageNet-V2 22.77 24.21 +1.44 ObjectNet 26.62 29.31 +2.69 Others Cars 28.29 32.40 +4.10 Country211 6.06 6.30 +0.25 FER2013 18.14 15.46 −2.67 FGVC-Aircraft 1.77 1.92 +0.15 GTSRB 12.06 13.33 +1.27 MNIST 5.51 12.04 +6.53 RenderedSST2 48.98 49.75 +0.77 STL10 83.91 86.44 +2.53 SUN397 41.14 42.33 +1.19 VOC2007 61.14 66.51 +5.36 Visual Task Adaptation Benchmark Caltech101 70.83 72.70 +1.87 CIFAR-10 80.03 80.45 +0.42 CIFAR-100 42.02 49.39 +7.37 CLEVR closest object distance 15.79 21.92 +6.13 CLEVR count all 12.76 13.01 +0.25 Diabetic Retinopathy 7.92 60.44 +52.52 DMLab 14.86 14.89 +0.04 dSprites label orientation 2.63 2.99 +0.36 dSprites label x position 3.14 2.48 −0.65 dSprites label y position 3.28 3.26 −0.02 DTD 23.40 24.52 +1.12 EuroSAT 32.43 32.41 −0.02 flowers 16.64 18.39 +1.76 KITTI closest vehicle distance 27.29 29.11 +1.83 PCam 58.20 59.77 +1.57 pets 28.73 28.13 −0.60 RESISC45 24.87 22.35 −2.52 SmallNORB label azimuth 4.91 5.42 +0.51 SmallNORB label elevation 12.49 12.03 −0.45 SVHN 7.77 11.32 +3.55 
+
+Zero-shot Retrieval (Recall@5) 
+
+Dataset T2I (ViT) T2I (ViT+KoPE) ∆ I2T (ViT) I2T (ViT+KoPE) ∆
+
+Flickr30k 49.56 50.32 +0.76 61.90 63.40 +1.50 Flickr8k 45.72 45.58 −0.14 59.30 58.80 −0.50 MSCOCO 29.56 31.45 +1.88 42.56 44.54 +1.98 24
