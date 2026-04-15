@@ -1,0 +1,379 @@
+Title: On the Distillation Loss Functions of Speech VAE for Unified Reconstruction, Understanding, and Generation
+
+URL Source: https://arxiv.org/pdf/2604.12383v1
+
+Published Time: Wed, 15 Apr 2026 01:05:59 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+# On the Distillation Loss Functions of Speech VAE for Unified Reconstruction, Understanding, and Generation 
+
+# Changhao Cheng ID 1, Wei Wang ID 2, Wangyou Zhang ID 1, Dongya Jia ID 3, Jian Wu ID 3, Zhuo Chen 3,Yanmin Qian ID 21 School of Artificial Intelligence, Shanghai Jiao Tong University, Shanghai, China 
+
+2 Auditory Cognition and Computational Acoustics Lab MoE Key Lab of Artificial Intelligence, AI Institute School of Computer Science, Shanghai Jiao Tong University, Shanghai, China 
+
+3 ByteDance Seed, China 
+
+taycch1213@sjtu.edu.cn 
+
+# Abstract 
+
+Continuous speech representations based on Variational Au-toencoders (VAEs) have emerged as a promising alternative to traditional spectrogram or discrete token based features for speech generation and reconstruction. Recent research has tried to enrich the structural information in VAE latent representa-tions by aligning with self-supervised learning (SSL) features, aiming for better generation performance. However, it remains unclear whether the widely-used alignment approach based on time-axis distillation is optimal when considering more tasks. To address this problem, this paper systematically explores different alignment approaches and analyzes their impact on the performances over three axes: reconstruction, understand-ing, and generation. We investigate various design choices in the distillation loss. Extensive experiments show that the joint-marginal alignment approach with adaptive weighting can achieve the best overall performance while allowing for a con-trollable balance. 
+
+Index Terms : VAE, speech reconstruction, speech generation, knowledge distillation 
+
+# 1. Introduction 
+
+Discrete speech representations, including both semantic to-kens (e.g., HuBERT [1]) and acoustic tokens (e.g., neural audio codecs [2, 3, 4]), have proven effective for boosting the perfor-mance of speech large language models (Speech LLMs) [5, 6]. However, quantizing continuous audio signals into discrete to-kens incurs inevitable information loss, which has motivated growing interest in continuous representations learned via deep learning like Variational Autoencoders (VAEs) [7, 8, 9, 10, 11]. Consequently, continuous speech representations such as VAE latent features have been shown to provide rich information for speech generative modeling while keeping compactness [8]. In the literature, VAE is commonly observed to suffer from the reconstruction-loss trade-off [12]. To address this problem, the VA-VAE approach [13] has been proposed to align the VAE latent space with intermediate features from vision foundation models. A similar method has also been explored for speech: Semantic-VAE [14] uses a time-axis (T-axis) point-wise cosine similarity loss to distill the features of speech foundation mod-els into speech VAE latent space, outperforming both mel spec-trogram and Vanilla VAE in the zero-shot text-to-speech (TTS) task [15]. However, existing studies mainly optimize VAEs for recon-struction or generation tasks, neglecting other important aspects of speech research, i.e., understanding (e.g., speech recognition, speaker verification, emotion classification, etc.). In fact, our experiments show that although the alignment scheme of T-axis Aligned VAE (TAS-VAE) improves both generation and under-standing over Vanilla VAE, its understanding capability remains poor. For example, its Automatic Speech Recognition (ASR) performance in terms of Word Error Rate (WER) is much higher than that of Fbank features (cf. Fig. 1). As recent trends move toward unifying speech understand-ing and generation models [17, 18], it is crucial to develop acoustic representations that serve both purposes effectively. We argue that the dilemma illustrated in Fig. 1 arises from the fact that conventional distillation loss functions overlook the structural differences inherent in representations. Thus, by introducing a novel distillation paradigm, we have identified a speech VAE representation that unifies and better balances re-construction, generation, and understanding. Overall, we not only present a novel VAE approach that outperforms traditional continuous representations across various downstream tasks, but also provide detailed insights into tuning the trade-offs be-tween these downstream capabilities. We also release models and code to facilitate further research 1.
+
+# 2. Proposed Methods 
+
+The widely adopted loss combination for VAE training is il-lustrated in Fig. 2, which consists of a reconstruction loss for autoencoding, a Kullback-Leibler (KL) divergence loss for posterior regularization, and Generative Adversarial Network (GAN) based losses for distribution matching [19]. Following Semantic-VAE [14], we also include a feature alignment loss 
+
+Lalign on the VAE latent, as shown in the right part of Fig. 2. Compared to conventional VAEs, the core modification lies in aligning with the foundation models, such as self-supervised learning (SSL) models based on a distillation loss term: 
+
+Lalign = ωdistill Ldistill , (1) where ωdistill is the loss weight factor, and Ldistill is a loss func-tion used to distill structural semantic information from pre-trained SSL models into VAE latent representations. Our goal is to explore different design choices regarding this loss term and analyze the corresponding impact on downstream perfor-mances. 
+
+> 1
+
+https://github.com/changhao-cheng/JMAS-VAE 
+
+> arXiv:2604.12383v1 [cs.SD] 14 Apr 2026
+
+Good 
+
+Good 
+
+Reconstruction 
+
+> STOI>0.97
+
+Understanding   
+
+> THE WANDERING SINGER
+> WER~40%
+> ASR THE WANT REE SINMER
+> Activate
+> IC
+> Acc<20% Deactivate
+
+Generation    
+
+> IT IS GOOD TTS
+> SIM>0.60
+
+Bad Figure 1: T-axis Aligned Semantic VAE (TAS-VAE) distills semantic knowledge from speech foundation models via Eq.2 alignment loss, achieving TTS performance comparable to mel spectrograms with minor reconstruction degradation. Its latent representations still underperform on downstream speech understanding. Baseline: Mel+Vocos [16] (reconstruction), Fbank (understanding), Mel+F5-TTS [15] (generation). Encoder 
+
+Decoder  
+
+> KL loss
+> Reconstruction loss
+> ∇ℒrec ∇ℒdistill
+
+ℒalign = 𝝎 distill ∗ ℒdistill 
+
+SSL Model       
+
+> Choice I ：𝝎 𝐒𝐒𝐋
+> Choice II ：*𝝎 adaptive
+> Choice I ：𝓛 𝐓
+> Choice II ：𝓛 𝐃
+> Choice III: 𝓛 𝐦𝐜𝐨𝐬 &𝓛 𝐦𝐝𝐬 𝐬
+
+MLP  
+
+> GAN loss Backpropagation
+
+Figure 2: The design space of distillation loss functions for speech VAEs. For mathematical formulations, see Eqs. 2 to 6. 
+
+2.1. Alignment Loss Function Design Space 
+
+2.1.1. T-axis Aligned Semantic VAE 
+
+The mathematical form of Ldistill exerts a notable influence on the downstream performances of speech VAEs. A commonly-used scheme is to align the features with T-axis cosine distance loss, which is shown to outperform mean absolute error (MAE) and mean squared error (MSE) losses in the speech generation task [14]. Let f denote the speech feature extracted by the SSL model, and z′ the dimensionally aligned VAE latent obtained via multilayer perceptron (MLP) projection. The T-axis distil-lation loss can be then expressed as: 
+
+LT = − 1
+
+T
+
+> T
+
+X
+
+> t=1
+
+log σ(cos( z′
+
+> t
+
+, f t)) , (2) where T denotes the total number of time frames, t the time step and σ(·) the sigmoid activation. 
+
+2.1.2. D-axis Aligned Semantic VAE 
+
+Orthogonal to point-wise temporal alignment, we further intro-duce the dimension-wise distillation scheme, which captures the temporal structure and variations in local feature dimen-sions: 
+
+LD = − 1
+
+D
+
+> D
+
+X
+
+> d=1
+
+log σ(cos( z′[d], f [d])) , (3) where D is the total feature dimensionality of z′ and f ,and d represents the dimensional index. Similar distillation schemes have been employed in discrete spaces and demon-strated promising performance [20]. 
+
+2.1.3. Joint-marginal Aligned Semantic VAE 
+
+In addition to fine-grained frame-wise and dimension-wise alignment, we further incorporate joint-marginal distribution alignment into our design space. In contrast to existing point-wise losses that only focus on overall feature matching, this scheme further enforces the intra-distribution consistency be-tween the latent space and the foundation model feature space via an extra alignment loss term. Targeting the long-range dependence of speech sequences, we adapt the joint-marginal alignment loss from the computer vision domain [13] to speech representation processing. We construct the loss at two levels: frame-level feature distance and sequence-level distribution similarity. The marginal cosine sim-ilarity loss aligns SSL and VAE features along the T-axis: 
+
+Lmcos = 1
+
+T
+
+> T
+
+X
+
+> t=1
+
+ReLU(1 − m1 − cos( z′
+
+> t
+
+, f t)) , (4) and the marginal distance sequence similarity loss further aligns their relative structures by comparing all pairs of frames: 
+
+Lmdss = 1 
+
+> T2
+> T
+
+P
+
+> ti,t j
+
+ReLU( | cos( z′ 
+
+> ti
+
+, z ′ 
+
+> tj
+
+) − cos( fti , f tj )| − m2) . (5) In Eqs 4 and 5, m1 and m2 denote the respective margins, which serve as an important mechanism for balancing recon-struction, understanding, and generation capabilities. 
+
+2.2. Loss Weight Design Space 
+
+Since VAE is typically trained in a multi-task manner, the rela-tive weighting of different loss terms, especially the alignment losses, can lead to significant performance variations. Apart from static loss weights [14] that need manual tuning, we fur-ther investigate an adaptive weighting strategy as follows: 
+
+ωadaptive = ∥∇L rec ∥∥∇L distill ∥ , (6) Table 1: Performance comparison of different speech representation methods. For methods, ⋆ denotes the use of adaptive weighting in Section 2.2. The metrics for the eight understanding tasks and the WER metric in the generation task are all percentages. 
+
+Method Recon. Under. Gene. Overall Score ↑ER PR ASR KS SID ASV SD IC PESQ ↑ STOI ↑ xr ↑ Acc ↑ PER ↓ WER ↓ Acc ↑ Acc ↑ EER ↓ DER ↓ Acc ↑ xu ↑ WER ↓ SIM ↑ xg ↑
+
+Vanilla VAE 4.12 0.985 0.905 36.87 89.40 53.48 29.80 7.74 14.64 17.11 5.98 0.382 2.72 0.58 0.776 0.645 Semantic-VAE [14] 3.97 0.981 0.888 45.99 85.71 41.75 43.49 15.97 12.41 15.21 9.25 0.449 2.01 0.67 0.825 0.690 EnCodec [3] 2.77 0.938 0.746 50.41 80.75 28.90 48.46 18.08 12.05 14.10 10.04 0.489 4.71 0.56 0.756 0.651 Baseline (Mel/Fbank) 3.60 0.978 0.849 35.39 82.01 20.86 8.63 8.5E-4 9.56 10.05 9.10 0.413 2.23 0.61 0.794 0.653 TAS-VAE 3.97 0.977 0.886 44.61 70.12 39.97 64.56 17.65 11.67 13.64 16.93 0.510 2.55 0.63 0.802 0.713 TAS-VAE ⋆ 2.92 0.947 0.766 56.77 19.70 15.40 96.62 23.11 8.80 9.93 71.74 0.743 1.93 0.31 0.645 0.716 DAS-VAE 3.98 0.979 0.888 53.73 52.84 27.83 80.46 19.92 10.61 12.54 28.55 0.599 2.46 0.59 0.783 0.746 DAS-VAE ⋆ 2.73 0.940 0.743 60.18 19.66 14.86 96.36 22.42 8.83 10.68 76.22 0.751 2.32 0.32 0.648 0.713 JMAS-VAE 3.97 0.978 0.886 46.18 70.95 37.49 61.57 17.61 11.95 12.81 18.11 0.513 2.59 0.63 0.802 0.714 JMAS-VAE ⋆ 3.84 0.973 0.871 57.24 36.72 21.04 92.76 24.58 9.53 10.65 48.48 0.681 2.04 0.57 0.775 0.772 
+
+which dynamically adjusts the loss weight in Eq. 1 based on the gradient norm ratio between the reconstruction loss Lrec and the alignment loss Ldistill (Both loss gradient values are calcu-lated on the parameters of the projection layer of the Encoder.). Specifically, we have ωdistill ∈ {ωSSL , ω SSL ∗ ωadaptive },where ωSSL is the static weight set manually. To precisely allocate the contributions of Lmcos and Lmdss in the joint marginal loss, we compute the adaptive weights separately for each term: 
+
+ωmcos = ∥∇L rec ∥∥∇L mcos ∥ , ω mdss = ∥∇L rec ∥∥∇L mdss ∥ . (7) 
+
+# 3. Experimental Setup 
+
+We use stable-audio-tools 2 as the speech VAE back-bone, with a DAC-based encoder [21] and a BigVGAN de-coder [22]. The input speech signal is downsampled by factors of {4,4,5,5 } to a 64-dim 40 Hz latent representation z, which is linearly projected to 1024-dim ( z′) and aligned with the 23rd-layer features of WavLM Large [23]. All VAE models are trained on the full Libriheavy [24] (16kHz). For the Vanilla VAE, we train it with a batch size of 20 for 550k steps. For TAS-VAE and D-axis Aligned Seman-tic VAE (DAS-VAE) with adaptive weighting, we use a batch size of 16 and train for 1100k steps, while all remaining VAE experiments are trained with a batch size of 16 for 600k steps. Other hyperparameters are set as follows: Adam optimizer with 
+
+lr = 10 −4 and γ = 0 .999996 ; the loss weights are ωrec = 1 .0,
+
+ωKL = 0 .001 , and ωSSL = 2 .5.We evaluate the performance across three categories of downstream tasks: (1) Speech reconstruction ability is eval-uated on LibriSpeech-test-clean [25] with PESQ (Percep-tual Evaluation o Speech Quality) [26] and STOI (Short-timeObjective Intelligibility). (2) Speech understanding abil-ity is tested on 8 SUPERB [27] tasks: Emotion Recogni-tion (ER), Phoneme Recognition (PR), ASR, Keyword Spotting (KS), Speaker Identification (SID), Automatic Speaker Verifi-cation (ASV), Speaker Diarization (SD) and Intent Classifica-tion (IC). To obtain results closer to convergence, we increased the training steps from 200k to 500k for all methods (including the baseline) on both the ASR and SID tasks. Consequently, the ASR performance of Fbank in our experimental results is slightly higher than that reported in SUPERB [27]. (3) We as-sess the speech generation ability on the TTS task. A small F5-TTS [15] model is trained on LibriTTS [28] with a per-GPU batch size of 6400 over 8 GPUs and a learning rate of 10 −4 (For Encodec, gradient explosion would occur under the same learn-
+
+> 2https://github.com/Stability-AI/ stable-audio-tools
+
+ing rate, so we train F5-TTS under this representation with a learning rate of 10 −5.). It is evaluated on LibriSpeech-PC test-clean [29] using WER and speaker similarity (SIM) metrics. 
+
+# 4. Results 
+
+4.1. Overall Performance Comparison 
+
+Tab. 1 presents the evaluation results of speech VAEs with different distillation schemes on reconstruction, understand-ing, and generation. For the joint-marginal-aligned semantic-VAE (JMAS-VAE) in Section 2.1.3, we set m1 = 0.5 and 
+
+m2 = 0 .25 . Besides Vanilla VAE, we compare with Semantic-VAE [14] (whose distillation scheme corresponds to TAS-VAE in this work) and EnCodec (24kHz) [3], and use conventional continuous representation as the baseline. For the baseline , re-construction is evaluated based on the mel-based vocoder (Vo-cos [16]), understanding by Fbank features, and generation by mel-based F5-TTS. To compute the overall score, we first take the arithmetic mean for each task: reconstruction-xr , understanding-xu and generation-xg (Error rates are replaced with ( 1−error rate), and PESQ is rescaled to a similar score scale by PESQ /5): 
+
+xr = PESQ /5 + STOI 
+
+2 , xg = 1 − WER + SIM 
+
+2 ,xu =
+
+P 
+
+> ER, KS, SID, IC
+
+Acc + P
+
+> PR, ASR, ASV, SD
+
+(1 − ER )8 .
+
+(8) To avoid biased evaluation by extreme scores in some tasks, the overall score in Tab. 1 is obtained via the geometric mean 3 [30] 
+
+> 3
+
+√xr · xu · xg . Comparing the overall scores in Tab. 1, we have the following findings: 1. Although the Vanilla VAE and Semantic-VAE excel in re-construction and generation, their performances across eight speech understanding tasks are very poor, some of which even lagging behind the conventional baseline and Encodec. 2. Compared to TAS-VAE, DAS-VAE demonstrates much bet-ter understanding performance with small performance drop in generation, resulting in substantial overall improvement. 3. The JMAS-VAE model with adaptive weighting significantly outperforms other approaches in terms of the overall score. This highlights the efficacy of the joint-marginal alignment in balancing reconstruction, understanding, and generation within compact continuous representations. 4. The adaptive weighting strategy (denoted with ⋆) can sig- 
+
+> 3We also explored arithmetic and harmonic means for overall score calculation (cf. https://github.com/changhao-cheng/ JMAS-VAE/blob/main/VAE_scores.pdf ), showing a similar conclusion.
+
+nificantly improve speech understanding performance for all three types of semantic-aligned VAEs. Among them, the JMAS-VAE achieves the best balance of reconstruction, un-derstanding, and generation, while TAS-VAE and DAS-VAE significantly sacrifices their reconstruction and generation abilities when applying adaptive weighting. The above observations also indicate that directly aligning VAE latents with pretrained SSL features without dedicated reg-ularization can potentially lead to biased representations. 
+
+4.2. Analysis of Adaptive Weighting 
+
+As shown in last subsection, the adaptive weighting proposed in Section 2.2 is critical for better distilling the semantic in-formation structure inherent in pretrained SSL features, thus greatly improving the understanding ability. In this subsection, we further delve into the adaptive weighting procedure by vi-sualizing the evolving loss weights during training. As shown in Fig. 3, the adaptive weights ωmcos and ωmdss for the joint-marginal alignment loss quickly become orders of magnitude larger than the commonly-adopted static weights (e.g., < 10 ), enabling finer alignment between learned representations and SSL features. 0k 20k 40k 60k 80k 100k  
+
+> Training Step
+> 10 1
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> 10 4
+> 10 5
+> 10 6
+> 10 7
+> mcos
+
+(a) Adaptive weighting of Lmcos 0k 20k 40k 60k 80k 100k  
+
+> Training Step
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> mdss
+
+(b) Adaptive weighting of Lmdss 
+
+Figure 3: The adaptive weighting of the two distillation losses for JMAS-VAE as a function of training steps. The vertical axis adopts a logarithmic coordinate system. 
+
+4.3. Ablation Study of JMAS-VAE 
+
+The results in Tab. 1 show that simply aligning features toward those of the speech SSL model only improves performance on speech understanding. For speech reconstruction and genera-tion, however, such alignment requires an appropriate thresh-old—either by disabling adaptive weighting or by manually in-troducing margins as in Eq. 4–5. Here, we aim to investigate the role of different margins introduced in Section 2.1.3 by training and evaluating different variants of JMAS-VAE. Fig. 4 shows the reconstruction, understanding, generation and overall scores of adaptive-weighted JMAS-VAE under var-ious margin combinations (m1, m 2), as well as the correspond-ing distances between VAE latents and SSL features calculated by modified Eqs. 4 and 5 (with m1 = m2 = 0 ). Comparing subplots (a)–(d), we can see that smaller margins generally improve understanding but impair reconstruction and gen-eration . Overall, the heatmap shows no strong symmetry be-tween margins: (m1 = 1 , m 2 = 0) performs much better than 
+
+(m1 = 0 , m 2 = 1) in reconstruction and generation, revealing the distinct contributions of the two marginal losses. Subplots (e) and (f) illustrate the two distances between VAE and WavLM features under different margin combina-tions, computed on the LibriSpeech-test-clean dataset. The rep-resentation distances are linked to distillation losses defined in Eqs. 4 and 5, where a smaller distance reflects the optimiza-tion direction of distillation It can be readily observed that a larger margin setting leads to a correspondingly larger loss dis-tance. Furthermore, Tab. 2 shows the Pearson Correlation Coef-ficients (PCC) between representation distances and their corre-m1    
+
+> 00.25 0.5 0.75 1.0
+> m2
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1.0
+> 0.775
+> 0.800
+> 0.825
+> 0.850
+> 0.875
+
+(a) Reconstruction m1     
+
+> 00.25 0.5 0.75 1.0
+> m2
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1.0
+> 0.50
+> 0.55
+> 0.60
+> 0.65
+> 0.70
+
+(b) Understanding m1    
+
+> 00.25 0.5 0.75 1.0
+> m2
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1.0
+> 0.70
+> 0.75
+
+(c) Generation m1     
+
+> 00.25 0.5 0.75 1.0
+> m2
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1.0
+> 0.68
+> 0.70
+> 0.72
+> 0.74
+> 0.76
+
+(d) Overall m1    
+
+> 00.25 0.5 0.75 1.0
+> m2
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1.0
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+
+(e) mcos distance (Eq. 4) m1     
+
+> 00.25 0.5 0.75 1.0
+> m2
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1.0
+> 0.25
+> 0.30
+> 0.35
+
+(f) mdss distance (Eq. 5) 
+
+Figure 4: Reconstruction, understanding, generation, and over-all performance as well as marginal loss distances for different margin parameter combinations. Mosaic patterns indicate that the VAE training has diverged. 
+
+lations with reconstruction, understanding, generation and over-all scores for the 11 JMAS-VAE experiments in Fig. 4. It re-veals that smaller Lmcos distances (which are essentially T-axis distances) strengthen understanding and TTS text accuracy but weaken reconstruction and TTS SIM, thus negatively affecting the overall score. For the Lmdss distance, however, the opposite is true: its optimization direction is consistent with the improve-ment of reconstruction and TTS SIM. The above observation indicates that the frame-wise align-ment scheme on the T-axis focuses more on semantic infor-mation, while reducing Lmdss allows for better preservation of acoustic information. Carefully balancing the two loss terms with distinct roles eventually leads to a high-quality compact representation for unified reconstruction, understanding, and generation. Table 2: Pearson Correlation Coefficients (PCCs) between dis-tance metrics calculated on LibriSpeech-test-clean and task performance scores. 
+
+Distance Recon. Under. Gene. Overall 1-WER SIM Overall 
+
+Lmcos 0.723 -0.615 -0.552 0.701 0.694 0.133 
+
+Lmdss -0.585 0.284 0.391 -0.384 -0.378 -0.267 
+
+# 5. Conclusion 
+
+In this work, we explore the design space of distillation loss functions for speech VAEs aligned with speech foundation models. Through extensive experiments, we demonstrate that speech VAEs equipped with joint-marginal loss and adaptive weighting can achieve balanced and superior overall perfor-mance across reconstruction, understanding, and generation tasks. In future work, we aim to further explore the design space of speech VAEs in other aspects (e.g., channel dimension, frame rate, etc.) and their applications in Speech LLMs. 6. Acknowledgments 
+
+We thank Zhikang Niu for valuable discussions during this work. 
+
+# 7. Generative AI Use Disclosure 
+
+Generative AI is only used for text polishing. 
+
+# 8. References 
+
+[1] W.-N. Hsu, B. Bolte, Y.-H. H. Tsai, K. Lakhotia, R. Salakhut-dinov, and A. Mohamed, “HuBERT: Self-supervised speech representation learning by masked prediction of hidden units,” 
+
+IEEE/ACM Transactions on Audio, Speech, and Language Pro-cessing , vol. 29, pp. 3451–3460, 2021. [2] N. Zeghidour, A. Luebs, A. Omran, J. Skoglund, and M. Tagliasacchi, “SoundStream: An end-to-end neural audio codec,” IEEE/ACM Transactions on Audio, Speech, and Lan-guage Processing , vol. 30, pp. 495–507, 2021. [3] A. D´ efossez, J. Copet, G. Synnaeve, and Y. Adi, “High fidelity neural audio compression,” Transactions on Machine Learning Research , 2023. [4] D. Yang, S. Liu, R. Huang, J. Tian, C. Weng, and Y. Zou, “Hifi-codec: Group-residual vector quantization for high fidelity audio codec,” arXiv preprint arXiv:2305.02765 , 2023. [5] E. Casanova, R. Langman, P. Neekhara, S. Hussain, J. Li, S. Ghosh, A. Juki´ c, and S.-g. Lee, “Low frame-rate speech codec: a codec designed for fast high-quality speech LLM train-ing and inference,” in IEEE International Conference on Acous-tics, Speech and Signal Processing (ICASSP) , 2025. [6] Z. Ye, P. Sun, J. Lei, H. Lin, X. Tan, Z. Dai, Q. Kong, J. Chen, J. Pan, Q. Liu, Y. Guo, and W. Xue, “Codec does matter: Explor-ing the semantic shortcoming of codec for audio language model,” in Proceedings of the AAAI Conference on Artificial Intelligence ,vol. 39, no. 24, 2025, pp. 25 697–25 705. [7] K. Xia, X. Zhu, J. Yao, W. Tian, W. Li, and L. Xie, “Kall-e: Au-toregressive speech synthesis with next-distribution prediction,” 
+
+arXiv preprint arXiv:2412.16846 , 2024. [8] D. Jia, Z. Chen, J. Chen, C. Du, J. Wu, J. Cong, X. Zhuang, C. Li, Z. Wei, Y. Wang, and Y. Wang, “DiTAR: Diffusion transformer autoregressive modeling for speech generation,” in International Conference on Machine Learning (ICML) , 2025. [9] C. Y. Wu, J. Deng, G. Li, Q. Kong, and S. Lui, “Clear: Continuous latent autoregressive modeling for high-quality and low-latency speech synthesis,” arXiv preprint arXiv:2508.19098 , 2025. [10] Z. Peng, J. Yu, W. Wang, Y. Chang, Y. Sun, L. Dong, Y. Zhu, W. Xu, H. Bao, Z. Wang et al. , “Vibevoice technical report,” arXiv preprint arXiv:2508.19205 , 2025. [11] Y. Zhou, G. Zeng, X. Liu, X. Li, R. Yu, Z. Wang, R. Ye, W. Sun, J. Gui, K. Li et al. , “VoxCPM: Tokenizer-free TTS for context-aware speech generation and true-to-life voice cloning,” arXiv preprint arXiv:2509.24650 , 2025. [12] A. Gupta, L. Yu, K. Sohn, X. Gu, M. Hahn, F.-F. Li, I. Essa, L. Jiang, and J. Lezama, “Photorealistic video generation with diffusion models,” in European Conference on Computer Vision .Springer, 2024, pp. 393–411. [13] J. Yao, B. Yang, and X. Wang, “Reconstruction vs. generation: Taming optimization dilemma in latent diffusion models,” in Pro-ceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2025, pp. 15 703–15 712. [14] Z. Niu, S. Hu, J. Choi, Y. Chen, P. Chen, P. Zhu, Y. Yang, B. Zhang, J. Zhao, C. Wang, and X. Chen, “Semantic-VAE: Semantic-alignment latent representation for better speech syn-thesis,” arXiv preprint arXiv:2509.22167 , 2025. [15] Y. Chen, Z. Niu, Z. Ma, K. Deng, C. Wang, K. JianZhao, K. Yu, and X. Chen, “F5-TTS: A fairytaler that fakes fluent and faithful speech with flow matching,” in Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , 2025, pp. 6255–6271. [16] H. Siuzdak, “Vocos: Closing the gap between time-domain and fourier-based neural vocoders for high-quality audio synthesis,” in Proceedings of the International Conference on Learning Rep-resentations (ICLR) , 2024. [17] A. Huang, B. Wu, B. Wang, C. Yan, C. Hu, C. Feng, F. Tian, F. Shen, J. Li, M. Chen et al. , “Step-Audio: Unified understanding and generation in intelligent speech interaction,” arXiv preprint arXiv:2502.11946 , 2025. [18] Y. Wang, D. Yang, Y. Shao, H. Chen, J. Zhao, Z. Wu, H. Meng, and X. Wu, “DualSpeechLM: Towards unified speech understand-ing and generation via dual speech token modeling with large lan-guage models,” arXiv preprint arXiv:2508.08961 , 2025. [19] Z. Evans, J. D. Parker, C. Carr, Z. Zukowski, J. Taylor, and J. Pons, “Stable Audio Open,” in IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) , 2025. [20] X. Zhang, D. Zhang, S. Li, Y. Zhou, and X. Qiu, “SpeechTok-enizer: Unified speech tokenizer for speech language models,” in 
+
+Proceedings of the International Conference on Learning Repre-sentations (ICLR) , 2024. [21] R. Kumar, P. Seetharaman, A. Luebs, I. Kumar, and K. Kumar, “High-fidelity audio compression with improved RVQGAN,” in 
+
+Advances in Neural Information Processing Systems , vol. 36, 2023, pp. 27 980–27 993. [22] S. G. Lee, W. Ping, B. Ginsburg, B. Catanzaro, and S. Yoon, “BigVGAN: A universal neural vocoder with large-scale train-ing,” in Proceedings of the International Conference on Learning Representations (ICLR) , 2023. [23] S. Chen, C. Wang, Z. Chen, Y. Wu, S. Liu, Z. Chen, J. Li, N. Kanda, T. Yoshioka, X. Xiao et al. , “WavLM: Large-scale self-supervised pre-training for full stack speech processing,” IEEE Journal of Selected Topics in Signal Processing , vol. 16, no. 6, pp. 1505–1518, 2022. [24] W. Kang, X. Yang, Z. Yao, F. Kuang, Y. Yang, L. Guo, L. Lin, and D. Povey, “Libriheavy: A 50,000 hours ASR corpus with punctuation casing and context,” in IEEE International Confer-ence on Acoustics, Speech and Signal Processing (ICASSP) , 2024, pp. 10 991–10 995. [25] V. Panayotov, G. Chen, D. Povey, and S. Khudanpur, “Lib-rispeech: An ASR corpus based on public domain audio books,” in IEEE International Conference on Acoustics, Speech and Sig-nal Processing (ICASSP) , 2015, pp. 5206–5210. [26] A. W. Rix, J. G. Beerends, M. P. Hollier, and A. P. Hekstra, “Per-ceptual evaluation of speech quality (PESQ)—a new method for speech quality assessment of telephone networks and codecs,” in 
+
+IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) , vol. 2, 2001, pp. 749–752. [27] S.-w. Yang, P.-H. Chi, Y.-S. Chuang, C.-I. J. Lai, K. Lakhotia, Y. Y. Lin, A. T. Liu, J. Shi, X. Chang, G.-T. Lin, T.-H. Huang, W.-C. Tseng, K.-t. Lee, D.-R. Liu, Z. Huang, S. Dong, S.-W. Li, S. Watanabe, A. Mohamed, and H.-y. Lee, “SUPERB: Speech processing universal performance benchmark,” in Proc. ISCA In-terspeech , 2021, pp. 1194–1198. [28] H. Zen, V. Dang, R. Clark, Y. Zhang, R. J. Weiss, Y. Jia, Z. Chen, and Y. Wu, “LibriTTS: A corpus derived from librispeech for text-to-speech,” in Proc. ISCA Interspeech , 2019, pp. 1526–1530. [29] A. Meister, M. Novikov, N. Karpov, E. Bakhturina, V. Lavrukhin, and B. Ginsburg, “LibriSpeech-PC: Benchmark for evaluation of punctuation and capitalization capabilities of end-to-end asr mod-els,” in IEEE Automatic Speech Recognition and Understanding Workshop (ASRU) , 2023. [30] P. J. Fleming and J. J. Wallace, “How not to lie with statistics: The correct way to summarize benchmark results,” Communications of the ACM , vol. 29, no. 3, pp. 218–221, 1986.

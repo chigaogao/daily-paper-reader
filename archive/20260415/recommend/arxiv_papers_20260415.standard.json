@@ -1,0 +1,334 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-15T20:16:22.208050+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 7,
+    "quick_skim_target": 11,
+    "quick_selected": 7
+  },
+  "deep_dive": [
+    {
+      "id": "2604.12683v1",
+      "title": "Brain-DiT: A Universal Multi-state fMRI Foundation Model with Metadata-Conditioned Pretraining",
+      "abstract": "Current fMRI foundation models primarily rely on a limited range of brain states and mismatched pretraining tasks, restricting their ability to learn generalized representations across diverse brain states. We present \\textit{Brain-DiT}, a universal multi-state fMRI foundation model pretrained on 349,898 sessions from 24 datasets spanning resting, task, naturalistic, disease, and sleep states. Unlike prior fMRI foundation models that rely on masked reconstruction in the raw-signal space or a latent space, \\textit{Brain-DiT} adopts metadata-conditioned diffusion pretraining with a Diffusion Transformer (DiT), enabling the model to learn multi-scale representations that capture both fine-grained functional structure and global semantics. Across extensive evaluations and ablations on 7 downstream tasks, we find consistent evidence that diffusion-based generative pretraining is a stronger proxy than reconstruction or alignment, with metadata-conditioned pretraining further improving downstream performance by disentangling intrinsic neural dynamics from population-level variability. We also observe that downstream tasks exhibit distinct preferences for representational scale: ADNI classification benefits more from global semantic representations, whereas age/sex prediction comparatively relies more on fine-grained local structure. Code and parameters of Brain-DiT are available at \\href{https://github.com/REDMAO4869/Brain-DiT}{Link}.",
+      "authors": [
+        "Junfeng Xia",
+        "Wenhao Ye",
+        "Xuanye Pan",
+        "Xinke Shen",
+        "Mo Wang",
+        "Quanying Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "q-bio.NC"
+      ],
+      "published": "2026-04-14T12:52:42+00:00",
+      "link": "https://arxiv.org/pdf/2604.12683v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Universal brain foundation model using diffusion pretraining on large-scale datasets",
+      "llm_evidence_cn": "基于大规模数据集和扩散预训练的通用大脑基础模型",
+      "llm_evidence": "基于大规模数据集和扩散预训练的通用大脑基础模型",
+      "canonical_evidence": "基于大规模数据集和扩散预训练的通用大脑基础模型",
+      "llm_tldr_en": "Brain-DiT is a universal fMRI foundation model using diffusion transformers for multi-state representation learning.",
+      "llm_tldr_cn": "Brain-DiT 是一个通用的 fMRI 基础模型，利用扩散 Transformer 进行多状态表征学习。",
+      "llm_tldr": "Brain-DiT 是一个通用的 fMRI 基础模型，利用扩散 Transformer 进行多状态表征学习。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.11971v1",
+      "title": "Classification of Epileptic iEEG using Topological Machine Learning",
+      "abstract": "Epileptic seizure detection from EEG signals remains challenging due to the high dimensionality and nonlinear, potentially stochastic, dynamics of neural activity. In this work, we investigate whether features derived from topological data analysis (TDA) can improve the classification of brain states in preictal, ictal and interictal iEEG recordings from epilepsy patients using multichannel data. We analyze data from 55 patients, significantly larger than many previous studies that rely on patient-specific models. Persistence diagrams derived from iEEG signals are vectorized using several TDA representations, including Carlsson coordinates, persistence images, and template functions. To understand how topological representations interact with modern machine learning pipelines, we conduct a large-scale ablation study across multiple iEEG frequency bands, dimensionality reduction techniques, feature representations, and classifier architectures. Our experiments show that dimension-reduced topological representations achieve up to 80\\% balanced accuracy for three-class classification. Interestingly, classical machine learning models perform comparably to deep learning models, achieving up to 79.17\\% balanced accuracy, suggesting that carefully designed topological features can substantially reduce model complexity requirements. In contrast, pipelines preserving the full multichannel feature structure exhibit severe overfitting due to the high-dimensional feature space. These findings highlight the importance of structure-preserving dimensionality reduction when applying topology-based representations to multichannel neural data.",
+      "authors": [
+        "Sunia Tanweer",
+        "Narayan Puthanmadam Subramaniyam",
+        "Firas A. Khasawneh"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.AP"
+      ],
+      "published": "2026-04-13T19:04:30+00:00",
+      "link": "https://arxiv.org/pdf/2604.11971v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Classification of EEG signals using machine learning",
+      "llm_evidence_cn": "使用机器学习进行脑电信号分类",
+      "llm_evidence": "使用机器学习进行脑电信号分类",
+      "canonical_evidence": "使用机器学习进行脑电信号分类",
+      "llm_tldr_en": "Applies topological machine learning to classify epileptic iEEG signals, relevant to EEG signal processing.",
+      "llm_tldr_cn": "应用拓扑机器学习对癫痫iEEG信号进行分类，与脑电信号处理相关。",
+      "llm_tldr": "应用拓扑机器学习对癫痫iEEG信号进行分类，与脑电信号处理相关。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.09213v1",
+      "title": "SHIFT: Steering Hidden Intermediates in Flow Transformers",
+      "abstract": "Diffusion models have become leading approaches for high-fidelity image generation. Recent DiT-based diffusion models, in particular, achieve strong prompt adherence while producing high-quality samples. We propose SHIFT, a simple but effective and lightweight framework for concept removal in DiT diffusion models via targeted manipulation of intermediate activations at inference time, inspired by activation steering in large language models. SHIFT learns steering vectors that are dynamically applied to selected layers and timesteps to suppress unwanted visual concepts while preserving the prompt's remaining content and overall image quality. Beyond suppression, the same mechanism can shift generations into a desired \\emph{style domain} or bias samples toward adding or changing target objects. We demonstrate that SHIFT provides effective and flexible control over DiT generation across diverse prompts and targets without time-consuming retraining.",
+      "authors": [
+        "Nina Konovalova",
+        "Andrey Kuznetsov",
+        "Aibek Alanov"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-10T11:07:33+00:00",
+      "link": "https://arxiv.org/pdf/2604.09213v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "steering intermediate activations in diffusion models",
+      "llm_evidence_cn": "扩散模型中中间激活值的引导控制",
+      "llm_evidence": "扩散模型中中间激活值的引导控制",
+      "canonical_evidence": "扩散模型中中间激活值的引导控制",
+      "llm_tldr_en": "A framework for steering diffusion models, applicable to controlling generative AI content.",
+      "llm_tldr_cn": "一种引导扩散模型的框架，可用于控制生成式AI的内容输出。",
+      "llm_tldr": "一种引导扩散模型的框架，可用于控制生成式AI的内容输出。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.12579v1",
+      "title": "EEG-Based Multimodal Learning via Hyperbolic Mixture-of-Curvature Experts",
+      "abstract": "Electroencephalography (EEG)-based multimodal learning integrates brain signals with complementary modalities to improve mental state assessment, providing great clinical potential. The effectiveness of such paradigms largely depends on the representation learning on heterogeneous modalities. For EEG-based paradigms, one promising approach is to leverage their hierarchical structures, as recent studies have shown that both EEG and associated modalities (e.g., facial expressions) exhibit hierarchical structures reflecting complex cognitive processes. However, Euclidean embeddings struggle to represent these hierarchical structures due to their flat geometry, while hyperbolic spaces, with their exponential growth property, are naturally suited for them. In this work, we propose EEG-MoCE, a novel hyperbolic mixture-of-curvature experts framework designed for multimodal neurotechnology. EEG-MoCE assigns each modality to an expert in a learnable-curvature hyperbolic space, enabling adaptive modeling of its intrinsic geometry. A curvature-aware fusion strategy then dynamically weights experts, emphasizing modalities with richer hierarchical information. Extensive experiments on benchmark datasets demonstrate that EEG-MoCE achieves state-of-the-art performance, including emotion recognition, sleep staging, and cognitive assessment.",
+      "authors": [
+        "Runhe Zhou",
+        "Shanglin Li",
+        "Guanxiang Huang",
+        "Xinliang Zhou",
+        "Qibin Zhao",
+        "Motoaki Kawanabe",
+        "Yi Ding",
+        "Cuntai Guan"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-14T11:03:51+00:00",
+      "link": "https://arxiv.org/pdf/2604.12579v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "EEG-based multimodal representation learning using hyperbolic embeddings",
+      "llm_evidence_cn": "基于EEG的多模态表征学习，利用双曲嵌入捕捉层次结构",
+      "llm_evidence": "基于EEG的多模态表征学习，利用双曲嵌入捕捉层次结构",
+      "canonical_evidence": "基于EEG的多模态表征学习，利用双曲嵌入捕捉层次结构",
+      "llm_tldr_en": "Proposes a hyperbolic mixture-of-curvature experts framework for hierarchical EEG multimodal representation learning.",
+      "llm_tldr_cn": "提出一种双曲曲率混合专家框架，用于EEG多模态学习中的层次化表征提取。",
+      "llm_tldr": "提出一种双曲曲率混合专家框架，用于EEG多模态学习中的层次化表征提取。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.09838v1",
+      "title": "Vector Field Synthesis with Sparse Streamlines Using Diffusion Model",
+      "abstract": "We present a novel diffusion-based framework for synthesizing 2D vector fields from sparse, coherent inputs (i.e., streamlines) while maintaining physical plausibility. Our method employs a conditional denoising diffusion probabilistic model with classifier-free guidance, enabling progressive reconstruction that preserves both geometric and physical constraints. Experimental results demonstrate our method's ability to synthesize plausible vector fields that adhere to physical laws while maintaining fidelity to sparse input observations, outperforming traditional optimization-based approaches in terms of flexibility and physical consistency.",
+      "authors": [
+        "Nguyen K. Phan",
+        "Ricardo Morales",
+        "Sebastian D. Espriella",
+        "Guoning Chen"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-10T19:10:24+00:00",
+      "link": "https://arxiv.org/pdf/2604.09838v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "diffusion model for synthesizing vector fields from sparse inputs",
+      "llm_evidence_cn": "用于从稀疏输入合成向量场的扩散模型",
+      "llm_evidence": "用于从稀疏输入合成向量场的扩散模型",
+      "canonical_evidence": "用于从稀疏输入合成向量场的扩散模型",
+      "llm_tldr_en": "Applies conditional diffusion models to synthesize 2D vector fields from sparse streamline observations.",
+      "llm_tldr_cn": "应用条件扩散模型从稀疏流线观测中合成二维向量场。",
+      "llm_tldr": "应用条件扩散模型从稀疏流线观测中合成二维向量场。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.12152v1",
+      "title": "Domain-Specific Latent Representations Improve the Fidelity of Diffusion-Based Medical Image Super-Resolution",
+      "abstract": "Latent diffusion models for medical image super-resolution universally inherit variational autoencoders designed for natural photographs. We show that this default choice, not the diffusion architecture, is the dominant constraint on reconstruction quality. In a controlled experiment holding all other pipeline components fixed, replacing the generic Stable Diffusion VAE with MedVAE, a domain-specific autoencoder pretrained on more than 1.6 million medical images, yields +2.91 to +3.29 dB PSNR improvement across knee MRI, brain MRI, and chest X-ray (n = 1,820; Cohen's d = 1.37 to 1.86, all p < 10^{-20}, Wilcoxon signed-rank). Wavelet decomposition localises the advantage to the finest spatial frequency bands encoding anatomically relevant fine structure. Ablations across inference schedules, prediction targets, and generative architectures confirm the gap is stable within plus or minus 0.15 dB, while hallucination rates remain comparable between methods (Cohen's h < 0.02 across all datasets), establishing that reconstruction fidelity and generative hallucination are governed by independent pipeline components. These results provide a practical screening criterion: autoencoder reconstruction quality, measurable without diffusion training, predicts downstream SR performance (R^2 = 0.67), suggesting that domain-specific VAE selection should precede diffusion architecture search. Code and trained model weights are publicly available at https://github.com/sebasmos/latent-sr.",
+      "authors": [
+        "Sebastian Cajas",
+        "Ashaba Judith",
+        "Rahul Gorijavolu",
+        "Sahil Kapadia",
+        "Hillary Clinton Kasimbazi",
+        "Leo Kinyera",
+        "Emmanuel Paul Kwesiga",
+        "Sri Sri Jaithra Varma Manthena",
+        "Luis Filipe Nakayama",
+        "Ninsiima Doreen",
+        "Leo Anthony Celi"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-14T00:11:23+00:00",
+      "link": "https://arxiv.org/pdf/2604.12152v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Latent diffusion models for brain MRI reconstruction using domain-specific autoencoders",
+      "llm_evidence_cn": "使用领域特定自编码器的潜扩散模型用于脑部MRI重建",
+      "llm_evidence": "使用领域特定自编码器的潜扩散模型用于脑部MRI重建",
+      "canonical_evidence": "使用领域特定自编码器的潜扩散模型用于脑部MRI重建",
+      "llm_tldr_en": "Improves medical image reconstruction using domain-specific VAEs in latent diffusion models.",
+      "llm_tldr_cn": "通过在潜扩散模型中使用领域特定的VAE，显著提升了包括脑部MRI在内的医学图像重建质量。",
+      "llm_tldr": "通过在潜扩散模型中使用领域特定的VAE，显著提升了包括脑部MRI在内的医学图像重建质量。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.12255v1",
+      "title": "ARGen: Affect-Reinforced Generative Augmentation towards Vision-based Dynamic Emotion Perception",
+      "abstract": "Dynamic facial expression recognition in the wild remains challenging due to data scarcity and long-tail distributions, which hinder models from effectively learning the temporal dynamics of scarce emotions. To address these limitations, we propose ARGen, an Affect-Reinforced Generative Augmentation Framework that enables data-adaptive dynamic expression generation for robust emotion perception. ARGen operates in two stages: Affective Semantic Injection (ASI) and Adaptive Reinforcement Diffusion (ARD). The ASI stage establishes affective knowledge alignment through facial Action Units and employs a retrieval-augmented prompt generation strategy to synthesize consistent and fine-grained affective descriptions via large-scale visual-language models, thereby injecting interpretable emotional priors into the generation process. The ARD stage integrates text-conditioned image-to-video diffusion with reinforcement learning, introducing inter-frame conditional guidance and a multi-objective reward function to jointly optimize expression naturalness, facial integrity, and generative efficiency. Extensive experiments on both generation and recognition tasks verify that ARGen substantially enhances synthesis fidelity and improves recognition performance, establishing an interpretable and generalizable generative augmentation paradigm for vision-based affective computing.",
+      "authors": [
+        "Huanzhen Wang",
+        "Ziheng Zhou",
+        "Jiaqi Song",
+        "Li He",
+        "Yunshi Lan",
+        "Yan Wang",
+        "Wenqiang Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-14T04:05:07+00:00",
+      "link": "https://arxiv.org/pdf/2604.12255v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "reinforcement diffusion for generative augmentation in emotion perception",
+      "llm_evidence_cn": "用于情感感知生成增强的强化扩散模型",
+      "llm_evidence": "用于情感感知生成增强的强化扩散模型",
+      "canonical_evidence": "用于情感感知生成增强的强化扩散模型",
+      "llm_tldr_en": "Uses diffusion models for generative data augmentation to improve dynamic emotion recognition.",
+      "llm_tldr_cn": "利用扩散模型进行生成式数据增强，以提高动态情感识别能力。",
+      "llm_tldr": "利用扩散模型进行生成式数据增强，以提高动态情感识别能力。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.12383v1",
+      "title": "On the Distillation Loss Functions of Speech VAE for Unified Reconstruction, Understanding, and Generation",
+      "abstract": "Continuous speech representations based on Variational Autoencoders (VAEs) have emerged as a promising alternative to traditional spectrogram or discrete token based features for speech generation and reconstruction. Recent research has tried to enrich the structural information in VAE latent representations by aligning with self-supervised learning (SSL) features, aiming for better generation performance. However, it remains unclear whether the widely-used alignment approach based on time-axis distillation is optimal when considering more tasks. To address this problem, this paper systematically explores different alignment approaches and analyzes their impact on the performances over three axes: reconstruction, understanding, and generation. We investigate various design choices in the distillation loss. Extensive experiments show that the joint-marginal alignment approach with adaptive weighting can achieve the best overall performance while allowing for a controllable balance.",
+      "authors": [
+        "Changhao Cheng",
+        "Wei Wang",
+        "Wangyou Zhang",
+        "Dongya Jia",
+        "Jian Wu",
+        "Zhuo Chen",
+        "Yanmin Qian"
+      ],
+      "primary_category": "cs.SD",
+      "categories": [
+        "cs.SD"
+      ],
+      "published": "2026-04-14T07:17:55+00:00",
+      "link": "https://arxiv.org/pdf/2604.12383v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Speech VAE alignment with self-supervised learning for reconstruction and generation",
+      "llm_evidence_cn": "语音VAE与自监督学习对齐用于重建与生成",
+      "llm_evidence": "语音VAE与自监督学习对齐用于重建与生成",
+      "canonical_evidence": "语音VAE与自监督学习对齐用于重建与生成",
+      "llm_tldr_en": "Investigates VAE latent alignment with SSL for improved speech reconstruction and generation.",
+      "llm_tldr_cn": "研究了VAE潜变量与自监督学习的对齐，以提升语音重建与生成性能。",
+      "llm_tldr": "研究了VAE潜变量与自监督学习的对齐，以提升语音重建与生成性能。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -6,64 +6,46 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-14
-- 运行时间：2026-04-14 19:56:29 UTC
+- 最新运行日期：2026-04-15
+- 运行时间：2026-04-15 20:17:26 UTC
 - 运行状态：成功
-- 本次总论文数：14
-- 精读区：3
-- 速读区：11
+- 本次总论文数：8
+- 精读区：1
+- 速读区：7
 
 ### 今日简报（AI）
-今日聚焦脑机接口前沿，重点突破了基于图显著性先验与统一框架的 fMRI 视觉解码技术。
-Brain-Grasp 与 NeuroFlow 展示了如何利用神经活动精准重建视觉图像，是理解大脑编码机制的必读之作。
-建议普通读者关注大传感器模型在可穿戴设备上的潜力，感受 AI 如何从实验室走向日常健康监测。
-- 详情：[/202604/14/README](/202604/14/README)
+今日聚焦脑机接口与神经影像前沿，深度解析了 8.0 高分的多状态 fMRI 通用基础模型 Brain-DiT。
+重点展示了元数据增强的预训练技术，以及拓扑学习和双曲几何在癫痫识别与脑电多模态分析中的跨界应用。
+建议优先研读 Brain-DiT 论文，探索大模型如何统一处理复杂的脑活动状态。
+- 详情：[/202604/15/README](/202604/15/README)
 
 ### 精读区论文标签
-1. [Brain-Grasp: Graph-based Saliency Priors for Improved fMRI-based Visual Brain Decoding](/202604/14/2604.10617v1-brain-grasp-graph-based-saliency-priors-for-improved-fmri-based-visual-brain-decoding)  
-   标签：评分：9.0/10、query:eeg-ai
-   evidence：利用扩散模型和显著性先验进行大脑引导的图像生成
-2. [NeuroFlow: Toward Unified Visual Encoding and Decoding from Neural Activity](/202604/14/2604.09817v1-neuroflow-toward-unified-visual-encoding-and-decoding-from-neural-activity)  
+1. [Brain-DiT: A Universal Multi-state fMRI Foundation Model with Metadata-Conditioned Pretraining](/202604/15/2604.12683v1-brain-dit-a-universal-multi-state-fmri-foundation-model-with-metadata-conditioned-pretraining)  
    标签：评分：8.0/10、query:eeg-ai
-   evidence：从神经活动进行视觉编码和解码的统一框架
-3. [Probabilistic Prediction of Neural Dynamics via Autoregressive Flow Matching](/202604/14/2604.11178v1-probabilistic-prediction-of-neural-dynamics-via-autoregressive-flow-matching)  
-   标签：评分：8.0/10、query:eeg-ai
-   evidence：使用流匹配对神经动力学进行生成式预测
+   evidence：基于大规模数据集和扩散预训练的通用大脑基础模型
 
 ### 速读区论文标签
-1. [Towards Multi-Source Domain Generalization for Sleep Staging with Noisy Labels](/202604/14/2604.10009v1-towards-multi-source-domain-generalization-for-sleep-staging-with-noisy-labels)  
+1. [Classification of Epileptic iEEG using Topological Machine Learning](/202604/15/2604.11971v1-classification-of-epileptic-ieeg-using-topological-machine-learning)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：使用脑电信号的多模态睡眠分期
-2. [A Temporally Augmented Graph Attention Network for Affordance Classification](/202604/14/2604.10149v1-a-temporally-augmented-graph-attention-network-for-affordance-classification)  
+   evidence：使用机器学习进行脑电信号分类
+2. [EEG-Based Multimodal Learning via Hyperbolic Mixture-of-Curvature Experts](/202604/15/2604.12579v1-eeg-based-multimodal-learning-via-hyperbolic-mixture-of-curvature-experts)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：用于脑电分类的时间增强图注意力网络
-3. [Wearable AI in the Era of Large Sensor Models](/202604/14/2604.10172v1-wearable-ai-in-the-era-of-large-sensor-models)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：大型传感器模型作为多模态可穿戴数据的基座模型
-4. [CoRe-ECG: Advancing Self-Supervised Representation Learning for 12-Lead ECG via Contrastive and Reconstructive Synergy](/202604/14/2604.11359v1-core-ecg-advancing-self-supervised-representation-learning-for-12-lead-ecg-via-contrastive-and-reconstructive-synergy)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：通过对比与重建协同进行生理信号的自监督表示学习
-5. [From Multimodal Signals to Adaptive XR Experiences for De-escalation Training](/202604/14/2604.11570v1-from-multimodal-signals-to-adaptive-xr-experiences-for-de-escalation-training)  
-   标签：评分：7.0/10、query:eeg-ai
-   evidence：多模态系统中的脑电心理状态解码
-6. [Kuramoto Oscillatory Phase Encoding: Neuro-inspired Synchronization for Improved Learning Efficiency](/202604/14/2604.07904v1-kuramoto-oscillatory-phase-encoding-neuro-inspired-synchronization-for-improved-learning-efficiency)  
+   evidence：基于EEG的多模态表征学习，利用双曲嵌入捕捉层次结构
+3. [SHIFT: Steering Hidden Intermediates in Flow Transformers](/202604/15/2604.09213v1-shift-steering-hidden-intermediates-in-flow-transformers)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：受神经启发的同步机制用于表示学习
-7. [CARE-ECG: Causal Agent-based Reasoning for Explainable and Counterfactual ECG Interpretation](/202604/14/2604.10420v1-care-ecg-causal-agent-based-reasoning-for-explainable-and-counterfactual-ecg-interpretation)  
+   evidence：扩散模型中中间激活值的引导控制
+4. [Vector Field Synthesis with Sparse Streamlines Using Diffusion Model](/202604/15/2604.09838v1-vector-field-synthesis-with-sparse-streamlines-using-diffusion-model)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：用于生理信号解释的大规模基础模型
-8. [Unsupervised Equivalent Contrastive Learning for Radio Signal Recognition](/202604/14/2604.10906v1-unsupervised-equivalent-contrastive-learning-for-radio-signal-recognition)  
+   evidence：用于从稀疏输入合成向量场的扩散模型
+5. [Domain-Specific Latent Representations Improve the Fidelity of Diffusion-Based Medical Image Super-Resolution](/202604/15/2604.12152v1-domain-specific-latent-representations-improve-the-fidelity-of-diffusion-based-medical-image-super-resolution)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：多域信号表示的无监督对比学习方法
-9. [Tracking High-order Evolutions via Cascading Low-rank Fitting](/202604/14/2604.10980v1-tracking-high-order-evolutions-via-cascading-low-rank-fitting)  
+   evidence：使用领域特定自编码器的潜扩散模型用于脑部MRI重建
+6. [ARGen: Affect-Reinforced Generative Augmentation towards Vision-based Dynamic Emotion Perception](/202604/15/2604.12255v1-argen-affect-reinforced-generative-augmentation-towards-vision-based-dynamic-emotion-perception)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：扩散模型中的高阶动力学
-10. [Diffusion-CAM: Faithful Visual Explanations for dMLLMs](/202604/14/2604.11005v1-diffusion-cam-faithful-visual-explanations-for-dmllms)  
+   evidence：用于情感感知生成增强的强化扩散模型
+7. [On the Distillation Loss Functions of Speech VAE for Unified Reconstruction, Understanding, and Generation](/202604/15/2604.12383v1-on-the-distillation-loss-functions-of-speech-vae-for-unified-reconstruction-understanding-and-generation)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：基于扩散的多模态大语言模型的可解释性
-11. [Progressively Texture-Aware Diffusion for Contrast-Enhanced Sparse-View CT](/202604/14/2604.11559v1-progressively-texture-aware-diffusion-for-contrast-enhanced-sparse-view-ct)  
-   标签：评分：6.0/10、query:eeg-ai
-   evidence：用于医学图像信号重建的扩散生成模型
+   evidence：语音VAE与自监督学习对齐用于重建与生成
 
 
 <div class="dpr-home-promo-card">
