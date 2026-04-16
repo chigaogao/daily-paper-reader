@@ -1,0 +1,93 @@
+{
+  "label": "2026-04-16",
+  "date": "2026-04-16",
+  "generated_at": "2026-04-16T19:47:48",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202604/16/2604.13359v1-biotrain-sub-mb-sub-50mw-on-device-fine-tuning-for-edge-ai-on-biosignals",
+      "section": "deep",
+      "title_en": "BioTrain: Sub-MB, Sub-50mW On-Device Fine-Tuning for Edge-AI on Biosignals",
+      "authors": "Run Wang, Victor J. B. Jung, Philip Wiese, Sebastian Frey, Giusy Spacone, Francesco Conti, Alessio Burrello, Luca Benin",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.13359v1",
+      "score": "8.0",
+      "evidence": "对最先进的脑电模型进行微调",
+      "tldr": "针对生物信号在不同个体和时间下的显著差异，本文提出BioTrain框架，实现在功耗低于50mW、内存小于1MB的边缘设备上进行全网络微调。该框架通过优化内存分配和网络拓扑，克服了传统反向传播在微控制器上的资源限制。实验表明，BioTrain在保持隐私的同时显著提升了模型精度，在GAP9平台上实现了高效的片上训练，内存占用降低了8.1倍，为边缘AI的个性化适配提供了新方案。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Biosignals exhibit substantial cross-subject and cross-session variability, inducing severe domain shifts that degrade post-deployment performance for small, edge-oriented AI models. On-device adaptation is therefore essential to both preserve user privacy and ensure system reliability. However, existing sub-100 mW MCU-based wearable platforms can only support shallow or sparse adaptation schemes due to the prohibitive memory footprint and computational cost of full backpropagation (BP). In this paper, we propose BioTrain, a framework enabling full-network fine-tuning of state-of-the-art biosignal models under milliwatt-scale power and sub-megabyte memory constraints. We validate BioTrain using both offline and on-device benchmarks on EEG and EOG datasets, covering Day-1 new-subject calibration and longitudinal adaptation to signal drift. Experimental results show that full-network fine-tuning achieves accuracy improvements of up to 35% over non-adapted baselines and outperforms last-layer updates by approximately 7% during new-subject calibration. On the GAP9 MCU platform, BioTrain enables efficient on-device training throughput of 17 samples/s for EEG and 85 samples/s for EOG models within a power envelope below 50 mW. In addition, BioTrain's efficient memory allocator and network topology optimization enable the use of a large batch size, reducing peak memory usage. For fully on-chip BP on GAP9, BioTrain reduces the memory footprint by 8.1x, from 5.4 MB to 0.67 MB, compared to conventional full-network fine-tuning using batch normalization with batch size 8.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/16/2604.10983v1-energy-oriented-diffusion-bridge-for-image-restoration-with-foundational-diffusion-models",
+      "section": "quick",
+      "title_en": "Energy-oriented Diffusion Bridge for Image Restoration with Foundational Diffusion Models",
+      "authors": "Jinhui Hou, Zhiyu Zhu, Junhui Hou",
+      "date": "2026-04-13",
+      "pdf": "https://arxiv.org/pdf/2604.10983v1",
+      "score": "7.0",
+      "evidence": "面向能量的图像修复扩散桥模型",
+      "tldr": "本文针对图像恢复中扩散桥模型轨迹复杂、效率低的问题，提出了能量导向扩散桥（E-Bridge）框架。该框架通过设计演化时间更短且起始于退化图像与噪声混合点的桥接过程，理论上降低了轨迹能量。结合一致性模型实现单步映射，并引入可调轨迹长度以平衡信息保留与生成能力。实验证明，E-Bridge在多项任务中达到了SOTA性能，且支持极简步数的高质量恢复。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion bridge models have shown great promise in image restoration by explicitly connecting clean and degraded image distributions. However, they often rely on complex and high-cost trajectories, which limit both sampling efficiency and final restoration quality. To address this, we propose an Energy-oriented diffusion Bridge (E-Bridge) framework to approximate a set of low-cost manifold geodesic trajectories to boost the performance of the proposed method. We achieve this by designing a novel bridge process that evolves over a shorter time horizon and makes the reverse process start from an entropy-regularized point that mixes the degraded image and Gaussian noise, which theoretically reduces the required trajectory energy. To solve this process efficiently, we draw inspiration from consistency models to learn a single-step mapping function, optimized via a continuous-time consistency objective tailored for our trajectory, so as to analytically map any state on the trajectory to the target image. Notably, the trajectory length in our framework becomes a tunable task-adaptive knob, allowing the model to adaptively balance information preservation against generative power for tasks of varying degradation, such as denoising versus super-resolution. Extensive experiments demonstrate that our E-Bridge achieves state-of-the-art performance across various image restoration tasks while enabling high-quality recovery with a single or fewer sampling steps. Our project page is https://jinnh.github.io/E-Bridge/.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/16/2604.13685v1-emgflow-robust-and-efficient-surface-electromyography-synthesis-via-flow-matching",
+      "section": "quick",
+      "title_en": "EMGFlow: Robust and Efficient Surface Electromyography Synthesis via Flow Matching",
+      "authors": "Boxuan Jiang, Chenyun Dai, Can Han",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.13685v1",
+      "score": "7.0",
+      "evidence": "用于sEMG信号合成的流匹配和生成模型",
+      "tldr": "针对表面肌电信号（sEMG）手势识别中数据稀缺和多样性不足的问题，本文提出了首个基于流匹配（Flow Matching）的条件生成框架 EMGFlow。该方法克服了 GAN 训练不稳定和扩散模型推理效率低的问题。通过在三个基准数据集上的评估，EMGFlow 在生成质量、下游任务效用及推理效率方面均优于现有基准，为肌电控制系统的数据增强提供了高效稳健的新方案。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Deep learning-based surface electromyography (sEMG) gesture recognition is frequently bottlenecked by data scarcity and limited subject diversity. While synthetic data generation via Generative Adversarial Networks (GANs) and diffusion models has emerged as a promising augmentation strategy, these approaches often face challenges regarding training stability or inference efficiency. To bridge this gap, we propose EMGFlow, a conditional sEMG generation framework. To the best of our knowledge, this is the first study to investigate the application of Flow Matching (FM) and continuous-time generative modeling in the sEMG domain. To validate EMGFlow across three benchmark sEMG datasets, we employ a unified evaluation protocol integrating feature-based fidelity, distributional geometry, and downstream utility. Extensive evaluations show that EMGFlow outperforms conventional augmentation and GAN baselines, and provides stronger standalone utility than the diffusion baselines considered here under the train-on-synthetic test-on-real (TSTR) protocol. Furthermore, by optimizing generation dynamics through advanced numerical solvers and targeted time sampling, EMGFlow achieves improved quality-efficiency trade-offs. Taken together, these results suggest that Flow Matching is a promising and efficient paradigm for addressing data bottlenecks in myoelectric control systems. Our code is available at: https://github.com/Open-EXG/EMGFlow.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/16/2604.10465v1-rethinking-the-diffusion-model-from-a-langevin-perspective",
+      "section": "quick",
+      "title_en": "Rethinking the Diffusion Model from a Langevin Perspective",
+      "authors": "Candi Zheng, Yuan Lan",
+      "date": "2026-04-12",
+      "pdf": "https://arxiv.org/pdf/2604.10465v1",
+      "score": "6.0",
+      "evidence": "扩散模型的理论框架",
+      "tldr": "本文从朗之万动力学的新视角重新审视扩散模型，旨在简化VAE、得分匹配和流匹配等复杂数学推导。文章系统地回答了逆向过程如何还原数据、如何统一ODE与SDE框架、以及扩散模型为何优于传统VAE等核心问题。通过证明流匹配与得分匹配在极大似然下的等价性，为初学者和研究者提供了一个更直观、统一且具有教学价值的理论框架。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion models are often introduced from multiple perspectives, such as VAEs, score matching, or flow matching, accompanied by dense and technically demanding mathematics that can be difficult for beginners to grasp. One classic question is: how does the reverse process invert the forward process to generate data from pure noise? This article systematically organizes the diffusion model from a fresh Langevin perspective, offering a simpler, clearer, and more intuitive answer. We also address the following questions: how can ODE-based and SDE-based diffusion models be unified under a single framework? Why are diffusion models theoretically superior to ordinary VAEs? Why is flow matching not fundamentally simpler than denoising or score matching, but equivalent under maximum-likelihood? We demonstrate that the Langevin perspective offers clear and straightforward answers to these questions, bridging existing interpretations of diffusion models, showing how different formulations can be converted into one another within a common framework, and offering pedagogical value for both learners and experienced researchers seeking deeper intuition.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/16/2604.13470v1-universality-of-gaussian-mixture-reverse-kernels-in-conditional-diffusion",
+      "section": "quick",
+      "title_en": "Universality of Gaussian-Mixture Reverse Kernels in Conditional Diffusion",
+      "authors": "Nafiz Ishtiaque, Syed Arefinul Haque, Kazi Ashraful Alam, Fatima Jahara",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.13470v1",
+      "score": "6.0",
+      "evidence": "条件扩散模型的数学理论",
+      "tldr": "本研究探讨了条件扩散模型的通用近似能力。作者证明了当反向核采用带有ReLU网络逻辑的有限高斯混合模型时，该模型能在条件KL散度下以任意精度逼近正则目标分布。通过路径空间分解，研究将整体误差转化为终端不匹配和单步反向核误差，并结合高斯混合理论给出了定量界限。该成果为扩散模型在复杂条件分布建模中的有效性提供了坚实的数学基础。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "We prove that conditional diffusion models whose reverse kernels are finite Gaussian mixtures with ReLU-network logits can approximate suitably regular target distributions arbitrarily well in context-averaged conditional KL divergence, up to an irreducible terminal mismatch that typically vanishes with increasing diffusion horizon. A path-space decomposition reduces the output error to this mismatch plus per-step reverse-kernel errors; assuming each reverse kernel factors through a finite-dimensional feature map, each step becomes a static conditional density approximation problem, solved by composing Norets' Gaussian-mixture theory with quantitative ReLU bounds. Under exact terminal matching the resulting neural reverse-kernel class is dense in conditional KL.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/16/2604.13495v1-adp-dit-text-guided-diffusion-transformer-for-brain-image-generation-in-alzheimers-disease-progression",
+      "section": "quick",
+      "title_en": "ADP-DiT: Text-Guided Diffusion Transformer for Brain Image Generation in Alzheimer's Disease Progression",
+      "authors": "Juneyong Lee, Geonwoo Baek, Ikbeom Jang",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.13495v1",
+      "score": "6.0",
+      "evidence": "用于大脑图像生成的扩散Transformer",
+      "tldr": "本研究提出ADP-DiT，一种用于阿尔茨海默病（AD）纵向脑部MRI合成的文本引导扩散Transformer模型。该模型通过自然语言提示词整合随访间隔、人口统计学及临床诊断信息，利用双文本编码器（OpenCLIP和T5）实现精细化控制。在SDXL-VAE潜空间中结合旋转位置嵌入，ADP-DiT能够生成高分辨率且具备解剖学保真度的图像，准确捕捉脑室扩大等疾病进展特征，为个体化病情评估提供支持。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Alzheimer's disease (AD) progresses heterogeneously across individuals, motivating subject-specific synthesis of follow-up magnetic resonance imaging (MRI) to support progression assessment. While Diffusion Transformers (DiT), an emerging transformer-based diffusion model, offer a scalable backbone for image synthesis, longitudinal AD MRI generation with clinically interpretable control over follow-up time and participant metadata remains underexplored. We present ADP-DiT, an interval-aware, clinically text-conditioned diffusion transformer for longitudinal AD MRI synthesis. ADP-DiT encodes follow-up interval together with multi-domain demographic, diagnostic (CN/MCI/AD), and neuropsychological information as a natural-language prompt, enabling time-specific control beyond coarse diagnostic stages. To inject this conditioning effectively, we use dual text encoders-OpenCLIP for vision-language alignment and T5 for richer clinical-language understanding. Their embeddings are fused into DiT through cross-attention for fine-grained guidance and adaptive layer normalization for global modulation. We further enhance anatomical fidelity by applying rotary positional embeddings to image tokens and performing diffusion in a pre-trained SDXL-VAE latent space to enable efficient high-resolution reconstruction. On 3,321 longitudinal 3T T1-weighted scans from 712 participants (259,038 image slices), ADP-DiT achieves SSIM 0.8739 and PSNR 29.32 dB, improving over a DiT baseline by +0.1087 SSIM and +6.08 dB PSNR while capturing progression-related changes such as ventricular enlargement and shrinking hippocampus. These results suggest that integrating comprehensive, subject-specific clinical conditions with architectures can improve longitudinal AD MRI synthesis.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

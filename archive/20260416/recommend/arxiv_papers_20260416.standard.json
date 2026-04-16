@@ -1,0 +1,244 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-16T19:46:24.507992+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2604.13359v1",
+      "title": "BioTrain: Sub-MB, Sub-50mW On-Device Fine-Tuning for Edge-AI on Biosignals",
+      "abstract": "Biosignals exhibit substantial cross-subject and cross-session variability, inducing severe domain shifts that degrade post-deployment performance for small, edge-oriented AI models. On-device adaptation is therefore essential to both preserve user privacy and ensure system reliability. However, existing sub-100 mW MCU-based wearable platforms can only support shallow or sparse adaptation schemes due to the prohibitive memory footprint and computational cost of full backpropagation (BP). In this paper, we propose BioTrain, a framework enabling full-network fine-tuning of state-of-the-art biosignal models under milliwatt-scale power and sub-megabyte memory constraints. We validate BioTrain using both offline and on-device benchmarks on EEG and EOG datasets, covering Day-1 new-subject calibration and longitudinal adaptation to signal drift. Experimental results show that full-network fine-tuning achieves accuracy improvements of up to 35% over non-adapted baselines and outperforms last-layer updates by approximately 7% during new-subject calibration. On the GAP9 MCU platform, BioTrain enables efficient on-device training throughput of 17 samples/s for EEG and 85 samples/s for EOG models within a power envelope below 50 mW. In addition, BioTrain's efficient memory allocator and network topology optimization enable the use of a large batch size, reducing peak memory usage. For fully on-chip BP on GAP9, BioTrain reduces the memory footprint by 8.1x, from 5.4 MB to 0.67 MB, compared to conventional full-network fine-tuning using batch normalization with batch size 8.",
+      "authors": [
+        "Run Wang",
+        "Victor J. B. Jung",
+        "Philip Wiese",
+        "Sebastian Frey",
+        "Giusy Spacone",
+        "Francesco Conti",
+        "Alessio Burrello",
+        "Luca Benin"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AR",
+        "eess.SP"
+      ],
+      "published": "2026-04-14T23:47:58+00:00",
+      "link": "https://arxiv.org/pdf/2604.13359v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "fine-tuning state-of-the-art EEG models",
+      "llm_evidence_cn": "对最先进的脑电模型进行微调",
+      "llm_evidence": "对最先进的脑电模型进行微调",
+      "canonical_evidence": "对最先进的脑电模型进行微调",
+      "llm_tldr_en": "Enables full-network fine-tuning of EEG models on edge devices, supporting representation learning and adaptation.",
+      "llm_tldr_cn": "实现在边缘设备上对脑电模型进行全网络微调，支持表示学习与模型适配。",
+      "llm_tldr": "实现在边缘设备上对脑电模型进行全网络微调，支持表示学习与模型适配。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.10983v1",
+      "title": "Energy-oriented Diffusion Bridge for Image Restoration with Foundational Diffusion Models",
+      "abstract": "Diffusion bridge models have shown great promise in image restoration by explicitly connecting clean and degraded image distributions. However, they often rely on complex and high-cost trajectories, which limit both sampling efficiency and final restoration quality. To address this, we propose an Energy-oriented diffusion Bridge (E-Bridge) framework to approximate a set of low-cost manifold geodesic trajectories to boost the performance of the proposed method. We achieve this by designing a novel bridge process that evolves over a shorter time horizon and makes the reverse process start from an entropy-regularized point that mixes the degraded image and Gaussian noise, which theoretically reduces the required trajectory energy. To solve this process efficiently, we draw inspiration from consistency models to learn a single-step mapping function, optimized via a continuous-time consistency objective tailored for our trajectory, so as to analytically map any state on the trajectory to the target image. Notably, the trajectory length in our framework becomes a tunable task-adaptive knob, allowing the model to adaptively balance information preservation against generative power for tasks of varying degradation, such as denoising versus super-resolution. Extensive experiments demonstrate that our E-Bridge achieves state-of-the-art performance across various image restoration tasks while enabling high-quality recovery with a single or fewer sampling steps. Our project page is https://jinnh.github.io/E-Bridge/.",
+      "authors": [
+        "Jinhui Hou",
+        "Zhiyu Zhu",
+        "Junhui Hou"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-13T04:42:55+00:00",
+      "link": "https://arxiv.org/pdf/2604.10983v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Energy-oriented diffusion bridge for image restoration",
+      "llm_evidence_cn": "面向能量的图像修复扩散桥模型",
+      "llm_evidence": "面向能量的图像修复扩散桥模型",
+      "canonical_evidence": "面向能量的图像修复扩散桥模型",
+      "llm_tldr_en": "Proposes an efficient diffusion bridge framework for image restoration using foundational models.",
+      "llm_tldr_cn": "提出一种高效的扩散桥框架，利用基础模型进行图像修复。",
+      "llm_tldr": "提出一种高效的扩散桥框架，利用基础模型进行图像修复。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.10465v1",
+      "title": "Rethinking the Diffusion Model from a Langevin Perspective",
+      "abstract": "Diffusion models are often introduced from multiple perspectives, such as VAEs, score matching, or flow matching, accompanied by dense and technically demanding mathematics that can be difficult for beginners to grasp. One classic question is: how does the reverse process invert the forward process to generate data from pure noise? This article systematically organizes the diffusion model from a fresh Langevin perspective, offering a simpler, clearer, and more intuitive answer. We also address the following questions: how can ODE-based and SDE-based diffusion models be unified under a single framework? Why are diffusion models theoretically superior to ordinary VAEs? Why is flow matching not fundamentally simpler than denoising or score matching, but equivalent under maximum-likelihood? We demonstrate that the Langevin perspective offers clear and straightforward answers to these questions, bridging existing interpretations of diffusion models, showing how different formulations can be converted into one another within a common framework, and offering pedagogical value for both learners and experienced researchers seeking deeper intuition.",
+      "authors": [
+        "Candi Zheng",
+        "Yuan Lan"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-04-12T05:18:07+00:00",
+      "link": "https://arxiv.org/pdf/2604.10465v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical framework for diffusion models",
+      "llm_evidence_cn": "扩散模型的理论框架",
+      "llm_evidence": "扩散模型的理论框架",
+      "canonical_evidence": "扩散模型的理论框架",
+      "llm_tldr_en": "Provides a unified Langevin perspective on diffusion models, clarifying their generative mechanisms and theory.",
+      "llm_tldr_cn": "从Langevin视角统一了扩散模型理论，阐明了其生成机制。",
+      "llm_tldr": "从Langevin视角统一了扩散模型理论，阐明了其生成机制。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.13685v1",
+      "title": "EMGFlow: Robust and Efficient Surface Electromyography Synthesis via Flow Matching",
+      "abstract": "Deep learning-based surface electromyography (sEMG) gesture recognition is frequently bottlenecked by data scarcity and limited subject diversity. While synthetic data generation via Generative Adversarial Networks (GANs) and diffusion models has emerged as a promising augmentation strategy, these approaches often face challenges regarding training stability or inference efficiency. To bridge this gap, we propose EMGFlow, a conditional sEMG generation framework. To the best of our knowledge, this is the first study to investigate the application of Flow Matching (FM) and continuous-time generative modeling in the sEMG domain. To validate EMGFlow across three benchmark sEMG datasets, we employ a unified evaluation protocol integrating feature-based fidelity, distributional geometry, and downstream utility. Extensive evaluations show that EMGFlow outperforms conventional augmentation and GAN baselines, and provides stronger standalone utility than the diffusion baselines considered here under the train-on-synthetic test-on-real (TSTR) protocol. Furthermore, by optimizing generation dynamics through advanced numerical solvers and targeted time sampling, EMGFlow achieves improved quality-efficiency trade-offs. Taken together, these results suggest that Flow Matching is a promising and efficient paradigm for addressing data bottlenecks in myoelectric control systems. Our code is available at: https://github.com/Open-EXG/EMGFlow.",
+      "authors": [
+        "Boxuan Jiang",
+        "Chenyun Dai",
+        "Can Han"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC",
+        "cs.LG"
+      ],
+      "published": "2026-04-15T10:07:29+00:00",
+      "link": "https://arxiv.org/pdf/2604.13685v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Flow matching and generative modeling for sEMG signal synthesis",
+      "llm_evidence_cn": "用于sEMG信号合成的流匹配和生成模型",
+      "llm_evidence": "用于sEMG信号合成的流匹配和生成模型",
+      "canonical_evidence": "用于sEMG信号合成的流匹配和生成模型",
+      "llm_tldr_en": "Proposes EMGFlow for robust sEMG synthesis using flow matching to address data scarcity in gesture recognition.",
+      "llm_tldr_cn": "提出EMGFlow，利用流匹配技术进行鲁棒的sEMG信号合成，解决手势识别中的数据稀缺问题。",
+      "llm_tldr": "提出EMGFlow，利用流匹配技术进行鲁棒的sEMG信号合成，解决手势识别中的数据稀缺问题。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.13470v1",
+      "title": "Universality of Gaussian-Mixture Reverse Kernels in Conditional Diffusion",
+      "abstract": "We prove that conditional diffusion models whose reverse kernels are finite Gaussian mixtures with ReLU-network logits can approximate suitably regular target distributions arbitrarily well in context-averaged conditional KL divergence, up to an irreducible terminal mismatch that typically vanishes with increasing diffusion horizon. A path-space decomposition reduces the output error to this mismatch plus per-step reverse-kernel errors; assuming each reverse kernel factors through a finite-dimensional feature map, each step becomes a static conditional density approximation problem, solved by composing Norets' Gaussian-mixture theory with quantitative ReLU bounds. Under exact terminal matching the resulting neural reverse-kernel class is dense in conditional KL.",
+      "authors": [
+        "Nafiz Ishtiaque",
+        "Syed Arefinul Haque",
+        "Kazi Ashraful Alam",
+        "Fatima Jahara"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-04-15T04:48:31+00:00",
+      "link": "https://arxiv.org/pdf/2604.13470v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Mathematical theory of conditional diffusion models",
+      "llm_evidence_cn": "条件扩散模型的数学理论",
+      "llm_evidence": "条件扩散模型的数学理论",
+      "canonical_evidence": "条件扩散模型的数学理论",
+      "llm_tldr_en": "Proves the universality of Gaussian-mixture reverse kernels in conditional diffusion models for distribution approximation.",
+      "llm_tldr_cn": "证明了条件扩散模型中高斯混合反向核在分布逼近中的普适性。",
+      "llm_tldr": "证明了条件扩散模型中高斯混合反向核在分布逼近中的普适性。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.13495v1",
+      "title": "ADP-DiT: Text-Guided Diffusion Transformer for Brain Image Generation in Alzheimer's Disease Progression",
+      "abstract": "Alzheimer's disease (AD) progresses heterogeneously across individuals, motivating subject-specific synthesis of follow-up magnetic resonance imaging (MRI) to support progression assessment. While Diffusion Transformers (DiT), an emerging transformer-based diffusion model, offer a scalable backbone for image synthesis, longitudinal AD MRI generation with clinically interpretable control over follow-up time and participant metadata remains underexplored. We present ADP-DiT, an interval-aware, clinically text-conditioned diffusion transformer for longitudinal AD MRI synthesis. ADP-DiT encodes follow-up interval together with multi-domain demographic, diagnostic (CN/MCI/AD), and neuropsychological information as a natural-language prompt, enabling time-specific control beyond coarse diagnostic stages. To inject this conditioning effectively, we use dual text encoders-OpenCLIP for vision-language alignment and T5 for richer clinical-language understanding. Their embeddings are fused into DiT through cross-attention for fine-grained guidance and adaptive layer normalization for global modulation. We further enhance anatomical fidelity by applying rotary positional embeddings to image tokens and performing diffusion in a pre-trained SDXL-VAE latent space to enable efficient high-resolution reconstruction. On 3,321 longitudinal 3T T1-weighted scans from 712 participants (259,038 image slices), ADP-DiT achieves SSIM 0.8739 and PSNR 29.32 dB, improving over a DiT baseline by +0.1087 SSIM and +6.08 dB PSNR while capturing progression-related changes such as ventricular enlargement and shrinking hippocampus. These results suggest that integrating comprehensive, subject-specific clinical conditions with architectures can improve longitudinal AD MRI synthesis.",
+      "authors": [
+        "Juneyong Lee",
+        "Geonwoo Baek",
+        "Ikbeom Jang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-15T05:30:14+00:00",
+      "link": "https://arxiv.org/pdf/2604.13495v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "diffusion transformer for brain image generation",
+      "llm_evidence_cn": "用于大脑图像生成的扩散Transformer",
+      "llm_evidence": "用于大脑图像生成的扩散Transformer",
+      "canonical_evidence": "用于大脑图像生成的扩散Transformer",
+      "llm_tldr_en": "Develops a text-guided diffusion transformer for subject-specific longitudinal brain MRI synthesis.",
+      "llm_tldr_cn": "开发了一种文本引导的扩散Transformer，用于特定受试者的纵向大脑MRI合成。",
+      "llm_tldr": "开发了一种文本引导的扩散Transformer，用于特定受试者的纵向大脑MRI合成。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
