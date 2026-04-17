@@ -1,0 +1,298 @@
+Title: Neuro-Oracle: A Trajectory-Aware Agentic RAG Framework for Interpretable Epilepsy Surgical Prognosis
+
+URL Source: https://arxiv.org/pdf/2604.14216v1
+
+Published Time: Fri, 17 Apr 2026 00:04:04 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# Neuro-Oracle: A Trajectory-Aware Agentic RAG Framework for Interpretable Epilepsy Surgical Prognosis 
+
+# Aizierjiang Aiersilan Q Mohamad Koubeissi The George Washington University 
+
+> alexandera@gwu.edu
+
+# Abstract 
+
+Predicting post-surgical seizure outcomes in pharmacore-sistant epilepsy is a clinical challenge. Conventional deep-learning approaches operate on static, single-timepoint pre-operative scans, omitting longitudinal morphological changes. We propose Neuro-Oracle , a three-stage frame-work that: (i) distils pre-to-post-operative MRI changes into a compact 512-dimensional trajectory vector using a 3D Siamese contrastive encoder; (ii) retrieves historically similar surgical trajectories from a population archive via nearest-neighbour search; and (iii) synthesises a natural-language prognosis grounded in the retrieved evidence us-ing a quantized Llama-3-8B reasoning agent. Evaluations are conducted on the public EPISURG dataset ( N =268 
+
+longitudinally paired cases) using five-fold stratified cross-validation. Since ground-truth seizure-freedom scores are unavailable, we utilize a clinical proxy label based on the resection type. We acknowledge that the network represen-tations may potentially learn the anatomical features of the resection cavities (i.e., temporal versus non-temporal loca-tions) rather than true prognostic morphometry. Our cur-rent evaluation thus serves mainly as a proof-of-concept for the trajectory-aware retrieval architecture. Trajectory-based classifiers achieve AUC values between 0.834 and 0.905, compared with 0.793 for a single-timepoint ResNet-50 baseline. The Neuro-Oracle agent (M5) matches the AUC of purely discriminative trajectory classifiers (0.867) while producing structured justifications with zero observed hallucinations under our audit protocol. A Siamese Diver-sity Ensemble (M6) of trajectory-space classifiers attains an AUC of 0.905 without language-model overhead. 
+
+# 1. Introduction 
+
+Epilepsy is a chronic neurological disorder characterised by recurrent, unprovoked seizures, affecting an estimated 50 million individuals globally [32]. Anti-seizure med-ications achieve adequate control in approximately 70% of patients; the remaining 30% develop pharmacoresis-tance, for whom resective neurosurgery represents the prin-cipal curative treatment route [30]. Temporal lobectomy yields seizure freedom in roughly 65–70% of operated pa-tients at two years (Engel Class I), whereas non-temporal and multilobar resections achieve freedom in only 40–55% of cases [10, 25, 26]. Long-term follow-up data demon-strate that even among initial responders, a substantial frac-tion experience late relapse [7]. This gap in outcomes across surgery types and the challenge of identifying pa-tients most likely to benefit motivate the search for reliable pre-operative prognostic tools. Accurate prognosis is especially difficult in patients with structurally normal MRI scans, where the epileptogenic tissue produces no gross visible lesion [23]. In these cases, pathology may manifest as subtle, progressive cor-tical thinning that evolves across longitudinal imaging ac-quisitions [2]. Three structural challenges compound the difficulty of applying deep learning to this setting. First, static single-scan classifiers evaluate the anatomy at a sin-gle cross-section in time and therefore cannot represent the trajectory of anatomical change from a healthy baseline through to the post-operative state. Second, epilepsy surgi-cal cohorts at individual centres are inherently small, rarely exceeding a few hundred patients with complete imaging and outcome records, which makes high-capacity end-to-end classifiers susceptible to overfitting [19]. Third, the output of a standard classifier is a bare probability score carrying no verifiable clinical rationale, which limits its ac-ceptability in surgical decision support. We address these three challenges jointly with Neuro-Oracle . The system encodes the morphological delta be-tween paired pre-operative and post-operative T1-weighted MRIs into a compact trajectory vector via a 3D Siamese contrastive network [6, 16], retrieves the most geometrically similar historical trajectories from a population archive through exact cosine nearest-neighbour search [15], and ap-plies a quantized Llama-3-8B reasoning agent [11] to pro-duce a verdict grounded in the retrieved evidence, following the retrieval-augmented generation (RAG) paradigm [17]. 
+
+> arXiv:2604.14216v1 [cs.MM] 10 Apr 2026
+
+Every component relies exclusively on public-domain datasets and open-source tooling, ensuring reproducibility. We use EPISURG [21], a public collection of T1-weighted MRIs from epilepsy surgery patients, for all our experiments in this paper (Section 3). The remainder of the paper reviews related work (Sec-tion 2), describes the dataset and preprocessing (Section 3), develops the methodology (Section 4), and presents results (Section 6) followed by discussion and limitations (Sec-tion 7). 
+
+# 2. Related Work 
+
+Deep learning for epilepsy prognosis. Early compu-tational methods for surgical outcome prediction relied on hand-crafted morphometric features, cortical thickness, hippocampal volume, and gyrification indices, fed into support-vector machines or random forests [32]. 3D CNN architectures, notably residual networks [13], have subsequently been applied directly to raw T1-weighted volumes to learn prognosis representations, demonstrating reasonable internal accuracy on single-centre cohorts [19]. Graph neural networks have also been explored to capture the spatial topology of white-matter connectivity in relation to seizure outcomes. A recurring limitation across these approaches is that they operate on a single pre-operative scan, discarding the clinically informative signal encoded in longitudinal change. Moreover, class imbalance and co-hort sizes of only a few hundred patients render end-to-end classifiers vulnerable to overfitting. 
+
+Longitudinal and deformation-based neuroimaging. 
+
+Longitudinal structural MRI analysis has a long history in neurodegeneration research, where within-subject tem-plate estimation enables unbiased measurement of volu-metric change [2, 22]. Siamese and twin-branch archi-tectures, originally introduced for signature verification and metric learning [6], have been adopted for longi-tudinal change detection in conditions such as multiple-sclerosis lesion evolution and tumour volume tracking. Deformation-based morphometry characterises anatomical change through non-linear registration fields produced by tools such as ANTs [1]; however, deformable registra-tion risks mathematically smoothing the localised volume changes of interest in epilepsy. Neuro-Oracle instead uti-lizes rigid coregistration followed by a learned difference embedding, preserving the structural signal while represent-ing it in a low-dimensional, retrieval-compatible space. 
+
+3D medical-image transformers. The Vision Trans-former [9] has rapidly been adapted to volumetric medical data. UNETR [12] demonstrated that a transformer encoder can serve as the contracting path of a 3D segmentation ar-chitecture, and MONAI [4] provides reference implementa-tions for both 3D ResNets and 3D ViTs in the medical imag-ing domain. In our experimental setup, a MONAI 3D ViT serves as a strong static baseline (M2), allowing direct com-parison between transformers operating on single-timepoint inputs and our trajectory-based approach. 
+
+Contrastive representation learning. Self-supervised contrastive objectives such as SimCLR [5] and MoCo [14] learn discriminative representations by maximising agree-ment between augmented views of the same instance. Khosla et al. [16] extended the InfoNCE loss to the su-pervised setting, leveraging label information to form posi-tive pairs across samples of the same class. We adopt Super-vised Contrastive loss at temperature τ =0 .07 and combine it with Focal Loss [18] to jointly address class separation and the 4:1 label imbalance in EPISURG. 
+
+Retrieval-augmented generation in clinical settings. 
+
+RAG [17] grounds LLM outputs in an external knowledge store retrieved at inference time, mitigating hallucination and providing traceable evidence chains. Vector search frameworks like FAISS [15] allow these archives to scale seamlessly to large datasets. Extending the RAG paradigm to vision–language clinical applications is an active fron-tier: MMed-RAG [33] introduced multimodal retrieval for medical VLMs, and RegioMix [34] applied region-specific retrieval augmentation for longitudinal visual question an-swering. To the best of our knowledge, agentic visual-RAG, in which the retrieved evidence is processed by an LLM agent rather than a fixed classifier, has not previously been applied to epilepsy surgical prognosis with 3D volumetric longitudinal trajectories as the retrieval key. 
+
+Large language models for medicine. Foundation lan-guage models [3, 29] have achieved strong performance on medical question answering, with Med-PaLM [24] reach-ing expert-level accuracy on the USMLE benchmark. The open-weight LLaMA family [11, 27] and efficient quanti-sation techniques such as NF4 [8] have made it feasible to deploy 8B-parameter models on a single consumer GPU (∼6 GB VRAM). We leverage Llama-3-8B-Instruct in 4-bit NF4 mode as the reasoning agent, loaded via the Hugging-Face Transformers library [31]. 
+
+# 3. Datasets and Preprocessing Protocol 
+
+EPISURG. The primary dataset we use in this work is EPISURG [21], which contains 430 T1-weighted MRI scans from epilepsy surgery patients, out of which 268 pos-sess both a pre-operative scan Xt0 and a post-operative scan 
+
+Xt1 . The public data release provides paired NIfTI volumes alongside a metadata file recording each subject’s surgery type, hemisphere, and a pre-operative quality flag; read-ers can find further dataset details in the original publica-tion [21]. Per-patient Engel seizure-freedom scores are not included in the public release. Because ground-truth seizure-freedom outcomes are un-available, we assign a binary proxy label derived from surgery type according to the published literature on out-come rates by surgery category [10, 25, 26, 30]. Tempo-ral resections (including lobectomy, lesionectomy, and mul-tilobar temporal resections) are labelled y=0 (favourable outcome proxy, cited seizure-freedom rate 65–70% at two years), and purely extra-temporal, frontal, parietal, occipi-tal resections, and hemispherectomy are labelled y=1 (less-favourable outcome proxy, cited rate 40–55%). This proxy is a clinically grounded but imperfect approximation. Be-cause the model distinguishes temporal from non-temporal procedures using post-operative scans, the encoder may pri-marily learn the anatomical features of temporal lobectomy cavities rather than subtle epileptogenic pathology. Conse-quently, the proxy introduces a major vulnerability where the model predicts surgery type instead of true seizure out-come. All results must therefore be strictly understood as performance on this proxy classification task. The proposed Neuro-Oracle framework serves primarily as an architec-tural proof-of-concept, designed to be readily applicable once true per-patient outcome registries become available. After preprocessing quality filtering, 268 subjects are re-tained: 215 with proxy label y=0 and 53 with y=1 , yield-ing a case-to-control ratio of approximately 4:1. While on-the-fly random augmentations are applied during training to prevent overfitting (detailed in Section 4.1), no offline aug-mented or synthetic subject records are added to the overall dataset count. 
+
+Preprocessing pipeline. Accurate trajectory encoding depends on geometric alignment between timepoints. Each pre-operative volume Xt0 and its corresponding post-operative volume Xt1 are read via ANTsPy [1]. The post-operative scan is rigidly registered (6 degrees of free-dom: three translations and three rotations) into the physical space of the pre-operative scan: 
+
+Xreg  
+
+> t1
+
+= Trigid (Xt1 ; Xt0 ) , (1) where Trigid is the optimal rigid (6-DOF) alignment map-ping Xt1 into the coordinate space of Xt0 . Deformable registration is deliberately avoided, as non-linear warping would smooth the localised volume changes targeted by prediction [22]. Both volumes are then z-score normalised per-volume over brain voxels exceeding the per-volume mean intensity (a simple threshold mask sufficient for well-normalised T1w acquisitions), and are centre-cropped or symmetrically zero-padded to a uniform 128 × 128 × 128 
+
+voxel grid at 1 × 1 × 1 mm 3 isotropic resolution. Processed volumes are saved as NIfTI files with an identity affine. All 268 subjects passed quality control and were carried for-ward to the experimental pipeline. 
+
+# 4. Methodology 
+
+We formulate the prognosis task as follows: given the aligned scan pair (Xt0 , X reg  
+
+> t1
+
+) and the surgery-type proxy label y ∈ { 0, 1}, learn a representation of the longitudinal change that separates the two outcome classes. The pipeline proceeds in three phases that can be trained and deployed independently (see Figure 1). 
+
+4.1. Phase 1: Contrastive Trajectory Encoding 
+
+A 3D Siamese contrastive encoder shares weights be-tween the two temporal branches [6]. The backbone fθ is a MONAI [4] 3D ResNet-50 [13] (bottleneck blocks, lay-ers [3 , 4, 6, 3] , channel widths [64 , 128 , 256 , 512] , single-channel input) initialised from scratch. All experiments were executed on computer of an NVIDIA GeForce RTX 5060 GPU. Each scan pair is encoded independently by the shared backbone: 
+
+vt0 = fθ (Xt0 ), vt1 = fθ (Xreg  
+
+> t1
+
+). (2) The difference vector vt1 − vt0 is projected to a 512-dimensional space by an MLP head and ℓ2-normalised to produce the trajectory vector :
+
+∆v = ℓ2-norm (MLP (vt1 − vt0 )) ∈ R512 , (3) where MLP = Linear (2048 →512) → BN → ReLU →
+
+Dropout (0 .3) → Linear (512 →512) .
+
+Training objective. The encoder is jointly trained with two complementary loss terms in equal weight: 
+
+L = 12 LSupCon + 12 LFocal . (4) The Supervised Contrastive loss [16] encourages trajec-tory vectors from the same surgical-outcome class to have high inner product and those from different classes to be mutually repulsive. Let I denote the in-batch indices, P (i)
+
+the set of positive examples for sample i (same class, ex-cluding i itself), and τ =0 .07 the temperature: 
+
+LSupCon = X
+
+> i∈I
+
+−1
+
+|P (i)|
+
+X 
+
+> p∈P(i)
+
+log exp(∆ vi · ∆vp / τ )
+
+P 
+
+> a∈I\{ i}
+
+exp(∆ vi · ∆va / τ ) .
+
+(5) The Focal Loss term [18] addresses the 4:1 class im-balance ( Nneg /N pos ≈ 4) by down-weighting correctly-classified easy examples ( γ=2 .0, α=0 .75 , positive-class Figure 1. Overview of the proposed Neuro-Oracle framework. (i) Pre- and post-operative MRI pairs are registered and encoded through a shared 3D Siamese ResNet-50 backbone. (ii) The morphological difference is projected into a compact trajectory vector, which is used to retrieve historically similar cases from a population archive. (iii) A quantized LLM reasoning agent evaluates the retrieved evidence to synthesize a transparent, natural-language surgical prognosis. 
+
+weight ≈ 4.0). A three-layer classification head ( 512 →
+
+256 → 128 → 1) is attached to ∆v exclusively during training and discarded at inference. To increase effective variance with only 268 subjects, training-time 3D data augmentation applies random axis flipping ( p=0 .5 per axis), additive Gaussian noise ( σ ∼U[0 .02 , 0.08] ), and random intensity scaling (factor ∼U[0 .85 , 1.15] ) to both temporal scans simultaneously. Aug-mentations are not applied during inference. The encoder is trained for 50 epochs with AdamW [20] (η=10 −4, weight decay 10 −4) and CosineAnnealingLR (Tmax =50 ). The physical batch size is 2, with gradient ac-cumulation over 8 steps to achieve an effective batch size of 16. Gradient clipping at ∥∇∥ 2=1 .0 is applied through-out. Mixed-precision training is enabled on CUDA hard-ware. The best checkpoint is selected by minimum valida-tion loss for each fold independently. 
+
+4.2. Phase 2: Population Archive and Trajectory Retrieval 
+
+Upon completing training, the encoder backbone and MLP head are frozen. A Population Archive D =
+
+{(∆ vi, y i, C i)}Ntrain  
+
+> i=1
+
+is constructed by forward-passing all training subjects through the frozen encoder and index-ing their 512-dimensional unit-norm trajectory vectors in a FAISS exact inner-product index ( IndexFlatIP ) [15]. Because ∆v vectors are ℓ2-normalised, the inner product is mathematically equivalent to cosine similarity, enabling exact nearest-neighbour retrieval. While an exhaustive dot-product search via IndexFlatIP is computationally in-stantaneous for our 268-subject cohort, this phase intrinsi-cally scales. Deploying the framework on a massive, multi-centre longitudinal database would merely require swap-ping the exact index for a FAISS approximate nearest neigh-bour (ANN) index (e.g., IndexIVFPQ ), achieving sub-millisecond retrieval without altering the clinical workflow. 
+
+Algorithm 1 Neuro-Oracle Inference Pipeline (M5) 
+
+Require: Query (∆ vq , C q ), frozen archive D, LLM agent 
+
+A, δ = 15 yr, k = 5  
+
+> 1:
+
+Nk ← FAISS Search (∆ vq , D, k ) 
+
+> 2:
+
+pneighbor ← 1
+
+> k
+
+P yi (neighbor outcomes)  
+
+> 3:
+
+Build prompt with Cq and Nk (age/sex/outcome); ap-pend: “Mentally filter out matches with age gap > δ ” 
+
+> 4:
+
+s ← A (prompt ) 
+
+> 5:
+
+pLLM ← 0.20 if parse (s) = SUCCESS else 0.80  
+
+> 6:
+
+pq ← 0.60 · pneighbor + 0 .40 · pLLM  
+
+> 7:
+
+ˆyq ← 1[pq > 0.5]  
+
+> 8:
+
+return ˆyq , justification s
+
+For a query subject q, the top-k most similar archived tra-jectories are retrieved: 
+
+Nk(q) = top -k
+
+> i∈D
+
+ ∆vq · ∆vi
+
+, k=5 . (6) 
+
+4.3. Phase 3: Calibrated LLM Reasoning Agent 
+
+The retrieved neighbour profiles and the query patient meta-data are formatted into a structured clinical prompt de-livered to a 4-bit NF4 quantized Llama-3-8B-Instruct 
+
+model [11] loaded with NF4 double quantisation [8] (com-pute dtype float16), consuming approximately 6 GB of GPU memory. The system prompt instructs the model to act as an ex-pert epileptologist and to begin its response with exactly one of two tokens, SUCCESS or FAILURE , followed by a single justification sentence. The user message presents the query patient’s age and sex, followed by up to five historically re-trieved neighbours with their ages, sexes, and surgical out-comes. An age-gap heuristic ( δ=15 yr) is integrated directly into the clinical prompt: the reasoning agent is given ex-plicit instructions to mentally filter out any historical match whose age discrepancy exceeds 15 years, reflecting the ex-pectation that cortical atrophy rates are age-dependent [2]. Generation is deterministic (greedy decoding, maximum 64 new tokens). The first token of the model’s response is parsed for the verdict keyword ( SUCCESS or FAILURE ), and a calibrated soft probability blends the neighbour majority vote with the LLM evidence: 
+
+pOracle = 0 .60 × pneighbor + 0 .40 × pLLM , (7) where pneighbor is the fraction of the k retrieved neighbours with y=1 and pLLM ∈ {0.20 , 0.80 } encodes the binary LLM verdict. The 0.60/0.40 weighting places a moderate majority weight on the geometric evidence while allowing the LLM to shift the estimate when its contextual reason-ing diverges from the raw neighbour vote. A brief sensitiv-ity analysis on this weighting ratio over the geometric term confirms its mathematical grounding: varying the neigh-bour weight empirically derived an optimal cross-validation calibration error at 60/40, proving it is not an arbitrary se-lection but an optimal balance between external semantic assessment and retrieved geometry. 
+
+# 5. Experimental Setup 
+
+Cross-validation strategy. All methods are evaluated under five-fold stratified cross-validation ( n=5 , shuffled, seed = 42). Stratification preserves the 4:1 class ratio across folds. To avoid data leakage across representation learn-ing and retrieval, we ensure strict separation of folds. Five independent encoder backbones are trained: for each test fold i ∈ { 0 . . . 4}, the encoder is trained exclusively on the union of the other four folds, and its weights are frozen prior to evaluation on fold i. This ensures the trajectory vectors for a given fold are computed by an encoder com-pletely blind to that fold during training. The downstream classifiers (M3, M3b, M4, M5, M6) are evaluated identi-cally. Crucially, to ensure no data leakage during retrieval, the FAISS index is rebuilt for every fold using only the unal-tered, non-augmented training subjects of that specific split. At no point does any augmented data or any test-fold sam-ple cross the indexing boundary to contaminate the retrieval evidence pool. Aggregate metrics are computed over the union of all five independent held-out partitions, covering all 268 subjects exactly once. 
+
+Compared methods. Seven methods are evaluated on the same 268-subject cohort. The ResNet-50 Static Base-line (M1) fine-tunes a MONAI 3D ResNet-50 [4, 13] end-to-end on Xt1 only, using class-weighted cross-entropy, AdamW [20], CosineAnnealingLR, and 25 training epochs. The 3D Vision Transformer Static Baseline (M2) fine-tunes a MONAI 3D ViT [9] (input size 128 3, patch size 16 3,hidden dimension 384, MLP dimension 1536, 6 layers, 6 heads, convolutional projection, learnable position embed-dings, dropout 0.1) end-to-end on Xt1 using class-weighted cross-entropy, AdamW, CosineAnnealingLR, and 25 train-ing epochs. The Siamese + Logistic Regression (M3) 
+
+method applies a balanced-class logistic regression classi-fier ( C=1 .0, 1000 iterations) to the frozen 512-dim ∆v em-beddings. The Siamese + 2-Layer MLP (M3b) substitutes an MLP classifier (hidden layers [256 , 128] , α=10 −3, early stopping) with balanced sample weights on the same em-beddings. The Siamese + k-NN (M4) uses a cosine-metric 
+
+k-nearest-neighbour classifier ( k= min(5 , ⌊ntrain /2⌋)) on 
+
+∆v. The Siamese Diversity Ensemble (M6) computes an equal-weight soft-vote average over four classifiers each trained on ∆v: ExtraTrees (seed=13), MLP (seed=99), MLP (seed=123), and a calibrated RBF-SVC (C=0.1), all with balanced class weights. Our Neuro-Oracle (M5) com-bines the retrieved neighbours with the LLM reasoning as described in Section 4.3. 
+
+Evaluation metrics. The primary evaluation metric is AUC-ROC. Secondary metrics are F1 score (positive class), sensitivity (TPR = T P/ (T P + F N )), speci-ficity (TNR = T N/ (T N + F P )), and balanced accu-racy (Balance Accuracy = ( Sensitivity + Specificity )/2). Threshold optimisation is performed via a grid search over 
+
+[0 .30 , 0.50] in steps of 0.02 on the aggregate held-out pre-dictions, with results reported at both the default thresh-old ( τ =0 .50 ) and the optimised threshold for completeness. All hyperparameters and random seeds were fixed prior to any evaluation (global seed 42 for all frameworks for repro-ducibility). 
+
+# 6. Results 
+
+All numerical results are cross-verified against indepen-dently logged predictions. 
+
+6.1. Primary Performance Comparison 
+
+We present the main evaluation in Table 1. and the ROC curves for 6 of the methods in Figure 2, and Figure 3 de-tails the decision outcomes for Neuro-Oracle (M5) via its confusion matrix. Trajectory-based classifiers (M3–M6) achieve substan-tially higher sensitivity on the minority class than the static ResNet-50 baseline (M1, Sensitivity = 0.396), confirming that the longitudinal difference encoding carries discrim-inative information absent from a single-timepoint scan. Among trajectory methods, M3 attains the highest sensi-tivity (0.849) and M6 the highest AUC (0.905). The 3D-ViT static baseline (M2) achieves AUC = 0.867 and Balance Accuracy = 0.871, indicating that a moderately sized Vision Transformer [9] can learn competitive single-timepoint rep-resentations on this cohort. Neuro-Oracle (M5) matches Table 1. Epilepsy surgical prognosis on EPISURG ( N =268 , 5-fold stratified CV). BalAcc = (Sensitivity + Specificity) / 2. Best value per column in bold .                                                    
+
+> Category Method AUC ↑F1 ↑Sensitivity ↑Specificity ↑Balanced Acc. ↑
+> Static encoders ResNet-50 Static 0.793 0.775 0.396 0.921 0.659
+> 3D-ViT Static 0.867 0.775 0.811 0.930 0.871
+> Siamese-based models
+> Siamese + Logistic Regression 0.883 0.629 0.849 0.791 0.820
+> Siamese + 2-Layer MLP 0.834 0.628 0.811 0.809 0.810
+> Siamese + k-NN 0.868 0.717 0.717 0.930 0.824
+> Siamese Diversity Ensemble (M6) 0.905 0.741 0.755 0.930 0.843
+> Proposed framework Neuro-Oracle (M5, ours) 0.867 0.600 0.566 0.921 0.744
+> Figure 2. ROC curves for six baseline and proposed methods un-der 5-fold stratified CV on EPISURG ( N=268 ); Siamese Diver-sity Ensemble (M6) is omitted for visual clarity. AUC values are reported in Table 1.
+> Figure 3. Aggregated confusion matrix for Neuro-Oracle (M5), 5-fold stratified CV. Rows: ground-truth proxy label ( 0= temporal resection, corresponding to Success / Engel I; 1= non-temporal or complex resection, corresponding to Failure / Engel II-IV); columns: predicted label. M5 achieves specificity of 0.921 and sensitivity of 0.566 at the default threshold.
+
+M2 and M4 in AUC while additionally producing a natural-language justification for every prediction. 
+
+6.2. Threshold-Optimised Performance 
+
+We also report metrics under decision thresholds that max-imise balanced accuracy on the aggregate held-out predic-tions in Table 2. Lowering the decision threshold from 0.50 to 0.34–0.42 recovers sensitivity at the expense of specificity, reflect-ing the clinical trade-off between under-detection of less-favourable outcomes (false negatives, under-treatment risk) and over-prediction (false positives, unnecessary patient anxiety). At its optimised threshold of 0.34, Neuro-Oracle (M5) achieves Sensitivity = 0.698, Specificity = 0.916, and Balance Accuracy = 0.807, a substantial improvement over its default-threshold balanced accuracy of 0.744. 
+
+6.3. Ablation Study 
+
+We isolate the contribution of the input modality (single scan vs. longitudinal over-time trajectory ∆v) and reason-ing engine (distance-based k-NN vs. Llama-3 agent). Fig-ure 4 visualizes these ablation comparisons, showing that longitudinal trajectories and agentic reasoning individually and jointly improve performance over the single-scan k-NN baseline. Additionally, Table 3 details the impact of the trained encoder, retrieval depth k, and the age-gap filter on the full trajectory-based model. A random (untrained) encoder reduces performance to near chance (AUC = 0.488), confirming that the learned tra-jectory vectors carry genuine discriminative signal. Re-stricting retrieval to k=1 degrades AUC to 0.741, showing the benefit of multi-neighbour vote smoothing. The age-gap filter does not affect AUC at the default threshold, consis-tent with moderate age variance in EPISURG; its primary role is to improve the coherence of the chosen LLM’s rea-soning (Section 7). 
+
+6.4. Retrieval and Embedding Space Quality 
+
+We report embedding and retrieval quality metrics in Ta-ble 4, and show t-SNE projection of all 268 trajectory vec-Table 2. Threshold-optimised performance. Threshold selected via grid search over [0 .30 , 0.50] (step 0.02), maximising balanced accuracy on aggregate held-out predictions. M3 and M3b retain τ = 0 .50 as optimal. 
+
+ID Method τ AUC ↑ Sensitivity ↑ Specificity ↑ Balanced Acc. ↑
+
+M3 Siamese + Logistic Regression 0.50 0.883 0.849 0.791 0.820 M4 Siamese + k-NN 0.42 0.868 0.717 0.930 0.824 
+
+M5 Neuro-Oracle (ours) 0.34 0.867 0.698 0.916 0.807 Table 3. Ablation study of Neuro-Oracle pipeline components ( N = 268 , 5-fold stratified cross-validation). 
+
+Model Configuration AUC ↑ Sensitivity ↑ Balanced Acc. ↑
+
+Random encoder Gaussian init., no training 0.488 0.038 0.486 
+
+Retrieval baseline k = 1 (greedy 1-NN, no vote smoothing) 0.741 0.585 0.741 
+
+Neuro-Oracle w/o age filter ( δ → ∞ ) 0.867 0.566 0.744 
+
+Neuro-Oracle M5 Full model ( k = 5 , δ = 15 yr) 0.867 0.566 0.744 
+
+Siamese Diversity Ensemble (M6) Ensemble of diverse models 0.905 0.755 0.843 
+
+Figure 4. AUC-ROC across input modality and reasoning engine combinations. Single scan with k-NN achieves 0.793; switching to longitudinal trajectory ∆v (0.868) or using a Llama-3 reasoning agent (0.867) individually increase performance. The full Neuro-Oracle pipeline (Trajectory ∆v + Llama-3) preserves the high per-formance of the geometric embedding and generates interpreta-tive clinical reasoning. The chance level AUC=0.5 is shown as a dashed red line. 
+
+tors in Figure 5. The high mean cosine similarity (0.919) reflects tight intra-class clustering from contrastive training. A top-5 fidelity of 83.0% indicates that the retrieved pool contains at least one correctly labelled neighbour in more than four out of five queries. The calibration MAE (0.189) reflects the inherent uncertainty of predicting a proxy label from geometric features on an imbalanced cohort. 
+
+6.5. Interpretability Audit of the LLM Agent 
+
+We report two check scores from raw Llama-3 outputs for the LLM interpretability audit of Neuro-Oracle (M5) us-ing Llama-3-8B-Instruct (4-bit NF4 quantization) that show age-filter adherence of 73.9% and zero-hallucination rate of 
+
+Figure 5. t-SNE projection [28] (perplexity = 30, 2000 itera-tions) of the 512-dim ℓ2-normalised trajectory vectors for all 268 EPISURG subjects. Green circles show proxy label y=0 (tem-poral resection, corresponding to Success / Engel I in legend); Red circles show y=1 (non-temporal or complex resection, cor-responding to Failure / Engel II-IV). Table 4. Embedding space and retrieval quality metrics ( N = 268 
+
+subjects; 512-dimensional FAISS exact inner-product index). 
+
+Metric Value 
+
+Top-5 retrieval fidelity (%) ↑ 83.0 
+
+Mean cosine similarity (top-5) ↑ 0.919 
+
+Calibration MAE (label-weighted) ↓ 0.189 
+
+100.0% where the full 100% zero-hallucination rate means no reply held info outside the set context window a trait of the tight prompt design not an inborn LLM power while the 73.9% age-filter adherence rate shows the model follows the age-reasoning rule in most cases but both numbers are audit-only for research and study and should not be read as clinic safety promises. 
+
+# 7. Discussion 
+
+Trajectory encoding versus static baselines. The con-sistent sensitivity advantage of trajectory-based methods over the static ResNet-50 baseline (Table 1) suggests that the longitudinal difference vector captures outcome-relevant signal absent from a single post-operative scan, in line with evidence of progressive cortical atrophy in phar-macoresistant epilepsy [2]. The accompanying specificity reductions in M3 and M3b reflect the sensitivity–specificity trade-off inherent to aggressive class reweighting on a 4:1 imbalanced problem [18]. The unexpectedly strong per-formance of the 3D-ViT static baseline (M2) indicates that a moderately sized Vision Transformer can learn competi-tive single-timepoint representations even on 268 subjects, likely aided by the modest patch size ( 16 3), shallow depth (6 layers), and class-weighted loss. 
+
+Neuro-Oracle and the interpretability–discriminability trade-off. While M5 does not attain the peak AUC of our purely discriminative Siamese Diversity Ensemble (M6), it bridges the interpretability gap by providing a natural-language justification for every prediction. The zero-hallucination rate is a direct consequence of the struc-tured prompt design, aligning with findings in Retrieval-Augmented Generation literature [17]. The clinical value of this architectural complexity over a simpler Random Forest or MLP ensemble is important. In surgical decision support, an AUC of 0.867 with a fully traceable, auditable reasoning chain is vastly more deployable than a black-box ensemble with an AUC of 0.905. Clinicians must establish trust in the synthesized prognosis through validation. If the LLM gen-erates a prognosis based on a retrieved neighbor who was not seizure-free, the agent correctly identifies the risk and mirrors the poor outcome predicting a failure. This behav-ior is intentional and appropriate for a retrieval-augmented system, as the LLM’s task is to faithfully relay the empir-ical risks associated with the retrieved anatomical match rather than overwrite it with general optimism. Clinicians can then inspect the exact historical trajectories retrieved as evidence and judge whether the demographic and morpho-logical match is plausible before accepting the prognosis. Threshold adjustment (Table 2) recovers meaningful sensi-tivity, confirming that the calibrated probability retains suf-ficient ranking information despite the LLM’s conservative default behaviour. 
+
+Siamese Diversity Ensemble. The best aggregate perfor-mance of M6 demonstrates that classifier diversity in the learned trajectory space, obtained by varying estimator type and random seed, yields measurable gains over any single model on this imbalanced small-cohort task, while also pro-viding a practical deployment path when LLM inference cost is prohibitive. 
+
+Ablation insights. The ablation results (Table 3) confirm that each pipeline component contributes meaningfully: the trained encoder provides the discriminative signal, multi-neighbour retrieval smooths out embedding noise, and the age-gap filter improves the coherence of the LLM’s reason-ing chain rather than the aggregate discriminative score. 
+
+Proxy label limitations. As discussed, predicting surgery type as an outcome proxy introduces unquantifiable label noise [7]. So reported metrics represent proxy-label recov-ery rather than direct clinical seizure-freedom prognosis. 
+
+Limitations and future work. The cohort size ( N =268 )prevents computing confidence intervals narrow enough to make strong statistical claims about pairwise method differ-ences. Although we have mitigated the limited sample size in large part by learning low-dimensional trajectory embed-dings combined with k-NN retrieval and data augmenta-tions, all subjects still originate from a single centre, which limits claims about cross-site or cross-scanner generalisa-tion. Future work should (i) obtain ethical approval to link EPISURG scans to de-identified Engel outcome registries, (ii) evaluate cross-centre generalisation on independent co-horts, and (iii) investigate whether supervised fine-tuning of the quantized LLM agent on outcome-labelled clinical notes can improve the fidelity of its clinical reasoning. 
+
+# 8. Conclusion 
+
+We’ve presented Neuro-Oracle, a framework for epilepsy surgical prognosis that encodes the longitudinal pre-to-post-operative MRI change into a compact trajectory vector and grounds a calibrated verdict in historically similar retrieved cases via a quantized LLM reasoning agent [11, 17]. On the EPISURG dataset [21] ( N =268 ), trajectory-based meth-ods consistently outperform the single-timepoint baseline in sensitivity, with the Siamese Diversity Ensemble attain-ing the highest AUC (0.905). Although it does not exceed the pure discriminative power of the Siamese Diversity En-semble, Neuro-Oracle matches the performance of geomet-ric baseline classifiers while uniquely providing auditable natural-language justifications. Ablation experiments con-firm that each pipeline stage contributes meaningfully to both quantitative and qualitative outcomes. References 
+
+[1] Brian B Avants, Nicholas J Tustison, Gang Song, Philip A Cook, Arno Klein, and James C Gee. A reproducible eval-uation of ants similarity metric performance in brain image registration. Neuroimage , 54(3):2033–2044, 2011. 2, 3 [2] Boris C Bernhardt, KJ Worsley, H Kim, AC Evans, A Bernasconi, and N Bernasconi. Longitudinal and cross-sectional analysis of atrophy in pharmacoresistant temporal lobe epilepsy. Neurology , 72(20):1747–1754, 2009. 1, 2, 5, 8[3] Tom Brown, Benjamin Mann, Nick Ryder, Melanie Sub-biah, Jared D Kaplan, Prafulla Dhariwal, Arvind Neelakan-tan, Pranav Shyam, Girish Sastry, Amanda Askell, et al. Lan-guage models are few-shot learners. Advances in neural in-formation processing systems , 33:1877–1901, 2020. 2 [4] M Jorge Cardoso, Wenqi Li, Richard Brown, Nic Ma, Eric Kerfoot, Yiheng Wang, Benjamin Murrey, Andriy Myro-nenko, Can Zhao, Dong Yang, et al. Monai: An open-source framework for deep learning in healthcare. arXiv preprint arXiv:2211.02701 , 2022. 2, 3, 5 [5] Ting Chen, Simon Kornblith, Mohammad Norouzi, and Ge-offrey Hinton. A simple framework for contrastive learning of visual representations. In International conference on ma-chine learning , pages 1597–1607. PmLR, 2020. 2 [6] Sumit Chopra, Raia Hadsell, and Yann LeCun. Learning a similarity metric discriminatively, with application to face verification. In 2005 IEEE computer society conference on computer vision and pattern recognition (CVPR’05) , pages 539–546. IEEE, 2005. 1, 2, 3 [7] Jane De Tisi, Gail S Bell, Janet L Peacock, Andrew W McEvoy, William FJ Harkness, Josemir W Sander, and John S Duncan. The long-term outcome of adult epilepsy surgery, patterns of seizure remission, and relapse: a cohort study. The Lancet , 378(9800):1388–1395, 2011. 1, 8 [8] T Dettmers, M Lewis, S Shleifer, and L Zettlemoyer. Qlora: Efficient fine-tuning of quantized language models. arXiv preprint , 2022. 2, 4 [9] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Syl-vain Gelly, et al. An image is worth 16x16 words: Trans-formers for image recognition at scale. arXiv preprint arXiv:2010.11929 , 2020. 2, 5 [10] Jerome Engel Jr, Samuel Wiebe, Jacqueline French, Michael Sperling, Peter Williamson, Dennis Spencer, Robert Gum-nit, Catherine Zahn, Edward Westbrook, and Bruce Enos. Practice parameter: temporal lobe and localized neocortical resections for epilepsy: report of the quality standards sub-committee of the american academy of neurology, in asso-ciation with the american epilepsy society and the american association of neurological surgeons. Neurology , 60(4):538– 547, 2003. 1, 3 [11] Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, Ab-hinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten, Alex Vaughan, et al. The llama 3 herd of models. arXiv preprint arXiv:2407.21783 , 2024. 1, 2, 4, 8 [12] Ali Hatamizadeh, Yucheng Tang, Vishwesh Nath, Dong Yang, Andriy Myronenko, Bennett Landman, Holger R Roth, and Daguang Xu. Unetr: Transformers for 3d med-ical image segmentation. In Proceedings of the IEEE/CVF winter conference on applications of computer vision , pages 574–584, 2022. 2 [13] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep residual learning for image recognition. In Proceed-ings of the IEEE conference on computer vision and pattern recognition , pages 770–778, 2016. 2, 3, 5 [14] Kaiming He, Haoqi Fan, Yuxin Wu, Saining Xie, and Ross Girshick. Momentum contrast for unsupervised visual rep-resentation learning. In Proceedings of the IEEE/CVF con-ference on computer vision and pattern recognition , pages 9729–9738, 2020. 2 [15] Jeff Johnson, Matthijs Douze, and Herv´ e J´ egou. Billion-scale similarity search with gpus. IEEE transactions on big data , 7(3):535–547, 2019. 1, 2, 4 [16] Prannay Khosla, Piotr Teterwak, Chen Wang, Aaron Sarna, Yonglong Tian, Phillip Isola, Aaron Maschinot, Ce Liu, and Dilip Krishnan. Supervised contrastive learning. Advances in neural information processing systems , 33:18661–18673, 2020. 1, 2, 3 [17] Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich K¨ uttler, Mike Lewis, Wen-tau Yih, Tim Rockt¨ aschel, et al. Retrieval-augmented generation for knowledge-intensive nlp tasks. Advances in neural information processing systems ,33:9459–9474, 2020. 1, 2, 8 [18] Tsung-Yi Lin, Priya Goyal, Ross Girshick, Kaiming He, and Piotr Doll´ ar. Focal loss for dense object detection. In Pro-ceedings of the IEEE international conference on computer vision , pages 2980–2988, 2017. 2, 3, 8 [19] Geert Litjens, Thijs Kooi, Babak Ehteshami Bejnordi, Ar-naud Arindra Adiyoso Setio, Francesco Ciompi, Mohsen Ghafoorian, Jeroen Awm Van Der Laak, Bram Van Gin-neken, and Clara I S´ anchez. A survey on deep learning in medical image analysis. Medical image analysis , 42:60–88, 2017. 1, 2 [20] Ilya Loshchilov and Frank Hutter. Decoupled weight decay regularization. arXiv preprint arXiv:1711.05101 , 2017. 4, 5 [21] F. P´ erez-Garc´ ıa, R. Rodionov, A. Alim-Marvasti, R. Sparks, J. S. Duncan, and S. Ourselin. EPISURG: MRI dataset for quantitative analysis of resective neurosurgery for refractory epilepsy. -, 2020. 2, 3, 8 [22] Martin Reuter, Nicholas J Schmansky, H Diana Rosas, and Bruce Fischl. Within-subject template estimation for unbi-ased longitudinal image analysis. Neuroimage , 61(4):1402– 1418, 2012. 2, 3 [23] Maurits W Sanders, Iskander Van der Wolf, Floor E Jansen, Eleonora Aronica, Christoph Helmstaedter, Attila Racz, Rainer Surges, Alexander Grote, Albert J Becker, Sylvain Rheims, et al. Outcome of epilepsy surgery in mri-negative patients without histopathologic abnormalities in the re-sected tissue. Neurology , 102(4):e208007, 2024. 1 [24] Karan Singhal, Shekoofeh Azizi, Tao Tu, S Sara Mahdavi, Jason Wei, Hyung Won Chung, Nathan Scales, Ajay Tan-wani, Heather Cole-Lewis, Stephen Pfohl, et al. Large language models encode clinical knowledge. Nature , 620 (7972):172–180, 2023. 2 [25] Susan Spencer and Linda Huh. Outcomes of epilepsy surgery in adults and children. The Lancet Neurology , 7(6):525–537, 2008. 1, 3 [26] Jos´ e F T´ ellez-Zenteno, Raj Dhar, and Samuel Wiebe. Long-term seizure outcomes following epilepsy surgery: a sys-tematic review and meta-analysis. Brain , 128(5):1188–1198, 2005. 1, 3 [27] Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timoth´ ee Lacroix, Baptiste Rozi` ere, Naman Goyal, Eric Hambro, Faisal Azhar, et al. Llama: Open and efficient foundation language models. 
+
+arXiv preprint arXiv:2302.13971 , 2023. 2 [28] Laurens Van der Maaten and Geoffrey Hinton. Visualizing data using t-sne. Journal of machine learning research , 9 (11), 2008. 7 [29] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszko-reit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems , 30, 2017. 2 [30] Samuel Wiebe, Warren T Blume, John P Girvin, and Michael Eliasziw. A randomized, controlled trial of surgery for temporal-lobe epilepsy. New England Journal of Medicine ,345(5):311–318, 2001. 1, 3 [31] Thomas Wolf, Lysandre Debut, Victor Sanh, Julien Chau-mond, Clement Delangue, Anthony Moi, Pierric Cistac, Tim Rault, R´ emi Louf, Morgan Funtowicz, et al. Transformers: State-of-the-art natural language processing. In Proceed-ings of the 2020 conference on empirical methods in natural language processing: system demonstrations , pages 38–45, 2020. 2 [32] Yitong Wu, Eileen Lee Ming Su, Mingyu Wu, Chia Yee Ooi, and William Holderbaum. A review of machine learning and deep learning trends in eeg-based epileptic seizure predic-tion. IEEE Access , 2025. 1, 2 [33] Peng Xia, Kangyu Zhu, Haoran Li, Tianze Wang, Weijia Shi, Sheng Wang, Linjun Zhang, James Zou, and Huaxiu Yao. Mmed-rag: Versatile multimodal rag system for medical vi-sion language models. arXiv preprint arXiv:2410.13085 ,2024. 2 [34] Ka-Wai Yung, Jayaram Sivaraj, Danail Stoyanov, Stavros Loukogeorgakis, and Evangelos B Mazomenos. Region-specific retrieval augmentation for longitudinal visual ques-tion answering: A mix-and-match paradigm. In Inter-national Conference on Medical Image Computing and Computer-Assisted Intervention , pages 585–594. Springer, 2024. 2

@@ -1,0 +1,422 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-17T20:26:11.530565+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 7,
+    "quick_skim_target": 11,
+    "quick_selected": 7
+  },
+  "deep_dive": [
+    {
+      "id": "2604.15016v1",
+      "title": "DLink: Distilling Layer-wise and Dominant Knowledge from EEG Foundation Models",
+      "abstract": "EEG foundation models (FMs) achieve strong cross-subject and cross-task generalization but impose substantial computational and memory costs that hinder deployment on embedded BCI systems. Knowledge distillation is a natural solution; however, conventional methods fail for EEG FMs because task-relevant semantics are often distributed across intermediate layers, and aggressive dimensionality reduction can distort oscillatory structure via representational collapse and aliasing. To address these challenges, we propose DLink (Distilling Layer-wise and Dominant Knowledge), a unified framework for transferring knowledge from large EEG FMs to compact students with three key innovations: (1) a dynamic Router that adaptively aggregates teacher layers to capture dominant intermediate representations; (2) an EEG MiC student with a Mimic-then-Compress pipeline, which inherits high-dimensional teacher features and then applies structured spatio-temporal compression to avoid a heavy classification head; and (3) spectral distillation that aligns teacher-student representations in the frequency domain to regularize compression and mitigate aliasing and temporal jitter. Experiments on four EEG benchmarks show that DLink enables compact students to outperform lightweight baselines while approaching fully fine-tuned FM performance at substantially lower model size and inference cost.",
+      "authors": [
+        "Jingyuan Wang",
+        "Meiyan Xu",
+        "Zhihao Jia",
+        "Chenyu Liu",
+        "Xinliang Zhou",
+        "Ziyu Jia",
+        "Yong Li",
+        "Fang Li",
+        "Junfeng Yao",
+        "Yi Ding"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-16T13:43:51+00:00",
+      "link": "https://arxiv.org/pdf/2604.15016v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Distilling knowledge from large EEG foundation models for BCI deployment",
+      "llm_evidence_cn": "从大型脑电基础模型中提取知识以用于脑机接口部署",
+      "llm_evidence": "从大型脑电基础模型中提取知识以用于脑机接口部署",
+      "canonical_evidence": "从大型脑电基础模型中提取知识以用于脑机接口部署",
+      "llm_tldr_en": "Introduces DLink to distill layer-wise knowledge from large EEG foundation models into compact student models.",
+      "llm_tldr_cn": "引入DLink框架，将大型脑电基础模型的层级知识蒸馏到紧凑的轻量化模型中。",
+      "llm_tldr": "引入DLink框架，将大型脑电基础模型的层级知识蒸馏到紧凑的轻量化模型中。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "State of the art large foundation models for EEG decoding and generation",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.14441v1",
+      "title": "Batch Effects In Brain Foundation Model Embeddings",
+      "abstract": "Foundation models show strong potential for large-scale, high-dimensional biomedical applications, yet their ability to capture relevant neurobiological characteristics remains underexplored. We systematically evaluate embeddings from two neuroimaging foundation models, BrainLM and SwiFT, across multi-site fMRI datasets using a comprehensive evaluation framework. Our results show that foundation model embeddings encode substantial batch-related variability, often dominating diagnosis-related information across heterogeneous datasets. We further investigate how harmonization, applied to reduce batch effects, influences these embeddings. In addition, we find that BrainLM prefers to capture fine-grained regional activity, whereas SwiFT tends to represent interactions between regions, consistent with their respective model architectures. Our study highlights the importance of accounting for batch effects in foundation models and motivates future work on disentangling biologically meaningful signals from acquisition-related variability.",
+      "authors": [
+        "Ye Tao",
+        "Bradley T. Baker",
+        "Yu Wu",
+        "Anand D. Sarwate",
+        "Sandeep Panta",
+        "Sergey Plis",
+        "Vince D. Calhoun"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-04-15T21:33:03+00:00",
+      "link": "https://arxiv.org/pdf/2604.14441v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Evaluation of brain foundation models like BrainLM and SwiFT",
+      "llm_evidence_cn": "评估BrainLM和SwiFT等大脑基础模型",
+      "llm_evidence": "评估BrainLM和SwiFT等大脑基础模型",
+      "canonical_evidence": "评估BrainLM和SwiFT等大脑基础模型",
+      "llm_tldr_en": "Systematically evaluates embeddings from neuroimaging foundation models for batch effects and neurobiology.",
+      "llm_tldr_cn": "系统评估了神经影像基础模型的嵌入向量在批次效应和神经生物学方面的表现。",
+      "llm_tldr": "系统评估了神经影像基础模型的嵌入向量在批次效应和神经生物学方面的表现。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "State of the art large foundation models for EEG decoding and generation",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.10627v1",
+      "title": "Computational Lesions in Multilingual Language Models Separate Shared and Language-specific Brain Alignment",
+      "abstract": "How the brain supports language across different languages is a basic question in neuroscience and a useful test for multilingual artificial intelligence. Neuroimaging has identified language-responsive brain regions across languages, but it cannot by itself show whether the underlying processing is shared or language-specific. Here we use six multilingual large language models (LLMs) as controllable systems and create targeted ``computational lesions'' by zeroing small parameter sets that are important across languages or especially important for one language. We then compare intact and lesioned models in predicting functional magnetic resonance imaging (fMRI) responses during 100 minutes of naturalistic story listening in native English, Chinese and French (112 participants). Lesioning a compact shared core reduces whole-brain encoding correlation by 60.32% relative to intact models, whereas language-specific lesions preserve cross-language separation in embedding space but selectively weaken brain predictivity for the matched native language. These results support a shared backbone with embedded specializations and provide a causal framework for studying multilingual brain-model alignment.",
+      "authors": [
+        "Yang Cui",
+        "Jingyuan Sun",
+        "Yizheng Sun",
+        "Yifan Wang",
+        "Yunhao Zhang",
+        "Jixing Li",
+        "Shaonan Wang",
+        "Hongpeng Zhou",
+        "John Hale",
+        "Chengqing Zong",
+        "Goran Nenadic"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CE"
+      ],
+      "published": "2026-04-12T13:06:47+00:00",
+      "link": "https://arxiv.org/pdf/2604.10627v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Strong method match for brain alignment using large language models",
+      "llm_evidence_cn": "使用大语言模型进行大脑对齐的强方法匹配",
+      "llm_evidence": "使用大语言模型进行大脑对齐的强方法匹配",
+      "canonical_evidence": "使用大语言模型进行大脑对齐的强方法匹配",
+      "llm_tldr_en": "Uses multilingual LLMs to investigate shared and language-specific brain alignment via computational lesions.",
+      "llm_tldr_cn": "利用多语言大模型通过计算损伤研究大脑在语言处理中的共享与特定对齐。",
+      "llm_tldr": "利用多语言大模型通过计算损伤研究大脑在语言处理中的共享与特定对齐。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.14259v1",
+      "title": "Continual Learning for fMRI-Based Brain Disorder Diagnosis via Functional Connectivity Matrices Generative Replay",
+      "abstract": "Functional magnetic resonance imaging (fMRI) is widely used for studying and diagnosing brain disorders, with functional connectivity (FC) matrices providing powerful representations of large-scale neural interactions. However, existing diagnostic models are trained either on a single site or under full multi-site access, making them unsuitable for real-world scenarios where clinical data arrive sequentially from different institutions. This results in limited generalization and severe catastrophic forgetting. This paper presents the first continual learning framework specifically designed for fMRI-based diagnosis across heterogeneous clinical sites. Our framework introduces a structure-aware variational autoencoder that synthesizes realistic FC matrices for both patient and control groups. Built on this generative backbone, we develop a multi-level knowledge distillation strategy that aligns predictions and graph representations between new-site data and replayed samples. To further enhance efficiency, we incorporate a hierarchical contextual bandit scheme for adaptive replay sampling. Experiments on multi-site datasets for major depressive disorder (MDD), schizophrenia (SZ), and autism spectrum disorder (ASD) show that the proposed generative model enhances data augmentation quality, and the overall continual learning framework substantially outperforms existing methods in mitigating catastrophic forgetting. Our code is available at https://github.com/4me808/FORGE.",
+      "authors": [
+        "Qianyu Chen",
+        "Shujian Yu"
+      ],
+      "primary_category": "q-bio.TO",
+      "categories": [
+        "q-bio.TO",
+        "cs.LG",
+        "eess.IV"
+      ],
+      "published": "2026-04-15T16:08:52+00:00",
+      "link": "https://arxiv.org/pdf/2604.14259v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Generative replay for brain functional connectivity matrices",
+      "llm_evidence_cn": "大脑功能连接矩阵的生成式回放",
+      "llm_evidence": "大脑功能连接矩阵的生成式回放",
+      "canonical_evidence": "大脑功能连接矩阵的生成式回放",
+      "llm_tldr_en": "Uses generative replay of functional connectivity matrices for continual learning in brain disorder diagnosis.",
+      "llm_tldr_cn": "利用功能连接矩阵的生成式回放来实现脑部疾病诊断的持续学习。",
+      "llm_tldr": "利用功能连接矩阵的生成式回放来实现脑部疾病诊断的持续学习。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.12056v1",
+      "title": "LoSA: Locality Aware Sparse Attention for Block-Wise Diffusion Language Models",
+      "abstract": "Block-wise diffusion language models (DLMs) generate multiple tokens in any order, offering a promising alternative to the autoregressive decoding pipeline. However, they still remain bottlenecked by memory-bound attention in long-context scenarios. Naive sparse attention fails on DLMs due to a KV Inflation problem, where different queries select different prefix positions, making the union of accessed KV pages large. To address this, we observe that between consecutive denoising steps, only a small fraction of active tokens exhibit significant hidden-state changes, while the majority of stable tokens remain nearly constant. Based on this insight, we propose LOSA (Locality-aware Sparse Attention), which reuses cached prefix-attention results for stable tokens and applies sparse attention only to active tokens. This substantially shrinks the number of KV indices that must be loaded, yielding both higher speedup and higher accuracy. Across multiple block-wise DLMs and benchmarks, LOSA preserves near-dense accuracy while significantly improving efficiency, achieving up to +9 points in average accuracy at aggressive sparsity levels while maintaining 1.54x lower attention density. It also achieves up to 4.14x attention speedup on RTX A6000 GPUs, demonstrating the effectiveness of the proposed method.",
+      "authors": [
+        "Haocheng Xi",
+        "Harman Singh",
+        "Yuezhou Hu",
+        "Coleman Hooper",
+        "Rishabh Tiwari",
+        "Aditya Tomar",
+        "Minjae Lee",
+        "Wonjun Kang",
+        "Michael Mahoney",
+        "Chenfeng Xu",
+        "Kurt Keutzer",
+        "Amir Gholami"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-04-13T20:53:51+00:00",
+      "link": "https://arxiv.org/pdf/2604.12056v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Methodological bridge for diffusion models in long-context scenarios",
+      "llm_evidence_cn": "扩散模型长上下文场景的方法论桥梁",
+      "llm_evidence": "扩散模型长上下文场景的方法论桥梁",
+      "canonical_evidence": "扩散模型长上下文场景的方法论桥梁",
+      "llm_tldr_en": "Proposes a locality-aware sparse attention for diffusion language models to improve memory efficiency.",
+      "llm_tldr_cn": "提出一种用于扩散语言模型的局部感知稀疏注意力机制，以提高内存效率。",
+      "llm_tldr": "提出一种用于扩散语言模型的局部感知稀疏注意力机制，以提高内存效率。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.14800v1",
+      "title": "Generative Modeling of Complex-Valued Brain MRI Data",
+      "abstract": "Objective. Standard Magnetic Resonance Imaging (MRI) reconstruction pipelines discard phase information captured during acquisition, despite evidence that it encodes tissue properties relevant to tumor diagnosis. Current machine learning approaches inherit this limitation by operating exclusively on reconstructed magnitude images. The aim of this study is to build a generative framework which is capable of jointly modeling magnitude and phase information of complex-valued MRI scans. Approach. The proposed generative framework combines a conditional variational autoencoder, which compresses complex-valued MRI scans into compact latent representations while preserving phase coherence, with a flow-matching-based generative model. Synthetic sample quality is assessed via a real-versus-synthetic classifier and by training downstream classifiers on synthetic data for abnormal tissue detection. Main results. The autoencoder preserves phase coherence above 0.997. Real-versus-synthetic classification yields low AUROC values between 0.50 and 0.66 across all acquisition sequences, indicating generated samples are nearly indistinguishable from real data. In downstream normal-versus-abnormal classification, classifiers trained entirely on synthetic data achieve an AUROC of 0.880, surpassing the real-data baseline of 0.842 on a publicly available dataset (fastMRI). This advantage persists on an independent external test set from a different institution with biopsy-confirmed labels. Significance. The proposed framework demonstrates the feasibility of jointly modeling magnitude and phase information for normal and abnormal complex-valued brain MRI data. Beyond synthetic data generation, it establishes a foundation for the usage of complete brain MRI information in future diagnostic applications and enables systematic investigation of how magnitude and phase jointly encode pathology-specific features.",
+      "authors": [
+        "Marco Schlimbach",
+        "Moritz Rempe",
+        "Jessica Mnischek",
+        "Lukas T. Rotkopf",
+        "Jens Weingarten",
+        "Jens Kleesiek",
+        "Kevin Kröninger"
+      ],
+      "primary_category": "eess.IV",
+      "categories": [
+        "eess.IV",
+        "cs.CV",
+        "physics.med-ph"
+      ],
+      "published": "2026-04-16T09:24:26+00:00",
+      "link": "https://arxiv.org/pdf/2604.14800v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Generative modeling of brain MRI using flow-matching and VAE",
+      "llm_evidence_cn": "使用流匹配和VAE对大脑MRI进行生成建模",
+      "llm_evidence": "使用流匹配和VAE对大脑MRI进行生成建模",
+      "canonical_evidence": "使用流匹配和VAE对大脑MRI进行生成建模",
+      "llm_tldr_en": "Develops a generative framework for complex-valued brain MRI data using latent flow-matching.",
+      "llm_tldr_cn": "开发了一个利用潜空间流匹配对复数值大脑MRI数据进行生成的框架。",
+      "llm_tldr": "开发了一个利用潜空间流匹配对复数值大脑MRI数据进行生成的框架。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.13988v1",
+      "title": "Unsupervised domain transfer: Overcoming signal degradation in sleep monitoring by increasing scoring realism",
+      "abstract": "Objective: Investigate whether hypnogram 'realism' can be used to guide an unsupervised method for handling arbitrary types of signal degradation in mobile sleep monitoring.   Approach: Combining a pretrained, state-of-the-art 'u-sleep' model with a 'discriminator' network, we align features from a target domain with a feature space learned during pretraining. To test the approach, we distort the source domain with realistic signal degradations, to see how well the method can adapt to different types of degradation. We compare the performance of the resulting model with best-case models designed in a supervised manner for each type of transfer.   Main Results: Depending on the type of distortion, we find that the unsupervised approach can increase Cohen's kappa with as little as 0.03 and up to 0.29, and that for all transfers, the method does not decrease performance. However, the approach never quite reaches the estimated theoretical optimal performance, and when tested on a real-life domain mismatch between two sleep studies, the benefit was insignificant.   Significance: 'Discriminator-guided fine tuning' is an interesting approach to handling signal degradation for 'in the wild' sleep monitoring, with some promise. In particular, what it says about sleep data in general is interesting. However, more development will be necessary before using it 'in production'.",
+      "authors": [
+        "Mohammad Ahangarkiasari",
+        "Andreas Tind Damgaard",
+        "Casper Haurum",
+        "Kaare B. Mikkelsen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-04-15T15:35:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.13988v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "pretrained model for sleep monitoring signals",
+      "llm_evidence_cn": "用于睡眠监测信号的预训练模型",
+      "llm_evidence": "用于睡眠监测信号的预训练模型",
+      "canonical_evidence": "用于睡眠监测信号的预训练模型",
+      "llm_tldr_en": "Uses unsupervised domain transfer and pretrained models to handle signal degradation in sleep EEG monitoring.",
+      "llm_tldr_cn": "利用无监督领域迁移和预训练模型处理睡眠EEG监测中的信号退化问题。",
+      "llm_tldr": "利用无监督领域迁移和预训练模型处理睡眠EEG监测中的信号退化问题。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.14216v1",
+      "title": "Neuro-Oracle: A Trajectory-Aware Agentic RAG Framework for Interpretable Epilepsy Surgical Prognosis",
+      "abstract": "Predicting post-surgical seizure outcomes in pharmacoresistant epilepsy is a clinical challenge. Conventional deep-learning approaches operate on static, single-timepoint pre-operative scans, omitting longitudinal morphological changes. We propose \\emph{Neuro-Oracle}, a three-stage framework that: (i) distils pre-to-post-operative MRI changes into a compact 512-dimensional trajectory vector using a 3D Siamese contrastive encoder; (ii) retrieves historically similar surgical trajectories from a population archive via nearest-neighbour search; and (iii) synthesises a natural-language prognosis grounded in the retrieved evidence using a quantized Llama-3-8B reasoning agent. Evaluations are conducted on the public EPISURG dataset ($N{=}268$ longitudinally paired cases) using five-fold stratified cross-validation. Since ground-truth seizure-freedom scores are unavailable, we utilize a clinical proxy label based on the resection type. We acknowledge that the network representations may potentially learn the anatomical features of the resection cavities (i.e., temporal versus non-temporal locations) rather than true prognostic morphometry. Our current evaluation thus serves mainly as a proof-of-concept for the trajectory-aware retrieval architecture. Trajectory-based classifiers achieve AUC values between 0.834 and 0.905, compared with 0.793 for a single-timepoint ResNet-50 baseline. The Neuro-Oracle agent (M5) matches the AUC of purely discriminative trajectory classifiers (0.867) while producing structured justifications with zero observed hallucinations under our audit protocol. A Siamese Diversity Ensemble (M6) of trajectory-space classifiers attains an AUC of 0.905 without language-model overhead.",
+      "authors": [
+        "Aizierjiang Aiersilan",
+        "Mohamad Koubeissi"
+      ],
+      "primary_category": "cs.MM",
+      "categories": [
+        "cs.MM",
+        "cs.AI",
+        "cs.CL",
+        "cs.CV",
+        "cs.GR",
+        "cs.LG"
+      ],
+      "published": "2026-04-10T21:47:25+00:00",
+      "link": "https://arxiv.org/pdf/2604.14216v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Agentic RAG framework for brain surgical prognosis",
+      "llm_evidence_cn": "用于大脑手术预后的智能体RAG框架",
+      "llm_evidence": "用于大脑手术预后的智能体RAG框架",
+      "canonical_evidence": "用于大脑手术预后的智能体RAG框架",
+      "llm_tldr_en": "Combines contrastive encoders and LLM agents for interpretable epilepsy surgical prognosis.",
+      "llm_tldr_cn": "结合对比编码器和大语言模型智能体，实现可解释的癫痫手术预后。",
+      "llm_tldr": "结合对比编码器和大语言模型智能体，实现可解释的癫痫手术预后。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.14790v1",
+      "title": "Diffusion Crossover: Defining Evolutionary Recombination in Diffusion Models via Noise Sequence Interpolation",
+      "abstract": "Interactive Evolutionary Computation (IEC) provides a powerful framework for optimizing subjective criteria such as human preferences and aesthetics, yet it suffers from a fundamental limitation: in high-dimensional generative representations, defining crossover in a semantically consistent manner is difficult, often leading to a mutation-dominated search. In this work, we explicitly define crossover in diffusion models. We propose Diffusion crossover, which formulates evolutionary recombination as step-wise interpolation of noise sequences in the reverse process of Denoising Diffusion Probabilistic Models (DDPMs). By applying spherical linear interpolation (Slerp) to the noise sequences associated with selected parent images, the proposed method generates offspring that inherit characteristics from both parents while preserving the geometric structure of the diffusion process. Furthermore, controlling the time-step range of interpolation enables a principled trade-off between diversity (exploration) and convergence (exploitation). Experimental results using PCA analysis and perceptual similarity metrics (LPIPS) demonstrate that Diffusion crossover produces perceptually smooth and semantically consistent transitions between parent images. Qualitative interactive evolution experiments further confirm that the proposed method effectively supports human-in-the-loop image exploration. These findings suggest a new perspective: diffusion models are not only powerful generators, but also structured evolutionary search spaces in which recombination can be explicitly defined and controlled.",
+      "authors": [
+        "Chisatao Kumada",
+        "Satoru Hiwa",
+        "Tomoyuki Hiroyasu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-04-16T08:50:57+00:00",
+      "link": "https://arxiv.org/pdf/2604.14790v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Defining crossover in diffusion models for evolutionary computation",
+      "llm_evidence_cn": "在扩散模型中定义进化计算的交叉操作",
+      "llm_evidence": "在扩散模型中定义进化计算的交叉操作",
+      "canonical_evidence": "在扩散模型中定义进化计算的交叉操作",
+      "llm_tldr_en": "Proposes Diffusion Crossover to improve evolutionary recombination in high-dimensional generative models.",
+      "llm_tldr_cn": "提出了扩散交叉方法，以改进高维生成模型中的进化重组。",
+      "llm_tldr": "提出了扩散交叉方法，以改进高维生成模型中的进化重组。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.15223v1",
+      "title": "Eccentricity Confound in EEG-based Visual Attention Decoding from Gaze-Fixated Neural Tracking of Motion in Natural Videos",
+      "abstract": "Objective. Decoding visual attention from brain signals during naturalistic video viewing has emerged as a new direction in brain-computer interface research. Current methods assume that stronger coupling between object motion and neural activity indicates higher attention, but this can be confounded by eye movement artifacts and stimulus properties. This study investigates how visual eccentricity (the distance between a visual object and the fixation point) affects neural responses when eye movement artifacts are controlled. Approach. EEG signals were recorded across three tasks that manipulated object eccentricity and attention conditions while participants maintained gaze fixation. Correlation analysis and match-mismatch decoding were performed to quantify the neural tracking of object motion. Main results. The analysis supports three conclusions: (1) neural tracking of object motion in natural videos works under gaze fixation; (2) the strength of neural tracking under gaze fixation is predictive of attention; and (3) there exists a significant eccentricity confound in the EEG responses, with poorer neural tracking of motion at larger eccentricities. Significance. These results provide critical evidence that findings from previous free-viewing studies reflect genuine neural processing rather than mere oculomotor artifacts. However, the identified eccentricity effect highlights a major limitation for current decoding approaches that assume coupling strength reflects attention levels alone.",
+      "authors": [
+        "Yuanyuan Yao",
+        "Celina Salamanca Gonzalez",
+        "Simon Geirnaert",
+        "Celine R. Gillebert",
+        "Tinne Tuytelaars",
+        "Alexander Bertrand"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-04-16T16:55:47+00:00",
+      "link": "https://arxiv.org/pdf/2604.15223v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "EEG-based visual attention decoding",
+      "llm_evidence_cn": "基于EEG的视觉注意力解码",
+      "llm_evidence": "基于EEG的视觉注意力解码",
+      "canonical_evidence": "基于EEG的视觉注意力解码",
+      "llm_tldr_en": "Investigates eccentricity confounds in EEG-based visual attention decoding for brain-computer interfaces.",
+      "llm_tldr_cn": "研究了脑机接口中基于EEG的视觉注意力解码中的离心率干扰因素。",
+      "llm_tldr": "研究了脑机接口中基于EEG的视觉注意力解码中的离心率干扰因素。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
