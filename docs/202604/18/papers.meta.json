@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-18",
+  "date": "2026-04-18",
+  "generated_at": "2026-04-18T19:48:53",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/18/2604.14694v1-robust-evaluation-of-neural-encoding-models-via-ground-truth-approximation",
+      "section": "quick",
+      "title_en": "Robust Evaluation of Neural Encoding Models via ground-truth approximation",
+      "authors": "Giovanni M. Di Liberto",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.14694v1",
+      "score": "7.0",
+      "evidence": "MEEG神经编码模型的评估",
+      "tldr": "评估神经编码模型对MEEG信号的拟合程度受限于噪声干扰且缺乏真实值。本研究提出了一种基于真实值近似的评估框架（CPA-PA），通过典型相关分析（CCA）和参与者平均技术，将模型预测与对齐后的信号进行比较。该方法在合成和真实MEEG数据集上的表现显著优于传统指标，大幅提升了对刺激相关神经活动的敏感度并降低了对信噪比的依赖，为编码模型的稳健评估提供了新标准。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Encoding models enable measurement of how our brains represent sensory inputs using electro-and magneto-encephalography (MEEG). Evaluating how closely encoding models reflect the underlying brain functions is a crucial premise for model interpretation and hypothesis testing. However, the ground-truth neural activity is unknown, preventing model evaluation with respect to the target neural signal. Existing evaluation metrics must therefore relate model's predictions to noisy MEEG measurements, where most variance is stimulus-unrelated. Here, I introduce an evaluation framework where model predictions are compared to a ground-truth approximation, obtained by aligning MEEG signals with predictions using canonical correlation analysis and via participant averaging. The resulting metric (CPA-PA) yields single-participant evaluations outperforming conventional scores by 300-1000% on synthetic EEG data and 250% on 34 real MEEG datasets (818 datapoints). These gains reflect increased sensitivity to stimulus-relevant neural activity and reduced dependence on SNR, establishing ground-truth approximation as a robust framework for evaluating encoding models.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/18/2604.08758v1-an-asynchronous-delta-modulator-for-spike-encoding-in-event-driven-brain-machine-interface",
+      "section": "quick",
+      "title_en": "An Asynchronous Delta Modulator for Spike Encoding in Event-Driven Brain-Machine Interface",
+      "authors": "Kaushik Lakshmiramanan, Vineeta Nair, Ching-Yi Lin, Sheng-Yu Peng, Sahil Shah",
+      "date": "2026-04-09",
+      "pdf": "https://arxiv.org/pdf/2604.08758v1",
+      "score": "6.0",
+      "evidence": "用于事件驱动脑机接口的脉冲编码",
+      "tldr": "本研究针对闭环脑机接口（BMI）的需求，在65nm CMOS工艺下设计并实现了一种用于事件驱动神经记录的异步增量调制器（ADM）。该调制器作为脉冲编码器，能将连续模拟生物电信号转换为离散的异步ON/OFF脉冲序列，实现数据压缩并与脉冲神经网络（SNN）无缝集成。该设计具有低功耗、小面积的特点，为实时神经信号解码提供了高效的硬件前端方案。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "This paper presents the design and implementation of an asynchronous delta modulator as a spike encoder for event-driven neural recording in a 65nm CMOS process. The proposed neuromorphic front-end converts analog signals into discrete, asynchronous ON and OFF spikes, effectively compressing continuous biopotentials into spike trains compatible with spiking neural networks (SNNs). Its asynchronous operation enables seamless integration with neuromorphic architectures for real-time decoding in closed-loop brain-machine interfaces (BMIs). Measurement results from silicon demonstrate an energy consumption of 60.73 nJ/spike, an F1-score of 80% compared to a behavioral model of the asynchronous delta modulator, and a compact pixel area of 73.45 um $\\times$ 73.64 um.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
