@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-20",
+  "date": "2026-04-20",
+  "generated_at": "2026-04-20T20:09:22",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/20/2604.15374v1-seeing-the-imagined-a-latent-functional-alignment-in-visual-imagery-decoding-from-fmri-data",
+      "section": "quick",
+      "title_en": "Seeing the imagined: a latent functional alignment in visual imagery decoding from fMRI data",
+      "authors": "Fabrizio Spera, Tommaso Boccato, Michal Olak, Sara Cammarota, Matteo Ciferri, Michelangelo Tronti, Nicola Toschi, Matteo Ferrante",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.15374v1",
+      "score": "7.0",
+      "evidence": "利用扩散模型进行脑解码的潜在功能对齐",
+      "tldr": "本研究针对从fMRI数据中解码心理意象的难题，提出了一种潜在功能对齐方法。研究者利用预训练的感知解码器DynaDiff，通过将意象诱发的脑活动映射到模型的条件空间，并结合检索增强策略来扩充有限的监督数据，成功在Imagery-NSD基准上实现了高质量的图像重建。该方法显著提升了语义重建性能，证明了感知学习到的语义结构可有效迁移至意象解码任务。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Recent progress in visual brain decoding from fMRI has been enabled by large-scale datasets such as the Natural Scenes Dataset (NSD) and powerful diffusion-based generative models. While current pipelines are primarily optimized for perception, their performance under mental-imagery remains less well understood. In this work, we study how a state-of-the-art (SOTA) perception decoder (DynaDiff) can be adapted to reconstruct imagined content from the Imagery-NSD benchmark. We propose a latent functional alignment approach that maps imagery-evoked activity into the pretrained model's conditioning space, while keeping the remaining components frozen. To mitigate the limited amount of matched imagery-perception supervision, we further introduce a retrieval-based augmentation strategy that selects semantically related NSD perception trials. Across four subjects, latent functional alignment consistently improves high-level semantic reconstruction metrics relative to the frozen pretrained baseline and a voxel-space ridge alignment baseline, and enables above-chance decoding from multiple cortical regions. These results suggest that semantic structure learned from perception can be leveraged to stabilize and improve visual imagery decoding under out-of-distribution conditions.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/20/2604.11375v1-dilo-decoupling-generative-priors-and-neural-operators-via-diffusion-latent-optimization-for-inverse-problems",
+      "section": "quick",
+      "title_en": "DiLO: Decoupling Generative Priors and Neural Operators via Diffusion Latent Optimization for Inverse Problems",
+      "authors": "Haibo Liu, Guang Lin",
+      "date": "2026-04-13",
+      "pdf": "https://arxiv.org/pdf/2604.11375v1",
+      "score": "6.0",
+      "evidence": "扩散模型作为逆问题的生成先验",
+      "tldr": "本文针对PDE约束的反问题，提出了一种名为DiLO的新框架。该方法通过解耦生成先验（扩散模型）与物理代理模型（神经算子），解决了传统方法在去噪中间态评估物理模型导致的分布偏移问题。DiLO将随机采样转化为确定性的潜空间轨迹优化，确保物理评估始终在物理流形上进行，从而显著提升了重建精度、效率和对噪声的鲁棒性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Diffusion models have emerged as powerful generative priors for solving PDE-constrained inverse problems. Compared to end-to-end approaches relying on massive paired datasets, explicitly decoupling the prior distribution of physical parameters from the forward physical model, a paradigm often formalized as Plug-and-Play (PnP) priors, offers enhanced flexibility and generalization. To accelerate inference within such decoupled frameworks, fast neural operators are employed as surrogate solvers. However, directly integrating them into standard diffusion sampling introduces a critical bottleneck: evaluating neural surrogates on partially denoised, non-physical intermediate states forces them into out-of-distribution (OOD) regimes. To eliminate this, the physical surrogate must be evaluated exclusively on the fully denoised parameter, a principle we formalize as the Manifold Consistency Requirement. To satisfy this requirement, we present Diffusion Latent Optimization (DiLO), which transforms the stochastic sampling process into a deterministic latent trajectory, enabling stable backpropagation of measurement gradients to the initial latent state. By keeping the trajectory on the physical manifold, it ensures physically valid updates and improves reconstruction accuracy. We provide theoretical guarantees for the convergence of this optimization trajectory. Extensive experiments across Electrical Impedance Tomography, Inverse Scattering, and Inverse Navier-Stokes problems demonstrate DiLO's accuracy, efficiency, and robustness to noise.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/20/2604.15611v1-climb-controllable-longitudinal-brain-image-generation-using-mamba-based-latent-diffusion-model-and-gaussian-aligned-autoencoder",
+      "section": "quick",
+      "title_en": "CLIMB: Controllable Longitudinal Brain Image Generation using Mamba-based Latent Diffusion Model and Gaussian-aligned Autoencoder",
+      "authors": "Duy-Phuong Dao, Muhammad Taqiyuddin, Jahae Kim, Sang-Heon Lee, Hye-Won Jung, Jaehoo Choi, Hyung-Jeong Yang",
+      "date": "2026-04-17",
+      "pdf": "https://arxiv.org/pdf/2604.15611v1",
+      "score": "6.0",
+      "evidence": "用于脑图像生成的潜扩散模型",
+      "tldr": "本研究提出CLIMB框架，旨在通过可控的纵向脑部图像生成来预测大脑结构的演化。该方法利用基于Mamba的状态空间模型替代高开销的自注意力机制，并结合高斯对齐自编码器，在整合年龄、疾病状态和基因等多种条件变量的基础上，实现了高效且高质量的MRI合成，为神经退行性疾病的早期干预和预后提供了有力工具。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Latent diffusion models have emerged as powerful generative models in medical imaging, enabling the synthesis of high quality brain magnetic resonance imaging scans. In particular, predicting the evolution of a patients brain can aid in early intervention, prognosis, and treatment planning. In this study, we introduce CLIMB, Controllable Longitudinal brain Image generation via state space based latent diffusion model, an advanced framework for modeling temporal changes in brain structure. CLIMB is designed to model the structural evolution of the brain structure over time, utilizing a baseline MRI scan and its acquisition age as foundational inputs. Additionally, multiple conditional variables, including projected age, gender, disease status, genetic information, and brain structure volumes, are incorporated to enhance the temporal modeling of anatomical changes. Unlike existing LDM methods that rely on self attention modules, which effectively capture contextual information from input images but are computationally expensive, our approach leverages state space, a state space model architecture that substantially reduces computational overhead while preserving high-quality image synthesis. Furthermore, we introduce a Gaussian-aligned autoencoder that extracts latent representations conforming to prior distributions without the sampling noise inherent in conventional variational autoencoders. We train and evaluate our proposed model on the Alzheimers Disease Neuroimaging Initiative dataset, consisting of 6,306 MRI scans from 1,390 participants. By comparing generated images with real MRI scans, CLIMB achieves a structural similarity index of 0.9433, demonstrating notable improvements over existing methods.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

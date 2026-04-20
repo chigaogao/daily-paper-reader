@@ -1,0 +1,136 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-20T20:08:53.695010+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.15374v1",
+      "title": "Seeing the imagined: a latent functional alignment in visual imagery decoding from fMRI data",
+      "abstract": "Recent progress in visual brain decoding from fMRI has been enabled by large-scale datasets such as the Natural Scenes Dataset (NSD) and powerful diffusion-based generative models. While current pipelines are primarily optimized for perception, their performance under mental-imagery remains less well understood. In this work, we study how a state-of-the-art (SOTA) perception decoder (DynaDiff) can be adapted to reconstruct imagined content from the Imagery-NSD benchmark. We propose a latent functional alignment approach that maps imagery-evoked activity into the pretrained model's conditioning space, while keeping the remaining components frozen. To mitigate the limited amount of matched imagery-perception supervision, we further introduce a retrieval-based augmentation strategy that selects semantically related NSD perception trials. Across four subjects, latent functional alignment consistently improves high-level semantic reconstruction metrics relative to the frozen pretrained baseline and a voxel-space ridge alignment baseline, and enables above-chance decoding from multiple cortical regions. These results suggest that semantic structure learned from perception can be leveraged to stabilize and improve visual imagery decoding under out-of-distribution conditions.",
+      "authors": [
+        "Fabrizio Spera",
+        "Tommaso Boccato",
+        "Michal Olak",
+        "Sara Cammarota",
+        "Matteo Ciferri",
+        "Michelangelo Tronti",
+        "Nicola Toschi",
+        "Matteo Ferrante"
+      ],
+      "primary_category": "q-bio.NC",
+      "categories": [
+        "q-bio.NC",
+        "cs.AI",
+        "eess.IV"
+      ],
+      "published": "2026-04-15T16:31:57+00:00",
+      "link": "https://arxiv.org/pdf/2604.15374v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "latent functional alignment for brain decoding with diffusion models",
+      "llm_evidence_cn": "利用扩散模型进行脑解码的潜在功能对齐",
+      "llm_evidence": "利用扩散模型进行脑解码的潜在功能对齐",
+      "canonical_evidence": "利用扩散模型进行脑解码的潜在功能对齐",
+      "llm_tldr_en": "Adapts diffusion-based decoders to reconstruct imagined visual content from fMRI brain activity.",
+      "llm_tldr_cn": "利用扩散生成模型和潜在功能对齐技术，从fMRI脑活动中重建想象的视觉内容。",
+      "llm_tldr": "利用扩散生成模型和潜在功能对齐技术，从fMRI脑活动中重建想象的视觉内容。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.11375v1",
+      "title": "DiLO: Decoupling Generative Priors and Neural Operators via Diffusion Latent Optimization for Inverse Problems",
+      "abstract": "Diffusion models have emerged as powerful generative priors for solving PDE-constrained inverse problems. Compared to end-to-end approaches relying on massive paired datasets, explicitly decoupling the prior distribution of physical parameters from the forward physical model, a paradigm often formalized as Plug-and-Play (PnP) priors, offers enhanced flexibility and generalization. To accelerate inference within such decoupled frameworks, fast neural operators are employed as surrogate solvers. However, directly integrating them into standard diffusion sampling introduces a critical bottleneck: evaluating neural surrogates on partially denoised, non-physical intermediate states forces them into out-of-distribution (OOD) regimes. To eliminate this, the physical surrogate must be evaluated exclusively on the fully denoised parameter, a principle we formalize as the Manifold Consistency Requirement. To satisfy this requirement, we present Diffusion Latent Optimization (DiLO), which transforms the stochastic sampling process into a deterministic latent trajectory, enabling stable backpropagation of measurement gradients to the initial latent state. By keeping the trajectory on the physical manifold, it ensures physically valid updates and improves reconstruction accuracy. We provide theoretical guarantees for the convergence of this optimization trajectory. Extensive experiments across Electrical Impedance Tomography, Inverse Scattering, and Inverse Navier-Stokes problems demonstrate DiLO's accuracy, efficiency, and robustness to noise.",
+      "authors": [
+        "Haibo Liu",
+        "Guang Lin"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA"
+      ],
+      "published": "2026-04-13T12:15:48+00:00",
+      "link": "https://arxiv.org/pdf/2604.11375v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "diffusion models as generative priors for inverse problems",
+      "llm_evidence_cn": "扩散模型作为逆问题的生成先验",
+      "llm_evidence": "扩散模型作为逆问题的生成先验",
+      "canonical_evidence": "扩散模型作为逆问题的生成先验",
+      "llm_tldr_en": "Decouples diffusion priors for inverse problems, providing a framework for brain signal decoding and reconstruction.",
+      "llm_tldr_cn": "解耦扩散先验以解决逆问题，为脑信号解码与重建提供了通用框架。",
+      "llm_tldr": "解耦扩散先验以解决逆问题，为脑信号解码与重建提供了通用框架。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.15611v1",
+      "title": "CLIMB: Controllable Longitudinal Brain Image Generation using Mamba-based Latent Diffusion Model and Gaussian-aligned Autoencoder",
+      "abstract": "Latent diffusion models have emerged as powerful generative models in medical imaging, enabling the synthesis of high quality brain magnetic resonance imaging scans. In particular, predicting the evolution of a patients brain can aid in early intervention, prognosis, and treatment planning. In this study, we introduce CLIMB, Controllable Longitudinal brain Image generation via state space based latent diffusion model, an advanced framework for modeling temporal changes in brain structure. CLIMB is designed to model the structural evolution of the brain structure over time, utilizing a baseline MRI scan and its acquisition age as foundational inputs. Additionally, multiple conditional variables, including projected age, gender, disease status, genetic information, and brain structure volumes, are incorporated to enhance the temporal modeling of anatomical changes. Unlike existing LDM methods that rely on self attention modules, which effectively capture contextual information from input images but are computationally expensive, our approach leverages state space, a state space model architecture that substantially reduces computational overhead while preserving high-quality image synthesis. Furthermore, we introduce a Gaussian-aligned autoencoder that extracts latent representations conforming to prior distributions without the sampling noise inherent in conventional variational autoencoders. We train and evaluate our proposed model on the Alzheimers Disease Neuroimaging Initiative dataset, consisting of 6,306 MRI scans from 1,390 participants. By comparing generated images with real MRI scans, CLIMB achieves a structural similarity index of 0.9433, demonstrating notable improvements over existing methods.",
+      "authors": [
+        "Duy-Phuong Dao",
+        "Muhammad Taqiyuddin",
+        "Jahae Kim",
+        "Sang-Heon Lee",
+        "Hye-Won Jung",
+        "Jaehoo Choi",
+        "Hyung-Jeong Yang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-17T01:34:41+00:00",
+      "link": "https://arxiv.org/pdf/2604.15611v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Latent diffusion model for brain image generation",
+      "llm_evidence_cn": "用于脑图像生成的潜扩散模型",
+      "llm_evidence": "用于脑图像生成的潜扩散模型",
+      "canonical_evidence": "用于脑图像生成的潜扩散模型",
+      "llm_tldr_en": "Applies latent diffusion models to generate longitudinal brain MRI scans.",
+      "llm_tldr_cn": "应用潜扩散模型生成纵向脑部MRI扫描图像。",
+      "llm_tldr": "应用潜扩散模型生成纵向脑部MRI扫描图像。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Latent diffusion models for brain signal decoding",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
