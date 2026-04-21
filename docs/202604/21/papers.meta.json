@@ -1,0 +1,93 @@
+{
+  "label": "2026-04-21",
+  "date": "2026-04-21",
+  "generated_at": "2026-04-21T20:22:47",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202604/21/2604.16926v1-test-time-adaptation-for-eeg-foundation-models-a-systematic-study-under-real-world-distribution-shifts",
+      "section": "deep",
+      "title_en": "Test-Time Adaptation for EEG Foundation Models: A Systematic Study under Real-World Distribution Shifts",
+      "authors": "Gabriel Jason Lee, Jathurshan Pradeepkumar, Jimeng Sun",
+      "date": "2026-04-18",
+      "pdf": "https://arxiv.org/pdf/2604.16926v1",
+      "score": "10.0",
+      "evidence": "脑电大模型的测试时自适应",
+      "tldr": "本文针对脑电图（EEG）大模型在临床部署中的分布偏移问题，提出了系统性基准NeuroAdapt-Bench。研究评估了多种测试时自适应（TTA）方法在不同模型、任务及异构数据集上的表现。结果显示，传统基于梯度的TTA方法在EEG领域效果不佳，而无需优化的方法更稳健，揭示了现有技术的局限并为未来研究指明了方向。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Electroencephalography (EEG) foundation models have shown strong potential for learning generalizable representations from large-scale neural data, yet their clinical deployment is hindered by distribution shifts across clinical settings, devices, and populations. Test-time adaptation (TTA) offers a promising solution by enabling models to adapt to unlabeled target data during inference without access to source data, a valuable property in healthcare settings constrained by privacy regulations and limited labeled data. However, its effectiveness for EEG remains largely underexplored. In this work, we introduce NeuroAdapt-Bench, a systematic benchmark for evaluating test-time adaptation methods on EEG foundation models under realistic distribution shifts. We evaluate representative TTA approaches from other domains across multiple pretrained foundation models, diverse downstream tasks, and heterogeneous datasets spanning in-distribution, out-of-distribution, and extreme modality shifts (e.g., Ear-EEG). Our results show that standard TTA methods yield inconsistent gains and often degrade performance, with gradient-based approaches particularly prone to heavy degradation. In contrast, optimization-free methods demonstrate greater stability and more reliable improvements. These findings highlight the limitations of existing TTA techniques in EEG, provide guidance for future development, and underscore the need for domain-specific adaptation strategies.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.17782v1-subject-aware-multi-granularity-alignment-for-zero-shot-eeg-to-image-retrieval",
+      "section": "deep",
+      "title_en": "Subject-Aware Multi-Granularity Alignment for Zero-Shot EEG-to-Image Retrieval",
+      "authors": "Lin Jiang, Qingshan She, Jiale Xu, Haiqi Xu, Duanpo Wu, Zhenzhong Kuang",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.17782v1",
+      "score": "9.0",
+      "evidence": "零样本脑电图到图像检索与神经解码",
+      "tldr": "提出一种多粒度对齐方法，用于零样本脑电到图像检索，提升视觉神经解码性能。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Zero-shot EEG-to-image retrieval aims to decode perceived visual content from electroencephalography (EEG) by aligning neural responses with pretrained visual representations, providing a promising route toward scalable visual neural decoding and practical brain-computer interfaces. However, robust EEG-to-image retrieval remains challenging, because prior methods usually rely on either a single fixed visual target or a subject-invariant target construction scheme. Such designs overlook two important properties of visually evoked EEG signals: they preserve information across multiple representational scales, and the visual granularity best matched to EEG may vary across subjects. To address these issues, subject-aware multi-granularity alignment (SAMGA) framework is proposed for zero-shot EEG-to-image retrieval. SAMGA first constructs a subject-aware visual supervision target by adaptively aggregating multiple intermediate representations from a pretrained vision encoder, allowing the model to absorb subject-dependent granularity deviations during training while preserving subject-agnostic inference. Building on this adaptive target construction, a coarse-to-fine cross-modal alignment strategy is further designed with a shared encoder wherein the coarse stage stabilizes the shared semantic geometry and reduces subject-induced distribution shift, and the fine stage further improves instance-level retrieval discrimination. Extensive experiments on the THINGS-EEG benchmark demonstrate that the proposed method achieves 91.3% Top-1 and 98.8% Top-5 accuracy in the intra-subject setting, and 34.4% Top-1 and 64.8% Top-5 accuracy in the inter-subject setting, outperforming recent state-of-the-art methods.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.18095v1-dsainet-an-efficient-dual-scale-attentive-interaction-network-for-general-eeg-decoding",
+      "section": "deep",
+      "title_en": "DSAINet: An Efficient Dual-Scale Attentive Interaction Network for General EEG Decoding",
+      "authors": "Zhiyuan Ma, Zeyuan Li, Zihao Qiu, Jinhao Li, Lingqin Meng, Xinche Zhang, Yixuan Liu, Xinke Shen, Sen Song",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18095v1",
+      "score": "8.0",
+      "evidence": "使用双尺度注意力交互网络进行通用脑电解码",
+      "tldr": "提出DSAINet，通过时空Token构建实现跨任务和受试者的通用脑电解码。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "In real-world applications of noninvasive electroencephalography (EEG), specialized decoders often show limited generalizability across diverse tasks under subject-independent settings. One central challenge is that task-relevant EEG signals often follow different temporal organization patterns across tasks, while many existing methods rely on task-tailored architectural designs that introduce task-specific temporal inductive biases. This mismatch makes it difficult to adapt temporal modeling across tasks without changing the model configuration. To address these challenges, we propose DSAINet, an efficient dual-scale attentive interaction network for general EEG decoding. Specifically, DSAINet constructs shared spatiotemporal token representations from raw EEG signals and models diverse temporal dynamics through parallel convolutional branches at fine and coarse scales. The resulting representations are then adaptively refined by intra-branch attention to emphasize salient scale-specific patterns and by inter-branch attention to integrate task-relevant features across scales, followed by adaptive token aggregation to yield a compact representation for prediction. Extensive experiments on five downstream EEG decoding tasks across ten public datasets show that DSAINet consistently outperforms 13 representative baselines under strict subject-independent evaluation. Notably, this performance is achieved using the same architecture hyperparameters across datasets. Moreover, DSAINet achieves a favorable accuracy-efficiency trade-off with only about 77K trainable parameters and provides interpretable neurophysiological insights. The code is publicly available at https://github.com/zy0929/DSAINet.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.17927v1-brain-inspired-capture-evidence-driven-neuromimetic-perceptual-simulation-for-visual-decoding",
+      "section": "quick",
+      "title_en": "Brain-Inspired Capture: Evidence-Driven Neuromimetic Perceptual Simulation for Visual Decoding",
+      "authors": "Feixue Shao, Guangze Shi, Xueyu Liu, Yongfei Wu, Mingqiang Wei, Jianan Zhang, Jianbo Lu, Guiying Yan, Weihua Yang",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.17927v1",
+      "score": "7.0",
+      "evidence": "神经生理信号的视觉解码",
+      "tldr": "针对脑机接口中神经信号与视觉模态间存在系统性差异且忽略人类视觉系统（HVS）机制的问题，本文提出了一种类脑感知模拟范式 BI-Cap。该方法通过构建包含动态与静态变换的类脑流水线，并结合互信息引导的模糊调节来模拟视觉处理，同时引入证据驱动的潜在空间表示以应对神经活动的非平稳性。实验证明，BI-Cap 在零样本脑图检索任务上显著优于现有方法。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Visual decoding of neurophysiological signals is a critical challenge for brain-computer interfaces (BCIs) and computational neuroscience. However, current approaches are often constrained by the systematic and stochastic gaps between neural and visual modalities, largely neglecting the intrinsic computational mechanisms of the Human Visual System (HVS). To address this, we propose Brain-Inspired Capture (BI-Cap), a neuromimetic perceptual simulation paradigm that aligns these modalities by emulating HVS processing. Specifically, we construct a neuromimetic pipeline comprising four biologically plausible dynamic and static transformations, coupled with Mutual Information (MI)-guided dynamic blur regulation to simulate adaptive visual processing. Furthermore, to mitigate the inherent non-stationarity of neural activity, we introduce an evidence-driven latent space representation. This formulation explicitly models uncertainty, thereby ensuring robust neural embeddings. Extensive evaluations on zero-shot brain-to-image retrieval across two public benchmarks demonstrate that BI-Cap substantially outperforms state-of-the-art methods, achieving relative gains of 9.2\\% and 8.0\\%, respectively. We have released the source code on GitHub through the link https://github.com/flysnow1024/BI-Cap.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.16514v1-bard-bridging-autoregressive-and-diffusion-vision-language-models-via-highly-efficient-progressive-block-merging-and-stage-wise-distillation",
+      "section": "quick",
+      "title_en": "BARD: Bridging AutoRegressive and Diffusion Vision-Language Models Via Highly Efficient Progressive Block Merging and Stage-Wise Distillation",
+      "authors": "Baoyou Chen, Hanchen Xia, Peng Tu, Haojun Shi, Shan Mu, Weihao Yuan, Siyu Zhu",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.16514v1",
+      "score": "6.0",
+      "evidence": "桥接自回归与扩散视觉语言模型",
+      "tldr": "针对自回归视觉语言模型推理速度慢的问题，本文提出BARD框架，通过渐进式块合并和阶段式扩散蒸馏，将预训练的自回归模型转换为高效的扩散模型。该方法在保持多模态能力的同时，显著提升了解码速度，在4B和8B规模上达到了开源扩散视觉语言模型的领先水平，并实现最高3倍的吞吐量提升。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Autoregressive vision-language models (VLMs) deliver strong multimodal capability, but their token-by-token decoding imposes a fundamental inference bottleneck. Diffusion VLMs offer a more parallel decoding paradigm, yet directly converting a pretrained autoregressive VLM into a large-block diffusion VLM (dVLM) often leads to substantial quality degradation. In this work, we present BARD, a simple and effective bridging framework that converts a pretrained autoregressive VLM into a same-architecture, decoding-efficient dVLM. Our approach combines progressive supervised block merging, which gradually enlarges the decoding block size, with stage-wise intra-dVLM distillation from a fixed small-block diffusion anchor to recover performance lost at larger blocks. We further incorporate a mixed noise scheduler to improve robustness and token revision during denoising, and memory-friendly training to enable efficient training on long multimodal sequences. A key empirical finding is that direct autoregressive-to-diffusion distillation is poorly aligned and can even hurt performance, whereas distillation within the diffusion regime is consistently effective. Experimental results show that, with $\\leq 4.4M$ data, BARD-VL transfers strong multimodal capability from Qwen3-VL to a large-block dVLM. Remarkably, BARD-VL establishes a new SOTA among comparable-scale open dVLMs on our evaluation suite at both 4B and 8B scales. At the same time, BARD-VL achieves up to \\textbf{3$\\times$} decoding throughput speedup compared to the source model.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.16796v1-generative-semantic-communication-via-alternating-dual-domain-posterior-sampling",
+      "section": "quick",
+      "title_en": "Generative Semantic Communication via Alternating Dual-Domain Posterior Sampling",
+      "authors": "Shunpu Tang, Qianqian Yang",
+      "date": "2026-04-18",
+      "pdf": "https://arxiv.org/pdf/2604.16796v1",
+      "score": "6.0",
+      "evidence": "基于扩散模型的语义解码与后验采样",
+      "tldr": "本研究针对生成式语义通信中感知质量受限的问题，指出传统最大后验估计无法保持数据分布。为此，提出了一种基于扩散模型的交替双域后验采样（ADDPS）接收机。该方法将语义解码建模为贝叶斯逆问题，通过在采样过程中交替引入潜空间和图像域的一致性引导，有效克服了单域引导的噪声敏感性和解码器偏差，在提升感知质量的同时避免了梯度冲突，实现了更优的无线图像传输效果。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Generative semantic communication (SemCom) harnesses pretrained generative priors to improve the perceptual quality of wireless image transmission. Existing generative SemCom receivers, however, rely on maximum a posteriori (MAP) estimation, which fundamentally cannot preserve the data distribution and thus limits achievable perceptual quality. Moreover, current diffusion-based approaches using single-domain guidance face significant limitations: latent-domain guidance is sensitive to channel noise, while image-domain guidance inherits decoder bias. Simply combining both domains simultaneously yields an overconfident pseudo-posterior. In this paper, we formulate semantic decoding as a Bayesian inverse problem and prove that posterior sampling achieves optimal perceptual quality by preserving the data distribution. Building on this insight, we propose alternating dual-domain posterior sampling (ADDPS), a diffusion-based SemCom receiver that alternately enforces latent-domain and image-domain consistency during the sampling process. This alternating strategy decomposes joint posterior sampling into simpler subproblems, avoiding gradient conflicts while retaining the complementary strengths of both domains. Experiments on FFHQ demonstrate that the proposed ADDPS achieves superior perceptual quality compared with existing methods.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

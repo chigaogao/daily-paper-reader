@@ -1,0 +1,651 @@
+Title: Brain-Inspired Capture: Evidence-Driven Neuromimetic Perceptual Simulation for Visual Decoding
+
+URL Source: https://arxiv.org/pdf/2604.17927v1
+
+Published Time: Tue, 21 Apr 2026 02:49:46 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+> IEEE TRANSACTIONS ON MULTIMEDIA, 2026 1
+
+# Brain-Inspired Capture: Evidence-Driven Neuromimetic Perceptual Simulation for Visual Decoding 
+
+Feixue Shao, Guangze Shi, Xueyu Liu, Member, IEEE , Yongfei Wu, Member, IEEE , Mingqiang Wei, Senior Member, IEEE , Jianan Zhang, Jianbo Lu, Guiying Yan, and Weihua Yang 
+
+Abstract —Visual decoding of neurophysiological signals is a critical challenge for brain-computer interfaces (BCIs) and computational neuroscience. However, current approaches are often constrained by the systematic and stochastic gaps between neural and visual modalities, largely neglecting the intrinsic computational mechanisms of the Human Visual System (HVS). To address this, we propose Brain-Inspired Capture (BI-Cap), a neuromimetic perceptual simulation paradigm that aligns these modalities by emulating HVS processing. Specifically, we con-struct a neuromimetic pipeline comprising four biologically plau-sible dynamic and static transformations, coupled with Mutual Information (MI)-guided dynamic blur regulation to simulate adaptive visual processing. Furthermore, to mitigate the inherent non-stationarity of neural activity, we introduce an evidence-driven latent space representation. This formulation explicitly models uncertainty, thereby ensuring robust neural embeddings. Extensive evaluations on zero-shot brain-to-image retrieval across two public benchmarks demonstrate that BI-Cap substantially outperforms state-of-the-art methods, achieving relative gains of 9.2% and 8.0%, respectively. We have released the source code on GitHub through the link https://github.com/flysnow1024/BI-Cap. 
+
+Index Terms —Visual decoding, evidence learning, neural sig-nal, brain-computer interface, neuromimetic perceptual simula-tion. 
+
+I. I NTRODUCTION 
+
+# ELECTROENCEPHALOGRAPHY (EEG) [1], magne-toencephalography (MEG) [2], and other neurophysio-logical signals provide direct measurements of brain activ-ity [3], [4], encoding rich information on visual perception and cognition [5]. Visual decoding aims to reconstruct or 
+
+This work was supported in part by the National Natural Science Foundation of China under Grant No. 12371356 and No. 62572339, in part by the Shanxi Key Laboratory of Digital Design and Manufacturing under Grant No. 202204010931025, in part by Open Foundation of the State Key Laboratory of Mathematical Sciences under Grant No. SKLMS-2025-KFKT-TD-03 and in part by Capital’s Funds for Health Improvement and Research under Grant No. 2026-1-4072. (Corresponding authors: Xueyu Liu and Weihua Yang) Feixue Shao, Jianan Zhang and Weihua Yang are with the School of Mathematics, Taiyuan University of Technology, Shanxi 030024, China. (e-mail: 2024310264@link.tyut.edu.cn; zhangjianan@tyut.edu.cn; yangwei-hua@tyut.edu.cn). Guangze Shi, Xueyu Liu, Yongfei Wu and Mingqiang Wei are with the College of Artificial Intelligence, Taiyuan University of Technology, Shanxi 030024, China. (e-mail: shiguangze0117@link.tyut.edu.cn; liuxu-eyu@tyut.edu.cn; wuyongfei@tyut.edu.cn; weimingqiang@tyut.edu.cn). Jianbo Lu is with the National Human Genetics Resource Center, National Research Institute for Family Planning, Beijing 100000, China. (e-mail: jblu@lsec.cc.ac.cn). Guiying Yan is with the Academy of Mathematics and Systems Sci-ence, Chinese Academy of Sciences, Beijing 100000, China. (e-mail: yangy@amt.ac.cn). This work has been submitted to the IEEE for possible publication. Copyright may be transferred without notice, after which this version may no longer be accessible. Cortical Magnification Effect 
+
+> Neural Volume Conduction Effect
+> Retinal Mosaic Sampling Mechanism
+> Low-frequency Visual Dominance
+
+Which mechanisms ？
+
+How much ？
+
+> V1
+
+Fig. 1. Which neural mechanisms should be emphasized, and to what extent, when applying biologically plausible transformations? 
+
+retrieve human-perceived visual content from these high-dimensional, non-stationary signals. This technology offers a pivotal window into the complex cognitive mechanisms of the Human Visual System (HVS) and lays a solid foundation for efficient Brain–Computer Interfaces (BCIs) and human– machine symbiotic intelligence [6], [7]. In recent years, with the rapid development of deep learning, significant progress has been made in visual alignment meth-ods for brain-to-image retrieval based on neural signals. Early explorations primarily focused on identifying linear mappings between neural and visual features. Subsequently, pioneering work such as Uncertainty-aware Blur Prior (UBP) [8] in-troduced physiological mechanism priors for the first time, by simulating visual focal points through dynamic foveated Gaussian blur, it demonstrated the effectiveness of processing image paradigms based on biological mechanisms. However, UBP overlooks the intrinsic asymmetry between visual and neural modalities, which constrains the overall alignment performance. To mitigate this, an Adaptive Teaching System (ATS) is proposed [9] based on UBP, enabling the “teacher” (visual) modality to adjust its representations under task guidance to better match neural signals. However, relying on a single simulation mechanism fails to accurately bridge the systematic gap across modalities. More recently, state-of-the-art performance is achieved by applying asymmetric, modality-specific transformations to EEG signals and im-ages [10]. Despite these advances, such approach largely depend on linear projections and fail to capture complex non-linear mappings, while also neglecting the stochastic gap 
+
+caused by the high dynamicity and inter-subject heterogeneity of neural activity. As a result, the intrinsic uncertainty of neural responses remains insufficiently modeled.  
+
+> arXiv:2604.17927v1 [cs.CV] 20 Apr 2026 IEEE TRANSACTIONS ON MULTIMEDIA, 2026 2
+
+Neuromimetic Perceptual Simulation   
+
+> Static T ransform
+> Dynamic Transform
+> Low Medium High
+
+Evidence Weighting 
+
+Module 
+
+Linear Weighting 
+
+Module 
+
+# 
+
+Brain 
+
+Encoder 
+
+> Similarity Matrix
+> Update level
+
+Image 
+
+Encoder 
+
+Evidence-Driven Latent Space Representation 
+
+Brain 
+
+Encoder        
+
+> sim: 0.613 sim: 0.565 sim: 0.533 sim: 0.530 sim: 0.615
+
+match ✔
+
+## Training 
+
+## Inference 
+
+> Trainable
+> Frozen
+
+Top-5 Retrieve Results 
+
+> Brain→Image
+> Image→Brain
+
+MI-Guided Dynamic Blur Regulation 
+
+> Feature Purification
+
+𝐀 = [CE (B→I , L batch )+CE (I→B , L batch )]/2  
+
+> fov Inoise
+
+I lr I mosaic I
+
+> v
+
+F latent F
+
+> att
+
+F
+
+> evidence
+
+F
+
+> N
+
+F
+
+> Fig. 2. Overview of the proposed BI-Cap framework for EEG/MEG-based zero-shot brain-to-image retrieval. This architecture extracts visual features through neuromimetic perceptual simulation and evidence-driven latent space representation, aligns them with neural signal features, and uses MI-guided dynamic blur regulation adaptive adjustment to further optimize cross modal retrieval by adjusting the degree of foveated blur.
+
+To address these challenges, we propose a Neuromimetic Perceptual Simulation (NPS) paradigm, which advocates achieving intrinsic cross-modal alignment through systematic simulation of HVS processing mechanisms. As illustrated in Fig. 1, we design four biologically plausible transfor-mations to simulate the cortical magnification effect [11], the neural volume conduction effect [12], the low-frequency dominance [13], [14] in Rapid Serial Visual Presentation (RSVP) [15], and the retinal photoreceptor mosaic sampling mechanism [16], [17]. These transformations construct visual representations that are physiologically highly congruent with neural signals to mitigate the systematic gap. Furthermore, to tackle the dynamicity and heterogeneity of neural activity and resolve the inherent stochastic gap, we propose evidence-driven latent space representation. By explicitly quantifying the epistemic uncertainty within individual neural processing mechanisms, this approach achieves robust dynamic percep-tion and adaptive calibration of neurophysiological signals. Our main contributions are summarized as follows:  
+
+> •
+
+We propose and validate Brain-Inspired Capture (BI-Cap), a neuromimetic perceptual simulation paradigm based on four dynamic and static biologically plausible transformations, demonstrating the reliability and physi-ological significance of this paradigm in brain-to-image cross-modal alignment.  
+
+> •
+
+To address the high dynamicity and heterogeneity of neu-ral activity, we propose an evidence-driven latent space learning framework that explicitly models uncertainty in human visual system processing. Our method integrates evidential weighting with a residual attention mechanism, and then applies a feature purification module to enforce compactness and mitigate noise.  
+
+> •
+
+We achieve state-of-the-art performance in zero-shot brain-to-image retrieval for EEG and MEG modalities, under both intra-subject and inter-subject settings. II. R ELATED WORK 
+
+A. Multimodal Neural Signal Visual Decoding 
+
+Early research on visual decoding primarily relied on fea-ture extraction from single-modality fMRI signals [18], [19]. Although EEG and MEG offer millisecond-level temporal resolution and superior portability [20], [21], they are con-strained by coarse spatial resolution and inherent signal noise. These limitations often lead to flattened feature representations that fail to capture the brain’s progressive refinement process from low-level to high-level features. Following the success of vision-language pre-training models such as Contrastive Language-Image Pre-training (CLIP) [22], the mainstream paradigm in this field has shifted toward cross-modal con-trastive learning. This approach maps neural signals into a shared latent semantic space with images or text [23], [24]. Representative works include BraVL [25], which innovatively introduce the text modality as auxiliary supervision, leveraging image captions or category descriptions to guide the learning of neural features. HA [26] utilizes an image-aligned encoder to map brain signals directly into a visual feature space. Despite these advances, systematic and stochastic gaps re-main between neural signals and artificial vision features [27], [28]. To mitigate these gaps, ViEEG [29] proposes a hier-archical decoupling paradigm that decomposes images into low-level edges, foreground entities, and high-level scenes via IEEE TRANSACTIONS ON MULTIMEDIA, 2026 3
+
+artificial cortical anchors, forcing EEG embeddings to simulate the hierarchical processing of biological vision. UBP [8] takes a biological perspective by introducing a dynamically adjusted blur prior to simulate early perceptual information, effectively narrowing both systematic and stochastic gaps. Building on this, ATS [9] employs a teacher-student framework to resolve the asymmetry between visual and brain modalities. Further-more, NeuroBridge [10] facilitates cross-modal alignment by combining modality-specific cognitive prior enhancement with shared semantic projections. 
+
+B. Evidential Learning in Multimodal Data 
+
+Evidential Learning (EL), grounded in Dempster-Shafer Theory [30] and Subjective Logic [31], enables explicit mod-eling of belief and uncertainty by parameterizing a Dirichlet distribution over the probability simplex. Unlike traditional softmax-based neural networks that often yield overconfident point estimates, EL treats the network outputs as evidence to quantify the vacuity of knowledge [32], [33]. By mapping evidence to the concentration parameters of the Dirichlet distribution, EL provides a principled way to distinguish between aleatoric uncertainty and epistemic uncertainty, which is particularly vital when dealing with limited or high-noise datasets. In multimodal settings, EL is primarily applied to multimodal fusion and cross-modal retrieval. For multimodal fusion, EL-based frameworks treat each modality as an in-dependent source of evidence, aggregating modality-specific beliefs via the Dempster’s Combination Rule to ensure robust integration of heterogeneous modalities [34], [35]. This mech-anism allows the model to dynamically suppress uninformative modalities while highlighting those with high evidential sup-port. In retrieval scenarios, formulated as bidirectional classi-fication problems, EL has been employed to model evidential distributions and improve robustness under noisy correspon-dences [36]. Representative approaches leverage bidirectional evidence to detect mismatched pairs [37] or explicitly model data uncertainty to calibrate retrieval predictions [38]. By calibrating retrieval predictions through evidential distribu-tions, these methods facilitate a more reliable and trustworthy alignment between diverse heterogeneous modalities. III. M ETHODS 
+
+A. Problem Statement 
+
+The primary objective of our proposed BI-Cap framework is to retrieve the specific ground-truth image that elicits a given neural signal from a large-scale candidate pool containing 
+
+unseen images . An overview of the BI-Cap architecture is illustrated in Fig. 2. Following the zero-shot experimen-tal protocol established in [8], we utilize a paired dataset 
+
+D = {(I, N )}, where the training and test classes are strictly mutually exclusive ( Dtrain ∩D test = ∅) to evaluate the model’s generalization to novel semantic categories. For the visual modality, I ∈ RCI ×H×W represents the original image data, where CI , H, W denote the number of channels, height, and width, respectively. A pre-trained image encoder is employed to extract high-level visual features 
+
+f ∈ Rdv . The neuromimetic visual features FV = {fv }Vv=1 ∈
+
+RV ×dv , where V denotes the number of transformation and 
+
+dv represents the feature dimension. For the neural modality, 
+
+N ∈ RCN ×L represents the corresponding neural signal, with 
+
+CN recording channels and a temporal segment of length L.We adopt the brain encoder proposed in the [9] to extract neural features FN ∈ Rdn . The core of BI-Cap lies in map-ping these heterogeneous features into a unified latent space. Specifically, FN and FV undergo a series of transformations to yield the final embeddings Flatent and FN , respectively. The retrieval task is subsequently performed by identifying the image within the candidate pool whose visual embedding demonstrates the highest semantic correspondence with the given neural representation in the shared latent space, thereby establishing a precise cross-modal alignment. 
+
+B. Neuromimetic Perceptual Simulation 
+
+Inspired by the physiological characteristics of HVS, we project the original images I into a neuromimetic perceptual space using four biologically plausible transformations. To simulate the spatial non-uniformity of the cortical mag-nification factor, we introduce a foveation mask Mf ∈ [0 , 1] ,which controls the transition from the high-acuity foveal region to the blurred periphery. The mask value at spatial location (i, j ) is governed by an exponential decay function: 
+
+Mf (i, j ) = exp 
+
+
+
+−γ · d(i, j )
+
+D
+
+
+
+, (1) where d(i, j ) denotes the Euclidean ( L2-norm) distance be-tween pixel (i, j ) and the designated foveation center, and 
+
+D represents the maximum Euclidean distance within the image plane. The parameter γ serves as a decay coefficient. Consequently, the final foveated visual stimulus, denoted as 
+
+If ov , is synthesized by spatially blending the original image 
+
+I with the biologically blurred image counterpart Ikblur . The blurred image is generated using a Gaussian blur kernel of size 
+
+k and perturbation constant c, and the fusion is implemented through element-wise multiplication ⊙:
+
+If ov = Mf ⊙ I + (1 − Mf ) ⊙ Ikblur . (2) Secondly, addressing the inherent neural volume conduction effect, we introduce additive Gaussian white noise to the visual representation. The noisy stimulus is formulated as Inoise =
+
+I + N (0 , σ 2), where N (0 , σ 2) represents a Gaussian noise distribution with zero mean and variance σ2.Thirdly, inspired by the coarse-to-fine low-frequency dom-inance mechanism of rapid visual processing, we aim to se-lectively filter out high-frequency stochastic redundancies that are functionally less relevant to macroscopic EEG signals. This aligns with the biological observation that early visual evoked potentials are more sensitive to global structural contours than to fine-grained textures. To achieve this, we employ bilinear interpolation for resampling to generate the low-resolution images Ilow . Simultaneously, to emulate the discrete sampling mechanism of the retinal mosaic, we utilize nearest-neighbor interpolation . This operation mimics the quantization of the continuous light field into discrete neural receptive fields, IEEE TRANSACTIONS ON MULTIMEDIA, 2026 4Input      
+
+> Exp & Alpha Cal
+> Linear(1024→512)
+> ReLU
+> ReLU
+> ReLU
+> Linear(512→256)
+> Linear(256→64)
+> Linear(64→1)
+> Linear(64→1)
+> Softplus
+> Uncertainty u
+> Weights Cal
+> Weighted Sum &
+> Normalize
+> Weighted  fused
+> Linear(1024→1024)
+> Softmax
+> Weighted fused
+> Weights Sum
+> Add
+> Output
+> Evidence Weighting Module
+> Linear Weighting Module
+> [B, 4, 1024]
+> [B, 4, 1] [B, 1024] [B, 1024]
+> [B, 4, 1] [B, 4]
+> [B, 1024]
+> [B, 768]
+> Linear(1024→256)
+> GeLU
+> Linear(256→768)
+> Dropout
+> LayerNorm
+> Feature Purification Module
+
+Fig. 3. Overview of the proposed framework for Evidence-Driven Latent Space Representation. Features from parallel Evidence and Linear Weighting streams are integrated via element-wise addition, and then processed by a bottleneck Feature Purification Module to align visual representations. 
+
+yielding the mosaic-like images Imosaic . These operations can be formally expressed as: 
+
+Ilow = Rbilinear (I, s low )
+
+Imosaic = Rnearest (I, s mos ), (3) where Rbilinear and Rnearest denote the resampling oper-ators based on bilinear and nearest-neighbor interpolation, respectively, and slow , s mos represent the corresponding down-sampling scale factors. Finally, the four distinct biologically plausible visual images generated through these transformations are parallelly fed into the pre-trained CLIP image encoder. This yields a set of aligned neuromimetic feature embeddings FV :
+
+FV = Encoder CLIP ({If ov , I noise , I low , I mosaic }). (4) 
+
+C. Evidence-Driven Latent Space Representation 
+
+Due to the heterogeneity and temporal variability of neu-ral activity, different visual transformations may contribute unequally to modeling EEG responses. Therefore, as shown in Fig. 3, we propose an Evidence-Driven Latent Space Representation method, which combines evidential weighting with a residual attention mechanism, then applies a feature purification module to enforce compactness and mitigate noise. These components construct a robust shared latent space. EL models belief and uncertainty associated with different hypotheses in model predictions, drawing upon Dempster-Shafer Theory and Subjective Logic. 
+
+1) Evidence Weighting Module: To adaptively aggregate features from diverse neuromimetic transformations, we pro-pose an Evidence Weighting Module (EWM) based on Subjec-tive Logic. Unlike vanilla attention, EWM explicitly models the reliability of each transformation. Given the input neu-romimetic visual features FV , we feed the FV into a non-linear Evidence Head ( hθ ). The hθ is composed of a Multi-Layer Perceptron (MLP) activated by the Softplus function to ensure non-negative outputs, thereby obtaining the non-negative evidence quantity ev for each transformation: 
+
+ev = exp( Softplus (MLP (FV ))) . (5) Following Subjective Logic, we characterize each dis-tinct neuromimetic transformation as an independent and au-tonomous evidence source that provides a specific perspective on the latent neural representation. In our implementation, we focus on a single-dimensional confidence estimation to model the inherent epistemic uncertainty of each branch. Under this configuration, the Dirichlet strength Sv is simplified as: 
+
+Sv = ev + 1 . (6) We can derive the corresponding epistemic uncertainty uv ∈
+
+(0 , 1] for the v-th transformation are derived as: 
+
+uv = 1
+
+Sv
+
+= 1
+
+ev + 1 . (7) As the collected evidence ev increases, Sv grows, and the uncertainty uv approaches 0. We define the Belief Weight wk
+
+of each transformation as its degree of certainty: wv = 1 − uv .Consequently, a higher evidence quantity ev leads to a belief weight wv approaching 1, while lack of evidence causes wv
+
+to vanish, effectively suppressing unreliable reconstructions. Utilizing these weights, we perform a weighted average on the multi-transformation features. This mechanism ensures that features with high evidence support dominate the final representation, while highly uncertain features are suppressed. The fused evidential feature Fevidence is calculated as: 
+
+Fevidence = Proj 
+
+PVv=1 wv · fv
+
+PVv=1 wv + ϵ
+
+!
+
+, (8) where Proj (·) is a linear projection layer. 
+
+2) Linear Weighting Module: To capture potential con-textual dependencies and supplement global information that might be lost through pure evidential weighting, we introduce a parallel Linear Fusion Module as a residual term outside the evidence fusion path. This module computes attention scores 
+
+sv via a learnable linear layer and normalizes them using the softmax function to obtain attention weights. The attention-fused feature is then computed as a weighted sum of features: 
+
+Fatt =
+
+> V
+
+X
+
+> v=1
+
+softmax (sv ) · fv . (9) The fused features is obtained by summing the evidence-fused and the attention-fused features Ff us = Fevidence + Fatt .
+
+3) Feature Purification Module: To ensure feature com-pactness and mitigate potential noise, Ff us is processed by the Feature Purification module with a bottleneck architecture to generate the final latent space representation Flatent . Specif-ically, the fused feature Ff us is first compressed into a lower-dimensional bottleneck space via a linear layer. This process employs a GeLU activation to perform non-linear filtering, effectively suppressing task-irrelevant noise while preserving core semantic information. Subsequently, a secondary linear layer projects these refined features into a reconstructed la-tent space. To enhance the robustness of the cross-modal alignment, Dropout and Layer Normalization are integrated to stabilize the feature distribution and prevent overfitting. The resulting purified embedding Flatent is the final representation for achieving cross modal alignment. IEEE TRANSACTIONS ON MULTIMEDIA, 2026 50 40 80 120 160 
+
+> Image Features
+> 0
+> 40
+> 80
+> 120
+> 160
+> EEG Features
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+
+(a) 0.4 0.6    
+
+> 0
+> 2
+> 4
+> 6
+> 8
+> Frequency
+> Frequency
+> Gaussian Fit
+> (= 0.60, = 0.06)
+
+(b)      
+
+> Fig. 4. Similarity analysis of feature alignment. (a) Cross-modal similarity matrix between EEG and image features. The prominent diagonal indicates high similarity between corresponding sample pairs. (b) Statistical distribution of the diagonal elements in the similarity matrix, featuring a Gaussian fit with
+> μ= 0 .60 and σ= 0 .06 .
+
+D. MI-Guided Dynamic Blur Regulation 
+
+We introduce a self-adaptive optimization strategy de-signed to dynamically identify the optimal granularity of neuromimetic visual transformations. Our objective is to maximize the dependency between the EEG representations 
+
+FN and the visual representation Flatent . Formally, we seek to maximize their Mutual Information (MI), denoted as 
+
+I(FN ; Flatent ), to ensure that the latent space captures the maximal shared semantic content across modalities. To align the FN and the Flatent in the shared latent space, we optimize the symmetric contrastive loss: 
+
+L = 12
+
+h
+
+CE( sim (FN , F latent )/τ, L batch ) + CE( sim (Flatent , F N )/τ, L batch )
+
+i
+
+,
+
+(10) where CE( ·) denotes the Cross-Entropy loss function, 
+
+sim (·, ·) denotes the cosine similarity, Lbatch denotes the ground truth labels, and τ is a learnable temperature parameter. As direct MI estimation in high-dimensional space is in-tractable, we leverage the theoretical connection between contrastive learning and MI [39]. The contrastive logit for a positive pair, denoted as logits N = sim (FN , F latent )/τ ,serves as an estimator of the log-density ratio associated with the pointwise mutual information. Accordingly, as visualized in the cross-modal similarity matrix in Fig. 4(a), the diagonal elements of logits N serve as feedback signals indicating the alignment quality under the current blur parameters. To stabi-lize the feedback under mini-batch stochasticity and adaptively characterize alignment difficulty, we introduce a distribution-aware confidence mechanism. We apply momentum smoothing to instance-wise similarity scores to mitigate training variance. Let s(i) 
+
+> t
+
+denote the logits N of the i-th sample at step t, and the smoothed similarity ˆs(i) 
+
+> t
+
+is updated as: 
+
+ˆs(i) 
+
+> t
+
+= β · s(i) 
+
+> t
+
++ (1 − β) · ˆs(i)
+
+> t−1
+
+, (11) where β is the momentum coefficient. Instead of using fixed thresholds, we dynamically construct a confidence interval based on the statistics of the current batch. As shown in Fig. 4(b), similarity scores follow a Gaussian distribution during training dynamics [40], we calculate the mean μs and standard deviation σs of the smoothed similarities and define the acceptance bounds using the Z-score ( zα/ 2) corresponding to a confidence level of 1 − α:
+
+Tupper = μs + zα/ 2 · σs
+
+Tlower = μs − zα/ 2 · σs. (12) Based on these dynamic bounds, we assign a new Gaussian blur configuration to each sample. Specifically, the blur con-figuration is jointly determined by the initial blur kernel size k
+
+and the perturbation constant c to update k(i) 
+
+> t
+
+of the i-th sample at step t. In this way, the proposed feedback-driven blur se-lection implicitly promotes mutual information maximization between visual and EEG representations, enabling adaptive control of visual degradation based on alignment quality: 
+
+k(i) 
+
+> t
+
+=
+
+
+
+k − c, if ˆs(i) 
+
+> t
+
+> T upper 
+
+k, if Tlower < ˆs(i) 
+
+> t
+
+< T upper 
+
+k + c, if ˆs(i) 
+
+> t
+
+< T lower .
+
+(13) IV. E XPERIMENTAL SETUP 
+
+A. Implementation Details 
+
+Our experiments are carried out using the PyTorch frame-work on a Linux server platform equipped with an NVIDIA Tesla V100. All models were trained for 150 epochs using the AdamW optimizer with weight decay. For the THINGS-EEG dataset, we set the batch size to 32 and the learning rate to 1 × 10 −4, with the initial Gaussian blur kernel size k
+
+configured to 75. Conversely, for the THINGS-MEG dataset, we utilized a larger batch size of 1024 and a learning rate of 
+
+3×10 −4, setting the Gaussian blur kernel size to 51. Regarding the hyperparameters of our proposed method, the temperature parameter τ for the contrastive loss was set to 0.07. The perturbation constant c was set to 6, and the standard deviation 
+
+σ for the Gaussian noise was set to 10. Finally, the sampling scale factors were set to slow = 1 /2 and smos = 1 /16 .
+
+B. Image and Brain Encoder 
+
+We leverage pre-trained weights from CLIP [22] and Open-CLIP [41] to extract visual embeddings, employing a di-verse range of backbones including ResNet-50, ResNet-101, ViT-B/16, ViT-B/32, ViT-L/14, ViT-H/14, ViT-g/14, and ViT-bigG/14. Unless otherwise specified, we utilize ResNet-50 as the default backbone for the THINGS-EEG2 dataset and ViT-B/16 for the THINGS-MEG dataset. For brain encoder, we adopt the Shared Temporal Attention Encoder (STAE) pro-posed by [9]. This architecture incorporates a shared temporal attention mechanism designed to mitigate the temporal aliasing effects inherent in the RSVP paradigm. Specifically, the STAE aims to automatically focus on the time steps most relevant to visual decoding by assigning greater attention weights to the most informative temporal segments of the neural signals. IEEE TRANSACTIONS ON MULTIMEDIA, 2026 6
+
+TABLE I TOP-1 AND TOP-5 ACCURACY (%) FOR 200-WAY ZERO-SHOT RETRIEVAL ON THINGS-EEG2. Subject 1 Subject 2 Subject 3 Subject 4 Subject 5 Subject 6 Subject 7 Subject 8 Subject 9 Subject 10 Avg Methods Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5                                                                                                                                                                                                                                                                                                                                           
+
+> Intra-subject: train and test on one subject
+> BraVL [25] 6.1 17.9 4.9 14.9 5.6 17.4 5.0 15.1 4.0 13.4 6.0 18.2 6.5 20.4 8.8 23.7 4.3 14.0 7.0 19.7 5.8 17.5 NICE-GA [24] 15.2 40.1 13.9 40.1 14.7 42.7 17.6 48.9 9.0 29.7 16.4 44.4 14.9 43.1 20.3 52.1 14.1 39.7 19.6 46.7 15.6 42.8 ATM-S [23] 25.6 60.4 22.0 54.5 25.0 62.4 31.4 60.9 12.9 43.0 21.3 51.1 30.5 61.5 38.8 72.0 34.4 51.5 29.1 63.5 28.5 60.4 UBP [8] 41.2 70.5 51.2 80.9 51.2 82.0 51.1 76.9 42.2 72.8 57.5 83.5 49.0 79.9 58.6 85.8 45.1 76.2 61.5 88.2 50.9 79.7 ATS [9] 53.0 79.0 62.0 87.5 61.5 89.0 57.0 86.5 55.0 84.0 68.0 90.5 53.0 84.0 66.5 91.0 58.5 86.0 67.5 89.0 60.2 86.7 NeuroBridge [10] 50.0 77.6 63.2 90.6 61.6 91.1 61.4 90.0 54.8 85.0 69.7 92.9 62.7 88.8 71.2 95.1 64.0 91.0 73.6 97.1 63.2 89.9
+> BI-Cap 65.0 87.5 77.0 97.0 74.5 97.5 69.5 93.5 69.0 92.0 76.5 96.5 65.5 94.0 77.5 98.5 72.5 97.0 76.5 98.5 72.4 95.2 Inter-subject: leave one subject out for test
+> BraVL [25] 2.3 8.0 1.5 6.3 1.4 5.9 1.7 6.7 1.5 5.6 1.8 7.2 2.1 8.1 2.2 7.6 1.6 6.4 2.3 8.5 1.8 7.0 NICE-GA [24] 5.9 21.4 6.4 22.7 5.5 20.1 6.1 21.0 4.7 19.5 6.2 22.5 5.9 19.1 7.3 25.3 4.8 18.3 6.2 26.3 5.9 21.6 ATM-S [23] 10.5 26.8 7.1 24.8 11.9 33.8 14.7 39.4 7.0 23.9 11.1 35.8 16.1 43.5 15.0 40.3 4.9 22.7 20.5 46.5 11.8 33.7 UBP [8] 11.5 29.7 15.5 40.0 9.8 27.0 13.0 32.3 8.8 33.8 11.7 31.0 10.2 23.8 12.2 32.2 15.5 40.5 16.0 43.5 12.4 33.4 HA [26] 11.4 33.6 15.0 38.1 8.1 28.3 9.5 30.1 7.3 23.5 21.8 46.9 10.8 35.2 14.5 35.6 13.9 33.8 15.8 40.8 12.8 34.6 ATS [9] 17.0 37.5 21.5 49.5 7.5 20.0 13.5 41.5 7.0 27.0 14.5 37.0 10.0 33.5 13.0 30.5 9.5 28.5 26.0 52.5 14.0 35.8 NeuroBridge [10] 23.2 52.4 21.2 49.3 13.2 36.5 17.0 45.3 14.5 37.7 25.0 55.0 15.3 45.1 20.1 44.9 13.7 36.5 27.2 56.3 19.0 45.9
+> BI-Cap 24.5 54.5 28.5 62.0 11.5 29.5 20.0 48.5 15.5 41.5 15.0 44.5 20.5 41.5 13.5 37.0 13.0 36.0 31.5 65.0 19.4 46.0
+
+TABLE II TOP-1 AND TOP-5 ACCURACY (%) FOR 200-WAY ZERO-SHOT RETRIEVAL ON THINGS-MEG. Methods Subject 1 Subject 2 Subject 3 Subject 4 Avg Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5 Top-1 Top-5                                                                                                     
+
+> Intra-subject: train and test on one subject
+> NICE-GA [24] 8.7 30.5 21.8 56.6 16.5 49.7 10.3 32.3 14.3 42.3 HA [26] 15.5 39.6 36.8 75.2 25.6 55.0 14.7 38.6 23.2 52.1 UBP [8] 15.0 38.0 46.0 80.5 27.3 59.0 18.5 43.5 26.7 55.2 NeuroBridge [10] 16.5 41.6 53.7 85.3 40.4 73.2 18.1 43.1 32.2 60.8 ATS [9] 18.0 43.0 56.0 89.0 36.0 67.0 19.5 50.0 32.4 62.3
+> BI-Cap 19.0 45.5 70.0 94.0 48.5 82.0 24.0 54.5 40.4 69.0 Inter-subject: leave one subject out for test
+> UBP [8] 2.0 5.7 1.5 17.2 2.7 10.5 2.5 8.0 2.2 10.4 ATS [9] 2.0 6.0 6.0 14.0 4.5 15.0 1.0 9.5 3.4 11.2 NeuroBridge [10] 4.3 13.1 3.6 15.6 3.0 11.2 2.5 11.3 3.4 12.8
+> BI-Cap 2.5 6.0 6.0 22.0 5.0 16.5 2.0 9.5 3.9 13.5
+
+C. Datasets and Evaluation Metrics 
+
+We evaluate our method on two large-scale neuroimaging datasets: THINGS-EEG2 [42] and THINGS-MEG [43], both of which are based on the THINGS object concept database. Following the zero-shot protocol established in [8], the training and test concepts are strictly mutually exclusive to ensure an unbiased assessment of semantic generalization. 
+
+1) THINGS-EEG2 [42]: This dataset consists of 64-channel EEG recordings from 10 subjects collected using an EASYCAP system under the RSVP paradigm. The training set comprises 1,654 object concepts, with 10 images per concept and each image repeated four times per subject. The test set contains 200 unseen concepts, each represented by a single image repeated 80 times to facilitate robust zero-shot evaluation. For EEG preprocessing, raw signals were band-pass filtered between 0.1 and 100 Hz and subsequently downsampled to 250 Hz. To improve the Signal-to-Noise Ratio (SNR), trial repetitions are averaged, yielding a final dataset of 16,540 training samples and 200 test samples per subject. Especially, we implement different channel selection strategies for experimental settings of intra and inter subject. For intra-subject, where neural patterns are consistent, we selected a subset of 17 posterior channels located over the occipito-parietal cortex (P7, P5, P3, P1, Pz, P2, P4, P6, P8, PO7, PO3, POz, PO4, PO8, O1, Oz, O2) to concentrate on visual cortex activity. To address the significant heterogeneity in the inter-subject generalization tasks, we expanded our input to include the full montage of 63 channels, thereby leveraging global brain activity to learn more robust subject-invariant features. 
+
+2) THINGS-MEG [43]: This dataset contains high-density recordings from 4 subjects using a 271-channel MEG system. The training set includes 1,854 concepts featuring 12 unique images per concept, with each image presented a single time. The test set comprises 200 unseen concepts, each represented by one image that was repeated 12 times to ensure robust evaluation. MEG data were band-pass filtered between 0.1 and 100 Hz, baseline corrected, and downsampled to 200 Hz. To maximize the SNR, multiple repetitions of the same stimulus are averaged into a single representative trial. We consistently utilized the full array of 271 sensors across all experimental settings. This holistic approach ensures that the fine-grained spatiotemporal details and the complex magnetic field distributions inherent in high-density MEG recordings are fully preserved for cross-modal alignment. To quantitatively evaluate the efficacy of our proposed BI-Cap framework, we employ three key metrics: Top-n Accu-racy, mean Average Precision (mAP), and Similarity Score. Collectively, these metrics provide a holistic assessment of both ranking quality and intrinsic semantic alignment. V. R ESULTS 
+
+A. Comparison Performance 
+
+To validate the effectiveness of our proposed approach, we benchmark it against a comprehensive set of recent neural decoding methods, including BraVL [25], NICE [24], ATM-S [23], UBP [8], HA [26], ATS [9], and the previous state-of-the-art method NeuroBridge [10]. The methodological con-tributions of these works have been discussed in detail in Section II. For a fair and rigorous comparison, all baseline results are directly taken from the best reported performances in the original papers and we maintain complete consistency in data preprocessing pipelines across all experiments. Table I and Table II report the quantitative performance of BI-Cap against competing baselines on zero-shot brain-to-image retrieval tasks for THINGS-EEG2 and THINGS-MEG datasets. Our method consistently outperforms previ-ous state-of-the-art approaches under intra-subject and inter-subject settings, demonstrating superior feature alignment and generalization capabilities. Notably, our method achieves a IEEE TRANSACTIONS ON MULTIMEDIA, 2026 7
+
+TABLE III ABLATION STUDY OF PROGRESSIVE COMPONENTS ON THINGS-EEG2 UNDER THE INTRA-SUBJECT SETTING. WE INCREMENTALLY ADD DYNAMIC FOVEATION (DYN.), GAUSSIAN NOISE (NOISE.), LOW-RESOLUTION (RES.), MOSAIC (MOS.), AND EVIDENCE LEARNING (EL). Components Avg Dyn. Noise. Res. Mos. EL Top-1 (%) Top-5 (%) 48.9 81.8 
+
+✓ 58.8 87.1 
+
+✓ ✓ 63.7 90.2 
+
+✓ ✓ ✓ 66.4 92.7 
+
+✓ ✓ ✓ ✓ 70.4 94.1 
+
+✓ ✓ ✓ ✓ ✓ 72.4 95.2 
+
+Top-1 accuracy of 72.4% and a Top-5 accuracy of 95.2% on the THINGS-EEG2, yielding the best performance across all subjects and surpassing the previous state-of-the-art Top-1 accuracy by a margin of 9.2%. Similarly, on the THINGS-MEG, our model attains a Top-1 accuracy of 40.4% and a Top-5 accuracy of 69.0%, outperforming the prior best Top-1 result by 8.0% across all subjects. These results suggest that our biomimetic transformation and evidence-driven fusion effectively capture the core semantic components. 
+
+TABLE IV ABLATION STUDY OF PROGRESSIVE COMPONENTS ON THINGS-MEG UNDER THE INTER-SUBJECT SETTING. WE INCREMENTALLY ADD DYNAMIC FOVEATION (DYN.), GAUSSIAN NOISE (NOISE.), LOW-RESOLUTION (RES.), MOSAIC (MOS.), AND EVIDENCE LEARNING (EL). Components Avg Dyn. Noise. Res. Mos. EL Top-1 (%) Top-5 (%) 
+
+✓ 2.5 11.4 
+
+✓ ✓ 2.6 11.5 
+
+✓ ✓ ✓ 2.4 10.0 
+
+✓ ✓ ✓ ✓ 3.6 12.1 
+
+✓ ✓ ✓ ✓ ✓ 3.9 13.5 
+
+Notably, BI-Cap exhibits competitive robustness in the more challenging inter-subject scenarios, where significant neural heterogeneity leads to severe performance decline for existing models. On the THINGS-EEG2, BI-Cap maintains a leading average Top-1 accuracy of 19.4%, and on the THINGS-MEG, BI-Cap also achieves the highest average performance. 
+
+B. Ablation Performance 1) Effectiveness of Biologically Plausible Transformations and Evidence Learning: To evaluate the effectiveness of four biologically transformations and evidence learning proposed, we conducted a progressive ablation study on both THINGS-EEG2 and THINGS-MEG. The quantitative results are de-tailed in Table III for the intra-subject setting and Table IV for the inter-subject task, respectively. Dynamic Foveation, Gaussian Noise, Low Resolution, and Mosaic transformations are sequentially incorporated into the training pipeline. In the intra-subject setting of THINGS-EEG2, performance improves monotonically with each successive addition, con-firming that our paradigm effectively strengthens the cross-ResNet-50 
+
+> ResNet-101
+> ViT-B/16
+> ViT-B/32
+> ViT-L/14
+> ViT-H/14
+> ViT-g/14
+> ViT-bigG/14
+> Top-1 Acc
+> Top-5 Acc
+> mAP
+> Similarity
+
+(a) Top-1 Acc Top-5 Acc mAP Similarity  
+
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> Performance  0.72
+> 0.95
+> 0.82
+> 0.59
+> 0.80
+> 0.98
+> 0.88
+> 0.60
+> 0.86
+> 0.99
+> 0.92
+> 0.59
+> 200-way
+> 100-way
+> 50-way
+
+(b) 51 61 71 73 75 77 79 81 91 
+
+> Blur Kernal Size
+> 86
+> 88
+> 90
+> 92
+> 94
+> 96
+> 98
+> Top-5 Accuracy (%)
+> Only Blur
+> BI-Cap
+
+(c) 16 32 64 128 256 512 1024 2048   
+
+> Batch Size (Log Scale)
+> 50
+> 55
+> 60
+> 65
+> 70
+> 75
+> 80
+> Top-1 Accuracy (%)
+> Top-1 Accuracy
+> Top-5 Accuracy 86
+> 88
+> 90
+> 92
+> 94
+> 96
+> 98
+> 100
+> Top-5 Accuracy (%)
+
+(d) 
+
+Fig. 5. All results presented in the figure are averaged across 10 subjects in the intra-subject setting on THINGS-EEG2. (a) Comparison of different image encoders. (b) Performance across different retrieval set sizes. (c) Sensitivity analysis of blur kernel size. (d) The impact of batch size on retrieval accuracy. 
+
+modal alignment between neural and visual representations. For the more challenging inter-subject task of THINGS-MEG, although the absolute improvement is subject to significant intrinsic heterogeneity in underlying physiology, the overall trend remains consistent, with the combined transformations yielding superior results compared to the baseline. We further validated the effectiveness of EL as an uncertainty-aware mechanism. Across both datasets and ex-perimental settings, the integration of EL consistently provides the final performance boost. Specifically, in the intra-subject setting of THINGS-EEG2, adding EL boosts the Top-1 ac-curacy from 70.4% to 72.4%; in the inter-subject setting of THINGS-MEG, it further elevates the Top-1 accuracy to its peak at 3.9%. These results indicate that explicitly modeling uncertainty acts as a critical regularizer, enabling the network to discern reliable features and achieve robust alignment even under the high-variance conditions of inter-subject decoding. 
+
+2) Effect of Blur Strategies: As shown in Table V, the pro-posed dynamic strategy achieves superior performance across all metrics, surpassing the static strategy by a clear margin. This result indicates that dynamic central concavity improves performance by mimicking the spatial attention mechanism of the HVS, emphasizing salient regions while attenuating peripheral information, which facilitates the extraction of more biologically plausible features than static. 
+
+3) Effect of Image Encoders: We conduct an ablation study with a batch size of 1024 across eight image encoders to ana-lyze the impact of visual feature structure on EEG decoding. As shown in Fig. 5(a) and Table VI, scaling up model size does not improve decoding performance. Instead, the CNN-based ResNet-50 achieves the best results, consistently outperform-ing Transformer-based models across all evaluation metrics. This observation suggests that the hierarchical inductive bias of CNNs is more compatible with EEG decoding, whereas the globally attended feature representations of ViT models may IEEE TRANSACTIONS ON MULTIMEDIA, 2026 80 200 400 600 800 1000 
+
+> Time (ms)
+> 0
+> 2
+> 4
+> 6
+> 8
+> Norm. Magnitude ( ×10  3) BI-Cap
+> Baseline
+> Early Visual
+
+(a) Delta Theta Alpha Beta Gamma  
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> Energy Ratio
+> BI-Cap
+> Baseline
+
+(b)  
+
+> Fig. 6. Comparison of temporal and spectral gradient analysis on THINGS-EEG2 for subject 4 with baseline (ATS). (a) Temporal gradient distribution. (b) Spectral gradient distribution.
+
+be less suitable for effective EEG–visual alignment. 
+
+C. Evaluation under Different Retrieval Sizes 
+
+o evaluate the robustness of the model under varying retrieval difficulties, we compared the decoding performance across discrete candidate pool sizes of 200, 100, and 50, while maintaining a fixed ResNet-50 backbone. As illustrated in Fig. 5(b), reducing the retrieval space leads to consistent improvements of all metrics. In the 50-way setting, Top-5 accuracy approaches saturation (99%), demonstrating strong discriminative capability. Notably, the similarity score remains remarkably stable regardless of the number of candidates. This robust stability serves as a compelling indicator that the intrinsic cross-modal alignment between EEG representations and visual semantics is fundamentally preserved, rendering the learned features agnostic to external computational constraints. 
+
+D. Hyperparameter Sensitivity Analysis 1) Sensitivity Analysis of Blur Kernal Size: To evaluate robustness, we analyze retrieval accuracy under varying blur kernel sizes k. As shown in Fig. 5(c), only blur exhibit strong sensitivity, since approaches such as UBP [8] rely on manually predefined kernel sizes and suffer sharp performance degrada-tion once deviating from the optimum. In contrast, our method maintains a flat and stable performance curve, indicating that the proposed evidence-driven multi-neuromimetic framework effectively alleviates sensitivity to manual hyper-parameter choices by adaptively down-weighting unreliable branches. 
+
+2) Sensitivity Analysis of Batch Size: We investigated the impact of batch size on the retrieval performance, as this pa-rameter serves as a critical determinant in contrastive learning by modulating the density of the negative sample pool avail-able per stochastic iteration. As shown in Fig. 5(d), our model demonstrates strong robustness across batch sizes ranging from 16 to 1024, with peak performance 32. This suggests that effective cross-modal alignment can be achieved without large-batch training. Performance drops only at an extreme batch size of 2048, likely due to optimization and generalization issues commonly observed in large-batch regimes.                 
+
+> TABLE V COMPARISON OF DIFFERENT BLUR STRATEGIES ON THINGS-EEG2. WE REPORT AVERAGE TOP-1/TOP-5 ACCURACY, MAP, AND SIMILARITY. Blur Strategy Avg Top-1 (%) Top-5 (%) mAP (%) Similarity Static 70.5 94.8 80.8 0.585
+> Dynamic (Ours) 72.4 95.2 82.1 0.598
+
+E. Biological Interpretation 
+
+To verify the biological consistency of our model, we visualized the input gradients to identify the specific temporal-spectral features that exert the most significant influence on the retrieval task. We employed the absolute gradient magnitudes as saliency maps to quantify and compare feature importance. To ensure a rigorous and controlled assessment, ATS [9] was selected as the primary baseline because it utilizes a brain encoder architecture identical to our own. For temporal analysis, as visualized in Fig. 6(a), our method aligns with human visual attention dynamics. Unlike the Baseline, which exhibits distinctively high amplitudes in the artifact-dominant phase (0–100 ms), our method actively suppresses these early noise signals. Subsequently, it peaks at 100–200 ms, matching the P1/N1 latency for early attentional gain control [44]. Crucially, while the Baseline decays rapidly in the late period ( > 200 ms), our method sustains significantly higher gradient magnitudes. This persistent activity indicates prolonged semantic processing rather than the transient sen-sory registration observed in the baseline. For spectral analysis, as visualized in Fig. 6(b), we applied Welch’s method to estimate the power spectral density of the gradient signals. We aggregated the spectral energy into standard frequency bands, Delta (0–4 Hz), Theta (4–8 Hz), Alpha (8–12 Hz), Beta (12–30 Hz), and Gamma (30–100 Hz), to determine the frequency specific contribution to the model’s decision making process. The results reveal a distinct spectral shift in our method compared to baseline. Crucially, our model exhibits a dominant reliance on Gamma band activity. This is IEEE TRANSACTIONS ON MULTIMEDIA, 2026 9                                     
+
+> TABLE VI PERFORMANCE COMPARISON OF DIFFERENT IMAGE ENCODER BACKBONES . E XPERIMENTS ARE CONDUCTED ON THE THINGS-EEG2 DATASET USING THE INTRA -SUBJECT SETTING WITH 200-WAY ZERO -SHOT RETRIEVAL .
+> Image Encoder ResNet-50 ResNet-101 ViT-B/16 ViT-B/32 ViT-L/14 ViT-H/14 ViT-g/14 ViT-bigG/14 mAP (%) 79.0 75.5 71.7 74.8 67.6 66.6 66.7 65.6 Similarity 0.598 0.525 0.448 0.516 0.369 0.459 0.381 0.388 Parameters 5.6M 4.9M 3.4M 3.1M 5.8M 5.6M 6.1M 7.2M
+
+Ground Truth Top-1 Top-2 Top -3 Top-4 Top-5                              
+
+> sim: 0.611 sim: 0.583 sim: 0.576 sim: 0.558 sim: 0.629
+> sim: 0.604 sim: 0.595 sim: 0.594 sim: 0.557 sim: 0.644
+> sim: 0.613 sim: 0.565 sim: 0.533 sim: 0.530 sim: 0.615
+> sim: 0.560 sim: 0.537 sim: 0.526 sim: 0.522 sim: 0.571
+> beaver
+> gopher
+> pheasant
+> cat
+> cheetah
+> aircraft_carrier
+> sailboat
+> submarine
+> wheat
+> boat
+> calamari
+> crepe
+> scallop
+> dessert
+> omelet
+> bottle_opener
+> fork
+> folder
+> candlestick
+> dagger
+> Animals Vehicles Food Tools
+> Fig. 7. Top-5 retrieval visualization and semantic analysis for Subject 8. The first column displays ground-truth images across four semantic categories including Animals, Vehicles, Food, and Tools. Each retrieved image is presented with its predicted label and the corresponding similarity score (sim).
+
+consistent with prior findings showing that induced gamma-band activity reflects higher-level visual integration and object representation [45]. The baseline focuses predominantly on Delta, whereas our method emphasizes Beta and Gamma. This aligns with prior research linking these rhythms to feedback and feedforward influences in visual cortical areas [46]. 
+
+F. Semantic Concept Retrieval 
+
+In Fig. 7, we visualize the concept-level retrieval results. We employ Representational Similarity Analysis (RSA) [47] to examine the cross-modal alignment. Taking Subject 8 as an example, we present successful retrieval examples across diverse concepts, including Animals , Vehicles , Food , and Tools .Our model consistently achieves precise Top-1 retrieval, suc-cessfully mapping decoded EEG features back to their cor-responding ground-truth images. Beyond Top-1 accuracy, the Top-5 retrieved images exhibit significant semantic proximity to the target, demonstrating effective preservation of concept-level semantics in decoded EEG features. Even when seman-tically unrelated images appear, they share similar low-level attributes, such as color and pattern, with the ground truth. VI. C ONCLUSION AND LIMITATION 
+
+In this work, we present BI-Cap, a neuromimetic perceptual simulation paradigm to bridge the systematic and stochas-tic gaps in neural visual decoding. By integrating biolog-ically plausible static and dynamic visual transformations, we significantly enhance cross-modal alignment. Furthermore, to address neural dynamicity and heterogeneity, we intro-duce evidence-driven latent space representation. Our method achieves state-of-the-art performance in zero-shot brain-to-image retrieval. This work provides a principled computational perspective on biologically inspired visual decoding and offers a promising foundation for robust non-invasive BCIs systems. While our BI-Cap framework demonstrates state-of-the-art performance in zero-shot brain-to-image retrieval, there are several limitations inherent to the current study that outline promising directions for future research. Although retrieval is a critical step in verifying semantic alignment, it is constrained by the size and diversity of the pre-defined gallery. To over-come this, our future work aims to transition from retrieval to visual reconstruction. By leveraging the evidence-driven latent representations learned by BI-Cap, we plan to condition generative models to reconstruct pixel-level images directly from neural signals. Despite the improvements achieved by BI-Cap over baseline methods in cross-subject scenarios, a significant performance gap remains between intra-subject and inter-subject decoding. The absolute accuracy in cross-subject retrieval is still constrained by the inherent inter-individual variability of EEG signals. These discrepancies arise IEEE TRANSACTIONS ON MULTIMEDIA, 2026 10 
+
+from fundamental factors such as neuroanatomical differences, variations in electrode impedance, and distinct cognitive pro-cessing styles among participants. Consequently, achieving a truly universal neural decoder that generalizes seamlessly across diverse populations remains an ongoing challenge. REFERENCES [1] M. X. Cohen, “Where does eeg come from and what does it mean?” 
+
+Trends Neurosci. , vol. 40, no. 4, pp. 208–218, 2017. [2] F. Lopes da Silva, “Eeg and meg: relevance to neuroscience.” Neuron ,vol. 80, no. 5, pp. 1112–1128, 2013. [3] D. J. Heeger and D. Ress, “What does fmri tell us about neuronal activity?” Nature Rev. Neurosci. , vol. 3, no. 2, pp. 142–151, 2002. [4] J. Jiang, A. Fares, and S.-H. Zhong, “A brain-media deep framework towards seeing imaginations inside brains,” IEEE Trans. Multimedia ,vol. 23, pp. 1454–1465, 2021. [5] K. Liu, Y. Liu, L. Wei, C. Tang, Y. Zhan, Z. Chen, and Z. Chen, “Smile on the face, sadness in the eyes: Bridging the emotion gap with a multimodal dataset of eye and facial behaviors,” IEEE Trans. Multimedia , pp. 1–12, 2026. [6] X. Hu, K. Li, J. Han, X. Hua, L. Guo, and T. Liu, “Bridging the semantic gap via functional brain imaging,” IEEE Trans. Multimedia , vol. 14, no. 2, pp. 314–325, 2012. [7] H. Huang, L. Zhao, H. Dai, L. Zhang, X. Hu, D. Zhu, and T. Liu, “Bi-avan: A brain-inspired adversarial visual attention network for characterizing human visual attention from neural activity,” IEEE Trans. Multimedia , vol. 26, pp. 11 191–11 203, 2024. [8] H. Wu, Q. Li, C. Zhang, Z. He, and X. Ying, “Bridging the vision-brain gap with an uncertainty-aware blur prior,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2025, pp. 2246–2257. [9] L. Wu, J. Li, Z. Ren, K. Zhang, and X. Gao, “Shrinking the teacher: An adaptive teaching paradigm for asymmetric eeg-vision alignment,” 
+
+arXiv:2511.11422 , 2025. [10] W. Zhang, S. Wang, Y. Su, X. Li, C. Zhang, and S. Zhong, “Neurobridge: Bio-inspired self-supervised eeg-to-image decoding via cognitive priors and bidirectional semantic alignment,” arXiv:2511.06836 , 2025. [11] J. Rovamo, V. Virsu, and R. N¨ as¨ anen, “Cortical magnification factor predicts the photopic contrast sensitivity of peripheral vision,” Nature ,vol. 271, no. 5640, pp. 54–56, 1978. [12] A. A. Faisal, L. P. Selen, and D. M. Wolpert, “Noise in the nervous system,” Nature Rev. Neurosci. , vol. 9, no. 4, pp. 292–303, 2008. [13] Y. Sugase, S. Yamane, S. Ueno, and K. Kawano, “Global and fine information coded by single neurons in the temporal visual cortex,” 
+
+Nature , vol. 400, no. 6747, pp. 869–873, 1999. [14] P. Vuilleumier, J. L. Armony, J. Driver, and R. J. Dolan, “Distinct spatial frequency sensitivities for processing faces and emotional expressions,” 
+
+Nature Neurosci. , vol. 6, no. 6, pp. 624–631, 2003. [15] T. Grootswagers, A. K. Robinson, and T. A. Carlson, “The represen-tational dynamics of visual objects in rapid serial visual processing streams,” NeuroImage , vol. 188, pp. 668–679, 2019. [16] A. Roorda and D. R. Williams, “The arrangement of the three cone classes in the living human eye,” Nature , vol. 397, no. 6719, pp. 520– 522, 1999. [17] V. S. Ramachandran and R. L. Gregory, “Perceptual filling in of artificially induced scotomas in human vision,” Nature , vol. 350, no. 6320, pp. 699–702, 1991. [18] E. J. Allen, G. St-Yves, Y. Wu, J. L. Breedlove, J. S. Prince, L. T. Dowdle, M. Nau, B. Caron, F. Pestilli, I. Charest et al. , “A massive 7t fmri dataset to bridge cognitive neuroscience and artificial intelligence,” 
+
+Nature Neurosci. , vol. 25, no. 1, pp. 116–126, 2022. [19] Z. Chen, J. Qing, T. Xiang, W. L. Yue, and J. H. Zhou, “Seeing beyond the brain: Conditional diffusion model with sparse masked modeling for vision decoding,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2023, pp. 22 710–22 720. [20] C. Spampinato, S. Palazzo, I. Kavasidis, D. Giordano, N. Souly, and M. Shah, “Deep learning human mind for automated visual classifica-tion,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) ,2017, pp. 6809–6817. [21] I. Kavasidis, S. Palazzo, C. Spampinato, D. Giordano, and M. Shah, “Brain2image: Converting brain signals into images,” in Proc. ACM Int. Conf. Multimedia , 2017, pp. 1809–1817. [22] A. Radford, J. W. Kim, C. Hallacy, A. Ramesh, G. Goh, S. Agarwal, G. Sastry, A. Askell, P. Mishkin, J. Clark et al. , “Learning transferable visual models from natural language supervision,” in Proc. Int. Conf. Mach. Learn. (ICML) , 2021, pp. 8748–8763. [23] D. Li, C. Wei, S. Li, J. Zou, and Q. Liu, “Visual decoding and reconstruction via eeg embeddings with guided diffusion,” in Proc. Conf. Neural Inf. Process. Syst. (NeurIPS) , 2024, pp. 102 822–102 864. [24] Y. Song, B. Liu, X. Li, N. Shi, Y. Wang, and X. Gao, “Decoding natural images from eeg for object recognition,” in Proc. Int. Conf. Learn. Represent. (ICLR) , 2024. [25] C. Du, K. Fu, J. Li, and H. He, “Decoding visual neural representations by multimodal learning of brain-visual-linguistic features,” IEEE Trans. Pattern Anal. Mach. Intell. , vol. 45, no. 9, pp. 10 760–10 777, 2023. [26] N. Rajabi, A. H. Ribeiro, M. Vasco, F. Taleb, M. Bj¨ orkman, and D. Kragic, “Human-aligned image models improve visual decoding from the brain,” in Proc. Int. Conf. Mach. Learn. (ICML) , 2025. [27] R. Li, J. S. Johansen, H. Ahmed, T. V. Ilyevsky, R. B. Wilbur, H. M. Bharadwaj, and J. M. Siskind, “The perils and pitfalls of block design for eeg classification experiments,” IEEE Trans. Pattern Anal. Mach. Intell. , vol. 43, no. 1, pp. 316–333, 2020. [28] H. Ahmed, R. B. Wilbur, H. M. Bharadwaj, and J. M. Siskind, “Object classification from randomized eeg trials. in 2021 ieee,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2021, pp. 3844–3853. [29] M. Liu, D. Guan, C. Zheng, C. Tian, J. Wen, and Q. Zhu, “Vieeg: Hierarchical neural coding with cross-modal progressive enhancement for eeg-based visual decoding,” arXiv:2505.12408 , 2025. [30] A. P. Dempster, “A generalization of bayesian inference,” J. Roy. Statist. Soc. Ser. B (Methodol.) , vol. 30, no. 2, pp. 205–232, 1968. [31] A. Jsang, Subjective Logic: A formalism for reasoning under uncertainty .Springer Pub., 2018. [32] B. Li, Z. Han, H. Li, H. Fu, and C. Zhang, “Trustworthy long-tailed classification,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2022, pp. 6970–6979. [33] J. Gao, M. Chen, L. Xiang, and C. Xu, “A comprehensive survey on evidential deep learning and its applications,” IEEE Trans. Pattern Anal. Mach. Intell. , 2025. [34] H. Ma, Z. Han, C. Zhang, H. Fu, J. T. Zhou, and Q. Hu, “Trustworthy multimodal regression with mixture of normal-inverse gamma distribu-tions,” Proc. Neural Inf. Process. Syst. (NeurIPS) , vol. 34, pp. 6881– 6893, 2021. [35] J. Gao, M. Chen, and C. Xu, “Collecting cross-modal presence-absence evidence for weakly-supervised audio-visual event perception,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2023, pp. 18 827–18 836. [36] S. Li, X. Xu, Y. Yang, F. Shen, Y. Mo, Y. Li, and H. T. Shen, “Dcel: deep cross-modal evidential learning for text-based person retrieval,” in 
+
+Proc. ACM Int. Conf. Multimedia , 2023, pp. 6292–6300. [37] Y. Qin, D. Peng, X. Peng, X. Wang, and P. Hu, “Deep evidential learning with noisy correspondence for cross-modal retrieval,” in Proc. ACM Int. Conf. Multimedia , 2022, pp. 4948–4956. [38] H. Li, J. Song, L. Gao, X. Zhu, and H. Shen, “Prototype-based aleatoric uncertainty quantification for cross-modal retrieval,” Proc. Neural Inf. Process. Syst. (NeurIPS) , vol. 36, pp. 24 564–24 585, 2023. [39] A. v. d. Oord, Y. Li, and O. Vinyals, “Representation learning with contrastive predictive coding,” arXiv:1807.03748 , 2018. [40] J. Wang, L. Zhang, H. Lin, Q. Liu, G. Huang, Z. Li, Z. Liang, and X. Wu, “Neuroclip: Brain-inspired prompt tuning for eeg-to-image multimodal contrastive learning,” arXiv:2511.09250 , 2025. [41] M. Cherti, R. Beaumont, R. Wightman, M. Wortsman, G. Ilharco, C. Gordon, C. Schuhmann, L. Schmidt, and J. Jitsev, “Reproducible scal-ing laws for contrastive language-image learning,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2023, pp. 2818–2829. [42] A. T. Gifford, K. Dwivedi, G. Roig, and R. M. Cichy, “A large and rich eeg dataset for modeling human visual object recognition,” J. Vis. ,vol. 23, no. 9, pp. 4579–4579, 2023. [43] M. N. Hebart, O. Contier, L. Teichmann, A. H. Rockter, C. Y. Zheng, A. Kidder, A. Corriveau, M. Vaziri-Pashkam, and C. I. Baker, “Things-data, a multimodal collection of large-scale datasets for investigating object representations in human brain and behavior,” Elife , vol. 12, p. e82580, 2023. [44] S. A. Hillyard and L. Anllo-Vento, “Event-related brain potentials in the study of visual selective attention,” Proc. Nat. Acad. Sci. , vol. 95, no. 3, pp. 781–787, 1998. [45] C. Tallon-Baudry and O. Bertrand, “Oscillatory gamma activity in humans and its role in object representation,” Trends Cogn. Sci. , vol. 3, no. 4, pp. 151–162, 1999. [46] G. Michalareas, J. Vezoli, S. Van Pelt, J.-M. Schoffelen, H. Kennedy, and P. Fries, “Alpha-beta and gamma rhythms subserve feedback and feedforward influences among human visual cortical areas,” Neuron ,vol. 89, no. 2, pp. 384–397, 2016. IEEE TRANSACTIONS ON MULTIMEDIA, 2026 11 
+
+[47] R. M. Cichy and A. Oliva, “Am/eeg-fmri fusion primer: resolving human brain responses in space and time,” Neuron , vol. 107, no. 5, pp. 772–781, 2020.
