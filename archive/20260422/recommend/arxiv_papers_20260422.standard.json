@@ -1,0 +1,232 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-22T20:00:21.643239+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.18827v1",
+      "title": "OmniMouse: Scaling properties of multi-modal, multi-task Brain Models on 150B Neural Tokens",
+      "abstract": "Scaling data and artificial neural networks has transformed AI, driving breakthroughs in language and vision. Whether similar principles apply to modeling brain activity remains unclear. Here we leveraged a dataset of 3.1 million neurons from the visual cortex of 73 mice across 323 sessions, totaling more than 150 billion neural tokens recorded during natural movies, images and parametric stimuli, and behavior. We train multi-modal, multi-task models that support three regimes flexibly at test time: neural prediction, behavioral decoding, neural forecasting, or any combination of the three. OmniMouse achieves state-of-the-art performance, outperforming specialized baselines across nearly all evaluation regimes. We find that performance scales reliably with more data, but gains from increasing model size saturate. This inverts the standard AI scaling story: in language and computer vision, massive datasets make parameter scaling the primary driver of progress, whereas in brain modeling -- even in the mouse visual cortex, a relatively simple system -- models remain data-limited despite vast recordings. The observation of systematic scaling raises the possibility of phase transitions in neural modeling, where larger and richer datasets might unlock qualitatively new capabilities, paralleling the emergent properties seen in large language models. Code available at https://github.com/enigma-brain/omnimouse.",
+      "authors": [
+        "Konstantin F. Willeke",
+        "Polina Turishcheva",
+        "Alex Gilbert",
+        "Goirik Chakrabarty",
+        "Hasan A. Bedel",
+        "Paul G. Fahey",
+        "Yongrong Qiu",
+        "Marissa A. Weis",
+        "Michaela Vystrčilová",
+        "Taliah Muhammad",
+        "Lydia Ntanavara",
+        "Rachel E. Froebe",
+        "Kayla Ponder",
+        "Zheng Huan Tan",
+        "Emin Orhan",
+        "Erick Cobos",
+        "Sophia Sanborn",
+        "Katrin Franke",
+        "Fabian H. Sinz",
+        "Alexander S. Ecker",
+        "Andreas S. Tolias"
+      ],
+      "primary_category": "q-bio.NC",
+      "categories": [
+        "q-bio.NC",
+        "cs.AI"
+      ],
+      "published": "2026-04-20T20:46:46+00:00",
+      "link": "https://arxiv.org/pdf/2604.18827v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Large-scale foundation models for brain activity",
+      "llm_evidence_cn": "脑活动大规模基础模型",
+      "llm_evidence": "脑活动大规模基础模型",
+      "canonical_evidence": "脑活动大规模基础模型",
+      "llm_tldr_en": "Scales multi-modal brain models on 150B neural tokens for prediction and decoding tasks.",
+      "llm_tldr_cn": "在1500亿神经标记上扩展多模态脑模型，用于预测和解码任务。",
+      "llm_tldr": "在1500亿神经标记上扩展多模态脑模型，用于预测和解码任务。",
+      "llm_tags": [
+        "query:eeg-ai:composite"
+      ],
+      "matched_query_tag": "query:eeg-ai:composite",
+      "matched_query_text": "Papers central to 脑电大模型、扩散模型与AIGC相关论文检索, especially work that connects or combines: Large-scale foundation models for EEG signal processing; Diffusion probabilistic models applied to EEG data; AI generated content from brain activity and EEG; Reconstructing images from EEG using generative models; Self-supervised pre-training for EEG representation learning; Latent diffusion models for brain signal decoding; State of the art large foundation models for EEG decoding and generation; Applications of diffusion models in brain computer interface and AIGC; Cross modal generation from EEG signals using generative AI.",
+      "matched_requirement_id": "req-composite-eeg-ai",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.15694v1",
+      "title": "Neural Continuous-Time Markov Chain: Discrete Diffusion via Decoupled Jump Timing and Direction",
+      "abstract": "Discrete diffusion models based on continuous-time Markov chains (CTMCs) have shown strong performance on language and discrete data generation, yet existing approaches typically parameterize the reverse rate matrix as a single object -- via concrete scores, clean-data predictions ($x_0$-parameterization), or denoising distributions -- rather than aligning the parameterization with the intrinsic CTMC decomposition into jump timing and jump direction. Since a CTMC is fundamentally a Poisson process fully determined by these two quantities, decomposing along this structure is closer to first principles and naturally leads to our formulation. We propose \\textbf{Neural CTMC}, which separately parameterizes the reverse process through an \\emph{exit rate} (when to jump) and a \\emph{jump distribution} (where to jump) using two dedicated network heads. We show that the evidence lower bound (ELBO) differs from a path-space KL divergence between the true and learned reverse processes by a $θ$-independent constant, so that the training objective is fully governed by the exit rate and jump distribution we parameterize. Moreover, this KL factorizes into a Poisson KL for timing and a categorical KL for direction. We further show that the tractable conditional surrogate preserves the gradients and minimizers of the corresponding marginal reverse-process objective under standard regularity assumptions. Our theoretical framework also covers masked and GIDD-style noise schedules. Empirically, while the uniform forward process has been explored in prior work, our model, to our best of the knowledge, is the first pure-uniform method to outperform mask-based methods on the OpenWebText dataset.To facilitate reproducibility, we release our pretrained weights at https://huggingface.co/Jiangxy1117/Neural-CTMC.",
+      "authors": [
+        "Jingyuan Li",
+        "Xiaoyi Jiang",
+        "Fukang Wen",
+        "Wei Liu",
+        "Renqian Luo",
+        "Yi Zhu",
+        "Zuoqiang Shi",
+        "Pipi Hu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.PR"
+      ],
+      "published": "2026-04-17T04:40:19+00:00",
+      "link": "https://arxiv.org/pdf/2604.15694v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Discrete diffusion models via continuous-time Markov chains",
+      "llm_evidence_cn": "基于连续时间马尔可夫链的离散扩散模型",
+      "llm_evidence": "基于连续时间马尔可夫链的离散扩散模型",
+      "canonical_evidence": "基于连续时间马尔可夫链的离散扩散模型",
+      "llm_tldr_en": "Proposes Neural CTMC for discrete diffusion, potentially applicable to discrete brain signal representations.",
+      "llm_tldr_cn": "提出Neural CTMC用于离散扩散，可能适用于离散化的脑信号表示。",
+      "llm_tldr": "提出Neural CTMC用于离散扩散，可能适用于离散化的脑信号表示。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.19368v1",
+      "title": "Mind2Drive: Predicting Driver Intentions from EEG in Real-world On-Road Driving",
+      "abstract": "Predicting driver intention from neurophysiological signals offers a promising pathway for enhancing proactive safety in advanced driver assistance systems, yet remains challenging in real-world driving due to EEG signal non-stationarity and the complexity of cognitive-motor preparation. This study proposes and evaluates an EEG-based driver intention prediction framework using a synchronised multi-sensor platform integrated into a real electric vehicle. A real-world on-road dataset was collected across 32 driving sessions, and 12 deep learning architectures were evaluated under consistent experimental conditions. Among the evaluated architectures, TSCeption achieved the highest average accuracy (0.907) and Macro-F1 score (0.901). The proposed framework demonstrates strong temporal stability, maintaining robust decoding performance up to 1000 ms before manoeuvre execution with minimal degradation. Furthermore, additional analyses reveal that minimal EEG preprocessing outperforms artefact-handling pipelines, and prediction performance peaks within a 400-600 ms interval, corresponding to a critical neural preparatory phase preceding driving manoeuvres. Overall, these findings support the feasibility of early and stable EEG-based driver intention decoding under real-world on-road conditions. Code: https://github.com/galosaimi/Mind2Drive.",
+      "authors": [
+        "Ghadah Alosaimi",
+        "Hanadi Alhamdan",
+        "Wenke E",
+        "Stamos Katsigiannis",
+        "Amir Atapour-Abarghouei",
+        "Toby P. Breckon"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.HC",
+        "cs.LG",
+        "cs.RO"
+      ],
+      "published": "2026-04-21T11:50:53+00:00",
+      "link": "https://arxiv.org/pdf/2604.19368v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "EEG signal processing for driver intention prediction using deep learning",
+      "llm_evidence_cn": "使用深度学习进行脑电信号处理以预测驾驶员意图",
+      "llm_evidence": "使用深度学习进行脑电信号处理以预测驾驶员意图",
+      "canonical_evidence": "使用深度学习进行脑电信号处理以预测驾驶员意图",
+      "llm_tldr_en": "Evaluates 12 deep learning architectures for EEG-based driver intention prediction in real-world settings.",
+      "llm_tldr_cn": "在真实场景下评估了12种用于脑电驾驶意图预测的深度学习架构。",
+      "llm_tldr": "在真实场景下评估了12种用于脑电驾驶意图预测的深度学习架构。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.16558v1",
+      "title": "Cross-Modal Generation: From Commodity WiFi to High-Fidelity mmWave and RFID Sensing",
+      "abstract": "AIGC has shown remarkable success in CV and NLP, and has recently demonstrated promising potential in the wireless domain. However, significant data imbalance exists across RF modalities, with abundant WiFi data but scarce mmWave and RFID data due to high acquisition cost. This makes it difficult to train high-quality generative models for these data-scarce modalities. In this work, we propose RF-CMG, a diffusion-based cross-modal generative method that leverages data-rich WiFi signals to synthesize high-fidelity RF data for scarce modalities including mmWave and RFID. The key insight of RF-CMG is to decouple cross-modal generation into high-frequency guidance and low-frequency constraint, which respectively learn high-frequency distribution from limited target modality data and preserve the underlying physical structure via low-frequency constraints during generation. On this basis, we introduce a Modality-Guided Embedding (MGE) module to steer the reverse diffusion trajectory toward the target high-frequency distribution, and a Low-Frequency Modality Consistency (LFMC) module to progressively enforce low-frequency constraints to suppress the accumulation of source-modality structural biases during inference, enabling high-quality target-modality generation. Performance comparison with several prevalent generative models demonstrates that RF-CMG achieves superior performance in synthesizing RFID and mmWave signals. We further showcase the effectiveness of the data generated by RF-CMG in gesture recognition tasks, and analyze the impact of the proportion of synthetic data on downstream performance.",
+      "authors": [
+        "Zhixiong Yang",
+        "Long Jing",
+        "Yao Li",
+        "Shuli Cheng",
+        "Guoxuan Chi",
+        "Chenyu Wen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-17T08:39:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.16558v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "diffusion-based cross-modal generative method",
+      "llm_evidence_cn": "基于扩散的跨模态生成方法",
+      "llm_evidence": "基于扩散的跨模态生成方法",
+      "canonical_evidence": "基于扩散的跨模态生成方法",
+      "llm_tldr_en": "Proposes RF-CMG, a diffusion-based method for cross-modal RF signal generation.",
+      "llm_tldr_cn": "提出RF-CMG，一种基于扩散模型的跨模态射频信号生成方法。",
+      "llm_tldr": "提出RF-CMG，一种基于扩散模型的跨模态射频信号生成方法。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Cross modal generation from EEG signals using generative AI",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.17673v1",
+      "title": "Grokking of Diffusion Models: Case Study on Modular Addition",
+      "abstract": "Despite their empirical success, how diffusion models generalize remains poorly understood from a mechanistic perspective. We demonstrate that diffusion models trained with flow-matching objectives exhibit grokking--delayed generalization after overfitting--on modular addition, enabling controlled analysis of their internal computations. We study this phenomenon across two levels of data regime. In a single-image regime, mechanistic dissection reveals that the model implements modular addition by composing periodic representations of individual operands. In a diverse-image regime with high intraclass variability, we find that the model leverages its iterative sampling process to partition the task into an arithmetic computation phase followed by a visual denoising phase, separated by a critical timestep threshold. Our work provides the mechanistic decomposition of algorithmic learning in diffusion models, revealing how these models bridge continuous pixel-space generation and discrete symbolic reasoning.",
+      "authors": [
+        "Joon Hyeok Kim",
+        "Yong-Hyun Park",
+        "Mattis Dalsætra Østby",
+        "Jiatao Gu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-20T00:02:00+00:00",
+      "link": "https://arxiv.org/pdf/2604.17673v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Mechanistic study of diffusion models and iterative sampling",
+      "llm_evidence_cn": "扩散模型及其迭代采样过程的机制研究",
+      "llm_evidence": "扩散模型及其迭代采样过程的机制研究",
+      "canonical_evidence": "扩散模型及其迭代采样过程的机制研究",
+      "llm_tldr_en": "Analyzes how diffusion models generalize and perform internal computations during sampling.",
+      "llm_tldr_cn": "从机制角度分析了扩散模型如何通过迭代采样过程实现泛化和计算。",
+      "llm_tldr": "从机制角度分析了扩散模型如何通过迭代采样过程实现泛化和计算。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
