@@ -1,0 +1,93 @@
+{
+  "label": "2026-04-23",
+  "date": "2026-04-23",
+  "generated_at": "2026-04-23T20:28:38",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202604/23/2604.16554v1-pa-tcnet-pathology-aware-temporal-calibration-with-physiology-guided-target-refinement-for-cross-subject-motor-imagery-eeg-decoding-in-stroke-patients",
+      "section": "deep",
+      "title_en": "PA-TCNet: Pathology-Aware Temporal Calibration with Physiology-Guided Target Refinement for Cross-Subject Motor Imagery EEG Decoding in Stroke Patients",
+      "authors": "Xiangkai Wang, Yun Zhao, Dongyi He, Qingling Xia, Gen Li, Nizhuan Wang, Ningxiao Peng, Bin Jiang",
+      "date": "2026-04-17",
+      "pdf": "https://arxiv.org/pdf/2604.16554v1",
+      "score": "9.0",
+      "evidence": "使用Mamba架构进行运动想象脑电解码",
+      "tldr": "针对中风患者运动想象脑机接口中存在的病理慢波干扰和个体差异大等挑战，本文提出PA-TCNet框架。该框架通过PRSM模块分解脑电时空特征以捕捉异常时间动态，并利用PGTC模块结合生理一致性约束优化伪标签。实验证明该方法在跨受试者解码任务中显著优于现有模型，为个性化康复提供了更鲁棒的初始化方案。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Stroke patient cross-subject electroencephalography (EEG) decoding of motor imagery (MI) brain-computer interface (BCI) is essential for motor rehabilitation, yet lesion-related abnormal temporal dynamics and pronounced inter-patient heterogeneity often undermine generalization. Existing adaptation methods are easily misled by pathological slow-wave activity and unstable target-domain pseudo-labels. To address this challenge, we propose PA-TCNet, a pathology-aware temporal calibration framework with physiology-guided target refinement for stroke motor imagery decoding. PA-TCNet integrates two coordinated components. The Pathology-aware Rhythmic State Mamba (PRSM) module decomposes EEG spatiotemporal features into slowly varying rhythmic context and fast transient perturbations, injecting the fused pathological context into selective state propagation to more effectively capture abnormal temporal dynamics. The Physiology-Guided Target Calibration (PGTC) module constructs source-domain sensorimotor region-of-interest templates, imposing physiological consistency constraints and dynamically refining target-domain pseudo-labels, thereby improving adaptation reliability. Leave-one-subject-out experiments on two independent stroke EEG datasets, XW-Stroke and 2019-Stroke, yielded mean accuracies of 66.56\\% and 72.75\\%, respectively, outperforming state-of-the-art baselines. These results indicate that jointly modeling pathological temporal dynamics and physiology-constrained pseudo-supervision can provide more robust cross-subject initialization for personalized post-stroke MI-BCI rehabilitation. The implemented code is available at https://github.com/wxk1224/PA-TCNet.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.20448v1-forward--inverse-interplay-in-fem-based-eeg-source-imaging-distributional-signatures-of-advanced-source-models-and-inverse-solvers",
+      "section": "quick",
+      "title_en": "Forward--Inverse Interplay in FEM-Based EEG Source Imaging: Distributional Signatures of Advanced Source Models and Inverse Solvers",
+      "authors": "Santtu Söderholm, Joonas Lahtinen, Sampsa Pursiainen",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20448v1",
+      "score": "7.0",
+      "evidence": "脑电源成像与高级源模型",
+      "tldr": "本研究深入探讨了基于有限元法（FEM）的脑电图（EEG）源成像中前向模型与反向算法之间的相互作用。通过在真实头模型上测试多种先进源模型（如散度一致模型）与反向求解器（如sHAL1R、SKF），研究分析了重建活动的分布特征。结果揭示了源模型选择与反向方法成功率之间的强依赖性，强调了前向假设与反向先验匹配对提高定位精度的重要性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Electroencephalography (EEG) source imaging aims to infer brain activity from electrical potentials measured on the scalp. This is a difficult problem because many different source patterns can explain the same measurements. The result depends strongly on two things: the forward model and the inverse method. In this work, we study how these two parts work together. We focus not only on where the activity is located, but also on how the reconstructed activity is distributed in space. We suggest that different source models create different signatures in the reconstructed activity. We use realistic head models and compute forward solutions with the finite element method using Zeffiro Interface and DUNEuro. We test different source models, including 2 implementations of a divergence-conforming model, and one implementation of Local subtraction approach. For inverse methods, we use advanced methods such as standardized hierarchical adaptive L1 regression (sHAL1R), standardized Kalman filtering (SKF), and classical dipole scanning. To understand the complex interplay between the forward and inverse approaches, we analyze the inverse source localization results using distributional quantitative measures, including Earth Mover's Distance and depth bias scatter plot, and qualitatively assess the amplitude distribution and focality. The results show that there is a strong dependence between the choice of source model and the success rate of a given inverse method: a source model that corresponds well with a single point-like source is a good match with an inverse method that presupposes such a source.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.15180v1-adasplash-2-faster-differentiable-sparse-attention",
+      "section": "quick",
+      "title_en": "AdaSplash-2: Faster Differentiable Sparse Attention",
+      "authors": "Nuno Gonçalves, Hugo Pitorro, Vlad Niculae, Edoardo Ponti, Lei Li, Andre Martins, Marcos Treviso",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.15180v1",
+      "score": "6.0",
+      "evidence": "用于长上下文Transformer的高效稀疏注意力机制",
+      "tldr": "针对Transformer长文本训练的计算瓶颈，本文提出AdaSplash-2，一种高效的可微稀疏注意力机制。它通过创新的直方图初始化方法将α-entmax归一化因子的迭代次数降至1-2次，并结合稀疏感知的GPU算子优化。在稀疏度较高时，其训练速度可媲美或超越FlashAttention-2，且在长文本任务中表现优于传统Softmax。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Sparse attention has been proposed as a way to alleviate the quadratic cost of transformers, a central bottleneck in long-context training. A promising line of work is $α$-entmax attention, a differentiable sparse alternative to softmax that enables input-dependent sparsity yet has lagged behind softmax due to the computational overhead necessary to compute the normalizer $τ$. In this paper, we introduce AdaSplash-2, which addresses this limitation through a novel histogram-based initialization that reduces the number of iterations needed to compute $τ$ to typically 1--2. The key idea is to compute a coarse histogram of attention scores on the fly and store it in on-chip SRAM, yielding a more accurate initialization that enables fast forward and backward computation. Combined with a sparsity-aware GPU implementation that skips zero blocks with low overhead, AdaSplash-2 matches or improves per-step training time relative to FlashAttention-2 when block sparsity is moderate-to-high (e.g., $>$60\\%), which often occurs at long-context lengths. On downstream tasks, models trained with our efficient $α$-entmax attention match softmax baselines at short-context lengths and achieve substantial gains in long-context settings.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.17492v1-coevolving-representations-in-joint-image-feature-diffusion",
+      "section": "quick",
+      "title_en": "Coevolving Representations in Joint Image-Feature Diffusion",
+      "authors": "Theodoros Kouzelis, Spyros Gidaris, Nikos Komodakis",
+      "date": "2026-04-19",
+      "pdf": "https://arxiv.org/pdf/2604.17492v1",
+      "score": "6.0",
+      "evidence": "用于生成任务的图像-特征联合扩散",
+      "tldr": "针对联合图像-特征扩散模型中语义空间固定且独立于生成目标的问题，本文提出CoReDi框架。该方法通过在训练过程中让语义表示空间与扩散模型共同演化，利用轻量级线性投影、停止梯度、归一化及正则化技术防止特征坍缩。实验证明，这种自适应语义空间能更好地辅助图像合成，在VAE潜空间和像素空间扩散任务中均实现了更快的收敛速度和更高的生成质量。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Joint image-feature generative modeling has recently emerged as an effective strategy for improving diffusion training by coupling low-level VAE latents with high-level semantic features extracted from pre-trained visual encoders. However, existing approaches rely on a fixed representation space, constructed independently of the generative objective and kept unchanged during training. We argue that the representation space guiding diffusion should itself adapt to the generative task. To this end, we propose Coevolving Representation Diffusion (CoReDi), a framework in which the semantic representation space evolves during training by learning a lightweight linear projection jointly with the diffusion model. While naively optimizing this projection leads to degenerate solutions, we show that stable coevolution can be achieved through a combination of stop-gradient targets, normalization, and targeted regularization that prevents feature collapse. This formulation enables the semantic space to progressively specialize to the needs of image synthesis, improving its complementarity with image latents. We apply CoReDi to both VAE latent diffusion and pixel-space diffusion, demonstrating that adaptive semantic representations improve generative modeling across both settings. Experiments show that CoReDi achieves faster convergence and higher sample quality compared to joint diffusion models operating in fixed representation spaces.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.18255v1-wifo-misac-a-wireless-foundation-model-for-multimodal-sensing-and-communication-integration-via-synesthesia-of-machines-som",
+      "section": "quick",
+      "title_en": "WiFo-MiSAC: A Wireless Foundation Model for Multimodal Sensing and Communication Integration via Synesthesia of Machines (SoM)",
+      "authors": "Xuanyu Liu, Shijian Gao, Boxun Liu, Xiang Cheng, Liuqing Yang",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18255v1",
+      "score": "6.0",
+      "evidence": "针对信号的自监督预训练大模型",
+      "tldr": "WiFo-MiSAC是一个针对感知与通信集成（ISAC）的无线基础模型。针对现有方法泛化性差的问题，该模型通过“机器联觉”概念将异构信号统一Token化并进行自监督预训练。采用SS-DMoE架构解耦模态共享与特定特征，结合掩码重建与对比对齐，在波束预测和信道估计等任务中达到SOTA，展现了强大的少样本迁移能力和多模态扩展性。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Current learning-based wireless methods struggle with generalization due to the fragmented processing of communication and sensing data. WiFo-MiSAC addresses this as a task-agnostic foundation model that tokenizes heterogeneous signals into a unified space for self-supervised pre-training. A shared-specific disentangled mixture-of-experts (SS-DMoE) architecture is employed to decouple modality-shared and modality-specific representations, facilitating interaction without cross-modal interference. By combining masked reconstruction with contrastive alignment, the model achieves state-of-the-art performance across downstream tasks, including beam prediction and channel estimation. Experimental results demonstrate robust few-shot adaptation and seamless integration of new modalities, positioning WiFo-MiSAC as a scalable backbone for future integrated sensing and communication systems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.19675v1-medflowseg-flow-matching-for-medical-image-segmentation-with-frequency-aware-attention",
+      "section": "quick",
+      "title_en": "MedFlowSeg: Flow Matching for Medical Image Segmentation with Frequency-Aware Attention",
+      "authors": "Zhi Chen, Runze Hu, Le Zhang",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19675v1",
+      "score": "6.0",
+      "evidence": "流匹配作为医疗生成的扩散模型替代方案",
+      "tldr": "针对扩散模型在医学图像分割中采样效率低和计算开销大的问题，本文提出MedFlowSeg框架。该方法将分割任务建模为条件流匹配过程，通过学习时间相关的向量场实现单步确定性推理。核心创新包括双分支空间注意力机制和频域感知注意力模块，有效融合了多尺度结构信息与频域特征，在保持生成模型表达能力的同时显著提升了推理效率。",
+      "tags": "query:eeg-ai",
+      "abstract_en": "Flow matching has recently emerged as a principled framework for learning continuous-time transport maps, enabling efficient deterministic generation without relying on stochastic diffusion processes. While generative modeling has shown promise for medical image segmentation, particularly in capturing uncertainty and complex anatomical variability, existing approaches are predominantly built upon diffusion models, which incur substantial computational overhead due to iterative sampling and are often constrained by UNet-based parameterizations. In this work, we introduce MedFlowSeg, a conditional flow matching framework that formulates medical image segmentation as learning a time-dependent vector field that transports a simple prior distribution to the target segmentation distribution. This formulation enables one-step deterministic inference while preserving the expressiveness of generative modeling. We further develop a dual-conditioning mechanism to incorporate structured priors into the learned flow. Specifically, we propose a Dual-Branch Spatial Attention module that injects multi-scale structural information into the flow field, and a Frequency-Aware Attention module that models cross-domain interactions between spatial and spectral representations via discrepancy-aware fusion and time-dependent modulation. Together, these components provide an effective parameterization of conditional flows that capture both global anatomical structure and fine-grained boundary details. We provide extensive empirical validation across multiple medical imaging modalities, demonstrating that MedFlowSeg achieves state-of-the-art performance while significantly reducing computational cost compared to diffusion-based methods. Our results highlight the potential of flow matching as a theoretically grounded and computationally efficient alternative for generative medical image segmentation.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
