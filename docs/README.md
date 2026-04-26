@@ -6,40 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-23
-- 运行时间：2026-04-23 20:28:28 UTC
+- 最新运行日期：2026-04-26
+- 运行时间：2026-04-26 20:01:17 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：1
+- 本次总论文数：5
+- 精读区：0
 - 速读区：5
 
 ### 今日简报（AI）
-今日聚焦脑机接口临床应用，重点解析针对中风患者运动想象的高精度 EEG 解码新架构 PA-TCNet。
-该研究通过病理感知与生理引导突破跨被试解码瓶颈，同步涵盖稀疏注意力加速与扩散模型表征演化等算法前沿。
-推荐医疗 AI 开发者深入研读病理特征如何与时序校准结合，以提升复杂生理信号在临床场景下的建模鲁棒性。
-- 详情：[/202604/23/README](/202604/23/README)
+- 今日共生成 5 篇推荐（精读 0 篇，速读 5 篇）
+- 速读：《EEG-Based Emergency Braking Intensity Prediction Using Blind Source Separation》（7.0/10）, 《StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation》（6.0/10）, 《NI Sampling: Accelerating Discrete Diffusion Sampling by Token Order Optimization》（6.0/10）
+- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
+- 详情：[/202604/26/README](/202604/26/README)
 
 ### 精读区论文标签
-1. [PA-TCNet: Pathology-Aware Temporal Calibration with Physiology-Guided Target Refinement for Cross-Subject Motor Imagery EEG Decoding in Stroke Patients](/202604/23/2604.16554v1-pa-tcnet-pathology-aware-temporal-calibration-with-physiology-guided-target-refinement-for-cross-subject-motor-imagery-eeg-decoding-in-stroke-patients)  
-   标签：评分：9.0/10、query:eeg-ai
-   evidence：使用Mamba架构进行运动想象脑电解码
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Forward--Inverse Interplay in FEM-Based EEG Source Imaging: Distributional Signatures of Advanced Source Models and Inverse Solvers](/202604/23/2604.20448v1-forward--inverse-interplay-in-fem-based-eeg-source-imaging-distributional-signatures-of-advanced-source-models-and-inverse-solvers)  
+1. [EEG-Based Emergency Braking Intensity Prediction Using Blind Source Separation](/202604/26/2604.18220v1-eeg-based-emergency-braking-intensity-prediction-using-blind-source-separation)  
    标签：评分：7.0/10、query:eeg-ai
-   evidence：脑电源成像与高级源模型
-2. [AdaSplash-2: Faster Differentiable Sparse Attention](/202604/23/2604.15180v1-adasplash-2-faster-differentiable-sparse-attention)  
+   evidence：用于制动强度预测的脑电信号处理
+2. [StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation](/202604/26/2604.17381v1-strebm-a-structured-latent-energy-based-model-for-blind-source-separation)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：用于长上下文Transformer的高效稀疏注意力机制
-3. [Coevolving Representations in Joint Image-Feature Diffusion](/202604/23/2604.17492v1-coevolving-representations-in-joint-image-feature-diffusion)  
+   evidence：结构化潜变量表示学习与盲源分离
+3. [NI Sampling: Accelerating Discrete Diffusion Sampling by Token Order Optimization](/202604/26/2604.18471v1-ni-sampling-accelerating-discrete-diffusion-sampling-by-token-order-optimization)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：用于生成任务的图像-特征联合扩散
-4. [WiFo-MiSAC: A Wireless Foundation Model for Multimodal Sensing and Communication Integration via Synesthesia of Machines (SoM)](/202604/23/2604.18255v1-wifo-misac-a-wireless-foundation-model-for-multimodal-sensing-and-communication-integration-via-synesthesia-of-machines-som)  
+   evidence：加速离散扩散采样
+4. [EgoMotion: Hierarchical Reasoning and Diffusion for Egocentric Vision-Language Motion Generation](/202604/26/2604.19105v1-egomotion-hierarchical-reasoning-and-diffusion-for-egocentric-vision-language-motion-generation)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：针对信号的自监督预训练大模型
-5. [MedFlowSeg: Flow Matching for Medical Image Segmentation with Frequency-Aware Attention](/202604/23/2604.19675v1-medflowseg-flow-matching-for-medical-image-segmentation-with-frequency-aware-attention)  
+   evidence：用于动作生成的扩散模型
+5. [Emergence Transformer: Dynamical Temporal Attention Matters](/202604/26/2604.19816v1-emergence-transformer-dynamical-temporal-attention-matters)  
    标签：评分：6.0/10、query:eeg-ai
-   evidence：流匹配作为医疗生成的扩散模型替代方案
+   evidence：用于生物物理系统振荡相干性的Transformer架构
 
 
 <div class="dpr-home-promo-card">

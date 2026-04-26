@@ -1,0 +1,721 @@
+Title: EEG-Based Emergency Braking Intensity Prediction Using Blind Source Separation
+
+URL Source: https://arxiv.org/pdf/2604.18220v1
+
+Published Time: Tue, 21 Apr 2026 02:55:32 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+> 1
+
+# EEG-Based Emergency Braking Intensity Prediction Using Blind Source Separation 
+
+Zikun Zhou, Wenshuo Wang, Member, IEEE , Wenzhuo Liu, Graduate Student Member, IEEE , Hui Yao, Chaopeng Zhang, Student Member, IEEE , Yichen Liu, Xiaonan Yang, Junqiang Xi 
+
+Abstract —Electroencephalography (EEG) signals have been promising for long-term braking intensity prediction but are prone to various artifacts that limit their reliability. Here, we propose a novel framework that models EEG signals as mixtures of independent blind sources and identifies those strongly cor-related with braking action. Our method employs independent component analysis to decompose EEG into different components and combines time-frequency analysis with Pearson correlations to select braking-related components. Furthermore, we utilize hierarchical clustering to group braking-related components into two clusters, each characterized by a distinct spatial pattern. Additionally, these components exhibit trial-invariant temporal patterns and demonstrate stable and common neural signatures of the emergency braking process. Using power features from these components and historical braking data, we predict braking intensity at a 200 ms horizon. Evaluations on the open source dataset (O.D.) and human-in-the-loop simulation (H.S.) show that our method outperforms state-of-the-art approaches, achieving 
+
+RMSE reductions of 8.0% (O.D.) and 23 .8% (H.S.). 
+
+Index Terms —Braking intensity prediction, electroencephalog-raphy, independent component analysis. 
+
+I. I NTRODUCTION 
+
+# REAR-END crash is one of the most frequent types of traffic accidents [1], typically caused by abrupt decel-eration of a leading vehicle and the delayed reaction from the following driver [2]. To address this, Emergency Braking Assist (EBA) systems enhance braking force preemptively to avoid imminent collisions [3], [4]. Since early activation can improve safety, accurate prediction of the driver’s braking intention is critical for timely intervention. Electroencephalog-raphy (EEG) captures neurophysiological activity preceding voluntary actions [5], offering a promising approach to antici-pate braking intention [6] and enable earlier EBA deployment. Current EEG-based methods primarily treat braking prediction as a binary classification problem, predicting whether braking will occur within a short time window. These methods fall into two categories: (i) Traditional machine learning, such as reg-ularized linear discriminant analysis (RLDA) [6]–[9], which counters overfitting in high-dimensional EEG data; (ii) Deep learning, particularly convolutional neural networks (CNNs) [10]–[14], which tackle challenges like high dimensionality, 
+
+This work was supported by the National Natural Science Foundation of China (Grant No.:52572469, 52272411). The corresponding authors are 
+
+Wenshuo Wang and Junqiang Xi .All authors are with the School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China (email: zikun.zhou@bit.edu.cn; ws.wang@bit.edu.cn; wzliu@bit.edu.cn; hui.yao@bit.edu.cn; chaopeng666@gmail.com; yc.liu@bit.edu.cn; yangxn@bit.edu.cn; xijunqiang@bit.edu.cn.) Intention 
+
+> Generation
+> Start Hitting
+> the Pedal
+> Stop
+> the Car
+> Braking Intensity
+> Time
+> Driving Direction
+
+Fig. 1. Illustration of an emergency braking scenario unfolding over time. The time interval between intention and action enables EEG-based braking intensity prediction, contributing to the construction of an adaptive control strategy for EBA. 
+
+low signal-to-noise ratio, inter-subject variability, and diverse spectral information. Simplified CNNs have achieved over 
+
+84% accuracy with only four electrodes [11], while hybrid CNN-spiking neural networks have achieved 99 .06% accuracy, underscoring the superiority of deep learning in this field [12]. Despite these advances, existing methods fail to predict the braking intensity, a critical factor for safety-comfort trade-offs in EBA systems. Fig. 1 illustrates a typical emergency braking scenario, where the leading vehicle abruptly decel-erates, prompting the following driver to brake and avoid a collision. If the predicted braking is insufficient, the EBA system supplements force to prevent a collision; if adequate, it avoids intervention to preserve comfort. Current approaches fail to meet these demands. Kim et al. [15] used kernel ridge regression (KRR) with multiple EEG features (e.g., event-related potentials, readiness potentials, and event-related desynchronization) but reported high prediction errors due to two limitations: (i) KRR’s limited capacity to capture high-dimensional, nonlinear features, and (ii) contamination by artifacts (e.g., ocular, muscular), which degrades predic-tion performance [16], [17]. We address the first limita-tion by employing deep neural networks which effectively model complex, high-dimensional nonlinear relationships in EEG data. To overcome the second, we apply blind source separation (BSS), which recovers underlying sources from mixed EEG observations, to raw EEG data to isolate sources and suppress artifacts [18]. However, some isolated sources weakly correlate with braking action, degrading prediction performance. To overcome this, we develop a multi-stage framework to systematically identify and retain braking-related sources. First, independent component analysis (ICA), a well-
+
+> arXiv:2604.18220v1 [cs.HC] 20 Apr 2026 2
+
+established BSS method, decomposes raw EEG signals into multiple independent components (ICs). We then evaluate the time-frequency patterns and Pearson correlations of ICs with braking intensity to select braking-related ICs. These ICs and historical braking data are fed into a deep learning model. Hierarchical clustering and time-domain analysis re-veal distinct spatial topographies and temporal dynamics of braking-related ICs, suggesting stable and common neural substrates underlying braking behavior. Evaluations on open source dataset and human-in-the-loop simulation confirm our framework’s superiority over baselines. The contributions of this paper are twofold:  
+
+> •
+
+An EEG-based framework for emergency braking inten-sity prediction. By isolating braking-related sources, our method effectively mitigates the influence of artifacts in EEG signals.  
+
+> •
+
+Identification of two distinct spatial patterns and trial-invariant temporal dynamics in braking-related indepen-dent components, exhibiting stable and common neural substrates underlying emergency braking behavior. The remainder of this study is organized as follows. Section II introduces the framework of emergency braking intensity prediction. Section III describes the EEG datasets we utilized and corresponding feature extraction processes. Section IV analyzes the spatial and temporal characteristics of braking-related ICs. Section V reports the results of comparative and ablation experiments. The conclusion is shown in Section VI. II. T HE FRAMEWORK OF EMERGENCY BRAKING 
+
+INTENSITY PREDICTION 
+
+Our proposed framework of predicting emergency brak-ing intensity using EEG signals is shown in Fig. 2, which comprises four components: (i) Time–Frequency Analysis, which identifies EEG frequency bands associated with braking intention; (ii) EEG Decomposition via ICA, separating prepro-cessed EEG into ICs; (iii) ICs Selection, identifying braking-related ICs based on their correlations with braking action; and (iv) Prediction, integrating selected ICs and historical braking data to predict braking intensity. First, EEG and braking data are preprocessed for noise removal. The cleaned EEG signals undergo time-frequency analysis to identify frequency bands strongly linked to braking intention. Concurrently, ICA decomposes the EEG signals into ICs, revealing latent sources. Spectral power within the identified frequency band is com-puted as IC feature. We then use Pearson correlation analysis to evaluate the relationship between these features and braking intensity, retaining only ICs with significant correlations to ensure biological relevance and reduce dimensionality. Finally, spectral features from braking-related ICs and historical brak-ing intensity data are fed into a multilayer perceptron (MLP) model for prediction. 
+
+A. Time-Frequency Analysis 
+
+EEG signals exhibit oscillations across distinct frequency bands [19], whose amplitudes are quantified as spectral power, a feature linked to brain states and cognitive functions [20], [21]. This justifies its use for decoding braking intention.  
+
+> Fig. 2. The framework of our proposed method for emergency braking intensity prediction with EEG.
+
+Traditional power analysis based on Fourier Transform lacks sufficient temporal resolution [22]; therefore, we adopt time-frequency analysis to capture dynamic spectral power changes. In this paper, we apply Event-Related Spectral Perturbation (ERSP) to visualize spectral power variations during braking [23]. 
+
+B. EEG Decomposition via ICA 1) ICA: The neuronal electrical activity underlying EEG is primarily generated by postsynaptic potentials, whose prolonged duration allows summation across populations of aligned, similarly oriented pyramidal neurons [19]. The ac-tivity of such synchronously active local population can be modeled as an equivalent current dipole, corresponding to a distinct neural source. Its time-varying amplitude is termed 
+
+source waveform or source signal .Consider m neural sources in the brain, each characterized by a source waveform si = [ si, 1, . . . , s i,n ] ∈ Rn representing its activity over n time points. Assuming the number of sources equals the number of electrodes ( m), the EEG records at electrode i is xi = [ xi, 1, . . . , x i,n ]⊤ ∈ Rn. The EEG data matrix X is constructed as X = [ x1, . . . , xm]⊤ ∈ Rm×n, with each row corresponding to one electrode’s time series. Due to volume conduction, the EEG signal at electrode i is modeled as a linear mixture of source waveforms: 
+
+xi = ai1s⊤ 
+
+> 1
+
++ · · · + aij s⊤ 
+
+> j
+
++ · · · + aim s⊤ 
+
+> m
+
+(1) where aij ∈ R is the projection weight of the j-th source to the i-th electrode, determined by spatial geometry and tissue conductivity [24]. The EEG signals matrix X is decomposed as: 
+
+X =
+
+> m
+
+X
+
+> i=1
+
+aisi =
+
+
+
+a11 
+
+a21 
+
+...
+
+am1
+
+ s1 + · · · +
+
+
+
+a1m
+
+a2m
+
+...
+
+amm 
+
+ sm (2) where ai = [ a1i, . . . , a mi ]⊤ maps the i-th sources si to X.Each outer product aisi corresponds to an independent compo-nent. The IC’s scalp map, i.e., its spatial potential distribution, is determined by ai and scaled by si. For instance, at time j,the scalp map is aisi,j . Fig. 3 visualizes the time evolution of an IC’s scalp map, with red and blue indicating positive and negative potentials, respectively, and color intensity reflecting absolute strength. The scalp map exhibits a consistent spatial pattern across time, with amplitudes linearly scaled by si.3(a) FP1 AF3 F7 F5 F3 F1 Fz F2 F4 F6 F8 FT7 FC5FC3FC1FCzFC2FC4FC6 T7 C5 C3 C1 Cz C2 C4 C6 TP7 CP5 CP3 CP1 CPz CP2 CP4 CP6 P9 P7 P5 P3 P1Pz P2 P4 P6 P8 PO8 P10 PO7 PO3POzPO4 O1 Oz O2 FP2 AF4 FT8 T8 TP8 (b)      
+
+> !0:500:511:5
+> t[s]
+> !404
+> EEG [ 7V]
+> FCz Pz ...
+> Fig. 3. The illustrations of (a) electrode location with FCz and Pz highlighted in red and (b) an IC with its scalp map evolving over time.
+
+Electrode potentials (e.g., FCz, Pz) share the same temporal waveform si, scaled by ai’s entries. The source matrix S is recovered via linear combinations of X:
+
+S = WX =
+
+
+
+w1
+
+w2
+
+...
+
+wm
+
+ X =
+
+
+
+s1
+
+s2
+
+...
+
+sm
+
+ (3) where each row wi of W = A−1 acts a spatial filter extracting the i-th source waveform si = wiX.
+
+2) Model Development of ICA: ICA assumes that the source signals are statistically independent, meaning that the value of one signal neither influences nor predicts another. This independence can be quantified by the mutual information 
+
+I( s1, s 2) (take two sources as an example) [25], defined as: 
+
+I( s1, s 2) = H( s1) − H( s1|s2) (4) where H( s1) is the entropy of s1, and H( s1|s2) is the conditional entropy of s1 given s2.
+
+Mutual Information Minimization and Joint Entropy Maximization. To separate sources from mixed EEG signals, ICA minimizes the mutual information among the estimated sources. Alternatively, this problem can be formulated as maximizing their joint entropy [26]. Given two sources s1 and 
+
+s2, the joint entropy is: 
+
+H( s1, s 2) = H( s1) + H( s2) − I( s1, s 2) (5) In practice, the interferences of H( s1) and H( s2) to I( s1, s 2)
+
+are often negligible [26]. Therefore, minimizing mutual infor-mation is equivalent to maximizing H( s1, s 2).
+
+Entropy Formulation for Single Sources. For a single source waveform, let s, x denote scalar random variables representing the source and EEG amplitude at an arbitrary time point, respectively. The entropy H( s) is defined by its probability density function (PDF) fs(s):
+
+H( s) = −E [ln fs(s)] = −
+
+Z ∞−∞ 
+
+fs(s) ln fs(s) ds (6) where E[·] denotes expectation. If s is derived from x via a monotonic transformation, the PDF fs(s) is given by [27]: 
+
+fs(s) = fx(x)
+
+> ∂s ∂x
+
+, (7) Substituting Eq. (7) into Eq. (6) yields: 
+
+H( s) = E
+
+
+
+ln ∂s ∂x 
+
+
+
+− E [ln fx(x)] (8) In practice, a nonlinear invertible transformation is used in-stead of a linear one to capture higher-order moments of the PDF: 
+
+s = g(wx + b) (9) where w and b are the weight and bias parameters, respectively, and g is an invertible nonlinear function (e.g., hyperbolic tangent). To maximize H( s), the parameters w and b can be optimized using gradient-based methods. 
+
+Extension to Multiple Sources. Let s = [ s1, . . . , s m] ∈ Rm
+
+denote the vector of source amplitudes at an arbitrary time point. The multivariate PDF under an element-wise monotonic transformation s = g(Wx + b) is: 
+
+fs(s) = fx(x)
+
+|det( J)| (10) where |det( J)| is the absolute value of the determinant of the partial derivatives matrix J:
+
+J =
+
+ 
+
+> ∂s 1
+> ∂x 1
+
+. . . ∂s 1
+
+> ∂x m
+
+... ... 
+
+> ∂s m
+> ∂x 1
+
+. . . ∂s m
+
+> ∂x m
+
+ (11) The joint entropy H( s) is then given by: 
+
+H( s) = E [ln |det( J)|] − E [ln fx(x)] (12) The partial derivatives of H( s) with respect to W and b are computed via the chain rule, enabling optimization via gradient ascent. 
+
+C. ICs Selection 
+
+Preprocessed EEG signals were decomposed into ICs, each corresponding to a distinct physiological process. To iden-tify braking-related ICs, we evaluated their relationship with braking intensity using Pearson correlation coefficients. Fig. 4 shows the analysis procedure. First, for each IC, the power of its source signal within the time-frequency-identified band was computed as the IC feature (see Appendix A). Using a sliding 4 
+
+> Fig. 4. The procedure for calculating the Pearson correlation coefficient between a pair of IC feature sequence and braking sequence.
+
+window of length w (see Appendix B), the source signal was divided into epochs ranging from t−w to t. For each time point 
+
+t, the IC feature was paired with braking intensity sampled at 
+
+t + ∆ t, where ∆t ∈ { 200 , 300 , 400 } ms to account for neural delays. For each trial, the Pearson correlation coefficient was then computed between the IC feature sequence and the de-layed braking sequence. A coefficient exceeding 0.6 indicated a strong positive correlation within the trial. To quantify the overall association strength, we defined the metric: 
+
+ν = Nstrong 
+
+Ntotal 
+
+, (13) where Nstrong is the number of trials with strong positive correlations, and Ntotal is the total braking trials. High ν
+
+values reflect strong and consistent IC-braking relationships across trials. For each subject, we ranked the ICs in descending order based on their ν values to obtain an initial set of candidate braking-related ICs. However, these candidates often included artifacts such as ocular movements, electromyographic sig-nals, and electrode noise [28], which could impair subse-quent analysis. To address this, we used ICLabel for artifact rejection. ICLabel classifies ICs into seven categories: six artifacts (‘ocular’, ‘muscular’, ‘cardiac’, ‘line noise’, ‘channel noise’, and ‘other’) and neural components ‘brain’ [29]. We excluded ICs with highest-probability assigned to any of the five artifact categories (‘ocular’, ‘muscular’, ‘cardiac’, ‘line noise’, and ‘channel noise’), as they were definitively non-neural. ICs labeled as ‘other’ were retained despite potential artifacts, as they might still contain neural components. From the remaining ICs, we selected the top 5% with the highest ν
+
+values as braking-related ICs. 
+
+D. Prediction 
+
+We employed a Multi-layer Perceptron (MLP) due to its proven effectiveness in EEG-based motion trajectory predic- 
+
+> Fig. 5. The experimental setup for emergency braking.
+
+tion [30]. The network architecture comprises the following components:  
+
+> •
+
+Input layer: Braking-related IC power pic  
+
+> t
+
+and braking intensity yhis  
+
+> t
+
+, both sampled over historical time steps.  
+
+> •
+
+Hidden layers: Four fully connected layers with 30 , 20 ,
+
+10 , and 5 neurons.  
+
+> •
+
+Activation function: Parametric rectified linear unit (PReLU) [31], which generalizes ReLU by learning neg-ative slopes to alleviate the dying ReLU problem.  
+
+> •
+
+Output layer: Predicted braking intensity at time t + ∆ t:
+
+ypre  
+
+> t+∆ t
+
+= MLP( pic , yhis ) (14) where pic = [pic 1
+
+> t−(m−1) h:t
+
+, . . . , p ic r
+
+> t−(m−1) h:t
+
+], r is the number of braking-related ICs, h = 50 ms, m = 5 ,and yhis = yhis 
+
+> t−(m−1) h:t
+
+. The prediction horizon ∆t is selected from {200 , 300 , 400 } ms (see Section III-D). Here, we performed prediction with a step size of 50 ms. During training, we minimized the mean square error (MSE) loss using the Adam optimizer [32]. III. D ATA DESCRIPTION AND PROCESSING 
+
+This section describes the two datasets employed, including their experimental protocols and recording setups. Since their feature extraction processes are similar, we detail the proce-dure only for the open source dataset. 
+
+A. Data Description 1) Open Source Dataset (O.D.): The dataset comprises EEG signals from a driving simulation experiment by Haufe et al. [33]. Eighteen participants controlled a virtual vehi-cle through a steering wheel, accelerator, and brake pedal, maintaining a safe distance behind a computer-controlled lead vehicle. If the inter-vehicle gap decreased below 20 m, the lead vehicle abruptly decelerated with activated brake lights, prompting participants to execute emergency braking maneu-vers. Braking intensity signals were acquired at 67 Hz, and EEG signals were recorded at 1000 Hz via a 59 -channel cap. Both signals were resampled to 200 Hz for synchronization. 
+
+2) Human-in-the-Loop Simulation (H.S.): We conducted an emergency braking experiment with 14 participants ( 9 males and 5 females) for data collection, with a mean age of 23 .3
+
+years (SD = 1 .7). All participants provided written informed consent and were informed about their right to withdraw at any 5Event-Related Spectral Perturbation                  
+
+> 48
+> !400 !200 Braking Onset
+> 3/
+> !800 !600 0200 400 600 800
+> t[ms]
+> 912 15 18 21 25 29 35 44
+> Frequency [Hz]
+> Fig. 6. The illustration of grand-average ERSP across all participants during emergency braking. Spectral power is depicted using a color gradient, with blue indicating suppression and red indicating enhancement relative to baseline.
+
+time without consequence. As shown in Fig. 5, participants seated facing a LED display presenting driving simulation environment created with Prescan/Simulink. Their task was to control a ego vehicle closely following a computer-controlled red lead vehicle on a 35 -km straight road. When the headway distance dropped below 30 m, the lead vehicle randomly decelerated from 90 km/h to 40 km/h at 10 -15 s, accompanied by the brake light switching from green to red. Participants were instructed to brake emergently to avoid collisions. Brake pedal deflections were recorded at 20 Hz, and EEG signals were acquired at 256 Hz via a 32 -channel cap. Both signals were resampled to 200 Hz for synchronization. 
+
+B. Data Preprocessing 
+
+Following the established preprocessing protocols [34]– [37], we processed the raw EEG data as follows (parameters are detailed in Appendix B). First, a 45 Hz low-pass filter was applied to remove power line interference ( 50 Hz). Second, EEG data were segmented into epochs spanning ±1500 ms relative to brake pedal activation onset, capturing the short-duration braking events ( ∼ 3 s) while excluding long inter-trial intervals ( > 10 s). Third, each epoch was baseline-corrected by subtracting the mean signal amplitude during a pre-stimulus window to mitigate instrumental drift and motion artifacts. Finally, a common average reference was performed by subtracting the global mean across all channels at each time point to reduce noise induced by the reference electrode. 
+
+C. Time-Frequency Analysis 
+
+Fig. 6 shows the grand-average ERSP across all participants during emergency braking. The time window spans from −800 
+
+ms to 800 ms and is aligned to the braking onset (black dashed line at t = 0 ms). The frequency band ( 3-45 Hz) includes the θ (4-8 Hz), α (8-12 Hz), and β (12 -30 Hz) bands, partially covering the δ (0.5-4 Hz) and γ (30 -100 Hz) bands. Spectral power is depicted using a color gradient, with blue gaa gag gac sal bax ja bba ii gah gab ih gam gal saj ae dx gae bad                             
+
+> 0.05 0.1 0.15
+> 8
+> 200 ms 300 ms 400 ms
+> Fig. 7. Illustration of average correlation νacross all subjects with the prediction horizon of 200 ,300 ,400 ms, respectively. 895% = 0 :2242
+> 8
+> 00.1 0.2 0.3 0.4 0.5 0.6 0.7
+> 8
+> 00.1 0.2 0.3 0.4
+> Probability
+> 8<895%
+> 86895%
+> 86895%
+> 0.2 0.4 0.6 00.2
+> Fig. 8. Histogram of νvalues for all retained ICs, alongside the distribution of the top 5% (ν > ν 95 ).
+
+indicating suppression and red indicating enhancement relative to baseline. A pronounced power increase (red) in the δ-θ band emerges at 200 -400 ms before braking onset, followed by suppression (blue) post-onset. This temporal-spectral pattern suggests a functional link between low-frequency oscillations and braking intention, prompting our selection of δ and θ
+
+power as discriminative features for analysis. 
+
+D. Braking-Related IC selection 
+
+Fig. 7 shows the average correlation metric ν across all subjects for prediction horizons of 200 ms, 300 ms, 400 ms. The results reveal an inverse relationship between prediction horizon and correlation strength: the 200 ms horizon (blue curve) exhibiting the highest ν consistently across all subjects. Therefore, we selected 200 ms as the optimal prediction horizon for analysis. For the 200 ms horizon, we removed artifacts using ICLabel and showed the distribution of ν values for the remaining ICs in Fig. 8. The correlation metric ν ranges from 0 to 
+
+0.713 across all retained ICs, with the majority concentrated near 0.05 . ICs exceeding the 95 th percentile ( ν95 = 0 .2242 )were classified as braking-related. The ν values of these braking-related ICs (top 5% ) exhibited a relatively uniform distribution spanning 0.2242 to 0.713 , distinct from the sharp peak observed in the full IC set. IV. A NALYSIS FOR BRAKING -R ELATED IC S
+
+This section analyzes the spatial and temporal patterns of braking-related ICs extracted by our method. Hierarchical clustering of these ICs in O.D. reveals two dominant scalp map patterns across subjects. Moreover, in H.S., both average 60 2 4 6 8 10 12 14 
+
+Cluster counts       
+
+> 010 20 30 40
+> WSS value
+> elbow point
+> Fig. 9. The WSS values for different numbers of clusters.
+> Fig. 10. Illustration of two clusters, alongside their centroids. Scalp maps consistent with the centroids of cluster 1and 2are highlighted in light-gray and light-pink regions, respectively.
+
+and individual EEG waveforms exhibit temporally consistent patterns. These results indicate stable and common neural substrates for braking intention generation. 
+
+A. Analysis for Open Source Dataset 1) Hierarchical Clustering: Based on Section II, we iden-tified 23 braking-related ICs across all subjects (excluding 
+
+gae ), each exhibiting distinct scalp maps. To determine whether these ICs share similar spatial patterns, we performed hierarchical clustering with scalp maps as input. In EEGLAB, each IC’s scalp map was represented as a 
+
+67 × 67 matrix [38], where scalp regions contained potential values and non-scalp regions were assigned ‘NaN’. To address polarity inconsistencies, we inverted maps with opposite polar-ity relative to their actual scalp maps. After excluding ‘NaN’ values, each matrix was flattened into a 3409 -dimensional vector. Given its high dimensionality, we applied Principal Component Analysis (PCA) [39] and retained principal com-ponents explaining 95% of the cumulative variance. We employed the unweighted pair group method with arith-metic mean (UPGMA) [40]. The algorithm iteratively: com-pute a pairwise distance matrix, merge the two nearest clusters, and update the distance matrix using the UPGMA linkage criterion. We used cosine distance as the metric because it is scale-independent [41]. The UPGMA linkage criterion (b)                                    
+
+> t: ! 0:46s
+> t: ! 0:06s
+> t:0:5s 0
+> EEG [ 7V]
+> !0:7!0:5!0:3
+> !0:200:20:4Activation
+> !0:10
+> !1
+> !0:5Peak 0:40:50:6
+> !0:100:1Decay
+> !1:5!1!0:500:511:5
+> t[s] 40 30 20 12 841
+> Frequency [Hz]
+> (a)
+> t: ! 0:46s
+> t: ! 0:08s 0
+> EEG [ 7V]
+> !0:5!0:400:10:2Activation
+> !0:20
+> !1
+> !0:50Peak
+> !1:5!1!0:500:511:5
+> t[s] 40 30 20 12 841
+> Frequency [Hz]
+> Fig. 11. Illustration of grand-average potentials for cluster (a) IC-FPO and (b) IC-C with corresponding spectrograms.
+
+updates distances between merged and existing clusters via proportional averaging. For example, if clusters A, B with size 
+
+|A| , |B| are merged, the distance between A ∪ B and another cluster C is: 
+
+d(A∪B ),C = |A| · dA,C + |B| · dB,C
+
+|A| + |B| (15) where the updated distance d(A∪B ),C is derived by the propor-tional averaging of dA,C and dB,C .To determine the optimal number of clusters K, we applied the elbow method by computing the Within-Cluster Sum of Squares (WSS) for K ∈ [1 , 15] . As shown in Fig, 9, a noticeable inflection point occurs at 2, beyond which the marginal reduction in WSS becomes negligible, indicating that the data naturally partition into two clusters. 
+
+2) Interpretation of Hierarchical Clustering: Hierarchical clustering revealed two clusters with distinct spatial patterns (Fig. 10). Scalp maps showing consistency with the centroids of cluster 1 and 2 are highlighted in light-gray and light-pink regions, respectively. The pink-highlighted ICs demonstrated a stable configura-tion: negative potential in frontal regions coupled with positive 7
+
+potentials in parietal-occipital regions. We designated these ICs as IC-FPO (frontal–parietal–occipital). Their bipolar dis-tribution suggests two functional roles: (i) Parietal/occipital contributions, integrating visual and vestibular inputs for spatial navigation [42], [43], and (ii) frontal contributions, supporting executive functions such as attention, decision-making, and planning [44], [45]. Fig. 11(a) presents the grand-average potentials and spec-trogram of IC-FPO , including the activation, peak, and decay to baseline timings across all ICs. The red-shaded region rep-resents the inter-subject variability range of potentials across all ICs, while the black trace depicts the mean potential. A negative deflection begins around −460 ms (relative to braking onset, t = 0 ms), marking the activation of IC-FPO . At the individual-subject level: (i) Activation onsets occur between 
+
+−700 ms to −300 ms, (ii) Peak onsets occur predominantly between −100 ms and 0 ms, with occasional post-braking onset delays, and (iii) Decay to baseline onsets span from 
+
+340 ms to 670 ms, aligning with the grand-average baseline return ( ≈ 500 ms). The spectrogram shows prolonged δ-band (1-2 Hz) power enhancement ( −1000 ms to 1000 ms), with greater duration and higher power compared to the transient 
+
+θ-band (from −500 ms to 0 ms) response. The gray-highlighted background exhibited localized neg-ative potentials, distinct from surrounding regions. These ICs were classified as IC-C (Central). The central region corresponds to the primary motor cortex, suggesting involve-ment in lower-limb motor control (e.g., knee and ankle joint movements during braking) [46]. Fig. 11(b) shows IC-C ’s grand-average waveform with a negative deflection starting at −460 ms and temporally synchronized with IC-FPO . At the individual-subject level, activation occurs between −500 
+
+ms and −400 ms, indicating a similar initiation period. Additionally, IC-C peaks slightly earlier ( ≈ − 80 ms) and remains active until 1500 ms, markedly longer ( 1000 ms) than IC-FPO . Spectral analysis further distinguishes IC-C 
+
+from IC-FPO . IC-C shows similar δ- and θ-band power amplitudes, contrasting with the IC-FPO ’s δ-dominant profile. Moreover, IC-C ’s δ (1-4 Hz) and θ (4-8 Hz) activity spans broader frequency ranges than IC-FPO .
+
+B. Analysis for Human-in-the-Loop Simulation 
+
+In the H.S. dataset, braking-related ICs do not exhibit con-sistent scalp maps like IC-FPO or IC-C , likely attributable to the fewer electrodes in H.S. ( 32 versus 59 in O.D.) [47]. Notably, their temporal patterns remain consistent across trials. For instance, Fig. 12(a) shows the average and individual EEG waveforms of a braking-related IC from one female driver, along with its non-canonical scalp map. All trials are aligned and visualized as a color map, with potentials displayed in blue (negative) or red (positive). The average waveform shows a negative deflection starting at −100 ms, peaking at braking onset, and returning toward baseline by 200 ms. Most trials exhibit synchronized negative potentials around −100 ms, confirming the temporal reliability of this IC. Fig. 12(b) shows the average and individual EEG waveforms of the braking-related IC in one male driver, along with its (b)            
+
+> 10 20 30 40 Trials
+> !1!0:500:51
+> t[s]
+> !6
+> !4
+> !202
+> EEG [ 7V]
+> (a)
+> 10 20 30 Trials
+> !1!0:500:51
+> t[s]
+> !4
+> !202
+> EEG [ 7V]
+> Fig. 12. Illustration of the average and individual EEG waveforms of the braking-related IC in (a) the female and (b) the male driver, with their scalp maps.
+
+scalp map, which exhibits a spatial pattern similar to IC-C .The average waveform displays a negative deflection around 
+
+−500 ms. Most trials align temporally with the average wave-form, as evidenced by a consistent blue-shaded region near 
+
+−500 ms. These two braking-related ICs show a significant functional association with braking behavior. V. E XPERIMENTS 
+
+A. Comparative Experiments 
+
+We evaluated seven baselines for extracting features from the preprocessed 59 -electrode EEG signals. 
+
+1) Common Spatial Patterns (CSP): CSP algorithm is a well-established technique for extracting discriminative fea-tures in binary-class EEG classification tasks, such as motor imagery decoding [48]. CSP identifies spatial filters that max-imize the variance ratio between two classes (e.g., braking and non-braking). Despite its effectiveness, CSP operates on a fixed time window and assumes signals’ stationarity, limiting its ability to capture dynamic neurophysiological activity. Moreover, its reliance on a predefined frequency band may discard discriminative spectral information. To address these issues, Time-Frequency Common Spatial Pat-terns (TFCSP) algorithm [49] decomposes EEG signals into multiple overlapping sub-bands and applies CSP to each, thereby capturing spectral characteristics while reducing sen-sitivity to frequency misalignment. Further, the Common Temporal-Spectral-Spatial Patterns (CTSSP) algorithm [50] introduces multi-time-window modeling and joint temporal-spectral-spatial optimization to adaptively extract features re-flecting distinct neurophysiological activity, enhancing robust-ness to EEG non-stationarity. 8
+
+TABLE I THE PREDICTION PERFORMANCE OF DIFFERENT METHODS WITH THE INPUT OF BRAKING INTENSITY . O.D.: O PEN SOURCE DATASET , H.S.: HUMAN -IN -THE -LOOP SIMULATION . T HE BEST RESULTS ARE MARKED IN BOLD .w/ Brake ( RMSE × 10 −2 ↓, R2 ↑)Subject DMD EDMD PIDMD SUBDMD CSP TFCSP CTSSP Proposed 
+
+gaa 8.09, 0.74 8.32, 0.72 8.31, 0.72 8.16, 0.73 7.24, 0.79 7.85, 0.75 8.28, 0.72 5.80, 0.86 
+
+gag 6.78, 0.81 6.82, 0.81 6.90, 0.81 6.69, 0.82 5.96, 0.86 6.48, 0.83 7.00, 0.80 6.45, 0.83 
+
+gac 9.33, 0.73 9.46, 0.73 9.49, 0.72 9.62, 0.72 9.18, 0.74 8.63, 0.77 9.55, 0.72 7.47, 0.83 
+
+sal 7.16, 0.83 7.20, 0.83 7.19, 0.83 7.22, 0.83 7.10, 0.84 6.92, 0.84 7.19, 0.83 6.95, 0.84 
+
+bax 10.0, 0.82 10.0, 0.82 10.1, 0.82 10.1, 0.82 9.80, 0.83 9.94, 0.82 10.1, 0.82 8.37, 0.87 
+
+ja 9.68, 0.81 9.70,0.81 9.81, 0.81 9.79, 0.81 9.61, 0.82 9.67, 0.82 9.80, 0.81 8.18, 0.87 
+
+bba 4.69, 0.90 4.64, 0.91 4.72, 0.90 4.74, 0.90 4.69, 0.90 4.88, 0.90 4.76, 0.90 4.43, 0.91 
+
+ii 5.67, 0.72 5.68, 0.71 5.74, 0.71 5.70, 0.71 5.64, 0.72 5.60, 0.72 5.83, 0.70 4.66, 0.81 
+
+gah 7.43, 0.80 7.50, 0.80 7.53, 0.80 7.48, 0.80 7.53, 0.80 7.48, 0.80 7.61, 0.80 6.77, 0.84 
+
+gab 4.97, 0.84 4.96, 0.84 4.99, 0.84 4.94, 0.84 4.98, 0.84 4.76, 0.86 5.03, 0.84 4.72, 0.86 
+
+ih 10.7, 0.76 10.8, 0.76 10.9, 0.76 10.8, 0.76 10.7, 0.76 10.5, 0.77 10.9, 0.75 10.5, 0.77 
+
+gam 5.90, 0.84 5.91, 0.84 6.02, 0.83 5.95, 0.84 12.3,-0.39 5.87, 0.84 6.12, 0.83 5.65, 0.85 
+
+gal 6.83, 0.84 6.82, 0.84 6.91, 0.84 6.89, 0.84 6.84, 0.84 6.81, 0.84 6.92, 0.84 6.70, 0.85 
+
+saj 8.86, 0.75 8.83, 0.75 8.89, 0.75 8.85, 0.75 8.77, 0.75 8.51, 0.77 8.94, 0.74 8.18, 0.78 
+
+ae 9.13, 0.71 9.18, 0.71 9.20, 0.71 9.20, 0.71 9.18, 0.71 9.07, 0.71 9.52, 0.69 8.92, 0.72 
+
+dx 6.40, 0.81 6.58, 0.80 6.57, 0.81 6.56, 0.81 6.46, 0.81 6.30, 0.82 6.73, 0.80 6.42, 0.81 O. D. 
+
+bad 8.13, 0.78 8.18, 0.78 8.19, 0.78 8.29, 0.77 8.00, 0.79 8.02, 0.79 8.35, 0.77 6.89, 0.84 
+
+1 33.5, 0.72 53.9,-0.12 38.5, 0.43 36.7, 0.48 48.5, 0.41 44.1, 0.25 44.4, 0.24 29.4, 0.79 
+
+2 41.4,-0.01 24.3, 0.65 33.0, 0.36 37.8, 0.16 29.5, 0.49 35.7, 0.25 37.1, 0.19 24.0, 0.66 
+
+3 42.7, 0.51 30.7, 0.65 42.6, 0.32 38.1, 0.46 40.2, 0.56 34.0, 0.57 37.7, 0.46 22.9, 0.86 
+
+4 30.1, 0.43 23.0, 0.67 29.4, 0.47 29.0, 0.48 26.6, 0.55 29.6, 0.46 31.3, 0.39 20.8, 0.73 
+
+5 23.9, 0.80 22.9, 0.75 26.6, 0.67 28.9, 0.61 31.8, 0.64 35.3, 0.41 34.6, 0.44 21.0, 0.84 
+
+6 54.9,-1.79 37.3,-0.29 35.7,-0.17 33.4,-0.03 42.2,-0.65 39.8,-0.46 40.9,-0.55 32.2, 0.04 
+
+7 28.1, 0.55 27.9, 0.48 26.8, 0.52 25.8, 0.56 35.5, 0.29 31.4, 0.35 28.6, 0.46 19.8, 0.78 
+
+8 25.5, 0.69 29.2, 0.51 27.9, 0.55 27.7, 0.56 35.9, 0.39 32.7, 0.39 30.9, 0.46 21.9, 0.77 
+
+9 33.7, 0.31 30.4, 0.43 36.9, 0.16 35.1, 0.24 42.2,-0.09 34.5, 0.27 34.4, 0.27 24.5, 0.63 
+
+10 34.8, 0.49 29.4, 0.59 34.9, 0.43 39.7, 0.27 40.1, 0.32 41.9, 0.18 44.7, 0.06 29.4, 0.63 
+
+11 34.6, 0.24 24.9, 0.73 29.9, 0.31 29.7, 0.32 36.7, 0.14 32.4, 0.19 34.1, 0.11 20.2, 0.74 
+
+12 55.8,-0.14 55.1,-0.11 58.8,-0.27 56.2,-0.16 53.2,-0.04 46.0, 0.22 47.2, 0.18 21.2, 0.62 
+
+13 37.9, 0.59 37.3, 0.50 40.3, 0.42 33.8, 0.59 27.7, 0.78 47.9, 0.18 45.6, 0.25 35.0, 0.65 H. S. 14 37.6, 0.57 33.4, 0.60 38.4, 0.47 33.6, 0.60 45.4, 0.37 33.3, 0.60 45.4, 0.27 27.6, 0.77 
+
+We applied CSP and its variants to the EEG segments during braking versus non-braking conditions. The spatial filters corresponding to the top three eigenvalues were retained, consistent with standard CSP implementations [51]. The pre-diction model integrates these CSP inputs as follows: 
+
+ypre  
+
+> t+∆ t
+
+= MLP( pcsp , yhis ) (16) where pcsp = [ pcsp 1
+
+> t−(m−1) h:t
+
+, . . . , p csp 3
+
+> t−(m−1) h:t
+
+]. To ensure com-parability, we computed the pcsp of TFCSP and CTSSP as detailed in original works [49], [50]. Moreover, we calculated the power within identified band as the pcsp of CSP. 
+
+2) Dynamic Mode Decomposition (DMD): Since EEG sig-nals originate from high-dimensional dynamical systems [52], we employed DMD [53] to extract spatiotemporal dynamics by approximating the system as linear. DMD decomposes EEG signals into spatial modes and their associated tem-poral dynamics, thereby enabling a compact representation of oscillatory behavior. However, DMD suffers from three key limitations: (i) Its linearity assumption contradicts the nonlinear nature of EEG dynamics; (ii) its data-driven nature may violate physical laws; and (iii) its eigenvalue estimates are noise-sensitive. To mitigate these issues, we adopt three DMD extensions: (i) Extended Dynamic Mode Decomposition (EDMD) [54], which embeds state variables into a nonlinear feature space for linear approximation; (ii) Physics-informed DMD (PIDMD) [55], which enforces physical constraints (e.g., symmetry or causality) during optimization to improve interpretablility; and (iii) Subspace DMD (SUBDMD) [56], which reduces noise by projecting EEG data onto a lower-dimensional subspace. We benchmarked DMD and its three extensions (EDMD, PIDMD, and SUBDMD). To enhance temporal modeling, EEG signals were embedded into Hankel matrices before decomposition. The DMD spectrum [57], computed from the Koopman operator’s eigendecomposition, served as the feature for prediction: 
+
+ypre  
+
+> t+∆ t
+
+= MLP( pdmd , yhis ) (17) where pdmd = pdmd  
+
+> t−(m−1) h:t
+
+encodes the time-lagged DMD power spectrum. 90 0.05 0.1 0.15 0.2 RMSE                 
+
+> !0:200:20:40:60:8R2
+> 0.07 0.08 0.7 0.8 0.2 0.3 0.4 0.5 0.6 RMSE
+> !1:0
+> !0:8
+> !0:6
+> !0:4
+> !0:200:20:40:60:8DMD-B EDMD-B PIDMD-B SUBDMD-B CSP-B TFCSP-B CTSSP-B Proposed-B DMD EDMD PIDMD SUBDMD CSP TFCSP CTSSP Proposed
+> Fig. 13. The dataset-level prediction performance with (red) and without (gray) braking intensity as input in (left) O.D. and (right) H.S..
+
+B. Ablation Experiments 
+
+To evaluate the contributions of EEG features and historical braking intensity ( yhis ), we conducted three ablation studies:  
+
+> •
+
+Only yhis was used to assess its standalone predictive performance.  
+
+> •
+
+yhis was excluded to quantify the impact of EEG features extracted by our proposed method and baselines.  
+
+> •
+
+Braking-related ICs were replaced by EEG signals to evaluate the effectiveness of our IC selection strategy. Prediction performance is quantified using the RMSE and the coefficient of determination (i.e., R-Square, R2): 
+
+RMSE = 
+
+vuut 1
+
+N
+
+> N
+
+X
+
+> t=1
+
+(ytru  
+
+> t+∆ t
+
+− ypre 
+
+> t+∆ t
+
+)2, (18) 
+
+R2 = 1 −
+
+PNt=1 (ytru  
+
+> t+∆ t
+
+− ypre 
+
+> t+∆ t
+
+)
+
+PNt=1 (ytru  
+
+> t+∆ t
+
+− ¯ytru 
+
+> t+∆ t
+
+) (19) where N is the sample size, ytru 
+
+> t+∆ t
+
+, ypre  
+
+> t+∆ t
+
+are the ground truth and predicted braking intensity at time t + ∆ t, and ¯ytru  
+
+> t+∆ t
+
+is the mean of the true values. Smaller RMSE and higher R2
+
+indicate better performance. 
+
+C. Results 
+
+We evaluate the proposed method with comparative experi-ments and ablation studies on two datasets. Table I compares the subject-level performance of our method with baselines with braking intensity as input, where the best and our method’s results are highlighted in bold and red, respectively. Our method achieves the highest accuracy on 14 /17 subjects in O.D. and 13 /14 subjects in H.S., with RMSE reductions of up to 19 .9% and 53 .9% , respectively, demonstrating superior generalizability. Baseline methods show inconsistent perfor-mance. For instance, TFCSP performs best among baselines in O.D. (outperforming ours on two subjects) but only surpasses !0:4 !0:2 0 0:2 0:4 0:6 0:8 1
+
+Pearson correlation coe /cients                                       
+
+> 024
+> Normalized PDF
+> O.D. H.S.
+> Fig. 14. Histograms of Pearson correlation coefficients between power peaks and braking intensity peaks across all subjects in O.D. and H.S.. TABLE II RESULTS OF DATA ABLATION EXPERIMENTS FOR TWO DATASETS WITH THE BEST RESULT MARKED IN bold . T HE RMSE VALUES ARE
+> REPORTED IN UNITS OF 10 −2.Data O.D. H.S. Method Brake EEG ICs RMSE R 2RMSE R 2
+> "7.69 0.79 27.7 0.69 Contrast ""7.24 0.82 31.4 0.56 Ours ""6.89 0.83 25.0 0.74
+
+other baselines on 3 subjects in H.S. EDMD leads baselines in H.S. but underperforms in O.D. Fig. 13 compares the dataset-level prediction accuracy of our method with (red) and without (gray) braking intensity as input. 
+
+The proposed method outperforms baselines . Across both datasets, our method achieves the highest performance, with significantly improved RMSE and R2 values, regardless of whether braking intensity is included. When braking inten-sity is included, our method surpasses the best baselines by substantial margin: R2 increases by 3.6% (O.D.) and 57 .5% 
+
+(H.S.), while RMSE decreases by 8.0% (O.D.) and 23 .8% 
+
+(H.S.). Notably, even without braking intensity as input, our method maintains significant advantages. Compared to the best baselines, RMSE decreases by 13 .1% (O.D.) and 12 .6% 
+
+(H.S.), and R2 increases from 0.00 (O.D.) and −0.12 (H.S.) to 0.26 (O.D.) and 0.08 (H.S.). These results highlight the robustness of our approach regardless of input configuration. 
+
+Braking intensity enhances prediction accuracy . Omit-ting braking intensity yields significant performance degra-dation in both datasets. For instance, our method exhibits a 110 .3% increase in RMSE (O.D.) and a 84 .4% increase (H.S.), with R2 decreasing by 68 .5% (O.D.) and 87 .7% 
+
+(H.S.). Compared with our method, baselines show even larger declines. For instance, EDMD exhibits a 121 .6% rise in 
+
+RMSE (O.D.) and 60 .9% (H.S.), with R2 dropping below zero in both datasets. This degradation is further analyzed in Fig. 14, which examines the correlation between power peak values and braking intensity peak values using Pearson coefficients. Most subjects show weak correlations ( −0.4 to 
+
+0.6), with none exceeding 0.8 in either datasets. These results align with prior findings [58], confirming that power peaks alone cannot reliably predict braking intensity magnitude. While power data capture temporal trends, accurate prediction requires combining both features: power for trend timing and braking intensity for magnitude scaling. Table II presents the data ablation results on two datasets, 10 00:10:20:3Braking Intensity preparation rising sustaining attenuation IC Brake EEG             
+
+> t=!0:2st= 0 :1st= 0 :6s
+> !0:500:511:5
+> t[s]
+> 0100 200 300
+> Power  Power of IC Power of EEG
+> Fig. 15. Top: Actual and predicted braking intensity for subject gaa using the braking-related IC versus preprocessed EEG inputs, with error distributions of three moments. Bottom: Power trajectories of the braking-related IC and EEG.
+
+with the best performance in bold and our method’s results in red. The ‘EEG’ corresponds to the prediction using 59 -electrode EEG signals. We computed the correlation metric ν
+
+for each electrode and selected the top 5% electrodes based on ν values as inputs. Our proposed method significantly outperforms its counterparts by integrating braking-related ICs with braking data. These results demonstrate that our source selection strategy effectively captures neurophysiological ac-tivity related to braking. To explain the superior performance of our method, we compares the braking intensity prediction based on the braking-related IC (IC 37 ) and EEG data for subject gaa of O.D., along with their power trajectories (Fig. 15). Predictions from EEG data exhibit significant deviations from the ground truth. To analyze these deviations, we divide the braking process into four phases: preparation, rising, sustaining, and attenuation. During the preparation phase (no actual decel-eration), the EEG data incorrectly predicts non-zero values. Additionally, its prediction lags behind the ground truth in the rising phase and shows slight temporal misalignment in the attenuation phase. In contrast, predictions from the braking-related IC closely match the ground truth, overcoming these limitations. The error distributions (residuals between predicted and actual values) for the three braking phases are shown in Fig. 15. Pink and gray distributions represent errors from the braking-related IC and EEG data, respectively. Errors from the braking-related IC are tightly clustered near zero across all phases, demonstrating high accuracy, whereas EEG data yields errors with higher variance and bias. This performance gap arises because the power trajectory of braking-related IC exhibits temporal dynamics and high similarity to the ground-truth braking intensity. In contrast, the power trajectory of EEG displays greater variability and weaker behavioral correlation, likely due to contamination by artifacts and non-braking-related neural activity. VI. C ONCLUSION 
+
+This paper presented an electroencephalography (EEG)-based framework to predict emergency braking intensity. The method isolates braking-related independent components (ICs) through decoupling neural signatures from artifact inter-ference, demonstrating superior predictive performance over state-of-the-art algorithms in comparative experiments. Hier-archical clustering identifies two distinct scalp topographies among braking-related ICs, with ( IC-FPO and IC-C ) show-ing cross-subject consistency. IC-FPO exhibits a frontal-parietal-occipital dipole distribution (negative frontal and pos-itive parietal-occipital potentials), while IC-C displays promi-nent central negativity. Such topographical consistency implies common neural mechanisms for braking intention generation. In human-in-the-loop simulation, these ICs show trial-invariant temporal patterns, suggesting stable neural substrates underly-ing emergency braking behavior. Our findings highlight the feasibility of using EEG-derived ICs to decode braking inten-tions in human-machine systems, advancing neural interfaces in vehicular control. APPENDIX AThe power spectral density (PSD) quantifies the distribu-tion of signal power across frequency and underlies band power estimation. To compute the PSD, we employed Welch’s method [59], which involves four key steps: segmentation, windowing, periodogram computation, and averaging. The EEG signals were divided into overlapping segments. Then, a Hamming window was applied to each segment to reduce spectral leakage. The windowed segments were subsequently transformed into the frequency domain via the discrete Fourier transform, where the squared magnitude of the Fourier coeffi-cients gave the periodogram. Finally, these periodograms were averaged across segments to produce the final PSD estimation. Band power was calculated by integrating the PSD over the target frequency range. For discrete spectra, the integral was approximated by summing the PSD values within the band multiplied by the frequency bin width. APPENDIX BThe hyperparameters referenced in Section III-B were se-lected as follows. First, we analyzed the distribution of braking durations across all trials to determine the time interval. A 1.5-s interval covers 96 .9% of trials, indicating its adequacy for capturing dynamic characteristics. Thus, we selected a symmetric 3-s window ( ±1.5 s) centered at braking onset, with boundaries at t = −1.5 s (left) and t = 1 .5 s (right). Second, the window length w for δ-θ band power ( 0.5-8 Hz) was chosen to balance temporal and frequency resolution. For a signal sampled at frequency fs with N points, the window duration is T = N/f s. From Fourier transform principles, the frequency resolution ∆f is: 11 
+
+∆f = fs
+
+N = 1
+
+T (20) For instance, a 1000 -ms window yields ∆f = 1 Hz (high fre-quency resolution), and a 250 -ms window yields ∆f = 4 Hz (poorer frequency resolution but higher temporal resolution). To reconcile this trade-off, we select T = 500 ms, providing adequate resolution in both domains. Third, to resolve rapid transients in 0.5-8 Hz EEG signals, the step size must be shorter than half the period of the highest frequency, i.e., 8 Hz ( 62 .5 ms). Thus, we chose a step size of 
+
+50 ms to ensure precise temporal tracking while maintaining computational efficiency. REFERENCES [1] X. Wang, X. Zhang, F. Guo, Y.Gu, and X. Zhu, “Effect of daily car-following behaviors on urban roadway rear-end crashes and near-crashes : A naturalistic driving study,” Accident Anal. Prevention , vol. 164, Jan. 2022, Art. no. 106502. [2] F. Lyu, N. Cheng, H. Zhu, H. Zhou, W. Xu, M. Li, and X. Shen, “Towards rear-end collision avoidance : Adaptive beaconing for connected vehicles,” IEEE Trans. Intell. Transp. Syst. , vol. 22, no. 2, pp. 1248-–1263, Feb. 2021. [3] S. S. Gunjate and S. A. Khot, “A systematic review of emergency braking assistant system to avoid accidents using pulse width modulation and fuzzy logic control integrated with antilock braking,” Int. J. Automot. Mech. Eng. , vol. 20, no. 2, pp. 10457-–10479, Jul. 2023. [4] K. D. Kusano and H. C. Gabler, “Safety benefits of forward collision warning, brake assist, and autonomous braking systems in rear-end collisions,” IEEE Trans. Intell. Transp. Syst. , vol. 13, no. 4, pp. 1546-–1555, Dec. 2012. [5] K.-R. Müller, M. Tangermann, G. Dornhege, M. Krauledat, G. Cu-rio, and B. Blankertz, “Machine learning for real-time single-trial eeg analysis : from brain–computer interfacing to mental state monitoring,” J. Neurosci. Methods , vol. 167, no. 1, pp. 82-–90, Jan. 2008. [6] T. Teng, L. Bi, and Y. Liu, “Eeg-based detection of driver emergency brak-ing intention for brain-controlled vehicles,” IEEE Trans. Intell. Transp. Syst. , vol. 19, no. 6, pp. 1766-–1773, Jun. 2018. [7] J. Ju, A. G. Feleke, L. Luo, and X. Fan, “Recognition of drivers’ hard and soft braking intentions based on hybrid brain-computer interfaces,” 
+
+Cyborg Bionic Syst. , Jan. 2022. [8] H. Wang, L. Bi, and T. Teng, “Eeg-based emergency braking intention prediction for brain-controlled driving considering one electrode falling off,” in Proc. Annu. Int. Conf. IEEE Eng. Med. Biol. Soc. (EMBS) , Jul. 2017, pp. 2494-–2497. [9] I.-H. Kim, J.-W. Kim, S. Haufe, and S.-W. Lee, “Detection of braking intention in diverse situations during simulated driving based on eeg feature combination,” J. Neural Eng. , vol. 12, no. 1, p. 016001, Nov. 2014. [10] X. Liang, Y. Yu, Y. Liu, K. Liu, Y. Liu, and Z. Zhou, “Eeg-based emergency braking intention detection during simulated driving,” Biomed. Eng. Online , vol. 22, no. 1, p. 65, Jul. 2023. [11] H. J. Mora and E. J. Pino, “Simplified prediction method for detecting the emergency braking intention using eeg and a cnn trained with a 2d matrices tensor arrangement,” Int. J. Hum.-Comput. Interact. , vol. 39, no. 3, pp. 587-–600, Apr. 2023. [12] N. Lutes, V. S. S. Nadendla, and K. Krishnamurthy, “Convolutional spiking neural networks for intent detection based on anticipatory brain potentials using electroencephalogram,” Sci. Rep. , vol. 14, no. 1, p. 8850, Apr. 2024. [13] W. Liu et al., “MMTL-UniAD : A unified framework for multimodal and multi-task learning in assistive driving perception,” 2025, arXiv 
+
+: 2504.02264 .[14] W. Liu et al., “UV-M3TL : A unified and versatile multimodal multi-task learning framework for assistive driving perception,” 2026, arXiv 
+
+: 2602.01594 .[15] J.-W. Kim, I.-H. Kim, and S.-W. Lee, “Decision of braking intensity during simulated driving based on analysis of neural correlates,” in Proc. IEEE Int. Conf. Syst. Man Cybern. (SMC) , Apr. 2014, pp. 4129—4132. [16] F. Zhang, L. Dong, L. Zhang, X. Zhang, and X. Jiao, “Genera-tive AI-Enhanced Multi-Physiological Signal Analysis for Intelligent Transportation Safety : An Attention-Masked Transformer Approach,” 
+
+IEEE Trans. Intell. Transp. Syst. , early access, pp. 1–12, 2025, doi : 10.1109/TITS.2025.3554808. [17] P. Li, G. Qi, S. Zhao, and W. Guan, “Assessing the effects of artifacts and noise in eeg signals on car-following driving behavior prediction,” 
+
+Biomed. Signal Process. Control , vol. 100, p. 106922, Feb. 2025. [18] M. Wang, C. Ma, Z. Li, S. Zhang, and Y. Li, “Alertness Estimation Using Connection Parameters of the Brain Network,” IEEE Trans. Intell. Transp. Syst. , vol. 23, no. 12, pp. 25448–25457, Dec. 2022. [19] S. J. Luck, An introduction to the event-related potential technique . MIT press, 2014. [20] C. E. Stevens Jr and D. L. Zabelina, “Creativity comes in waves: an eeg-focused exploration of the creative brain,” Curr. Opin. Behav. Sci. ,vol. 27, pp. 154–162, Jun. 2019. [21] G. Ouyang, A. Hildebrandt, F. Schmitz, and C. S. Herrmann, “Decom-posing alpha and 1/f brain activities reveals their differential associations with cognitive processing speed,” NeuroImage , vol. 205, p. 116304, Jan. 2020. [22] S. Morales and M. E. Bowers, “Time-frequency analysis methods and their application in developmental eeg data,” Dev. Cognit. Neurosci. , vol. 54, p. 101067, Apr. 2022. [23] F. Vecchio, L. Nucci, C. Pappalettera, F. Miraglia, D. Iacoviello, and P. M. Rossini, “Time-frequency analysis of brain activity in response to directional and non-directional visual stimuli : an event related spectral perturbations (ersp) study,” J. Neural Eng. , vol. 19, no.6, p. 066004, Nov. 2022. [24] S. Makeig, J. Onton, et al., “Erp features and eeg dynamics : an ica perspective,” Oxford handbook of event-related potential components , pp. 51–86, 2011. [25] A. Kraskov, H. Stögbauer, and P. Grassberger, “Estimating mutual information,” Phys. Rev. E: Stat. Nonlinear Soft Matter Phys. , vol. 69, no.6, p. 066138, Jun. 2004. [26] A. J. Bell and T. J. Sejnowski, “An information-maximization approach to blind separation and blind deconvolution,” Neural Comput. , vol. 7, no.6, pp. 1129–1159, Nov. 1995. [27] A. Papoulis, Random variables and stochastic processes . New York, NY, USA : McGraw Hill, 1965. [28] A. Bhattacharyya, A. Verma, R. Ranta, and R. B. Pachori, “Ocular artifacts elimination from multivariate eeg signal using frequency-spatial filtering,” IEEE Trans. Cognit. Dev. Syst. , vol. 15, no.3, pp. 1547–1559, Sep. 2022. [29] L. Pion-Tonachini, K. Kreutz-Delgado, and S. Makeig, “Iclabel: An automated electroencephalographic independent component classifier, dataset, and website,” NeuroImage , vol. 198, pp. 181–197, Sep. 2019. [30] S. Pancholi, A. Giri, A. Jain, L. Kumar, and S. Roy, “Source aware deep learning framework for hand kinematic reconstruction using eeg signal,” 
+
+IEEE Trans. Cybern. , vol. 53, no. 7, pp. 4094–4106, Jul. 2023. [31] K. He, X. Zhang, S. Ren, and J. Sun, “Delving deep into rectifiers : Surpassing human-level performance on imagenet classifica-tion,” in Proc. IEEE Int. Conf. Comput. Vis. (ICCV) , Dec. 2015, pp. 1026—1034. [32] D. P. Kingma, “Adam : A method for stochastic optimization,” 2014, 
+
+arXiv : 1412.6980 .[33] S. Haufe, M. S. Treder, M. F. Gugler, M. Sagebaum, G. Curio, and B. Blankertz, “Eeg potentials predict upcoming emergency brakings during simulated driving,” J. Neural Eng. , vol. 8, no. 5, p. 056001, Jul. 2011. [34] D. Gao, X. Tao, X. Wu, B. Du, Y. Qin, and J. Lu, “Cross-scenario vigi-lance detection based on eeg analysis for safety driving in autonomous,” 
+
+IEEE Trans. Intell. Transp. Syst. , vol. 26, no. 8, pp. 11404–11419, Aug. 2025. [35] F. Hu, L. Zhang, X. Yang, and W. -A. Zhang, “EEG-based driver fatigue detection using spatio-temporal fusion network with brain region partitioning strategy,” IEEE Trans. Intell. Transp. Syst. , vol. 25, no. 8, pp. 9618–9630, Aug. 2024. [36] R. Palaniappan, S. Mouli, H. Bowman, and I. McLoughlin, “Investigat-ing the cognitive response of brake lights in initiating braking action using eeg,” IEEE Trans. Intell. Transp. Syst. , vol. 23, no. 8, pp. 13878–13883, Aug. 2022. [37] X. Lyu, M. Azeem Akbar, S. Manimurugan, and H. Jiang, “Driver Fatigue Warning Based on Medical Physiological Signal Monitoring for Transportation Cyber-Physical Systems,” IEEE Trans. Intell. Transp. Syst. , vol. 26, no. 9, pp. 14237–14249, Sep. 2025. [38] A. Delorme and S. Makeig, “Eeglab: an open source toolbox for analysis of single-trial eeg dynamics including independent component analysis,” 
+
+J. Neurosci. Methods , vol. 134, no. 1, pp. 9–21, Mar. 2004. 12 
+
+[39] F. L. Gewers, G. R. Ferreira, H. F. D. Arruda, F. N. Silva, C. H. Comin, D. R. Amancio, and L. d. F. Costa, “Principal component analysis : Anatural approach to data exploration,” ACM Comput. Surv. , vol. 54, no. 4, pp. 1–34, May 2021. [40] R. R. Sokal, et al. , “A statistical method for evaluating systematic relationships,” J. Neurosci. Methods , vol. 134, no. 1, pp. 9–21, Mar. 2004. [41] A. Li, C. Fan, F. Xiao, and Z. Chen, “Distance measures in building informatics : An in-depth assessment through typical tasks in building energy management,” Energy Build. , vol. 258, Mar. 2022, Art. no.111817. [42] O. Leon Nehmad, “The end in sight : A look at the occipital lobe,” Clin. Eye Vision Care , vol. 10, no. 3, pp. 125–133, Sep. 1998. [43] P. Thier, H.-O. Karnath, Parietal lobe contributions to orientation in 3D space . Heidelberg, Germany : Springer Verlag, 1997. [44] J. D. Schall, V. Stuphorn, and J. W. Brown, “Monitoring and control of action by the frontal lobes,” Neuron , vol. 36, no. 2, pp. 309–322, Oct. 2002. [45] P. Praamstra, L. Boutsen, and G. W. Humphreys, “Frontoparietal control of spatial attention and motor intention in human eeg,” J. Neurophysiol. ,vol. 94, no. 1, pp. 764–774, Jul. 2005. [46] E. Naito, “Sensing limb movements in the motor cortex: how humans sense limb movement,” The Neuroscientist , vol. 10, no. 1, pp. 73–82, Feb. 2004. [47] T. M. Lau, J. T. Gwin, and D. P. Ferris, “How many electrodes are really needed for EEG-based mobile brain imaging?” J. Behav. Brain Sci. , vol. 2, 2012, Art. no. 22107. [48] A. Jiang, J. Shang, X. Liu, Y. Tang, H. K. Kwan, and Y. Zhu, “Efficient csp algorithm with spatio-temporal filtering for motor imagery classification,” IEEE Trans. Neural Syst. Rehabil. Eng. , vol. 28, pp. 1006– 1016, Apr. 2020. [49] V. Mishuhina, and X. Jiang, “Complex common spatial patterns on time-frequency decomposed EEG for brain-computer interface,” Pattern Recognit. , vol. 115, p. 107918, Jul. 2021. [50] L. Pan, K. Wang, W. Yi, Y. Zhang, M. Xu, and D. Ming, “CTSSP :
+
+A Temporal-Spectral-Spatio Joint Optimization Algorithm for Motor Imagery EEG Decoding,” Authorea Preprints , Apr. 2025. [51] M. Mousavi, E. Lybrand, S. Feng, S. Tang, R. Saab, and Virginia R. de Sa, “Spectrally Adaptive Common Spatial Patterns,” 2022, arXiv :
+
+2202.04542 .[52] O. K. Cura and A. Akan, “Analysis of epileptic eeg signals by using dynamic mode decomposition and spectrum,” Biocybern. Biomed. Eng. ,vol. 41, no. 1, pp. 28–44, Jan. 2021. [53] J. N. Kutz, S. L. Brunton, B. W. Brunton, and J. L. Proctor, Dynamic mode decomposition: data-driven modeling of complex systems . Philadel-phia, PA, USA : SIAM, 2016. [54] M. O. Williams, I. G. Kevrekidis, and C. W. Rowley, “A data–driven approximation of the koopman operator: Extending dynamic mode de-composition,” J. Nonlinear Sci. , vol. 25, pp.1307–1346, Jun. 2015. [55] P. J. Baddoo, B. Herrmann, B. J. McKeon, J. Nathan Kutz, and S. L. Brunton, “Physics-informed dynamic mode decomposition,” Proc. Royal Soc. A , vol. 479, p. 20220576, Mar. 2023. [56] N. Takeishi, Y. Kawahara, and T. Yairi, “Subspace dynamic mode decomposition for stochastic Koopman analysis,” Phys. Rev. E , vol. 96, no. 3, p. 033310, Jun. 2017. [57] B. W.Brunton, L. A. Johnson, J. G. Ojemann, and J. N. Kutz, “Extracting spatial-temporal coherent patterns in large-scale neural recordings using dynamic mode decomposition,” J. Neurosci. Methods , vol. 258, pp. 1–15, Jan. 2016. [58] G. Vecchiato et al. , “Electroencephalographic time-frequency patterns of braking and acceleration movement preparation in car driving simulation,” 
+
+Brain Res. , vol. 1716, pp. 16–26, Aug. 2019. [59] P. Welch, “The use of fast fourier transform for the estimation of power spectra : A method based on time averaging over short, modified periodograms,” IEEE Trans. Audio Electroacoust. , vol. 15, no. 2, pp. 70– 73, Jun. 1967. 
+
+Zikun Zhou received B.S. degree in Vehicle Engi-neering from Beijing Institute of Technology, Bei-jing, China, in 2023, where he is currently working toward the Ph.D. degree in vehicle engineering. His research interests include brain–computer interface, human–vehicle interaction, and driving intention prediction. 
+
+Wenshuo Wang (SM’15-M’18) received his Ph.D. degree in mechanical engineering from the Beijing Institute of Technology (BIT) in 2018. Presently, he is a Full Professor at the School of Mechanical Engi-neering, BIT, Beijing, China. Prior to his role at BIT, he completed Postdoctoral fellowships at McGill University, Carnegie Mellon University (CMU), and UC Berkeley between 2018 and 2023. Furthermore, from 2015 to 2018, he served as a Research Assistant at UC Berkeley and the University of Michigan, Ann Arbor. His research interests focus on Bayesian nonparametric learning, human driver model, human–vehicle interaction, ADAS, and autonomous vehicles. 
+
+Wenzhuo Liu (Graduate Student Member, IEEE) 
+
+was born in Jinan, Shandong Province, China in 1999. He received his master’s degree in computer science and technology from China University of Mining and Technology (Beijing). He was a joint student at the State Key Laboratory of Intelligent Green Vehicles and Mobility, School of Vehicle and Mobility, Tsinghua University for three years. Cur-rently, he is a PhD candidate at the State Key Labo-ratory of Intelligent Unmanned Systems Technology, Beijing Institute of Technology (BIT), China. His research interests include multi-task learning, autonomous driving perception, multi-modal fusion, and driver intention recognition. 
+
+Hui Yao received the B.S. degree in mechanical engineering from Beijing Institute of Technology (BIT), Beijing, China, in 2018. She is currently working toward the Ph.D. degree in mechanical engineering from Beijing Institute of Technology (BIT), Beijing, China. Her research interests include driver intention detection, machine learning, brain-machine intelligence and human-intelligence vehicle collaboration. 
+
+Chaopeng Zhang received B.S. degree in Mechan-ical Engineering from Beijing Institute of Tech-nology, Beijing, China, in 2019, where he is cur-rently working toward the Ph.D. degree in me-chanical engineering. His research interests include human factors in intelligent vehicles, human driver model, driving style recognition, and driving inten-tion recognition. 13 
+
+Yichen Liu received B.S. degree in Vehicle Engi-neering from Beijing Institute of Technology, China, in 2024, where he is currently pursuing the Master’s degree in Vehicle engineering. His research interests include intelligent vehicles, human-vehicle interac-tion, and subjective-objective consistency evaluation. 
+
+Xiaonan Yang is an Associate Professor at Bei-jing Institute of Technology. Her research focus on human-centered AI (HCAI), emphasizes human cognitive and behavioral characteristics in human-in-the-loop systems, encompassing natural human-computer interaction, multimodal intention recogni-tion, cognitive load, visual cognitive mechanisms, and visual fatigue. 
+
+Junqiang Xi received the B.S. degree in automotive engineering from the Harbin Institute of Technol-ogy, Harbin, China, in 1995, and the Ph.D. degree in vehicle engineering from the Beijing Institute of Technology (BIT), Beijing, China, in 2001. In 2001, he joined the State Key Laboratory of Vehicle Transmission, BIT. During 2012–2013, he made research as an Advanced Research Scholar in Ve-hicle Dynamic and Control Laboratory, Ohio State University, Columbus, OH, USA. He is currently a Professor and Director of Automotive Research Center in BIT. His research interests include vehicle dynamic and control, powertrain control, mechanics, intelligent transportation system, and intelli-gent vehicles.

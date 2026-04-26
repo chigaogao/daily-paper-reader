@@ -1,0 +1,209 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-26T20:00:58.651166+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.18220v1",
+      "title": "EEG-Based Emergency Braking Intensity Prediction Using Blind Source Separation",
+      "abstract": "Electroencephalography (EEG) signals have been promising for long-term braking intensity prediction but are prone to various artifacts that limit their reliability. Here, we propose a novel framework that models EEG signals as mixtures of independent blind sources and identifies those strongly correlated with braking action. Our method employs independent component analysis to decompose EEG into different components and combines time-frequency analysis with Pearson correlations to select braking-related components. Furthermore, we utilize hierarchical clustering to group braking-related components into two clusters, each characterized by a distinct spatial pattern. Additionally, these components exhibit trial-invariant temporal patterns and demonstrate stable and common neural signatures of the emergency braking process. Using power features from these components and historical braking data, we predict braking intensity at a 200 ms horizon. Evaluations on the open source dataset (O.D.) and human-in-the-loop simulation (H.S.) show that our method outperforms state-of-the-art approaches, achieving RMSE reductions of 8.0% (O.D.) and 23.8% (H.S.).",
+      "authors": [
+        "Zikun Zhou",
+        "Wenshuo Wang",
+        "Wenzhuo Liu",
+        "Hui Yao",
+        "Chaopeng Zhang",
+        "Yichen Liu",
+        "Xiaonan Yang",
+        "Junqiang Xi"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC",
+        "cs.LG"
+      ],
+      "published": "2026-04-20T13:07:43+00:00",
+      "link": "https://arxiv.org/pdf/2604.18220v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "EEG signal processing for braking intensity prediction",
+      "llm_evidence_cn": "用于制动强度预测的脑电信号处理",
+      "llm_evidence": "用于制动强度预测的脑电信号处理",
+      "canonical_evidence": "用于制动强度预测的脑电信号处理",
+      "llm_tldr_en": "Develops an EEG-based framework using ICA and clustering to predict emergency braking intensity.",
+      "llm_tldr_cn": "开发了一个基于脑电图的框架，利用独立成分分析和聚类预测紧急制动强度。",
+      "llm_tldr": "开发了一个基于脑电图的框架，利用独立成分分析和聚类预测紧急制动强度。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.17381v1",
+      "title": "StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation",
+      "abstract": "This paper proposes StrEBM, a structured latent energy-based model for source-wise structured representation learning. The framework is motivated by a broader goal of promoting identifiable and decoupled latent organization by assigning different latent dimensions their own learnable structural biases, rather than constraining the entire latent representation with a single shared energy. In this sense, blind source separation is adopted here as a concrete and verifiable testbed, through which the evolution of latent dimensions toward distinct underlying components can be directly examined. In the proposed framework, latent trajectories are optimized directly together with an observation-generation map and source-wise structural parameters. Each latent dimension is associated with its own energy-based formulation, allowing different latent components to gradually evolve toward distinct source-like roles during training. In the present study, this source-wise energy design is instantiated using Gaussian-process-inspired energies with learnable length-scales, but the framework itself is not restricted to Gaussian processes and is intended as a more general structured latent EBM formulation. Experiments on synthetic multichannel signals under linear and nonlinear mixing settings show that the proposed model can recover source components effectively, providing an initial empirical validation of the framework. At the same time, the study reveals important optimization characteristics, including slow late-stage convergence and reduced stability under nonlinear observation mappings. These findings not only clarify the practical behavior of the current GP-based instantiation, but also establish a basis for future investigation of richer source-wise energy families and more robust nonlinear optimization strategies.",
+      "authors": [
+        "Yuan-Hao Wei"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-04-19T11:11:38+00:00",
+      "link": "https://arxiv.org/pdf/2604.17381v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "structured latent representation learning and blind source separation",
+      "llm_evidence_cn": "结构化潜变量表示学习与盲源分离",
+      "llm_evidence": "结构化潜变量表示学习与盲源分离",
+      "canonical_evidence": "结构化潜变量表示学习与盲源分离",
+      "llm_tldr_en": "A structured latent energy-based model for identifiable and decoupled representation learning.",
+      "llm_tldr_cn": "一种基于能量的结构化潜变量模型，用于可解释且解耦的表示学习。",
+      "llm_tldr": "一种基于能量的结构化潜变量模型，用于可解释且解耦的表示学习。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Self-supervised pre-training for EEG representation learning",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.18471v1",
+      "title": "NI Sampling: Accelerating Discrete Diffusion Sampling by Token Order Optimization",
+      "abstract": "Discrete diffusion language models (dLLMs) have recently emerged as a promising alternative to traditional autoregressive approaches, offering the flexibility to generate tokens in arbitrary orders and the potential of parallel decoding. However, existing heuristic sampling strategies remain inefficient: they choose only a small part of tokens to sample at each step, leaving substantial room for improvement. In this work, we study the problem of token sampling order optimization and demonstrate its significant potential for acceleration. Specifically, we find that fully leveraging correct predictions at each step can reduce the number of sampling iterations by an order of magnitude without compromising accuracy. Based on this, we propose Neural Indicator Sampling (NI Sampling), a general sampling order optimization framework that utilize a neural indicator to decide which tokens should be sampled at each step. We further propose a novel trajectory-preserving objective to train the indicator. Experiments on LLaDA and Dream models across multiple benchmarks show that our method achieves up to 14.3$\\times$ acceleration over full-step sampling with negligible performance drop, and consistently outperforms confidence threshold sampling in the accuracy-step trade-off. Code is available at https://github.com/imagination-research/NI-Sampling.",
+      "authors": [
+        "Enshu Liu",
+        "Xuefei Ning",
+        "Yu Wang",
+        "Zinan Lin"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-20T16:22:59+00:00",
+      "link": "https://arxiv.org/pdf/2604.18471v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Accelerating discrete diffusion sampling",
+      "llm_evidence_cn": "加速离散扩散采样",
+      "llm_evidence": "加速离散扩散采样",
+      "canonical_evidence": "加速离散扩散采样",
+      "llm_tldr_en": "Optimizes token sampling order to significantly accelerate discrete diffusion language models.",
+      "llm_tldr_cn": "通过优化 Token 采样顺序显著加速离散扩散语言模型的生成过程。",
+      "llm_tldr": "通过优化 Token 采样顺序显著加速离散扩散语言模型的生成过程。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Diffusion probabilistic models applied to EEG data",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.19105v1",
+      "title": "EgoMotion: Hierarchical Reasoning and Diffusion for Egocentric Vision-Language Motion Generation",
+      "abstract": "Faithfully modeling human behavior in dynamic environments is a foundational challenge for embodied intelligence. While conditional motion synthesis has achieved significant advances, egocentric motion generation remains largely underexplored due to the inherent complexity of first-person perception. In this work, we investigate Egocentric Vision-Language (Ego-VL) motion generation. This task requires synthesizing 3D human motion conditioned jointly on first-person visual observations and natural language instructions. We identify a critical \\textit{reasoning-generation entanglement} challenge: the simultaneous optimization of semantic reasoning and kinematic modeling introduces gradient conflicts. These conflicts systematically degrade the fidelity of multimodal grounding and motion quality. To address this challenge, we propose a hierarchical generative framework \\textbf{EgoMotion}. Inspired by the biological decoupling of cognitive reasoning and motor control, EgoMotion operates in two stages. In the Cognitive Reasoning stage, A vision-language model (VLM) projects multimodal inputs into a structured space of discrete motion primitives. This forces the VLM to acquire goal-consistent representations, effectively bridging the semantic gap between high-level perceptual understanding and low-level action execution. In the Motion Generation stage, these learned representations serve as expressive conditioning signals for a diffusion-based motion generator. By performing iterative denoising within a continuous latent space, the generator synthesizes physically plausible and temporally coherent trajectories. Extensive evaluations demonstrate that EgoMotion achieves state-of-the-art performance, and produces motion sequences that are both semantically grounded and kinematically superior to existing approaches.",
+      "authors": [
+        "Ruibing Hou",
+        "Mingyue Zhou",
+        "Yuwei Gui",
+        "Mingshuang Luo",
+        "Bingpeng Ma",
+        "Hong Chang",
+        "Shiguang Shan",
+        "Xilin Chen"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-21T05:31:06+00:00",
+      "link": "https://arxiv.org/pdf/2604.19105v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Diffusion models for motion generation",
+      "llm_evidence_cn": "用于动作生成的扩散模型",
+      "llm_evidence": "用于动作生成的扩散模型",
+      "canonical_evidence": "用于动作生成的扩散模型",
+      "llm_tldr_en": "Uses diffusion models for egocentric vision-language motion generation to handle complex reasoning.",
+      "llm_tldr_cn": "利用扩散模型进行第一人称视角的视觉语言动作生成，解决复杂推理挑战。",
+      "llm_tldr": "利用扩散模型进行第一人称视角的视觉语言动作生成，解决复杂推理挑战。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Applications of diffusion models in brain computer interface and AIGC",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.19816v1",
+      "title": "Emergence Transformer: Dynamical Temporal Attention Matters",
+      "abstract": "The Transformer, a breakthrough architecture in artificial intelligence, owes its success to the attention mechanism, which utilizes long-range interactions in sequential data, enabling the emergent coherence between large language models (LLMs) and data distributions. However, temporal attention, that is, different forms of long-range interactions in temporal sequences, has rarely been explored in emergence phenomenon of complex systems including oscillatory coherence in quantum, biophysical, or climate systems. Here, by designing dynamical temporal attention (DTA) with time-varying query, key, and value matrices, we propose an Emergence Transformer. This architecture allows each component to interact with its own or its neighbors' past states through dynamical attention kernels, thereby enabling the promotion and/or suppression of the emergent coherence of components. Interestingly, we uncover that neighbor-DTA consistently promotes oscillatory coherence, whereas self-DTA exhibits an optimal attention weight for coherence enhancement, owing to its non-monotonic dependence on network structure. Practically, we demonstrate how DTA reshapes social coherence, suggesting strategies to either enhance agreement or preserve plurality. We further apply DTA to the paradigmatic Hopfield neural network, achieving emergent continual learning without catastrophic forgetting. Together, these results lay a foundation and provide an immediate paradigm for modulating emergence phenomenon in networked dynamics only using DTA.",
+      "authors": [
+        "Zihan Zhou",
+        "Bo-Wei Qin",
+        "Kai Du",
+        "Wei Lin"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-04-18T01:10:44+00:00",
+      "link": "https://arxiv.org/pdf/2604.19816v1",
+      "tags": [
+        "keyword:EEG AI",
+        "query:EEG AI"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Transformer architecture for oscillatory coherence in biophysical systems",
+      "llm_evidence_cn": "用于生物物理系统振荡相干性的Transformer架构",
+      "llm_evidence": "用于生物物理系统振荡相干性的Transformer架构",
+      "canonical_evidence": "用于生物物理系统振荡相干性的Transformer架构",
+      "llm_tldr_en": "Proposes Emergence Transformer with dynamical temporal attention for complex systems like biophysical signals.",
+      "llm_tldr_cn": "提出具有动态时间注意力的Emergence Transformer，用于生物物理等复杂系统的建模。",
+      "llm_tldr": "提出具有动态时间注意力的Emergence Transformer，用于生物物理等复杂系统的建模。",
+      "llm_tags": [
+        "query:eeg-ai"
+      ],
+      "matched_query_tag": "query:eeg-ai",
+      "matched_query_text": "Large-scale foundation models for EEG signal processing",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

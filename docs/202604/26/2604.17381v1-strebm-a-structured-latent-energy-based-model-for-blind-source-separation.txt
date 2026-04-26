@@ -1,0 +1,427 @@
+Title: StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation
+
+URL Source: https://arxiv.org/pdf/2604.17381v1
+
+Published Time: Tue, 21 Apr 2026 01:17:11 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation 
+
+Yuan-Hao Wei 
+
+Yuan-Hao.Wei@outlook.com; yuan-hao.wei@connect.polyu.hk; yuanhao.wei1993@gmail.com 
+
+# Abstract 
+
+This paper proposes StrEBM, a structured latent energy-based model for source-wise structured represen-tation learning. The framework is motivated by a broader goal of promoting identifiable and decoupled latent organization by assigning different latent dimensions their own learnable structural biases, rather than constraining the entire latent representation with a single shared energy. In this sense, blind source separation is adopted here as a concrete and verifiable testbed, through which the evolution of latent dimensions toward distinct underlying components can be directly examined. In the proposed framework, latent trajectories are optimized directly together with an observation-generation map and source-wise structural parameters. Each latent dimension is associated with its own energy-based formulation, allowing different latent components to gradually evolve toward distinct source-like roles during training. In the present study, this source-wise energy design is instantiated using Gaussian-process-inspired energies with learnable length-scales, but the framework itself is not restricted to Gaussian processes and is intended as a more general structured latent EBM formulation. Experiments on synthetic multichannel signals under linear and nonlinear mixing settings show that the proposed model can recover source components effectively, providing an initial empirical validation of the framework. At the same time, the study reveals important optimization characteristics, including slow late-stage convergence and reduced stability under nonlinear observation mappings. These findings not only clarify the practical behavior of the current GP-based instantiation, but also establish a basis for future investigation of richer source-wise energy families and more robust nonlinear optimization strategies. 
+
+Keywords: Blind source separation (BSS); energy-based model (EBM); structured latent representation; identifiable disentanglement; Gaussian process (GP); source-wise learning 
+
+# 1 Introduction 
+
+Blind source separation (BSS) is concerned with re-covering latent source components from observed mixtures without direct access to the underlying sources. As a classical problem in signal processing and statistical learning, it has long been studied through the framework of independent component analysis (ICA), where separation is achieved by ex-ploiting statistical independence or non-Gaussianity among latent factors (Jutten and H´ erault (1991); Comon (1994); Bell and Sejnowski (1995); Hyv¨ arinen and Oja (2000)). In the linear case, this viewpoint has led to a rich body of theory and highly influential algorithms. However, once the observation process becomes nonlinear, or once one moves beyond purely iid assumptions toward temporally or structurally organized latent factors, the problem becomes sub-stantially more difficult. In such settings, the chal-lenge is no longer merely to reconstruct observations, but to induce latent variables that evolve toward distinct, interpretable, and potentially identifiable roles. This broader perspective connects BSS to a wider line of work on disentangled and structured latent representation learning. A central ambition 
+
+> arXiv:2604.17381v1 [stat.ML] 19 Apr 2026
+
+StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation 
+
+in that literature is to recover latent factors that correspond, at least approximately, to distinct ex-planatory causes of the data. Yet it is now well understood that unsupervised disentanglement can-not generally be expected to emerge without suit-able inductive biases or auxiliary information (Lo-catello et al. (2019)). This observation is especially relevant for source separation and nonlinear ICA, where identifiability is a fundamental issue. Recent progress on nonlinear ICA has shown that identi-fiability can be recovered by exploiting additional structure, such as temporal nonstationarity, auxil-iary variables, or other side information (Hyv¨ arinen and Morioka (2016); Hyv¨ arinen et al. (2019); Khe-makhem et al. (2020)). These results suggest an important principle: latent factors become more re-coverable when different dimensions are subjected to sufficiently informative and non-exchangeable struc-tural biases. In parallel, deep latent-variable models have pro-vided flexible mechanisms for learning nonlinear gen-erative mappings from latent representations to ob-servations. Variational autoencoders (VAEs) made such models practical by combining amortized infer-ence with stochastic gradient optimization (Kingma and Welling (2014)). A large subsequent literature has sought to modify the latent objective so as to encourage factorization or disentanglement, for ex-ample through weighted KL regularization or total-correlation penalties (Higgins et al. (2017); Chen et al. (2018)). While these methods often improve axis-wise factorization, they typically still rely on relatively simple latent priors and are not, by them-selves, sufficient to guarantee identifiability in the absence of stronger inductive assumptions (Locatello et al. (2019)). More importantly for the present pa-per, many of these approaches regularize the latent representation in a largely shared or global manner, rather than explicitly endowing each latent dimen-sion with its own learnable structural identity. To address this limitation, another line of re-search has incorporated explicit probabilistic struc-ture into latent-variable models. Structured vari-ational autoencoders and related models combine neural observation mappings with graphical-model or state-space structure in the latent variables, thereby introducing temporal dependence, dynamical con-straints, or other forms of latent organization (John-son et al. (2016); Karl et al. (2017); Zhao and Lin-derman (2023)). Gaussian-process-based latent mod-eling provides a particularly clear example of this idea. By replacing the standard iid latent prior with GP-induced covariance structure, models such as GPPVAE and GP-VAE demonstrate that structured temporal dependence can improve representation quality, interpretability, and downstream inference for sequential or correlated data (Casale et al. (2018); Fortuin et al. (2020)). These developments rein-force the broader message that latent structure is not merely a regularization detail, but can play a decisive role in shaping what the model is able to recover. At the same time, energy-based models (EBMs) provide a complementary and highly flexible frame-work for latent modeling. Instead of requiring a normalized probability model with a fixed tractable prior, EBMs associate low energies with preferred configurations and higher energies with less plausible ones (LeCun et al. (2006)). This flexibility makes them attractive for representing rich dependencies and structured constraints, but it also brings train-ing and optimization challenges, especially in deep settings (Yu et al. (2020)). Despite the generality of the EBM viewpoint, comparatively less attention has been devoted to using source-wise or dimension-wise energy design as the main mechanism for organizing latent factors into distinct roles. In particular, the idea that each latent dimension should possess its own learnable energy geometry, so that the latent coordinates may progressively differentiate during training, remains insufficiently explored. This gap is especially notable when viewed from the perspective of identifiable and decoupled la-tent organization. Classical ICA imposes indepen-dence as a global statistical principle (Comon (1994); Hyv¨ arinen and Oja (2000)), while more recent non-linear ICA methods recover identifiability by intro-ducing auxiliary structure shared across the learning problem (Hyv¨ arinen and Morioka (2016); Hyv¨ arinen et al. (2019); Khemakhem et al. (2020)). Likewise, disentanglement-oriented VAEs often encourage fac-torization through global penalties (Higgins et al. (2017); Chen et al. (2018)), and structured latent-variable models typically specify one structured prior family over the latent process as a whole (Johnson et al. (2016); Karl et al. (2017); Casale et al. (2018); Fortuin et al. (2020)). What is still less studied is a source-wise structured latent formulation in which 2Yuan-Hao Wei 
+
+different latent dimensions are directly assigned dif-ferent learnable structural energies, so that separa-tion or decoupling emerges through the joint adap-tation of latent trajectories, observation mappings, and source-specific structural parameters. Motivated by this gap, this paper proposes 
+
+StrEBM , a structured latent energy-based model for source-wise structured representation learning. The key idea is to move away from a single shared latent regularizer and instead assign each latent dimension its own learnable energy-based formulation. Under this design, the latent trajectories are optimized di-rectly, together with the observation-generation map and the source-wise structural parameters. Thus, the latent dimensions are not treated as interchange-able coordinates under one common prior, but as components that may gradually evolve toward dif-ferent structural roles during training. Blind source separation is adopted here as a concrete and verifi-able testbed for this broader idea, because in that setting the learned latent dimensions can be directly compared with underlying source components. In the present study, the source-wise energy is instantiated using Gaussian-process-inspired ener-gies. This GP-based choice is not intended to de-fine the general framework exhaustively, but rather to provide one natural realization for indexed one-dimensional latent trajectories. In this realization, each latent dimension has its own learnable length-scale, which determines the covariance geometry underlying its structural energy. Consequently, dif-ferent latent dimensions are encouraged to settle into different smoothness or correlation regimes, rather than sharing one common latent bias. This design is conceptually related to the role of structured pri-ors in temporal latent-variable models (Casale et al. (2018); Fortuin et al. (2020)), but differs in two im-portant respects: first, the formulation is explicitly source-wise rather than globally latent-structured; second, the latent trajectories themselves are opti-mized directly in an EBM-style framework instead of being inferred solely through an encoder-based variational posterior. This source-wise design is also motivated by a broader question beyond BSS itself. If identifiable or decoupled latent organization requires inductive bias (Locatello et al. (2019)), then one possible strategy is to impose not just some latent structure, but dif-ferent learnable structures on different latent dimen-sions. In that sense, the present paper studies BSS as an experimentally transparent setting in which the latent dimensions can be inspected and matched to known underlying components, while the deeper methodological interest lies in structured latent or-ganization through source-wise energies. The hope is that such a formulation may eventually extend beyond source separation to more general problems of interpretable representation learning, identifiable latent factorization, and source-wise modeling of structured data. The experiments in this paper provide an ini-tial empirical study of this idea under both linear and nonlinear mixing settings. The results show that the proposed framework can effectively recover source components, supporting the basic feasibility of source-wise structured latent EBM learning in this setting. At the same time, the experiments also reveal two important practical phenomena. First, although source-wise structural energy alone can already drive separation in the linear case, conver-gence may become very slow in the later stage, which motivates the introduction of a weak auxiliary sepa-ration regularizer. Second, under nonlinear observa-tion mappings, the optimization becomes less stable, suggesting that the interaction among flexible gen-erators, directly optimized latent trajectories, and source-wise structural energies remains challenging. These observations are important not only for as-sessing the present GP-based instantiation, but also for motivating future work on richer energy families, improved optimization strategies, and more robust nonlinear source-wise latent modeling. The main contribution of this paper is therefore not merely a new GP-based BSS model, but a first step toward a broader source-wise structured latent EBM framework. By assigning each latent dimension its own learnable structured energy and by directly optimizing the latent trajectories together with the observation map, the proposed approach offers a different route to latent decoupling: separation is not imposed through explicit supervision, nor does it arise solely from a shared latent prior, but instead emerges through the progressive differentiation of latent roles under source-wise structural energies. In this sense, the present work contributes both a concrete model and an initial experimental analysis, while laying the groundwork for future investigations into source-wise energy design for identifiable and 3StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation 
+
+interpretable latent representation learning. 
+
+# 2 Methodology 
+
+2.1 Problem Setup and Latent Represen-tation 
+
+The proposed framework is motivated by a broader goal in structured latent modeling: to endow dif-ferent latent dimensions with their own learnable structural biases, so that they may evolve into dis-tinct, interpretable, and potentially more identifiable latent factors during training. Rather than treat-ing the latent representation as a single undiffer-entiated vector governed by one shared prior, the present formulation assigns an individual structured energy to each latent dimension. In principle, such a mechanism is relevant to disentangled representation learning, source-wise interpretability, and identifiable latent organization. In the present work, this idea is instantiated in a comparatively simple and ver-ifiable setting, namely latent factor recovery from multichannel observations, where the learned latent dimensions can be directly examined against under-lying components. In this sense, the present study may also be viewed as a blind source separation prob-lem, in which the latent dimensions are encouraged to align with underlying source components from multichannel observations while remaining embed-ded in a more general source-wise structured latent modeling framework. Let Y ∈ RT ×m denote the observed multichan-nel signal, where T is the number of indexed samples and m is the number of observed channels. The la-tent representation is written as 
+
+S = [ s1, s2, . . . , sn] ∈ RT ×n, (1) where each column sj ∈ RT is one structured latent component defined over an ordered index set. In the current instantiation, these latent dimensions are expected to align with underlying source components, but the formulation itself is introduced from the more general viewpoint that different latent dimensions should be allowed to develop different structural roles. In the present implementation, the ordered index is instantiated by the normalized sample index, which may be interpreted, for example, as a normalized time index in the current experiments. Unlike encoder-based variational formulations, the present method directly treats the latent matrix as an optimization variable. Specifically, the initial latent components are randomly initialized as 
+
+S(0) = σinit Ξ, Ξij ∼ N (0 , 1) , (2) where σinit > 0 is the initialization scale. Thus, at the beginning of training, each latent dimension is simply a random indexed trajectory rather than the output of an encoder or an explicit structured prior sampler. During optimization, these trajectories are gradually shaped by the observation-matching term, source-wise structural energy, and a weak separation regularizer. This matches the implementation in the code, where the latent trajectories are initialized by Gaussian noise and then optimized directly as trainable parameters. Once the structured latent representation has been introduced, the next question is how these la-tent components give rise to the observed multichan-nel signal. This leads to the observation-generation stage of the framework. 
+
+2.2 Observation Mapping and Recon-struction Term 
+
+The next step of the framework specifies how the structured latent representation gives rise to the ob-served multichannel signal. At a general level, this stage describes the mapping from structured latent components to the observation domain, and may therefore be viewed as the generative process from the latent space to the observed space. In the partic-ular blind source separation interpretation adopted in this paper, the same generative mapping is in-stantiated more concretely as a mixing mechanism that transforms latent source-like components into observed mixtures. For each index location i ∈ { 1, . . . , T }, let s(i) ∈
+
+Rn denote the i-th row of S. The latent representa-tion is mapped to the observation space according to 
+
+by(i) = gθ
+
+ s(i), (3) where gθ : Rn → Rm is a parametric observation map. Stacking all index locations yields 
+
+bY = gθ(S) ∈ RT ×m. (4) Accordingly, gθ serves in this work as a general observation-domain generator for structured latent variables. Under the present blind source separation 4Yuan-Hao Wei 
+
+viewpoint, however, it is more specifically interpreted as a mixing map from latent source-like components to observed mixtures. This terminology is especially natural in the current setting because the latent di-mensions are expected to evolve toward underlying source components, while the observation map ex-plains how these components combine to form the measured channels. When no hidden layer is used, the observation map reduces to a linear form, 
+
+by(i) = Ws (i) + b, (5) with W ∈ Rm×n and b ∈ Rm. In this case, the ob-servation map coincides with a linear mixer. When hidden layers are introduced, gθ(·) becomes a non-linear multilayer perceptron applied row-wise, so that the same framework also admits nonlinear mix-ing relationships. Therefore, the present formulation accommodates both linear and nonlinear observation-generation mechanisms within a unified structured latent modeling framework. The observation-matching term used in the im-plementation can be interpreted as the negative log-likelihood of an isotropic Gaussian observation model, 
+
+p(Y | S, θ ) ∝ exp 
+
+
+
+− 12νy
+
+∥Y − gθ(S)∥2
+
+> F
+
+
+
+, (6) where νy > 0 controls the relative weight of data fidelity (Higgins et al. (2017); Wei et al. (2024)). The practical loss is written as 
+
+Lobs = 12νy
+
+· Y − bY 2 
+
+> F
+
+. (7) From the first epoch onward, the current la-tent matrix S is passed through the observation map to produce bY, after which the discrepancy be-tween Y and bY drives the latent trajectories toward a representation that better explains the observed multichannel signal. Under the source separation in-terpretation adopted here, this means that the latent dimensions are progressively encouraged to organize into source-like components whose mixing through 
+
+gθ reproduces the observed mixtures, even though no direct source supervision is provided. Observation matching alone, however, does not determine how different latent dimensions should organize internally. To induce distinct structural roles across latent components, an additional source-wise structural mechanism is introduced. 
+
+2.3 Source-Wise Structural Energy and the GP Instantiation 
+
+To impose distinct structure on different latent di-mensions, the framework introduces a source-wise structural energy for each latent trajectory. At the general level, let 
+
+Ej (sj ; ϕj ) (8) denote the structured energy assigned to the j-th latent dimension, where ϕj represents the correspond-ing source-wise structural parameters. This leads to a factorized latent energy model of the form 
+
+p(S) ∝
+
+> n
+
+Y
+
+> j=1
+
+exp   − Ej (sj ; ϕj ). (9) Equation (9) expresses the high-level design principle of the present framework: different latent dimensions need not share one common structural prior, but may instead be equipped with their own learnable structural energies. The specific choice of energy is not conceptually restricted to one particular family. In the present paper, a Gaussian-process-inspired realization is adopted as a concrete and natural example for indexed one-dimensional latent components. Let 
+
+u = [ u1, . . . , u T ]⊤ (10) denote the ordered index associated with the T sam-ples. In the present implementation, u is given by the normalized sample index, which in the current experiments may be viewed as a normalized time in-dex. For the j-th latent dimension, the GP-inspired realization defines an RBF covariance matrix 
+
+Kj (i, r ) = σ2 
+
+> f
+
+exp − (ui − ur)2
+
+2ℓ2
+
+> j
+
+!
+
++ ϵ δ ir , (11) where ℓj > 0 is the learnable length-scale associated with the j-th dimension, σ2 
+
+> f
+
+is a fixed kernel am-plitude, ϵ > 0 is a small jitter term, and δir is the Kronecker delta. Each source-wise length-scale is parameterized as 
+
+ℓj = exp( ηj ), (12) where ηj ∈ R is unconstrained. This ensures posi-tivity while allowing different latent dimensions to develop different correlation scales during training. 5StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation 
+
+Under the present GP-inspired choice, the j-th structured energy is induced from the Gaussian density 
+
+sj ∼ N (0, Kj ), (13) whose density is 
+
+p(sj ) = 1(2 π)T / 2|Kj |1/2 exp 
+
+
+
+− 12 s⊤ 
+
+> j
+
+K−1 
+
+> j
+
+sj
+
+
+
+. (14) Taking the negative logarithm and omitting con-stants independent of the optimization variables gives the GP-inspired source-wise energy 
+
+EGP  
+
+> j
+
+(sj ; ℓj ) = 12 s⊤ 
+
+> j
+
+K−1 
+
+> j
+
+sj + 12 log |Kj |. (15) Summing over all latent dimensions yields the struc-tured energy used in this paper, 
+
+Lstr =
+
+> n
+
+X
+
+> j=1
+
+EGP  
+
+> j
+
+(sj ; ℓj )=
+
+> n
+
+X
+
+> j=1
+
+ 12 s⊤ 
+
+> j
+
+K−1 
+
+> j
+
+sj + 12 log |Kj |
+
+
+
+.
+
+(16) Equation (16) shows that the latent trajectories are not generated by directly sampling from Gaus-sian processes. Instead, they are regularized by a source-wise GP-induced energy geometry over the chosen index set. Starting from the random initializa-tion in (2) , each latent dimension is gradually pulled toward a trajectory that attains low energy under its own covariance structure while still remaining useful for explaining the observations. In the present study, this mechanism encourages different latent dimen-sions to align with different underlying components; more generally, it serves as one concrete realization of a broader source-wise structured latent modeling principle. Although the current implementation uses an ordered one-dimensional index, the same view-point is not conceptually restricted to physical time and may also be interpreted with respect to other ordered sample domains when appropriate. For numerical stability, the covariance matrix is factorized as 
+
+Kj = Lj L⊤ 
+
+> j
+
+, (17) where Lj is the Cholesky factor. The quadratic term is then evaluated by solving triangular linear systems rather than explicitly inverting Kj , and the log-determinant is computed as log |Kj | = 2 
+
+> T
+
+X
+
+> i=1
+
+log( Lj )ii . (18) Accordingly, the GP-inspired energy in practice is evaluated as 
+
+EGP  
+
+> j
+
+(sj ; ℓj ) = 12 s⊤ 
+
+> j
+
+K−1 
+
+> j
+
+sj +
+
+> T
+
+X
+
+> i=1
+
+log( Lj )ii , (19) which is algebraically equivalent to (15). While the source-wise structural energies encour-age different latent dimensions to settle into different structural configurations, they do not by themselves explicitly suppress residual overlap among latent components during optimization. This motivates the introduction of a weak auxiliary separation reg-ularizer. 
+
+2.4 Separation Regularization 
+
+In the broader source-wise structured latent mod-eling viewpoint adopted in this work, an explicit separation penalty is not conceptually indispensable. In several of the author’s previous studies, the latent dimensions were already able to evolve toward dif-ferent source-like roles under source-wise structured designs alone, without requiring an additional ex-plicit separation term. In that sense, the primary driving mechanism of separation in the present frame-work still comes from the combination of observation matching and source-wise structural regularization, rather than from an externally imposed decorrelation constraint. Nevertheless, the case study considered here also reveals a practical optimization issue. When only the observation term and the source-wise structural en-ergy are used, the model can already reconstruct the observations reasonably well, but the latent trajecto-ries may still remain partially correlated or weakly redundant for a long stage of training. As a re-sult, the later phase of optimization may enter a relatively flat region in which reconstruction is al-ready satisfactory while further refinement toward cleaner source-wise decoupling proceeds only very slowly. Therefore, in the present implementation, a weak separation regularizer is introduced not as the principal source of identifiability, but as an auxiliary term to suppress redundant latent overlap and to accelerate the late-stage convergence toward more distinct source-wise representations. Let the centered and normalized latent matrix be 
+
+eS = [ es1, . . . , esn], (20) 6Yuan-Hao Wei 
+
+where 
+
+esj = sj − ¯sj 1
+
+q 1 
+
+> T
+
+∥sj − ¯sj 1∥22 + εs
+
+, (21) with ¯sj denoting the empirical mean of the j-th latent dimension and εs > 0 a small constant. The empirical correlation matrix of the normalized latent representation is 
+
+C = 1
+
+T eS⊤ eS. (22) The regularizer is defined as 
+
+Lsep = ∥C − I∥2 
+
+> F
+
+. (23) This term encourages different latent dimen-sions to avoid collapsing into highly similar repre-sentations. In the present work, its role is inten-tionally weak: it does not replace the source-wise structural mechanism, but only provides an addi-tional preference for low cross-correlation among latent components. Under the blind source sepa-ration interpretation, it may be viewed as a mild acceleration term that helps the optimization move more efficiently from “good reconstruction but still partially entangled” latent configurations toward cleaner source-wise separation. 
+
+2.5 Learning Objective 
+
+Combining the observation model and the general source-wise latent energy in (9) , the posterior has the form 
+
+p(S | Y, θ ) ∝ p(Y | S, θ )
+
+> n
+
+Y
+
+> j=1
+
+exp   − Ej (sj ; ϕj ).
+
+(24) For clarity, the overall objective may be written explicitly as a function of the optimization variables and the observed data: 
+
+L(S, θ, {ϕj }nj=1 ; Y) = Lobs + λstr 
+
+> n
+
+X
+
+> j=1
+
+Ej (sj ; ϕj )+ λsep Lsep ,
+
+(25) where S denotes the latent representation, θ de-notes the parameters of the observation map, ϕj
+
+denotes the source-wise structural parameters as-sociated with the j-th latent dimension, and Y is the observed multichannel signal. In the present GP-based instantiation, ϕj = ℓj and (25) becomes 
+
+L(S, θ, {ℓj }nj=1 ; Y) = 12νy
+
+∥Y − gθ(S)∥2
+
+> F
+
++ λGP 
+
+> n
+
+X
+
+> j=1
+
+ 12 s⊤ 
+
+> j
+
+K−1 
+
+> j
+
+sj + 12 log |Kj |
+
+
+
++ λsep ∥C − I∥2 
+
+> F
+
+.
+
+(26) The observed data Y are fixed, while the latent trajectories S, the parameters θ of the observation-generation map, and the source-wise structural parameters {ϕj }nj=1 are jointly optimized. Consequently, training is not merely a process in which a scalar loss decreases, but also a process in which different latent dimensions progressively adapt under different structural constraints and gradually converge toward different roles. More specifically, during every epoch, the cur-rent latent trajectories S are mapped into recon-structed observations bY through the observation map; the observation-matching term aligns them with the observed multichannel data; the source-wise structural energy reshapes each latent dimension ac-cording to its own structural bias; and the separation penalty discourages overlap among latent factors. In the particular realization studied here, this struc-tural bias is instantiated by GP-inspired covariance geometry. Repeating this process over epochs grad-ually transforms the random initial trajectories into structured latent dimensions whose parameters and representations no longer evolve in the same man-ner, but instead tend to converge toward different configurations. This progressive differentiation is particularly important for interpretation. In the present paper, where the framework is examined in the concrete form of blind source separation, the convergence of different latent dimensions toward different struc-tured configurations may be viewed as the process by which underlying source components become sep-arated without direct source supervision. From a broader structured latent modeling viewpoint, the same phenomenon may also be interpreted as an unsupervised decoupling process, in which different latent dimensions acquire different structural identi-ties through joint optimization. 7StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation 
+
+2.6 Optimization Characteristics 
+
+Although the objective in (26) is straightforward, its optimization behavior is not necessarily uniform across training. Since the latent trajectories are op-timized directly together with the observation-map parameters and the source-wise structural parame-ters, the learning dynamics are governed by the joint interaction of data fitting, source-wise structural adaptation, and weak latent decorrelation. Conse-quently, the optimization process may be viewed as min    
+
+> S, θ, {ϕj}
+
+Lobs + λstr 
+
+> n
+
+X
+
+> j=1
+
+Ej (sj ; ϕj ) + λsep Lsep , (27) where the same latent representation must simulta-neously satisfy observation matching and source-wise structural differentiation. In practice, this often leads to a two-stage opti-mization pattern. The early stage is usually domi-nated by observation fitting, so that the latent rep-resentation is rapidly adjusted into a configuration that explains the observed mixtures reasonably well. The later stage is typically slower, because the model must further redistribute structural roles across la-tent dimensions under the source-wise energies, even when the observation mismatch has already become small. From the source separation viewpoint, this means that satisfactory reconstruction of the mix-tures may be reached earlier than clean source-wise decoupling. This effect becomes more visible when the obser-vation map is highly flexible, since part of the fitting burden may then be absorbed by the mapping itself, reducing the pressure for the latent trajectories to settle immediately into distinct source-wise config-urations. Accordingly, the convergence behavior of the proposed framework should be interpreted not only by the decrease of the overall loss, but also by the gradual differentiation of latent roles during training. More detailed empirical manifestations of this phenomenon will be shown in the case study section. 
+
+# 3 Experimental Study 
+
+This section evaluates the proposed source-wise GP-inspired energy-based model under both linear and nonlinear mixing settings. The experiments are de-signed not only to verify final separation accuracy, but also to examine the optimization behavior em-phasized in the methodology, namely that source separation is achieved through the joint evolution of the latent trajectories, the observation map, and the source-wise GP parameters. In particular, special at-tention is paid to the role of the auxiliary separation regularizer, since the methodology already suggested that structured source-wise energies alone may be sufficient for eventual separation, while the regular-izer mainly affects the convergence path rather than the basic feasibility of recovery. 
+
+3.1 Experimental Setup 
+
+A synthetic multichannel source separation task is considered, with three latent/source components de-fined over T = 1000 indexed samples. The observed mixtures are standardized before training, and the sample index is normalized to [0 , 1] for constructing the source-wise RBF covariance matrices. In all ex-periments, the latent matrix is directly initialized by Gaussian noise and optimized jointly with the obser-vation map and the source-wise GP length-scales, in accordance with the formulation in Section 1. Two observation settings are examined. a) Linear case. The observation map is a lin-ear mixer without hidden layers or bias. This setting is used to examine the behavior of the proposed source-wise GP energy under a stan-dard linear mixing assumption. b) Nonlinear case. The observation map is replaced by a row-wise multilayer perceptron with two hidden layers, allowing nonlinear map-ping from latent components to observations. To evaluate source recovery, the estimated la-tent components are aligned to the true sources by permutation matching, and the absolute correlation is reported for monitoring. It is important to em-phasize that this correlation is not included in the training objective. It is used only as an external di-agnostic to visualize how the latent trajectories pro-gressively evolve toward the underlying sources dur-ing optimization. Therefore, the monitoring curves should be interpreted as evaluation signals rather than optimization targets. 8Yuan-Hao Wei 
+
+Algorithm 1: Training procedure of the source-wise GP-inspired energy-based model.                                                                                                                       
+
+> Input: Normalized observations eY∈RT×m, normalized sample index t= [ t1, . . . , t T]⊤, source number n, weights
+> νy, λ GP , λ sep , initialization scale σinit .
+> Output: Estimated sources bS, observation-map parameters bθ, source-wise length-scales {bℓj}nj=1 .
+> 1Initialize S=σinit Ξwith Ξ ij ∼ N (0 ,1), initialize θ, initialize {ηj}nj=1 , and set ℓj= exp( ηj)
+> 2while not converged do
+> 3bY=gθ(S)
+> 4Lobs =12νy
+> eY−bY2
+> F
+> 5for j= 1 to ndo
+> 6Kj(i, r ) = σ2
+> fexp −(ti−tr)2
+> 2ℓ2
+> j
+> !
+> +ϵδ ir
+> 7Compute the Cholesky factorization Kj=LjL⊤
+> jand obtain aj=K−1
+> jsjvia triangular solves
+> 8Ej= 12s⊤
+> jaj+PTi=1 log( Lj)ii
+> 9end
+> 10 LGP =Pnj=1 Ej
+> 11 Normalize each column of Sto obtain eS, then set C= 1
+> T
+> eS⊤eS
+> 12 Lsep =∥C−I∥2
+> F
+> 13 L=Lobs +λGP LGP +λsep Lsep
+> 14 {S, θ, η 1, . . . , η n} ← OptimizerStep( ∇L )
+> 15 end
+> 16 Set bS=S,bθ=θ, and bℓj=ℓjfor j= 1 , . . . , n
+
+3.2 Linear Mixing Scenario Without Ex-plicit Separation Regularization 
+
+We first consider the linear case without the ex-plicit separation term, corresponding to the setting in Figure 1. This experiment is important because it connects the present model to the author’s pre-vious structured latent designs, such as SAHMM-VAE (Wei (2026a)), PDGMM-VAE (Wei and Sun (2026)), and StrADiff (Wei (2026b)), where source-wise structural design alone was already sufficient to drive separation without introducing an additional decorrelation penalty. The result shows that the proposed model can indeed recover the three sources accurately even without the separation term. This confirms that the essential separation mechanism still comes from the combination of observation matching and source-wise structured GP energy, rather than from an explicit correlation penalty. In other words, the source-wise structural design itself remains the principal mecha-nism that differentiates the latent dimensions and drives them toward distinct source-like roles. However, Figure 1 also reveals a characteristic optimization phenomenon. Although the monitoring correlation rises quickly at the beginning of training, the subsequent improvement becomes very slow, and the model spends a long range of epochs making only marginal gains. This behavior is fully consistent with the discussion in the methodology section: once the mixtures are already reconstructed reasonably well, the optimization enters a relatively flat late stage in which further refinement of the latent trajectories toward cleaner source-wise decoupling proceeds only gradually. Thus, the no-separation setting demon-strates that the model is capable of separation on its own, but that the late-stage convergence can be inefficient. 
+
+3.3 Effect of the Separation Regularizer in the Linear Case 
+
+To address the slow late-stage refinement observed above, the auxiliary separation regularizer is acti-vated in the linear case. The corresponding source recovery result is shown in Figure 2, and the training dynamics are summarized in Figure 3. Figure 2 shows that, after adding the separation term, the recovered sources become almost indis-tinguishable from the ground truth. More impor-tantly, the main improvement is not merely the final accuracy, but the optimization speed toward that accuracy. In Figure 3, the monitoring-correlation subplot shows a much faster rise compared with the no-separation case, indicating that the latent com-ponents are pushed toward source-wise decoupling much earlier during training. This observation is consistent with the intended role of Lsep : it does 9StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation 
+
+Figure 1: Linear-case monitoring correlation without the separation regularizer. not create the separation mechanism by itself, but reduces redundant overlap among latent dimensions and helps the optimizer leave the regime of “good reconstruction but still partially entangled” repre-sentations more quickly. The remaining subplots in Figure 3 provide further insight into this process. The loss curves in-dicate stable joint optimization of the reconstruction term, GP energy, and separation term. The learned source-wise length-scales settle at clearly different values, suggesting that different latent dimensions indeed converge to different structural regimes rather than sharing one common temporal scale. This is precisely the source-wise structural effect that the model is designed to induce. At the same time, the GP-energy trajectories remain well behaved, show-ing that the acceleration in source recovery is not obtained by discarding the structured prior, but by coordinating it with an additional weak decorrelation preference. An important point should again be emphasized here: the correlation curves in Figures 1 and 3 are 
+
+not optimization objectives. They are computed only for monitoring against the known synthetic ground truth. Therefore, the faster rise of correlation after introducing Lsep should be interpreted as evidence that the auxiliary regularizer improves the latent op-timization path, not that the model is being directly trained to maximize correlation. Overall, the linear experiments support two conclusions. First, the proposed source-wise GP-inspired energy is already capable of driving source separation without explicit separation loss, which is consistent with the behavior observed in the author’s previous structured models. Second, in the present EBM-style formulation, adding a weak separation term substantially improves convergence efficiency, especially in the later stage where pure structured optimization becomes slow. 
+
+3.4 Nonlinear Mixing Scenario 
+
+We next examine the nonlinear case, in which the linear mixer is replaced by a multilayer perceptron. The final matched source comparison is shown in Fig-ure 4, and the corresponding optimization behavior is summarized in Figure 5. Figure 4 shows that the proposed model still retains a substantial separation capability under non-linear mixing. The recovered components remain highly consistent with the true sources, indicating that the source-wise GP-inspired latent structure is not limited to the linear case. This is an im-portant result, because it suggests that the same structured latent principle can still function when the observation-generation mechanism becomes more flexible. Nevertheless, the nonlinear case is visibly less stable than the linear one. Compared with the nearly perfect linear recovery, the source matching in Fig-ure 4 is slightly weaker, and the training traces in Figure 5 show clearer fluctuations. In particular, the monitoring correlation no longer exhibits the same smooth and steadily improving behavior as in the linear setting. Instead, it oscillates during training, indicating that the increased flexibility of the nonlinear observation map makes the latent op-10 Yuan-Hao Wei 
+
+Figure 2: Linear-case matched source comparison with the separation regularizer. 
+
+Figure 3: Training dynamics in the linear case with the separation regularizer, including losses, source-wise GP length-scales, GP energies, and monitoring correlation. timization more difficult. This is also consistent with the optimization analysis in the methodology: when the observation map is more expressive, part of the fitting burden can be absorbed by the map itself, reducing the immediate pressure for the la-tent dimensions to settle into cleanly differentiated source-wise configurations. A further phenomenon appears in the learned length-scales. In Figure 5, the third source-wise length-scale reaches the clamp boundary. This indi-cates that, for that latent dimension, the length-scale parameter does not converge to a well-internalized structural optimum, but is instead pushed to the im-posed feasible range. From an optimization perspec-tive, this suggests that the third latent component is struggling to establish a stable GP scale under the nonlinear mapping. Therefore, although the model still achieves reasonably strong source recovery, the nonlinear case does not exhibit the same level of robustness and stability observed in either the lin-11 StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation 
+
+ear setting of the present method or several of the author’s previous structured generative models. In this sense, the nonlinear experiment should be interpreted as both a positive and a cautionary result. On the positive side, the method remains workable beyond linear mixing. On the cautionary side, the optimization becomes more fragile, the source-wise GP parameters are more difficult to sta-bilize, and the separation trajectory is less smooth. These observations suggest that, under nonlinear mixing, the interaction among latent trajectories, GP structural energies, and a flexible observation map becomes substantially more complicated than in the linear case. 
+
+3.5 Discussion 
+
+Taken together, the experiments reveal a rather clear empirical picture of the proposed framework. First, the source-wise GP-inspired structural design is the main mechanism enabling separation. Even without the explicit separation term, the model can already recover the sources in the linear case, which is fully in line with the conceptual motivation of the methodology and with the author’s earlier structured latent models. Second, the separation regularizer plays an im-portant practical role in the present EBM-style for-mulation. Its main contribution is not to make separation possible, but to accelerate source-wise differentiation and improve optimization efficiency. This is especially evident from the comparison be-tween Figures 1 and 3, where the monitored source correlations improve much faster after the regular-izer is added, even though correlation itself is never part of the training loss. Third, the linear and nonlinear cases differ not only in final accuracy but also in optimization char-acter. The linear case is remarkably stable and leads to nearly exact source recovery. The nonlinear case still works, but exhibits visibly larger fluctuations and less stable length-scale adaptation. In particu-lar, the clamped behavior of one learned length-scale suggests that nonlinear flexibility can weaken the stability of source-wise structural convergence. Overall, these results support the central claim of this paper: directly optimized latent trajectories, when equipped with source-wise GP-inspired ener-gies, can evolve into distinct source-like components through joint optimization with the observation map. At the same time, the experiments also clarify an important practical point: for this class of source-wise EBM formulations, auxiliary separation regu-larization can be highly beneficial for accelerating convergence, whereas nonlinear observation maps introduce additional instability that deserves further investigation in future work. 
+
+# 4 Conclusion 
+
+This paper proposed StrEBM, a structured latent energy-based model for source-wise structured repre-sentation learning, and examined it in the concrete setting of blind source separation. The central idea is to assign each latent dimension its own learnable structural energy, so that latent components are not merely regularized by a single shared constraint, but are gradually driven toward different source-like roles through joint optimization with the observation map. In the present study, this source-wise design was in-stantiated using GP-inspired energies with learnable length-scales, providing a concrete realization of a more general structured latent EBM framework. The experiments on synthetic multichannel sig-nals showed that the proposed framework is able to recover underlying source components effectively in both linear and nonlinear mixing settings. In the linear case, the model exhibited strong separation performance and stable optimization behavior, con-firming that source-wise structural energy itself can already serve as the main mechanism driving latent differentiation. The results also showed that the auxiliary separation regularizer is not the origin of separability, but a practically useful term for accel-erating late-stage convergence and reducing residual overlap among latent dimensions. At the same time, the case study also clarified an important limitation of the current formulation. Although the nonlinear setting remained workable, its optimization was visibly less stable than that of the linear case, with stronger fluctuations in the monitoring curves and less robust convergence of the source-wise structural parameters. A plausible reason is that, once the observation map becomes sufficiently flexible, the current formulation may no longer provide enough effective constraints on the interaction among latent trajectories, source-wise energies, and the nonlinear generator. As a result, part of the data fitting can be absorbed by the non-12 Yuan-Hao Wei 
+
+Figure 4: Nonlinear-case matched source comparison. 
+
+Figure 5: Training dynamics in the nonlinear case, showing losses, source-wise GP length-scales, GP energies, and monitoring correlation. linear mapping itself, weakening the pressure for the latent dimensions to settle into stable and clearly differentiated structural roles. Therefore, beyond establishing an initial proof of concept, this work also points to an important future direction. In particular, the nonlinear case suggests that stronger or more principled forms of constraint may be necessary to stabilize source-wise latent differentiation under expressive observation mappings. One possible direction is to introduce variational inference or related constrained inference mechanisms, so that the latent optimization is no longer driven only by direct energy shaping and re-construction matching, but is additionally guided by a more explicit posterior regularization principle. More generally, other forms of structural constraints, 13 StrEBM: A Structured Latent Energy-Based Model for Blind Source Separation 
+
+parameter-sharing restrictions, or source-wise proba-bilistic formulations may also be explored to improve robustness in nonlinear settings. Overall, the present work should be viewed as a first step toward a broader source-wise structured latent EBM framework. The GP-based instantiation studied here provides an empirically verifiable exam-ple showing that direct latent optimization under source-wise energies can promote source-like decou-pling. At the same time, the observed nonlinear in-stability indicates that richer constraint mechanisms and more robust optimization strategies will be es-sential for extending this idea toward more general identifiable, interpretable, and nonlinear structured latent learning problems. 
+
+# References 
+
+Bell, A. J. and Sejnowski, T. J. (1995). An information-maximization approach to blind sepa-ration and blind deconvolution. Neural Computa-tion , 7(6):1129–1159. Casale, F. P., Dalca, A. V., Saglietti, L., Listgarten, J., and Fusi, N. (2018). Gaussian process prior variational autoencoders. In Advances in Neural Information Processing Systems , volume 31, pages 10369–10380. Chen, R. T. Q., Li, X., Grosse, R., and Duvenaud, D. (2018). Isolating sources of disentanglement in variational autoencoders. In Advances in Neural Information Processing Systems , volume 31, pages 2610–2620. Comon, P. (1994). Independent component analysis, a new concept? Signal Processing , 36(3):287–314. Fortuin, V., Baranchuk, D., Raetsch, G., and Mandt, S. (2020). GP-VAE: Deep probabilistic time se-ries imputation. In Proceedings of the Twenty-Third International Conference on Artificial In-telligence and Statistics , volume 108, pages 1651– 1661. PMLR. Higgins, I., Matthey, L., Pal, A., Burgess, C., Glorot, X., Botvinick, M., Mohamed, S., and Lerchner, A. (2017). beta-VAE: Learning basic visual concepts with a constrained variational framework. Inter-national Conference on Learning Representations .Hyv¨ arinen, A. and Morioka, H. (2016). Unsupervised feature extraction by time-contrastive learning and nonlinear ICA. In Advances in Neural Information Processing Systems , volume 29, pages 3765–3773. Hyv¨ arinen, A. and Oja, E. (2000). Independent component analysis: algorithms and applications. 
+
+Neural Networks , 13(4–5):411–430. Hyv¨ arinen, A., Sasaki, H., and Turner, R. E. (2019). Nonlinear ICA using auxiliary variables and gen-eralized contrastive learning. In Proceedings of the Twenty-Second International Conference on Artificial Intelligence and Statistics , volume 89, pages 859–868. PMLR. Johnson, M. J., Duvenaud, D., Wiltschko, A. B., Adams, R. P., and Datta, S. R. (2016). Com-posing graphical models with neural networks for structured representations and fast inference. In 
+
+Advances in Neural Information Processing Sys-tems , volume 29, pages 2946–2954. Jutten, C. and H´ erault, J. (1991). Blind separation of sources, part i: An adaptive algorithm based on neuromimetic architecture. Signal Processing ,24(1):1–10. Karl, M., Soelch, M., Bayer, J., and van der Smagt, P. (2017). Deep variational bayes filters: Unsu-pervised learning of state space models from raw data. International Conference on Learning Rep-resentations .Khemakhem, I., Kingma, D. P., Monti, R. P., and Hyv¨ arinen, A. (2020). Variational autoencoders and nonlinear ICA: A unifying framework. In Pro-ceedings of the Twenty-Third International Con-ference on Artificial Intelligence and Statistics ,volume 108, pages 2207–2217. PMLR. Kingma, D. P. and Welling, M. (2014). Auto-encoding variational bayes. International Con-ference on Learning Representations .LeCun, Y., Chopra, S., Hadsell, R., Huang, F. J., and Ranzato, M. (2006). A tutorial on energy-based learning. Predicting Structured Data , 1(0):1–59. Locatello, F., Bauer, S., Lucic, M., Raetsch, G., Gelly, S., Sch¨ olkopf, B., and Bachem, O. (2019). Challenging common assumptions in the unsuper-vised learning of disentangled representations. In 14 Yuan-Hao Wei Proceedings of the 36th International Conference on Machine Learning , volume 97, pages 4114–4124. PMLR. Wei, Y. et al. (2024). Innovative blind source sepa-ration techniques combining gaussian process algo-rithms and variational autoencoders with applica-tions in structural health monitoring . PhD thesis, Hong Kong Polytechnic University. Wei, Y.-H. (2026a). Sahmm-vae: A source-wise adap-tive hidden markov prior variational autoencoder for unsupervised blind source separation. arXiv preprint arXiv:2603.25776 .Wei, Y.-H. (2026b). Stradiff: A structured source-wise adaptive diffusion framework for linear and nonlinear blind source separation. arXiv preprint arXiv:2604.04973 .Wei, Y.-H. and Sun, Y.-J. (2026). Pdgmm-vae: A variational autoencoder with adaptive per-dimension gaussian mixture model priors for non-linear ica. arXiv preprint arXiv:2603.23547 .Yu, L., Song, Y., Song, J., and Ermon, S. (2020). Training deep energy-based models with f-divergence minimization. In Proceedings of the 37th International Conference on Machine Learn-ing , volume 119, pages 10957–10967. PMLR. Zhao, Y. and Linderman, S. W. (2023). Revisiting structured variational autoencoders. In Proceed-ings of the 40th International Conference on Ma-chine Learning , volume 202, pages 42644–42674. PMLR. 15
